@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.7.8] - 2026-03-02
+
 ### Added
 - `agr onboard` interactive guided setup command: walks through tool selection, skill discovery, migration, and configuration
 - `agr --quiet` / `-q` global flag to suppress non-error output across all commands
