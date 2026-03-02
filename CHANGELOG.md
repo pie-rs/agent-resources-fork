@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.7.7] - 2026-03-02
+
 ### Fixed
 - `agr config set/add/remove tools --global` no longer calls `find_repo_root()` or syncs/deletes repo-local skills
 - `_sync_dependencies_to_tools` return value is now checked; non-zero exits with error
