@@ -20,8 +20,6 @@ A package and project manager for AI agent skills. Install, share, and run skill
 pip install agr
 ```
 
-**Beta note:** Multi-source support is only in the beta release right now. Install `agr==0.7.2b1` to use `default_source`, `[[source]]`, or `--source`.
-
 ## Choose Your Path
 
 ### Install a Skill (persist it)
@@ -49,17 +47,10 @@ continue the conversation.
 Dependencies are tracked in `agr.toml`:
 
 ```toml
-default_source = "github"
-
 dependencies = [
     {handle = "anthropics/skills/frontend-design", type = "skill"},
     {handle = "anthropics/skills/skill-creator", type = "skill"},
 ]
-
-[[source]]
-name = "github"
-type = "git"
-url = "https://github.com/{owner}/{repo}.git"
 ```
 
 Teammates install everything with:

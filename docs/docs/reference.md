@@ -11,7 +11,7 @@ title: Reference
 | Install a skill for your tool | `agr add <handle>` |
 | Run a skill once | `agrx <handle>` |
 | Team sync | Add to `agr.toml`, then `agr sync` |
-| Configure tool targets | `agr config tools ...` |
+| Configure tool targets | `agr config set tools claude codex` |
 | Interactive guided setup | `agr onboard` |
 | Create a new skill | `agr init <name>` |
 | Migrate old rules/commands | `agrx kasperjunge/migrate-to-skills` |
@@ -22,8 +22,6 @@ title: Reference
 - `--version`, `-v` — Show version and exit
 
 ## CLI Commands
-
-**Beta note:** Multi-source support is only in the beta release right now. Install `agr==0.7.2b1` to use `default_source`, `[[source]]`, or `--source`.
 
 ### agr add
 
@@ -63,6 +61,10 @@ Uninstall skills.
 ```bash
 agr remove <handle>...
 ```
+
+**Options:**
+
+- `--global`, `-g` — Remove from global skills directory
 
 **Examples:**
 
@@ -147,19 +149,45 @@ agr onboard --no-migrate   # Skip migration prompts
 
 ### agr config
 
-Manage `agr.toml` configuration, including tool selection and `agrx` defaults.
+Manage `agr.toml` configuration.
 
 ```bash
-agr config tools list
-agr config tools add codex
-agr config tools set claude codex opencode
-agr config tools remove codex
-agr config tools unset codex
-agr config default-tool set codex
-agr config default-tool unset
+agr config show                              # View formatted config
+agr config path                              # Print agr.toml path
+agr config edit                              # Open in $EDITOR
+agr config get <key>                         # Read a config value
+agr config set <key> <values>                # Write scalar or replace list
+agr config add <key> <values>                # Append to list
+agr config remove <key> <values>             # Remove from list
+agr config unset <key>                       # Clear to default
 ```
 
-`agr tools ...` remains available as a deprecated alias for `agr config tools ...`.
+**Valid keys:** `tools`, `default_tool`, `default_source`, `sync_instructions`, `canonical_instructions`, `sources`
+
+**Options (on all subcommands):**
+
+- `--global`, `-g` — Operate on `~/.agr/agr.toml` instead of local
+
+**Options (on `add` only):**
+
+- `--type` — Source type (when key is `sources`)
+- `--url` — Source URL (when key is `sources`)
+
+**Examples:**
+
+```bash
+agr config set tools claude codex opencode
+agr config set default_tool claude
+agr config add tools cursor
+agr config remove tools cursor
+agr config set sync_instructions true
+agr config set canonical_instructions CLAUDE.md
+agr config add sources my-source --type git --url "https://git.example.com/{owner}/{repo}.git"
+agr config unset default_tool
+```
+
+!!! note "Deprecated aliases"
+    `agr config tools list/add/set/remove` and `agr config default-tool set/unset` still work but print deprecation warnings. Use the unified commands above instead.
 
 ### agrx
 
@@ -173,9 +201,10 @@ Downloads the skill, runs it with the selected tool, and cleans up afterwards.
 
 **Options:**
 
+- `--tool`, `-t` — Tool CLI to use (claude, cursor, codex, opencode, copilot, antigravity). Overrides `default_tool` from config.
 - `--interactive`, `-i` — Run skill, then continue in interactive mode
 - `--prompt`, `-p` — Prompt to pass to the skill
-- `--global`, `-g` — Install to the global tool skills directory (e.g. `~/.claude/skills/`, `~/.codex/skills/`, `~/.config/opencode/skill/`, `~/.gemini/antigravity/skills/`) instead of the repo-local one
+- `--global`, `-g` — Install to the global tool skills directory instead of the repo-local one
 - `--source <name>` — Use a specific source from `agr.toml`
 
 **Examples:**
