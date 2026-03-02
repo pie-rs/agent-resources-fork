@@ -1,7 +1,7 @@
 {
-  "id": "local:/Users/kasperjunge/projects/agent-resources/skills/development/workflow/code-review",
+  "id": "local:/Users/kasperjunge/Code/business/agent-resources/skills/development/workflow/code-review",
   "tool": "opencode",
   "installed_name": "code-review",
   "type": "local",
-  "local_path": "/Users/kasperjunge/projects/agent-resources/skills/development/workflow/code-review"
+  "local_path": "/Users/kasperjunge/Code/business/agent-resources/skills/development/workflow/code-review"
 }

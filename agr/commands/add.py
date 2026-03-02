@@ -11,9 +11,10 @@ from agr.config import (
     find_repo_root,
     get_or_create_global_config,
 )
-from agr.exceptions import AgrError, InvalidHandleError
-from agr.fetcher import fetch_and_install_to_tools
-from agr.handle import parse_handle
+from agr.exceptions import AgrError, InvalidHandleError, SkillNotFoundError
+from agr.fetcher import fetch_and_install_to_tools, list_remote_repo_skills
+from agr.handle import ParsedHandle, parse_handle
+from agr.source import SourceResolver
 
 console = Console()
 
@@ -109,6 +110,9 @@ def run_add(
 
             results.append((ref, True, ", ".join(installed_paths)))
 
+        except SkillNotFoundError as e:
+            message = _maybe_suggest_repo_skills(ref, handle, resolver, source)
+            results.append((ref, False, message or str(e)))
         except InvalidHandleError as e:
             results.append((ref, False, str(e)))
         except FileExistsError as e:
@@ -143,3 +147,48 @@ def run_add(
     failures = [r for r in results if not r[1]]
     if failures:
         raise SystemExit(1)
+
+
+def _maybe_suggest_repo_skills(
+    ref: str,
+    handle: ParsedHandle,
+    resolver: SourceResolver,
+    source: str | None,
+) -> str | None:
+    """Try to suggest correct handles when a two-part handle fails.
+
+    When a handle like "owner/name" fails (no skill "name" in the default
+    "skills" repo), probes "owner/name" as a GitHub repo and lists
+    available skills to suggest three-part handles.
+
+    Returns:
+        A helpful error message with suggestions, or None to use the default.
+    """
+    # Only probe for two-part remote handles (no explicit repo)
+    if handle.is_local or handle.repo is not None:
+        return None
+
+    owner = handle.username
+    repo_name = handle.name
+    if not owner or not repo_name:
+        return None
+
+    try:
+        skills = list_remote_repo_skills(owner, repo_name, resolver, source)
+    except Exception:
+        return None
+
+    if not skills:
+        return None
+
+    lines = [
+        f"Skill '{repo_name}' not found. "
+        f"However, '{owner}/{repo_name}' exists as a repository "
+        f"with {len(skills)} skill(s):",
+        "",
+    ]
+    for skill in skills:
+        lines.append(f"  agr add {owner}/{repo_name}/{skill}")
+    lines.append("")
+    lines.append("Hint: agr handles use the format: owner/repo/skill-name")
+    return "\n".join(lines)

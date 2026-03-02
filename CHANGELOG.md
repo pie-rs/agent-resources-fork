@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+### Added
+- Helpful suggestions when a two-part handle (e.g. `agr add owner/repo`) fails: probes the repo and lists available skills with correct three-part handles
+- `list_remote_repo_skills` function to scan a remote repo for available skills
+- `discover_skills_in_repo_listing` function to extract all skill names from a git file listing
+- "Coming from npx skills?" section in README explaining handle format differences
+
+### Changed
+- Refactored `find_skill_in_repo_listing` to use shared `_iter_skill_dirs_in_listing` helper
+- Cleaned up `agr.toml` dependencies (removed duplicates and non-existent skills)
+- Added `.opencode/` to `.gitignore`
+
 ## [0.7.5] - 2026-02-07
 
 ### Added

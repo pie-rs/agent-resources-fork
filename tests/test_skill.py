@@ -6,6 +6,7 @@ from agr.skill import (
     SKILL_MARKER,
     create_skill_scaffold,
     discover_skills_in_repo,
+    discover_skills_in_repo_listing,
     find_skill_in_repo,
     is_valid_skill_dir,
     update_skill_md_name,
@@ -268,6 +269,62 @@ class TestFindSkillInRepo:
 
         result = find_skill_in_repo(tmp_path, "other-name")
         assert result is None
+
+
+class TestDiscoverSkillsInRepoListing:
+    """Tests for discover_skills_in_repo_listing function."""
+
+    def test_discovers_single_skill(self):
+        """Discovers a single skill from file listing."""
+        paths = ["skills/commit/SKILL.md"]
+        assert discover_skills_in_repo_listing(paths) == ["commit"]
+
+    def test_discovers_multiple_skills(self):
+        """Discovers multiple skills from file listing."""
+        paths = [
+            "skills/alpha/SKILL.md",
+            "skills/gamma/SKILL.md",
+            "skills/beta/SKILL.md",
+        ]
+        result = discover_skills_in_repo_listing(paths)
+        assert result == ["alpha", "beta", "gamma"]
+
+    def test_excludes_root_level_skill_md(self):
+        """Excludes SKILL.md at repo root."""
+        paths = ["SKILL.md", "skills/real-skill/SKILL.md"]
+        assert discover_skills_in_repo_listing(paths) == ["real-skill"]
+
+    def test_excludes_git_directory(self):
+        """Excludes .git directory."""
+        paths = [".git/hooks/my-skill/SKILL.md", "skills/valid/SKILL.md"]
+        assert discover_skills_in_repo_listing(paths) == ["valid"]
+
+    def test_excludes_node_modules(self):
+        """Excludes node_modules directory."""
+        paths = ["node_modules/pkg/my-skill/SKILL.md", "skills/valid/SKILL.md"]
+        assert discover_skills_in_repo_listing(paths) == ["valid"]
+
+    def test_returns_empty_for_no_skills(self):
+        """Returns empty list when no skills found."""
+        paths = ["README.md", "src/main.py"]
+        assert discover_skills_in_repo_listing(paths) == []
+
+    def test_returns_empty_for_empty_input(self):
+        """Returns empty list for empty input."""
+        assert discover_skills_in_repo_listing([]) == []
+
+    def test_deduplicates_same_name(self):
+        """Returns unique names when same skill name at multiple paths."""
+        paths = [
+            "skills/commit/SKILL.md",
+            "nested/skills/commit/SKILL.md",
+        ]
+        assert discover_skills_in_repo_listing(paths) == ["commit"]
+
+    def test_nested_paths(self):
+        """Discovers skills in nested directories."""
+        paths = ["resources/custom/skills/deep-skill/SKILL.md"]
+        assert discover_skills_in_repo_listing(paths) == ["deep-skill"]
 
 
 class TestDiscoverSkillsInRepo:

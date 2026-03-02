@@ -21,6 +21,7 @@ from agr.fetcher import (
     install_local_skill,
     install_skill_from_repo,
     is_skill_installed,
+    list_remote_repo_skills,
     uninstall_skill,
 )
 from agr.handle import ParsedHandle
@@ -199,6 +200,72 @@ class TestDownloadedRepoE2E:
         with pytest.raises(AuthenticationError):
             with downloaded_repo(source, "user", "repo"):
                 pass
+
+
+class TestListRemoteRepoSkills:
+    """Tests for list_remote_repo_skills function."""
+
+    def test_returns_skills_from_repo(self, monkeypatch):
+        """Lists skills found in a cloned repo."""
+        monkeypatch.setattr(shutil, "which", lambda _: "/usr/bin/git")
+
+        def fake_run(cmd, capture_output, text, check):
+            if cmd[:2] == ["git", "ls-remote"]:
+                return subprocess.CompletedProcess(
+                    cmd, 0, "ref: refs/heads/main\tHEAD\n", ""
+                )
+            # git clone
+            if cmd[1] == "clone":
+                repo_path = Path(cmd[-1])
+                repo_path.mkdir(parents=True, exist_ok=True)
+                return subprocess.CompletedProcess(cmd, 0, "", "")
+            # git ls-tree (list files)
+            if "ls-tree" in cmd:
+                files = "skills/alpha/SKILL.md\nskills/beta/SKILL.md\nREADME.md\n"
+                return subprocess.CompletedProcess(cmd, 0, files, "")
+            return subprocess.CompletedProcess(cmd, 0, "", "")
+
+        monkeypatch.setattr(subprocess, "run", fake_run)
+
+        skills = list_remote_repo_skills("owner", "repo")
+        assert skills == ["alpha", "beta"]
+
+    def test_returns_empty_for_nonexistent_repo(self, monkeypatch):
+        """Returns empty list when repo doesn't exist."""
+        monkeypatch.setattr(shutil, "which", lambda _: "/usr/bin/git")
+
+        def fake_run(cmd, capture_output, text, check):
+            return subprocess.CompletedProcess(
+                cmd, 1, "", "fatal: repository not found"
+            )
+
+        monkeypatch.setattr(subprocess, "run", fake_run)
+
+        skills = list_remote_repo_skills("nonexistent", "repo")
+        assert skills == []
+
+    def test_returns_empty_for_repo_without_skills(self, monkeypatch):
+        """Returns empty list when repo has no skills."""
+        monkeypatch.setattr(shutil, "which", lambda _: "/usr/bin/git")
+
+        def fake_run(cmd, capture_output, text, check):
+            if cmd[:2] == ["git", "ls-remote"]:
+                return subprocess.CompletedProcess(
+                    cmd, 0, "ref: refs/heads/main\tHEAD\n", ""
+                )
+            if cmd[1] == "clone":
+                repo_path = Path(cmd[-1])
+                repo_path.mkdir(parents=True, exist_ok=True)
+                return subprocess.CompletedProcess(cmd, 0, "", "")
+            if "ls-tree" in cmd:
+                files = "README.md\nsrc/main.py\n"
+                return subprocess.CompletedProcess(cmd, 0, files, "")
+            return subprocess.CompletedProcess(cmd, 0, "", "")
+
+        monkeypatch.setattr(subprocess, "run", fake_run)
+
+        skills = list_remote_repo_skills("owner", "repo")
+        assert skills == []
 
 
 class TestInstallLocalSkill:

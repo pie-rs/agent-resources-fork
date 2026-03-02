@@ -21,6 +21,7 @@ from agr.handle import INSTALLED_NAME_SEPARATOR, ParsedHandle, iter_repo_candida
 from agr.metadata import build_handle_id, read_skill_metadata, write_skill_metadata
 from agr.skill import (
     SKILL_MARKER,
+    discover_skills_in_repo_listing,
     find_skill_in_repo,
     find_skill_in_repo_listing,
     is_valid_skill_dir,
@@ -471,6 +472,37 @@ def prepare_repo_for_skills(repo_dir: Path, skill_names: list[str]) -> dict[str,
             if skill_path is not None:
                 resolved[name] = skill_path
         return resolved
+
+
+def list_remote_repo_skills(
+    owner: str,
+    repo_name: str,
+    resolver: SourceResolver | None = None,
+    source: str | None = None,
+) -> list[str]:
+    """List all skill names in a remote repository.
+
+    Clones the repo and scans for SKILL.md files. Used to provide
+    helpful suggestions when a two-part handle fails.
+
+    Args:
+        owner: Repository owner/username
+        repo_name: Repository name
+        resolver: Source resolver for finding the repo
+        source: Explicit source name
+
+    Returns:
+        Sorted list of skill names found, or empty list on any error.
+    """
+    resolver = resolver or SourceResolver(default_sources(), DEFAULT_SOURCE_NAME)
+    for source_config in resolver.ordered(source):
+        try:
+            with downloaded_repo(source_config, owner, repo_name) as repo_dir:
+                paths = _git_list_files(repo_dir)
+                return discover_skills_in_repo_listing(paths)
+        except AgrError:
+            continue
+    return []
 
 
 def _build_handle_ids(

@@ -6,19 +6,12 @@ dependencies = [
     {path = "./skills/development/workflow/commit-work", type = "skill"},
     {path = "./skills/development/workflow/create-plan", type = "skill"},
     {path = "./skills/development/workflow/design-solution", type = "skill"},
-    {path = "./skills/product-strategy/discover-assumptions", type = "skill"},
     {path = "./skills/development/codebase-maintenance/discover-codebase-enhancements", type = "skill"},
-    {path = "./skills/product-strategy/discover-opportunities", type = "skill"},
-    {path = "./skills/product-strategy/discover-outcomes", type = "skill"},
     {path = "./skills/development/codebase-maintenance/enhance-docs", type = "skill"},
-    {path = "./skills/product-strategy/ideate-solutions", type = "skill"},
     {path = "./skills/development/workflow/make-release", type = "skill"},
     {path = "./skills/agr/migrate-to-skills", type = "skill"},
-    {path = "./skills/product-development/ost", type = "skill"},
     {path = "./skills/skill-development/refactor-for-determinism", type = "skill"},
     {path = "./skills/development/workflow/research-codebase", type = "skill"},
-    {path = "./skills/writing/skriv-som-kasper", type = "skill"},
-    {path = "skills/development/workflow/make-release", type = "skill"},
 ]
 
 [[source]]

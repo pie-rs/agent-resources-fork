@@ -96,6 +96,32 @@ def find_skill_in_repo(repo_dir: Path, skill_name: str) -> Path | None:
     return min(matches, key=lambda p: len(p.parts))
 
 
+def _iter_skill_dirs_in_listing(paths: list[str]) -> list[PurePosixPath]:
+    """Return valid skill directories from a git file listing.
+
+    Filters SKILL.md entries, excluding root-level markers and paths
+    within excluded directories (.git, node_modules, etc.).
+
+    Args:
+        paths: List of file paths from git (posix-style).
+
+    Returns:
+        List of skill directory paths (parent of each valid SKILL.md).
+    """
+    results: list[PurePosixPath] = []
+    for rel in paths:
+        rel_path = PurePosixPath(rel)
+        if rel_path.name != SKILL_MARKER:
+            continue
+        if len(rel_path.parts) == 1:
+            # Root-level SKILL.md is not a skill directory
+            continue
+        if any(part in EXCLUDED_DIRS for part in rel_path.parts):
+            continue
+        results.append(rel_path.parent)
+    return results
+
+
 def find_skill_in_repo_listing(
     paths: list[str], skill_name: str
 ) -> PurePosixPath | None:
@@ -108,24 +134,24 @@ def find_skill_in_repo_listing(
     Returns:
         Path to skill directory (posix-style, relative), or None if not found.
     """
-    matches: list[PurePosixPath] = []
-
-    for rel in paths:
-        rel_path = PurePosixPath(rel)
-        if rel_path.name != SKILL_MARKER:
-            continue
-        if len(rel_path.parts) == 1:
-            # Root-level SKILL.md is not a skill directory
-            continue
-        if any(part in EXCLUDED_DIRS for part in rel_path.parts):
-            continue
-        if rel_path.parent.name == skill_name:
-            matches.append(rel_path.parent)
-
+    matches = [d for d in _iter_skill_dirs_in_listing(paths) if d.name == skill_name]
     if not matches:
         return None
-
     return min(matches, key=lambda p: len(p.parts))
+
+
+def discover_skills_in_repo_listing(paths: list[str]) -> list[str]:
+    """Discover all skill names from a git file listing.
+
+    Returns all unique skill names found. Results are sorted alphabetically.
+
+    Args:
+        paths: List of file paths from git (posix-style).
+
+    Returns:
+        Sorted list of unique skill names found in the listing.
+    """
+    return sorted({d.name for d in _iter_skill_dirs_in_listing(paths)})
 
 
 def discover_skills_in_repo(repo_dir: Path) -> list[tuple[str, Path]]:

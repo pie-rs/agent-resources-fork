@@ -195,6 +195,24 @@ agr add madsnorgaard/drupal-expert
 
 ---
 
+## Coming from npx skills?
+
+agr uses a slightly different handle format than `npx skills`:
+
+| What you want | npx skills | agr |
+|---|---|---|
+| Skill from a repo | `npx skills add owner/repo` | `agr add owner/repo/skill-name` |
+| Skill from user's default repo | — | `agr add owner/skill-name` |
+
+The key difference: `agr` handles always point to a **specific skill**, not a
+repo to scan. Use the three-part format `owner/repo/skill-name` when the skill
+lives in a non-default repo.
+
+If you use a two-part handle and the skill isn't found, `agr` will check if a
+matching repository exists and suggest the correct handles.
+
+---
+
 <div align="center">
 
 [Documentation](https://kasperjunge.github.io/agent-resources/) · [MIT License](LICENSE)
