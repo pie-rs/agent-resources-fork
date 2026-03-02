@@ -14,54 +14,99 @@ class TestAgrInit:
         assert_cli(result).succeeded()
         assert (cli_project / "agr.toml").exists()
 
-    def test_init_detects_antigravity_tools(self, agr, cli_project):
-        """agr init detects Antigravity tools when .agent/skills exists."""
-        skill_dir = cli_project / ".agent" / "skills" / "alpha"
-        skill_dir.mkdir(parents=True)
-        (skill_dir / "SKILL.md").write_text("---\nname: alpha\n---\n\n# alpha\n")
+    def test_init_detects_tools_from_config_dirs(self, agr, cli_project):
+        """agr init detects tools when .claude/ and .cursor/ exist."""
+        (cli_project / ".claude").mkdir()
+        (cli_project / ".cursor").mkdir()
 
         result = agr("init")
 
         assert_cli(result).succeeded()
         config = AgrConfig.load(cli_project / "agr.toml")
-        assert "antigravity" in config.tools
+        assert "claude" in config.tools
+        assert "cursor" in config.tools
 
-    def test_init_adds_discovered_skills(self, agr, cli_project, cli_skill):
-        """agr init adds discovered skills to agr.toml."""
+    def test_init_detects_tools_from_instruction_files(self, agr, cli_project):
+        """agr init detects claude from CLAUDE.md file."""
+        (cli_project / "CLAUDE.md").write_text("# Instructions\n")
+
+        result = agr("init")
+
+        assert_cli(result).succeeded()
+        config = AgrConfig.load(cli_project / "agr.toml")
+        assert "claude" in config.tools
+
+    def test_init_detects_tools_from_cursorrules(self, agr, cli_project):
+        """agr init detects cursor from .cursorrules file."""
+        (cli_project / ".cursorrules").write_text("rules\n")
+
+        result = agr("init")
+
+        assert_cli(result).succeeded()
+        config = AgrConfig.load(cli_project / "agr.toml")
+        assert "cursor" in config.tools
+
+    def test_init_no_tools_detected_defaults_to_claude(self, agr, cli_project):
+        """agr init with no signals defaults to claude."""
+        result = agr("init")
+
+        assert_cli(result).succeeded()
+        config = AgrConfig.load(cli_project / "agr.toml")
+        assert config.tools == ["claude"]
+
+    def test_init_tools_flag_overrides_detection(self, agr, cli_project):
+        """agr init --tools codex ignores detected tools."""
+        (cli_project / ".claude").mkdir()
+
+        result = agr("init", "--tools", "codex")
+
+        assert_cli(result).succeeded()
+        config = AgrConfig.load(cli_project / "agr.toml")
+        assert config.tools == ["codex"]
+
+    def test_init_does_not_discover_skills(self, agr, cli_project, cli_skill):
+        """agr init does NOT add discovered skills to config (onboard's job)."""
         result = agr("init")
 
         assert_cli(result).succeeded()
         config = (cli_project / "agr.toml").read_text()
-        assert "skills/test-skill" in config
+        assert "skills/test-skill" not in config
 
-    def test_init_does_not_duplicate_paths(
-        self, agr, cli_project, cli_skill, cli_config
-    ):
-        """agr init avoids duplicating local dependency paths."""
-        content = 'dependencies = [{ path = "skills/test-skill", type = "skill" }]\n'
-        cli_config(content)
-
-        result = agr("init")
-
-        assert_cli(result).succeeded()
-        assert (cli_project / "agr.toml").read_text() == content
-
-    def test_init_existing_returns_existing(self, agr, cli_project, cli_config):
-        """agr init with existing config returns it."""
+    def test_init_existing_config_no_overwrite(self, agr, cli_project, cli_config):
+        """agr init with existing config prints 'Already exists' and exits 0."""
         cli_config("dependencies = []")
 
         result = agr("init")
 
         assert_cli(result).succeeded().stdout_contains("Already exists")
 
-    def test_init_skill_creates_scaffold(self, agr, cli_project):
-        """agr init <name> creates skill scaffold."""
+    def test_init_quiet_suppresses_output(self, agr, cli_project):
+        """agr -q init produces no stdout output."""
+        result = agr("-q", "init")
+
+        assert_cli(result).succeeded().stdout_is_empty()
+        assert (cli_project / "agr.toml").exists()
+
+    def test_init_skill_scaffold_unchanged(self, agr, cli_project):
+        """agr init <name> still creates skill scaffold."""
         result = agr("init", "my-new-skill")
 
         assert_cli(result).succeeded()
         skill_dir = cli_project / "my-new-skill"
         assert skill_dir.exists()
         assert (skill_dir / "SKILL.md").exists()
+
+    def test_init_no_interactive_flag(self, agr):
+        """agr init -i is rejected as unknown option."""
+        result = agr("init", "-i")
+
+        assert_cli(result).failed()
+
+    def test_init_no_migrate_flag(self, agr):
+        """agr init --migrate is rejected as unknown option."""
+        result = agr("init", "--migrate")
+
+        assert_cli(result).failed()
 
     def test_init_skill_invalid_name_fails(self, agr):
         """agr init with invalid skill name fails."""
@@ -85,15 +130,7 @@ class TestAgrInit:
         )
 
     def test_init_discovers_tools_and_syncs_instructions(self, agr, cli_project):
-        """Onboarding flow discovers skills, configures tools, and syncs instructions."""
-        claude_skill = cli_project / ".claude" / "skills" / "alpha"
-        codex_skill = cli_project / ".codex" / "skills" / "beta"
-        for skill_dir in [claude_skill, codex_skill]:
-            skill_dir.mkdir(parents=True)
-            (skill_dir / "SKILL.md").write_text(
-                f"---\nname: {skill_dir.name}\n---\n\n# {skill_dir.name}\n"
-            )
-
+        """Init with explicit flags configures tools and instruction sync."""
         (cli_project / "CLAUDE.md").write_text("Claude instructions\n")
         (cli_project / "AGENTS.md").write_text("Agents instructions\n")
 
@@ -104,23 +141,21 @@ class TestAgrInit:
             "--default-tool",
             "claude",
             "--sync-instructions",
-            "--migrate",
         )
 
         assert_cli(result).succeeded()
         config = AgrConfig.load(cli_project / "agr.toml")
-        paths = {dep.path for dep in config.dependencies if dep.path}
-        assert "./skills/alpha" in paths
-        assert "./skills/beta" in paths
         assert config.tools == ["claude", "codex"]
         assert config.default_tool == "claude"
         assert config.sync_instructions is True
         assert config.canonical_instructions == "CLAUDE.md"
 
-        sync_result = agr("sync")
-        assert_cli(sync_result).succeeded()
-        assert (cli_project / "AGENTS.md").read_text() == (
-            cli_project / "CLAUDE.md"
-        ).read_text()
-        assert (claude_skill / ".agr.json").exists()
-        assert (codex_skill / ".agr.json").exists()
+    def test_init_detects_antigravity_tools(self, agr, cli_project):
+        """agr init detects Antigravity tools when .agent/ exists."""
+        (cli_project / ".agent").mkdir()
+
+        result = agr("init")
+
+        assert_cli(result).succeeded()
+        config = AgrConfig.load(cli_project / "agr.toml")
+        assert "antigravity" in config.tools

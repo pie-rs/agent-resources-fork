@@ -1,5 +1,6 @@
 """CLI tests for agr add command."""
 
+from agr.config import AgrConfig
 from tests.cli.assertions import assert_cli
 
 
@@ -64,3 +65,26 @@ class TestAgrAdd:
         result = agr("add", "./other/test-skill")
 
         assert_cli(result).failed().stdout_contains("only one local skill")
+
+    def test_add_first_run_detects_tools(self, agr, cli_project, cli_skill):
+        """agr add with no config detects tools from repo signals."""
+        (cli_project / ".cursor").mkdir()
+
+        result = agr("add", "./skills/test-skill")
+
+        assert_cli(result).succeeded()
+        config = AgrConfig.load(cli_project / "agr.toml")
+        assert "cursor" in config.tools
+
+    def test_add_existing_config_keeps_tools(
+        self, agr, cli_project, cli_skill, cli_config
+    ):
+        """agr add with existing config doesn't change tools."""
+        cli_config('tools = ["claude"]\ndependencies = []\n')
+        (cli_project / ".cursor").mkdir()
+
+        result = agr("add", "./skills/test-skill")
+
+        assert_cli(result).succeeded()
+        config = AgrConfig.load(cli_project / "agr.toml")
+        assert config.tools == ["claude"]

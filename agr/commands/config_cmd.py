@@ -5,8 +5,6 @@ import shlex
 import subprocess
 from pathlib import Path
 
-from rich.console import Console
-
 from agr.config import (
     AgrConfig,
     VALID_CANONICAL_INSTRUCTIONS,
@@ -22,10 +20,9 @@ from agr.commands.tools import (
     _ensure_valid_default_tool,
 )
 from agr.config import find_repo_root
+from agr.console import get_console
 from agr.source import SourceConfig
 from agr.tool import DEFAULT_TOOL_NAMES
-
-console = Console()
 
 VALID_KEYS = {
     "tools",
@@ -47,6 +44,7 @@ LIST_KEYS = {"tools", "sources"}
 
 def _load_config(global_scope: bool) -> tuple[AgrConfig, Path]:
     """Load config for local or global scope."""
+    console = get_console()
     if global_scope:
         config_path = get_global_config_path()
         if not config_path.exists():
@@ -65,6 +63,7 @@ def _load_config(global_scope: bool) -> tuple[AgrConfig, Path]:
 
 def _validate_key(key: str) -> None:
     """Validate key is in VALID_KEYS, exit with error listing valid keys."""
+    console = get_console()
     if key not in VALID_KEYS:
         valid = ", ".join(sorted(VALID_KEYS))
         console.print(f"[red]Error:[/red] Unknown config key '{key}'")
@@ -74,6 +73,7 @@ def _validate_key(key: str) -> None:
 
 def run_config_show(global_scope: bool) -> None:
     """Print formatted view of effective config."""
+    console = get_console()
     config, config_path = _load_config(global_scope)
 
     console.print(f"[bold]Config:[/bold] {config_path}")
@@ -100,6 +100,7 @@ def run_config_show(global_scope: bool) -> None:
 
 def run_config_path(global_scope: bool) -> None:
     """Print resolved agr.toml path."""
+    console = get_console()
     if global_scope:
         path = get_global_config_path()
         if not path.exists():
@@ -119,6 +120,7 @@ def run_config_path(global_scope: bool) -> None:
 
 def run_config_edit(global_scope: bool) -> None:
     """Open agr.toml in $EDITOR."""
+    console = get_console()
     editor = os.environ.get("VISUAL") or os.environ.get("EDITOR")
     if not editor:
         console.print("[red]Error:[/red] Neither $VISUAL nor $EDITOR is set.")
@@ -167,6 +169,7 @@ def run_config_get(key: str, global_scope: bool) -> None:
 
 def run_config_set(key: str, values: list[str], global_scope: bool) -> None:
     """Write a scalar value or replace a list."""
+    console = get_console()
     _validate_key(key)
     config, _ = _load_config(global_scope)
 
@@ -262,6 +265,7 @@ def run_config_set(key: str, values: list[str], global_scope: bool) -> None:
 
 def run_config_unset(key: str, global_scope: bool) -> None:
     """Clear a config value to default/None."""
+    console = get_console()
     _validate_key(key)
     config, _ = _load_config(global_scope)
 
@@ -320,6 +324,7 @@ def run_config_add(
     global_scope: bool,
 ) -> None:
     """Append to a list config value."""
+    console = get_console()
     _validate_key(key)
     config, _ = _load_config(global_scope)
 
@@ -401,6 +406,7 @@ def run_config_add(
 
 def run_config_remove(key: str, values: list[str], global_scope: bool) -> None:
     """Remove from a list config value."""
+    console = get_console()
     _validate_key(key)
     config, _ = _load_config(global_scope)
 

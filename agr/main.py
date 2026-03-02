@@ -8,6 +8,7 @@ from agr import __version__
 from agr.commands.add import run_add
 from agr.commands.init import run_init
 from agr.commands.list import run_list
+from agr.commands.onboard import run_onboard
 from agr.commands.remove import run_remove
 from agr.commands.sync import run_sync
 from agr.commands.config_cmd import (
@@ -28,6 +29,7 @@ from agr.commands.tools import (
     run_tools_remove,
     run_tools_set,
 )
+from agr.console import set_quiet
 
 GlobalScope = Annotated[
     bool,
@@ -178,9 +180,17 @@ def main(
             is_eager=True,
         ),
     ] = None,
+    quiet: Annotated[
+        bool,
+        typer.Option(
+            "--quiet",
+            "-q",
+            help="Suppress non-error output.",
+        ),
+    ] = False,
 ) -> None:
     """Agent Resources - Install and manage agent skills."""
-    pass
+    set_quiet(quiet)
 
 
 # Tools subcommand group
@@ -327,14 +337,6 @@ def init(
             help="Name for a new skill scaffold. If omitted, creates agr.toml.",
         ),
     ] = None,
-    interactive: Annotated[
-        bool,
-        typer.Option(
-            "--interactive",
-            "-i",
-            help="Run an interactive setup wizard.",
-        ),
-    ] = False,
     tools: Annotated[
         Optional[str],
         typer.Option(
@@ -363,20 +365,6 @@ def init(
             help="Canonical instruction file (AGENTS.md or CLAUDE.md).",
         ),
     ] = None,
-    migrate: Annotated[
-        bool,
-        typer.Option(
-            "--migrate",
-            help="Copy discovered skills into ./skills/ (recommended layout).",
-        ),
-    ] = False,
-    prefer: Annotated[
-        Optional[str],
-        typer.Option(
-            "--prefer",
-            help="Duplicate resolution: shallowest (default) or newest.",
-        ),
-    ] = None,
 ) -> None:
     """Initialize agr.toml or create a skill scaffold.
 
@@ -389,14 +377,33 @@ def init(
     """
     run_init(
         skill_name,
-        interactive=interactive,
         tools=tools,
         default_tool=default_tool,
         sync_instructions=sync_instructions,
         canonical_instructions=canonical_instructions,
-        migrate=migrate,
-        prefer=prefer,
     )
+
+
+@app.command()
+def onboard(
+    no_migrate: Annotated[
+        bool,
+        typer.Option(
+            "--no-migrate",
+            help="Skip migration offer for skills in tool folders.",
+        ),
+    ] = False,
+) -> None:
+    """Interactive guided setup for agr.
+
+    Walks you through tool selection, skill discovery, and configuration
+    in an interactive terminal session.
+
+    Examples:
+        agr onboard           # Start guided setup
+        agr onboard --no-migrate  # Skip migration prompts
+    """
+    run_onboard(no_migrate=no_migrate)
 
 
 @app.command()

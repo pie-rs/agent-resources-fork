@@ -2,15 +2,13 @@
 
 from pathlib import Path
 
-from rich.console import Console
 from rich.table import Table
 
 from agr.config import AgrConfig, find_config, find_repo_root, get_global_config_path
+from agr.console import get_console
 from agr.fetcher import is_skill_installed
 from agr.handle import ParsedHandle, parse_handle
 from agr.tool import ToolConfig
-
-console = Console()
 
 
 def _get_installation_status(
@@ -55,6 +53,7 @@ def run_list(global_install: bool = False) -> None:
 
     Lists all dependencies from agr.toml with their sync status.
     """
+    console = get_console()
     skills_dirs: dict[str, Path] | None = None
     if global_install:
         repo_root = None

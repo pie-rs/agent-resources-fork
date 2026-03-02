@@ -3,15 +3,12 @@
 import shutil
 from pathlib import Path
 
-from rich.console import Console
-
 from agr.config import AgrConfig, find_config, find_repo_root
+from agr.console import get_console
 from agr.exceptions import AgrError
 from agr.fetcher import fetch_and_install_to_tools, is_skill_installed
 from agr.handle import ParsedHandle, parse_handle
 from agr.tool import DEFAULT_TOOL_NAMES, TOOLS
-
-console = Console()
 
 
 def _normalize_tool_names(tool_names: list[str]) -> list[str]:
@@ -33,6 +30,7 @@ def _dedupe_preserve_order(items: list[str]) -> list[str]:
 
 def _validate_tool_names(tool_names: list[str]) -> None:
     """Validate tool names against TOOLS registry."""
+    console = get_console()
     invalid = [name for name in tool_names if name not in TOOLS]
     if invalid:
         available = ", ".join(TOOLS.keys())
@@ -43,6 +41,7 @@ def _validate_tool_names(tool_names: list[str]) -> None:
 
 def _load_required_config() -> AgrConfig:
     """Load agr.toml or exit with a user-facing error."""
+    console = get_console()
     config_path = find_config()
     if config_path is None:
         console.print("[red]Error:[/red] No agr.toml found.")
@@ -57,6 +56,7 @@ def _sync_dependencies_to_tools(config: AgrConfig, tool_names: list[str]) -> int
     Returns:
         Number of dependencies that failed to sync.
     """
+    console = get_console()
     if not tool_names or not config.dependencies:
         return 0
 
@@ -125,6 +125,7 @@ def _sync_dependencies_to_tools(config: AgrConfig, tool_names: list[str]) -> int
 
 def _delete_tool_skills(tool_name: str, repo_root: Path | None) -> bool:
     """Delete all skills for a configured tool."""
+    console = get_console()
     if repo_root is None:
         return True
 
@@ -151,6 +152,7 @@ def _ensure_valid_default_tool(
     config: AgrConfig, previous_default_tool: str | None
 ) -> None:
     """Keep default_tool valid after tool list updates."""
+    console = get_console()
     if config.default_tool and config.default_tool in config.tools:
         return
     if previous_default_tool is None:
@@ -169,6 +171,7 @@ def _ensure_valid_default_tool(
 
 def run_tools_list() -> None:
     """List configured tools and available tool names."""
+    console = get_console()
     config_path = find_config()
 
     if config_path:
@@ -195,6 +198,7 @@ def run_tools_list() -> None:
 
 def run_tools_add(tool_names: list[str]) -> None:
     """Add tools and sync existing dependencies to newly added tools."""
+    console = get_console()
     names = _dedupe_preserve_order(_normalize_tool_names(tool_names))
     _validate_tool_names(names)
 
@@ -226,6 +230,7 @@ def run_tools_add(tool_names: list[str]) -> None:
 
 def run_tools_set(tool_names: list[str]) -> None:
     """Replace configured tools with the provided list."""
+    console = get_console()
     names = _dedupe_preserve_order(_normalize_tool_names(tool_names))
     if not names:
         console.print("[red]Error:[/red] Cannot set empty tools list.")
@@ -264,6 +269,7 @@ def run_tools_set(tool_names: list[str]) -> None:
 
 def run_tools_remove(tool_names: list[str]) -> None:
     """Remove tools from configuration and delete their installed skills."""
+    console = get_console()
     names = _dedupe_preserve_order(_normalize_tool_names(tool_names))
     _validate_tool_names(names)
 
@@ -303,6 +309,7 @@ def run_tools_remove(tool_names: list[str]) -> None:
 
 def run_default_tool_set(tool_name: str) -> None:
     """Set default_tool in agr.toml."""
+    console = get_console()
     normalized = _normalize_tool_names([tool_name])
     if not normalized:
         console.print("[red]Error:[/red] Tool name is required.")
@@ -330,6 +337,7 @@ def run_default_tool_set(tool_name: str) -> None:
 
 def run_default_tool_unset() -> None:
     """Unset default_tool in agr.toml."""
+    console = get_console()
     config = _load_required_config()
     if config.default_tool is None:
         console.print("[dim]Default tool is already unset.[/dim]")

@@ -1,7 +1,5 @@
 """agr add command implementation."""
 
-from rich.console import Console
-
 from pathlib import Path
 
 from agr.config import (
@@ -11,12 +9,12 @@ from agr.config import (
     find_repo_root,
     get_or_create_global_config,
 )
+from agr.console import get_console
+from agr.detect import detect_tools
 from agr.exceptions import AgrError, InvalidHandleError, SkillNotFoundError
 from agr.fetcher import fetch_and_install_to_tools, list_remote_repo_skills
 from agr.handle import ParsedHandle, parse_handle
 from agr.source import SourceResolver
-
-console = Console()
 
 
 def run_add(
@@ -31,6 +29,7 @@ def run_add(
         refs: List of handles or paths to add
         overwrite: Whether to overwrite existing skills
     """
+    console = get_console()
     skills_dirs: dict[str, Path] | None = None
     if global_install:
         repo_root = None
@@ -47,6 +46,9 @@ def run_add(
         if config_path is None:
             config_path = repo_root / "agr.toml"
             config = AgrConfig()
+            detected = detect_tools(repo_root)
+            if detected:
+                config.tools = detected
         else:
             config = AgrConfig.load(config_path)
 

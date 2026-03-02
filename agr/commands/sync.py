@@ -3,9 +3,8 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-from rich.console import Console
-
 from agr.config import AgrConfig, find_config, find_repo_root, get_global_config_path
+from agr.console import get_console
 from agr.exceptions import AgrError
 from agr.fetcher import (
     downloaded_repo,
@@ -31,8 +30,6 @@ from agr.source import DEFAULT_SOURCE_NAME
 from agr.skill import SKILL_MARKER, is_valid_skill_dir, update_skill_md_name
 from agr.tool import ToolConfig
 
-console = Console()
-
 
 @dataclass
 class SyncEntry:
@@ -45,6 +42,7 @@ class SyncEntry:
 def _sync_instructions_if_configured(
     repo_root: Path, config: AgrConfig, tools: list[ToolConfig]
 ) -> None:
+    console = get_console()
     if not config.sync_instructions:
         return
     if len(tools) < 2:
@@ -86,6 +84,7 @@ def _migrate_legacy_directories(skills_dir: Path, tool: ToolConfig) -> None:
         skills_dir: The skills directory to scan for legacy directories.
         tool: Tool configuration (migration only for non-nested tools).
     """
+    console = get_console()
     # Only migrate for flat tools
     if tool.supports_nested:
         return
@@ -130,6 +129,7 @@ def _migrate_flat_installed_names(
     Only applies to flat tools. Uses agr.toml dependencies to resolve
     handle identities and writes metadata for accurate future matching.
     """
+    console = get_console()
     # TODO(decide): consider best-effort migration for installs not in agr.toml.
     # This is ambiguous for local skills because the original path is unknown,
     # and for remotes because multiple handles can share the same skill name.
@@ -250,6 +250,7 @@ def _migrate_flat_installed_names(
 
 def _run_global_sync() -> None:
     """Sync global dependencies from ~/.agr/agr.toml."""
+    console = get_console()
     config_path = get_global_config_path()
     if not config_path.exists():
         console.print("[yellow]No global agr.toml found.[/yellow] Nothing to sync.")
@@ -346,6 +347,7 @@ def run_sync(global_install: bool = False) -> None:
     Also migrates any legacy colon-based directory names to the new
     Windows-compatible double-hyphen format (for flat tools only).
     """
+    console = get_console()
     if global_install:
         _run_global_sync()
         return

@@ -2,6 +2,26 @@
 
 ## [Unreleased]
 
+### Added
+- `agr onboard` interactive guided setup command: walks through tool selection, skill discovery, migration, and configuration
+- `agr --quiet` / `-q` global flag to suppress non-error output across all commands
+- `agr/detect.py` module for signal-based tool detection (checks for `.claude/`, `CLAUDE.md`, `.cursor/`, `.cursorrules`, etc.)
+- `agr/console.py` shared console factory that respects the quiet flag
+- Auto-detect tools when `agr add` creates a new `agr.toml` (uses the same signal-based detection)
+- Tests for onboard, quiet mode, and tool detection
+
+### Changed
+- `agr init` simplified: removed `--interactive`, `--migrate`, and `--prefer` flags (interactive setup moved to `agr onboard`)
+- `agr init` no longer discovers or adds skills to config (that responsibility moved to `agr onboard`)
+- `agr init` uses signal-based tool detection instead of checking for tool skills directories
+- Replaced module-level `Console()` instances with lazy `get_console()` calls to support the quiet flag
+- `agr init` hints at `agr onboard` instead of `agr sync` as the next step
+
+### Removed
+- `--interactive` / `-i` flag from `agr init`
+- `--migrate` and `--prefer` flags from `agr init`
+- Skill discovery, migration, and deduplication logic from `agr/commands/init.py` (moved to onboard)
+
 ## [0.7.7] - 2026-03-02
 
 ### Fixed

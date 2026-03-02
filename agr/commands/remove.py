@@ -2,18 +2,15 @@
 
 from pathlib import Path
 
-from rich.console import Console
-
 from agr.config import (
     AgrConfig,
     find_config,
     find_repo_root,
     get_global_config_path,
 )
+from agr.console import get_console
 from agr.fetcher import uninstall_skill
 from agr.handle import parse_handle
-
-console = Console()
 
 
 def run_remove(refs: list[str], global_install: bool = False) -> None:
@@ -22,6 +19,7 @@ def run_remove(refs: list[str], global_install: bool = False) -> None:
     Args:
         refs: List of handles or paths to remove
     """
+    console = get_console()
     skills_dirs: dict[str, Path] | None = None
     if global_install:
         repo_root = None
