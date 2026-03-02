@@ -181,13 +181,17 @@ def _maybe_suggest_repo_skills(
     if not skills:
         return None
 
+    cleaned_skills = sorted({skill for skill in skills if skill})
+    if not cleaned_skills:
+        return None
+
     lines = [
         f"Skill '{repo_name}' not found. "
         f"However, '{owner}/{repo_name}' exists as a repository "
-        f"with {len(skills)} skill(s):",
+        f"with {len(cleaned_skills)} skill(s):",
         "",
     ]
-    for skill in skills:
+    for skill in cleaned_skills:
         lines.append(f"  agr add {owner}/{repo_name}/{skill}")
     lines.append("")
     lines.append("Hint: agr handles use the format: owner/repo/skill-name")
