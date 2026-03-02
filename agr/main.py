@@ -10,6 +10,16 @@ from agr.commands.init import run_init
 from agr.commands.list import run_list
 from agr.commands.remove import run_remove
 from agr.commands.sync import run_sync
+from agr.commands.config_cmd import (
+    run_config_add,
+    run_config_edit,
+    run_config_get,
+    run_config_path,
+    run_config_remove,
+    run_config_set,
+    run_config_show,
+    run_config_unset,
+)
 from agr.commands.tools import (
     run_default_tool_set,
     run_default_tool_unset,
@@ -18,6 +28,11 @@ from agr.commands.tools import (
     run_tools_remove,
     run_tools_set,
 )
+
+GlobalScope = Annotated[
+    bool,
+    typer.Option("--global", "-g", help="Use global ~/.agr/agr.toml."),
+]
 
 app = typer.Typer(
     name="agr",
@@ -33,6 +48,91 @@ config_app = typer.Typer(
     no_args_is_help=True,
 )
 app.add_typer(config_app, name="config")
+
+# --- New unified config commands ---
+
+
+@config_app.command("show")
+def config_show(
+    global_scope: GlobalScope = False,
+) -> None:
+    """Show formatted view of effective config."""
+    run_config_show(global_scope)
+
+
+@config_app.command("path")
+def config_path(
+    global_scope: GlobalScope = False,
+) -> None:
+    """Print resolved agr.toml path."""
+    run_config_path(global_scope)
+
+
+@config_app.command("edit")
+def config_edit(
+    global_scope: GlobalScope = False,
+) -> None:
+    """Open agr.toml in $EDITOR."""
+    run_config_edit(global_scope)
+
+
+@config_app.command("get")
+def config_get(
+    key: Annotated[str, typer.Argument(help="Config key to read.")],
+    global_scope: GlobalScope = False,
+) -> None:
+    """Read any config value."""
+    run_config_get(key, global_scope)
+
+
+@config_app.command("set")
+def config_set(
+    key: Annotated[str, typer.Argument(help="Config key to write.")],
+    values: Annotated[list[str], typer.Argument(help="Value(s) to set.")],
+    global_scope: GlobalScope = False,
+) -> None:
+    """Write a scalar value or replace a list."""
+    run_config_set(key, values, global_scope)
+
+
+@config_app.command("unset")
+def config_unset(
+    key: Annotated[str, typer.Argument(help="Config key to clear.")],
+    global_scope: GlobalScope = False,
+) -> None:
+    """Clear a config value to default/None."""
+    run_config_unset(key, global_scope)
+
+
+@config_app.command("add")
+def config_add(
+    key: Annotated[str, typer.Argument(help="Config key to append to.")],
+    values: Annotated[list[str], typer.Argument(help="Value(s) to add.")],
+    global_scope: GlobalScope = False,
+    source_type: Annotated[
+        Optional[str],
+        typer.Option("--type", help="Source type (for sources key)."),
+    ] = None,
+    source_url: Annotated[
+        Optional[str],
+        typer.Option("--url", help="Source URL (for sources key)."),
+    ] = None,
+) -> None:
+    """Append to a list config value."""
+    run_config_add(key, values, source_type, source_url, global_scope)
+
+
+@config_app.command("remove")
+def config_remove(
+    key: Annotated[str, typer.Argument(help="Config key to remove from.")],
+    values: Annotated[list[str], typer.Argument(help="Value(s) to remove.")],
+    global_scope: GlobalScope = False,
+) -> None:
+    """Remove from a list config value."""
+    run_config_remove(key, values, global_scope)
+
+
+# --- Deprecated sub-Typers (still functional, print warnings) ---
 
 # Config tools sub-app
 config_tools_app = typer.Typer(
@@ -125,12 +225,18 @@ def tools_remove(
 def config_tools_default(ctx: typer.Context) -> None:
     """List configured tools (default behavior)."""
     if ctx.invoked_subcommand is None:
+        typer.echo(
+            "Warning: 'agr config tools' is deprecated. Use 'agr config get tools'."
+        )
         run_tools_list()
 
 
 @config_tools_app.command("list")
 def config_tools_list() -> None:
     """List configured tools."""
+    typer.echo(
+        "Warning: 'agr config tools list' is deprecated. Use 'agr config get tools'."
+    )
     run_tools_list()
 
 
@@ -142,6 +248,9 @@ def config_tools_add(
     ],
 ) -> None:
     """Add tools and sync existing dependencies to them."""
+    typer.echo(
+        f"Warning: 'agr config tools add' is deprecated. Use 'agr config add tools {' '.join(names)}'."
+    )
     run_tools_add(names)
 
 
@@ -153,6 +262,9 @@ def config_tools_set(
     ],
 ) -> None:
     """Replace configured tools with the provided list."""
+    typer.echo(
+        f"Warning: 'agr config tools set' is deprecated. Use 'agr config set tools {' '.join(names)}'."
+    )
     run_tools_set(names)
 
 
@@ -164,6 +276,9 @@ def config_tools_remove(
     ],
 ) -> None:
     """Remove tools and delete their installed skills."""
+    typer.echo(
+        f"Warning: 'agr config tools remove' is deprecated. Use 'agr config remove tools {' '.join(names)}'."
+    )
     run_tools_remove(names)
 
 
@@ -175,6 +290,9 @@ def config_tools_unset(
     ],
 ) -> None:
     """Alias of remove."""
+    typer.echo(
+        f"Warning: 'agr config tools unset' is deprecated. Use 'agr config remove tools {' '.join(names)}'."
+    )
     run_tools_remove(names)
 
 
@@ -186,12 +304,18 @@ def default_tool_set(
     ],
 ) -> None:
     """Set the default tool used by agrx."""
+    typer.echo(
+        f"Warning: 'agr config default-tool set' is deprecated. Use 'agr config set default_tool {name}'."
+    )
     run_default_tool_set(name)
 
 
 @default_tool_app.command("unset")
 def default_tool_unset() -> None:
     """Unset the default tool (agrx falls back to first configured tool)."""
+    typer.echo(
+        "Warning: 'agr config default-tool unset' is deprecated. Use 'agr config unset default_tool'."
+    )
     run_default_tool_unset()
 
 

@@ -16,6 +16,8 @@ from agr.source import (
 )
 from agr.tool import DEFAULT_TOOL_NAMES, TOOLS, ToolConfig, get_tool
 
+VALID_CANONICAL_INSTRUCTIONS = {"AGENTS.md", "CLAUDE.md"}
+
 
 @dataclass
 class Dependency:
@@ -163,7 +165,7 @@ class AgrConfig:
         canonical_instructions = doc.get("canonical_instructions")
         if canonical_instructions is not None:
             canonical_instructions = str(canonical_instructions)
-            if canonical_instructions not in {"AGENTS.md", "CLAUDE.md"}:
+            if canonical_instructions not in VALID_CANONICAL_INSTRUCTIONS:
                 raise ConfigError(
                     "canonical_instructions must be 'AGENTS.md' or 'CLAUDE.md'"
                 )

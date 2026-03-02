@@ -2,6 +2,24 @@
 
 ## [Unreleased]
 
+### Fixed
+- `agr config set/add/remove tools --global` no longer calls `find_repo_root()` or syncs/deletes repo-local skills
+- `_sync_dependencies_to_tools` return value is now checked; non-zero exits with error
+- `agr config edit` handles `$EDITOR` with flags (e.g. `"code --wait"`) via `shlex.split`
+- `agr config edit` propagates editor exit code
+- `agr config path --global` errors when `~/.agr/agr.toml` doesn't exist instead of printing a nonexistent path
+- Hardcoded `~/.agr/agr.toml` in `_load_config` error message replaced with actual path
+- `agr config add/remove sources` rejects extra values (only one source name at a time)
+
+### Changed
+- Extracted `VALID_CANONICAL_INSTRUCTIONS` constant in `agr/config.py`, shared with `config_cmd.py`
+- Extracted `GlobalScope` type alias in `agr/main.py` replacing 8 duplicate `Annotated` definitions
+- Added `else: raise AssertionError` guards to key dispatch chains in `run_config_get/set/unset`
+- `agr config add tools` skips `config.save()` when no tools were actually added
+
+### Added
+- 14 new CLI tests for config edit, default_source, sync_instructions, canonical_instructions, type flags, unconfigured tools, extra values, and deprecation warnings
+
 ## [0.7.6] - 2026-03-02
 
 ### Added
