@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.7.6] - 2026-03-02
+
 ### Added
 - Helpful suggestions when a two-part handle (e.g. `agr add owner/repo`) fails: probes the repo and lists available skills with correct three-part handles
 - `list_remote_repo_skills` function to scan a remote repo for available skills
