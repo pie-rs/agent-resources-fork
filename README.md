@@ -144,20 +144,14 @@ agr add your-username/my-skill
 
 ## Initialize a Repo
 
-`agr init` can discover skills in your repo and add them to `agr.toml`.
-
 ```bash
-agr init       # Auto-discover skills and create agr.toml
-agr init -i    # Guided setup
+agr init       # Create agr.toml (auto-detects tools)
+agr onboard    # Interactive guided setup
 ```
 
-Skills inside tool folders (e.g. `.claude/skills/`, `.codex/skills/`,
-`.cursor/skills/`, `.opencode/skill/`, `.github/skills/`, `.agent/skills/`) are ignored by default. To bring them into
-`./skills/`, run:
+`agr init` creates `agr.toml` and detects which tools you use from repo signals (`.claude/`, `CLAUDE.md`, `.cursor/`, etc.).
 
-```bash
-agr init --migrate
-```
+`agr onboard` walks you through tool selection, skill discovery, migration, and configuration interactively.
 
 ---
 
@@ -175,6 +169,7 @@ agr init --migrate
 | `agr list -g` | Show global skills |
 | `agr init` | Create agr.toml |
 | `agr init <name>` | Create a new skill |
+| `agr onboard` | Interactive guided setup |
 | `agr config tools ...` | Manage configured tools |
 | `agr config default-tool ...` | Manage agrx default tool |
 | `agrx <handle>` | Run skill temporarily |

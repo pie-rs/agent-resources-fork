@@ -143,7 +143,7 @@ class TestCodeExamples:
 class TestCliCommands:
     """Test that documented CLI commands are real."""
 
-    KNOWN_COMMANDS = {"add", "remove", "sync", "list", "init", "config"}
+    KNOWN_COMMANDS = {"add", "remove", "sync", "list", "init", "onboard", "config"}
 
     def test_documented_agr_commands_exist(self):
         """Commands documented in reference.md are known commands."""

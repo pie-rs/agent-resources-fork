@@ -22,6 +22,12 @@
 - `--migrate` and `--prefer` flags from `agr init`
 - Skill discovery, migration, and deduplication logic from `agr/commands/init.py` (moved to onboard)
 
+### Docs
+- Updated README, docs/index.md, and docs/reference.md to reflect `agr init` simplification and new `agr onboard` command
+- Removed references to deleted `--interactive`, `--migrate`, `--prefer` flags
+- Added `agr onboard` to command tables and reference
+- Added "Global Options" section to reference documenting `--quiet/-q` and `--version/-v`
+
 ## [0.7.7] - 2026-03-02
 
 ### Fixed

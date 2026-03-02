@@ -75,7 +75,7 @@ agr init my-skill
 ```
 
 Then edit `my-skill/SKILL.md`. If you want it in this repo, place it under
-`./skills/` and run `agr init` to update `agr.toml`.
+`./skills/`.
 
 ### Migrate Old Rules or Commands
 
@@ -91,8 +91,9 @@ agrx kasperjunge/migrate-to-skills
 | `agr remove <handle>` | Uninstall a skill |
 | `agr sync` | Install all dependencies from `agr.toml` |
 | `agr list` | Show skills and installation status |
-| `agr init` | Create `agr.toml` (auto-discovery) |
+| `agr init` | Create `agr.toml` (auto-detects tools) |
 | `agr init <name>` | Create a skill scaffold |
+| `agr onboard` | Interactive guided setup |
 | `agrx <handle>` | Run a skill temporarily |
 
 ## Handle Format
@@ -127,22 +128,16 @@ If two skills have the same name, you'll get an error.
 
 ## Project Setup
 
-`agr init` discovers skills in your repo (based on the skills specification) and
-adds them to `agr.toml` as local path dependencies. It also detects tools from
-existing tool folders.
-
 ```bash
-agr init       # Auto-discover skills and create agr.toml
-agr init -i    # Guided setup
+agr init       # Create agr.toml (auto-detects tools)
+agr onboard    # Interactive guided setup
 ```
 
-By default, skills inside tool folders (e.g. `.claude/skills/`, `.codex/skills/`,
-`.cursor/skills/`, `.opencode/skill/`, `.github/skills/`, `.agent/skills/`) are ignored to avoid messy configs. To
-bring them into your repo, run:
+`agr init` creates `agr.toml` and detects which tools you use from repo signals
+(`.claude/`, `CLAUDE.md`, `.cursor/`, `.cursorrules`, etc.).
 
-```bash
-agr init --migrate
-```
+`agr onboard` walks you through tool selection, skill discovery, migration from
+tool folders into `./skills/`, and configuration.
 
 ## Example Skills
 

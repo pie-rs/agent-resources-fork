@@ -12,8 +12,14 @@ title: Reference
 | Run a skill once | `agrx <handle>` |
 | Team sync | Add to `agr.toml`, then `agr sync` |
 | Configure tool targets | `agr config tools ...` |
+| Interactive guided setup | `agr onboard` |
 | Create a new skill | `agr init <name>` |
 | Migrate old rules/commands | `agrx kasperjunge/migrate-to-skills` |
+
+## Global Options
+
+- `--quiet`, `-q` — Suppress non-error output (works with all commands)
+- `--version`, `-v` — Show version and exit
 
 ## CLI Commands
 
@@ -91,40 +97,52 @@ Displays skills from `agr.toml` and whether they're installed.
 
 ### agr init
 
-Create `agr.toml` (with auto-discovery) or a skill scaffold.
+Create `agr.toml` or a skill scaffold.
 
 ```bash
 agr init              # Create agr.toml
 agr init <name>       # Create skill scaffold
 ```
 
-By default, `agr init` discovers skills in the repo (based on the skills
-spec) and adds them to `agr.toml` as local path dependencies. It also
-detects tools from existing tool folders when available.
-
-Skills inside tool folders (e.g. `.claude/skills/`, `.codex/skills/`,
-`.cursor/skills/`, `.opencode/skill/`, `.github/skills/`, `.agent/skills/`) are ignored by default to keep configs
-clean. Use `--migrate` to move them into `./skills/`.
+`agr init` creates `agr.toml` and auto-detects which tools you use from repo
+signals (`.claude/`, `CLAUDE.md`, `.cursor/`, `.cursorrules`, etc.). It does not
+discover or add skills — use `agr onboard` for interactive setup with skill
+discovery and migration.
 
 **Options:**
 
-- `--interactive`, `-i` — Run a guided setup wizard
 - `--tools` — Comma-separated tool list (e.g., `claude,codex,opencode`)
 - `--default-tool` — Default tool for `agrx` and instruction sync
 - `--sync-instructions/--no-sync-instructions` — Sync instruction files on `agr sync`
 - `--canonical-instructions` — Canonical instruction file (`AGENTS.md` or `CLAUDE.md`)
-- `--migrate` — Move tool-folder skills into `./skills/`
-- `--prefer` — Duplicate resolution (`shallowest` or `newest`)
 
 **Examples:**
 
 ```bash
 agr init                    # Creates agr.toml in current directory
 agr init my-skill           # Creates my-skill/SKILL.md
-agr init -i                 # Guided setup
 agr init --tools claude,codex,opencode --default-tool claude
 agr init --sync-instructions --canonical-instructions CLAUDE.md
-agr init --migrate          # Copy skills into ./skills/
+```
+
+### agr onboard
+
+Interactive guided setup. Walks you through tool selection, skill discovery,
+migration from tool folders into `./skills/`, and configuration.
+
+```bash
+agr onboard
+```
+
+**Options:**
+
+- `--no-migrate` — Skip migration offer for skills in tool folders
+
+**Examples:**
+
+```bash
+agr onboard                # Start guided setup
+agr onboard --no-migrate   # Skip migration prompts
 ```
 
 ### agr config
