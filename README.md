@@ -13,14 +13,6 @@ Install agent skills from GitHub with one command.
 
 ---
 
-> **Note:** Support for rules, subagents, and slash commands has been removed. Most AI coding agents are converging on skills as the standard format, so agr now focuses exclusively on skills. To convert your existing rules, commands, or subagents to skills, run:
-> ```bash
-> agrx kasperjunge/migrate-to-skills
-> agrx kasperjunge/migrate-to-skills -p "convert files in ./my-commands"
-> ```
-
----
-
 ## Getting Started
 
 Install agr CLI:
