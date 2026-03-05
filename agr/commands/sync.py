@@ -25,7 +25,12 @@ from agr.instructions import (
     detect_instruction_files,
     sync_instruction_files,
 )
-from agr.metadata import build_handle_id, read_skill_metadata, write_skill_metadata
+from agr.metadata import (
+    build_handle_id,
+    compute_content_hash,
+    read_skill_metadata,
+    write_skill_metadata,
+)
 from agr.source import DEFAULT_SOURCE_NAME
 from agr.skill import SKILL_MARKER, is_valid_skill_dir, update_skill_md_name
 from agr.tool import ToolConfig
@@ -192,6 +197,7 @@ def _migrate_flat_installed_names(
                         tool.name,
                         name_dir.name,
                         source_name,
+                        compute_content_hash(name_dir),
                     )
                 continue
 
@@ -209,6 +215,7 @@ def _migrate_flat_installed_names(
                             tool.name,
                             name_dir.name,
                             source_name,
+                            compute_content_hash(name_dir),
                         )
                         console.print(
                             f"[blue]Migrated:[/blue] {full_dir.name} -> {name_dir.name}"
@@ -231,6 +238,7 @@ def _migrate_flat_installed_names(
                 tool.name,
                 name_dir.name,
                 matched_handle[1],
+                compute_content_hash(name_dir),
             )
 
         # Ensure metadata on full-name dirs for all handles
@@ -245,6 +253,7 @@ def _migrate_flat_installed_names(
                     tool.name,
                     full_dir.name,
                     source_name,
+                    compute_content_hash(full_dir),
                 )
 
 

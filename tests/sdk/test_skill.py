@@ -1,5 +1,6 @@
 """Tests for Skill class."""
 
+import re
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -284,6 +285,28 @@ class TestSkillFromGit:
 
         with pytest.raises(RepoNotFoundError):
             Skill.from_git("testuser/test-skill")
+
+
+class TestSkillContentHash:
+    """Tests for content_hash property and recompute_content_hash()."""
+
+    def test_content_hash_from_local_skill_is_none(self, mock_skill_dir: Path):
+        """Local skill without .agr.json has no content_hash."""
+        skill = Skill.from_local(mock_skill_dir)
+        assert skill.content_hash is None
+
+    def test_recompute_content_hash_returns_valid_format(self, mock_skill_dir: Path):
+        """recompute_content_hash returns sha256:<64 hex> format."""
+        skill = Skill.from_local(mock_skill_dir)
+        result = skill.recompute_content_hash()
+        assert re.fullmatch(r"sha256:[0-9a-f]{64}", result)
+
+    def test_recompute_content_hash_deterministic(self, mock_skill_dir: Path):
+        """recompute_content_hash returns the same value on repeated calls."""
+        skill = Skill.from_local(mock_skill_dir)
+        hash1 = skill.recompute_content_hash()
+        hash2 = skill.recompute_content_hash()
+        assert hash1 == hash2
 
 
 class TestGetHeadCommit:

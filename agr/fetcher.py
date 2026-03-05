@@ -18,7 +18,12 @@ from agr.exceptions import (
     SkillNotFoundError,
 )
 from agr.handle import INSTALLED_NAME_SEPARATOR, ParsedHandle, iter_repo_candidates
-from agr.metadata import build_handle_id, read_skill_metadata, write_skill_metadata
+from agr.metadata import (
+    build_handle_id,
+    compute_content_hash,
+    read_skill_metadata,
+    write_skill_metadata,
+)
 from agr.skill import (
     SKILL_MARKER,
     discover_skills_in_repo_listing,
@@ -558,7 +563,10 @@ def _copy_skill_to_destination(
     shutil.copytree(source, dest)
 
     update_skill_md_name(dest, dest.name)
-    write_skill_metadata(dest, handle, repo_root, tool.name, dest.name, install_source)
+    hash_value = compute_content_hash(dest)
+    write_skill_metadata(
+        dest, handle, repo_root, tool.name, dest.name, install_source, hash_value
+    )
 
     return dest
 
@@ -711,8 +719,14 @@ def install_local_skill(
         default_dest
     ):
         if read_skill_metadata(default_dest) is None:
+            hash_value = compute_content_hash(default_dest)
             write_skill_metadata(
-                default_dest, handle, repo_root, tool.name, default_dest.name
+                default_dest,
+                handle,
+                repo_root,
+                tool.name,
+                default_dest.name,
+                content_hash=hash_value,
             )
         return default_dest
 

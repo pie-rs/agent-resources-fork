@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### Added
+- Deterministic content hashes for installed skills (`sha256:` prefixed)
+- `compute_content_hash()` in `agr/metadata.py` for SHA-256 hashing of skill directory contents
+- `content_hash` property and `recompute_content_hash()` method on SDK `Skill` class
+- Content hash written to `.agr.json` at install time (both local and remote)
+- Content hash preserved during `agr sync` metadata migrations
+
 ## [0.7.8] - 2026-03-02
 
 ### Added

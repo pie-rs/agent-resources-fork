@@ -15,6 +15,7 @@ from agr.exceptions import (
 )
 from agr.fetcher import downloaded_repo, prepare_repo_for_skill
 from agr.handle import ParsedHandle, iter_repo_candidates, parse_handle
+from agr.metadata import compute_content_hash, read_skill_metadata
 from agr.sdk.cache import cache_skill, get_skill_cache_path, is_cached
 from agr.skill import SKILL_MARKER, is_valid_skill_dir
 from agr.source import SourceConfig, default_sources
@@ -274,6 +275,26 @@ class Skill:
             "handle": self.handle.to_toml_handle() if self.handle else None,
             "is_local": self.handle.is_local if self.handle else True,
         }
+
+    @property
+    def content_hash(self) -> str | None:
+        """Get the content hash from .agr.json metadata.
+
+        Returns:
+            The stored content hash string, or None if not present.
+        """
+        meta = read_skill_metadata(self.path)
+        if meta is None:
+            return None
+        return meta.get("content_hash")
+
+    def recompute_content_hash(self) -> str:
+        """Recompute the content hash from the current files on disk.
+
+        Returns:
+            Fresh hash string in the format "sha256:<64 hex chars>".
+        """
+        return compute_content_hash(self.path)
 
     def read_file(self, relative_path: str) -> str:
         """Read a file from the skill directory.

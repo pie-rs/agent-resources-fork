@@ -630,6 +630,93 @@ class TestCleanupEmptyParents:
         assert stop_at.exists()
 
 
+class TestContentHashOnInstall:
+    """Tests that content_hash is written during installation."""
+
+    def _create_repo_with_skill(self, base_dir: Path, name: str) -> Path:
+        repo_dir = base_dir / f"repo-{name}"
+        skill_dir = repo_dir / name
+        skill_dir.mkdir(parents=True)
+        (skill_dir / SKILL_MARKER).write_text("# Test skill")
+        return repo_dir
+
+    def test_install_local_skill_writes_content_hash(self, tmp_path, skill_fixture):
+        """Local skill installation writes a content_hash to .agr.json."""
+        dest_dir = tmp_path / ".claude" / "skills"
+        dest_dir.mkdir(parents=True)
+
+        installed_path = install_local_skill(skill_fixture, dest_dir, CLAUDE)
+
+        meta = read_skill_metadata(installed_path)
+        assert meta is not None
+        assert "content_hash" in meta
+        assert meta["content_hash"].startswith("sha256:")
+        assert len(meta["content_hash"]) == 7 + 64  # "sha256:" + 64 hex
+
+    def test_install_local_skill_hash_matches_recomputation(
+        self, tmp_path, skill_fixture
+    ):
+        """Stored content_hash matches a fresh recomputation."""
+        from agr.metadata import compute_content_hash
+
+        dest_dir = tmp_path / ".claude" / "skills"
+        dest_dir.mkdir(parents=True)
+
+        installed_path = install_local_skill(skill_fixture, dest_dir, CLAUDE)
+
+        meta = read_skill_metadata(installed_path)
+        assert meta is not None
+        assert meta["content_hash"] == compute_content_hash(installed_path)
+
+    def test_install_inplace_skill_writes_content_hash(self, tmp_path):
+        """In-place local skill (source == dest) writes content_hash."""
+        repo_root = tmp_path / "repo"
+        repo_root.mkdir()
+        skills_dir = repo_root / ".claude" / "skills"
+        skills_dir.mkdir(parents=True)
+
+        # Create skill directly at its destination
+        skill_dir = skills_dir / "my-skill"
+        skill_dir.mkdir()
+        (skill_dir / SKILL_MARKER).write_text("# My Skill")
+
+        handle = ParsedHandle(is_local=True, name="my-skill", local_path=skill_dir)
+        installed = install_local_skill(
+            skill_dir, skills_dir, CLAUDE, repo_root=repo_root, handle=handle
+        )
+
+        meta = read_skill_metadata(installed)
+        assert meta is not None
+        assert "content_hash" in meta
+        assert meta["content_hash"].startswith("sha256:")
+
+    def test_install_remote_skill_writes_content_hash(self, tmp_path):
+        """Remote skill installation writes a content_hash to .agr.json."""
+        repo_root = tmp_path / "project"
+        repo_root.mkdir()
+        skills_dir = repo_root / ".claude" / "skills"
+        skills_dir.mkdir(parents=True)
+
+        repo_dir = self._create_repo_with_skill(tmp_path, "test-skill")
+        handle = ParsedHandle(username="alpha", name="test-skill")
+
+        installed = install_skill_from_repo(
+            repo_dir,
+            "test-skill",
+            handle,
+            skills_dir,
+            CLAUDE,
+            repo_root,
+            install_source="github",
+        )
+
+        meta = read_skill_metadata(installed)
+        assert meta is not None
+        assert "content_hash" in meta
+        assert meta["content_hash"].startswith("sha256:")
+        assert len(meta["content_hash"]) == 7 + 64
+
+
 class TestFetchAndInstallToTools:
     """Tests for fetch_and_install_to_tools function."""
 
