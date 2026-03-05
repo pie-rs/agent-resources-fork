@@ -1,5 +1,7 @@
 """CLI tests for agr onboard command."""
 
+import json
+
 from agr.config import AgrConfig
 from tests.cli.assertions import assert_cli
 
@@ -128,3 +130,65 @@ class TestAgrOnboard:
         # Skill should still be in original location
         assert tool_skill.exists()
         assert not (cli_project / "skills" / "my-skill").exists()
+
+    def test_onboard_skips_remote_skills_in_migration(self, agr, cli_project):
+        """agr onboard does not offer to migrate remote-installed skills."""
+        # Place a remote-installed skill in .claude/skills/ with remote metadata
+        tool_skill = cli_project / ".claude" / "skills" / "remote-skill"
+        tool_skill.mkdir(parents=True)
+        (tool_skill / "SKILL.md").write_text(
+            "---\nname: remote-skill\n---\n# Remote Skill\n"
+        )
+        (tool_skill / ".agr.json").write_text(
+            json.dumps(
+                {
+                    "id": "remote:github:someone/repo/remote-skill",
+                    "tool": "claude",
+                    "installed_name": "remote-skill",
+                    "type": "remote",
+                    "handle": "someone/repo/remote-skill",
+                    "source": "github",
+                }
+            )
+        )
+
+        # Select claude (1), select skill (1), confirm
+        result = agr("onboard", input="1\n1\ny\n", env=_TTY_ENV)
+
+        assert_cli(result).succeeded()
+        # Migration prompt should NOT appear for remote-only skills
+        assert_cli(result).stdout_not_contains("Move them to ./skills/")
+        # Skill should stay in .claude/skills/
+        assert tool_skill.exists()
+        assert not (cli_project / "skills" / "remote-skill").exists()
+
+    def test_onboard_migrates_local_but_not_remote(self, agr, cli_project):
+        """agr onboard migrates local tool-folder skills but skips remote ones."""
+        # Remote skill in .claude/skills/
+        remote_skill = cli_project / ".claude" / "skills" / "remote-skill"
+        remote_skill.mkdir(parents=True)
+        (remote_skill / "SKILL.md").write_text(
+            "---\nname: remote-skill\n---\n# Remote\n"
+        )
+        (remote_skill / ".agr.json").write_text(
+            json.dumps({"type": "remote", "id": "remote:github:x/y/remote-skill"})
+        )
+
+        # Local (user-authored) skill in .claude/skills/ — no .agr.json
+        local_skill = cli_project / ".claude" / "skills" / "local-skill"
+        local_skill.mkdir(parents=True)
+        (local_skill / "SKILL.md").write_text(
+            "---\nname: local-skill\n---\n# Local\n"
+        )
+
+        # Select claude (1), select both skills, accept migration, confirm
+        result = agr("onboard", input="1\n1,2\ny\ny\n", env=_TTY_ENV)
+
+        assert_cli(result).succeeded()
+        # Migration prompt should appear (for the local skill)
+        assert_cli(result).stdout_contains("Move them to ./skills/")
+        # Local skill should be migrated
+        assert (cli_project / "skills" / "local-skill").exists()
+        # Remote skill should NOT be migrated
+        assert not (cli_project / "skills" / "remote-skill").exists()
+        assert remote_skill.exists()

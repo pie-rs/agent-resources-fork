@@ -14,6 +14,7 @@ from agr.config import AgrConfig, Dependency, find_config, find_repo_root
 from agr.console import get_console
 from agr.detect import detect_tools
 from agr.instructions import canonical_instruction_file, detect_instruction_files
+from agr.metadata import read_skill_metadata
 from agr.skill import (
     discover_all_skill_dirs,
     get_skill_frontmatter_name,
@@ -226,8 +227,14 @@ def run_onboard(*, no_migrate: bool = False) -> None:
         if selected_skills:
             console.print(f"[green]Selected:[/green] {len(selected_skills)} skill(s)")
 
-        # Migration offer for tool-folder skills
-        tool_folder_skills = [s for s in selected_skills if s.tool]
+        # Migration offer for tool-folder skills (skip remote-installed ones)
+        def _is_migratable(skill: DiscoveredSkill) -> bool:
+            if not skill.tool:
+                return False
+            meta = read_skill_metadata(skill.path)
+            return meta is None or meta.get("type") != "remote"
+
+        tool_folder_skills = [s for s in selected_skills if _is_migratable(s)]
         if tool_folder_skills and not no_migrate:
             console.print()
             console.print(
@@ -243,7 +250,7 @@ def run_onboard(*, no_migrate: bool = False) -> None:
                 migrated_skills: list[DiscoveredSkill] = []
                 migrate_count = 0
                 for skill in selected_skills:
-                    if skill.tool:
+                    if _is_migratable(skill):
                         old_path = skill.path
                         dest_existed = (skills_root / skill.name).exists()
                         dest_dir = migrate_skill(skill, skills_root)
