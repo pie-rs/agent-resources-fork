@@ -177,9 +177,7 @@ class TestAgrOnboard:
         # Local (user-authored) skill in .claude/skills/ — no .agr.json
         local_skill = cli_project / ".claude" / "skills" / "local-skill"
         local_skill.mkdir(parents=True)
-        (local_skill / "SKILL.md").write_text(
-            "---\nname: local-skill\n---\n# Local\n"
-        )
+        (local_skill / "SKILL.md").write_text("---\nname: local-skill\n---\n# Local\n")
 
         # Select claude (1), select both skills, accept migration, confirm
         result = agr("onboard", input="1\n1,2\ny\ny\n", env=_TTY_ENV)
