@@ -1,5 +1,6 @@
 """agr sync command implementation."""
 
+import shutil
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -75,6 +76,72 @@ def _sync_instructions_if_configured(
         console.print(
             f"[green]Synced instructions:[/green] {canonical_file} -> {updated_list}"
         )
+
+
+def migrate_codex_skills_directory(
+    old_skills_dir: Path, new_skills_dir: Path, tool: ToolConfig
+) -> None:
+    """Migrate skills from .codex/skills/ to .agents/skills/ for Codex.
+
+    Codex moved its skills directory from .codex/ to .agents/. This migrates
+    any existing skills installed under the old path.
+
+    Args:
+        old_skills_dir: The old skills directory (e.g., repo_root / ".codex" / "skills").
+        new_skills_dir: The new skills directory (e.g., repo_root / ".agents" / "skills").
+        tool: Tool configuration (only runs for codex).
+    """
+    if tool.name != "codex":
+        return
+
+    console = get_console()
+
+    if not old_skills_dir.exists():
+        return
+
+    new_skills_dir.mkdir(parents=True, exist_ok=True)
+
+    for skill_dir in old_skills_dir.iterdir():
+        if not skill_dir.is_dir():
+            continue
+
+        target = new_skills_dir / skill_dir.name
+        if target.exists():
+            console.print(
+                f"[yellow]Cannot migrate:[/yellow] .codex/skills/{skill_dir.name}"
+            )
+            console.print(
+                f"  [dim]Target .agents/skills/{skill_dir.name} already exists[/dim]"
+            )
+            continue
+
+        try:
+            shutil.move(str(skill_dir), target)
+            console.print(
+                f"[blue]Migrated:[/blue] .codex/skills/{skill_dir.name} -> .agents/skills/{skill_dir.name}"
+            )
+        except OSError as e:
+            console.print(
+                f"[red]Failed to migrate:[/red] .codex/skills/{skill_dir.name}"
+            )
+            console.print(f"  [dim]{e}[/dim]")
+
+    # Warn about non-directory files left behind
+    if old_skills_dir.exists():
+        leftover = [f for f in old_skills_dir.iterdir() if not f.is_dir()]
+        if leftover:
+            console.print(
+                f"[yellow]Note:[/yellow] {len(leftover)} non-skill file(s) remain in .codex/skills/"
+            )
+
+    # Clean up empty .codex/skills/ directory
+    if old_skills_dir.exists() and not any(old_skills_dir.iterdir()):
+        old_skills_dir.rmdir()
+
+    # Clean up empty .codex/ parent directory
+    codex_parent = old_skills_dir.parent
+    if codex_parent.exists() and not any(codex_parent.iterdir()):
+        codex_parent.rmdir()
 
 
 def _migrate_legacy_directories(skills_dir: Path, tool: ToolConfig) -> None:
@@ -270,6 +337,13 @@ def _run_global_sync() -> None:
     tools = config.get_tools()
     skills_dirs = {tool.name: tool.get_global_skills_dir() for tool in tools}
 
+    for tool in tools:
+        migrate_codex_skills_directory(
+            Path.home() / ".codex" / "skills",
+            Path.home() / ".agents" / "skills",
+            tool,
+        )
+
     if not config.dependencies:
         console.print(
             "[yellow]No dependencies in global agr.toml.[/yellow] Nothing to sync."
@@ -380,8 +454,13 @@ def run_sync(global_install: bool = False) -> None:
 
     _sync_instructions_if_configured(repo_root, config, tools)
 
-    # Migrate legacy colon-based directories for flat tools
+    # Migrate legacy directories
     for tool in tools:
+        migrate_codex_skills_directory(
+            repo_root / ".codex" / "skills",
+            repo_root / ".agents" / "skills",
+            tool,
+        )
         skills_dir = tool.get_skills_dir(repo_root)
         _migrate_legacy_directories(skills_dir, tool)
         _migrate_flat_installed_names(skills_dir, tool, config, repo_root)

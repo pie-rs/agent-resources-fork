@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+from agr.commands.sync import migrate_codex_skills_directory
 from agr.config import (
     AgrConfig,
     Dependency,
@@ -57,6 +58,19 @@ def run_add(
     resolver = config.get_source_resolver()
     if global_install:
         skills_dirs = {tool.name: tool.get_global_skills_dir() for tool in tools}
+        for tool in tools:
+            migrate_codex_skills_directory(
+                Path.home() / ".codex" / "skills",
+                Path.home() / ".agents" / "skills",
+                tool,
+            )
+    elif repo_root:
+        for tool in tools:
+            migrate_codex_skills_directory(
+                repo_root / ".codex" / "skills",
+                repo_root / ".agents" / "skills",
+                tool,
+            )
 
     # Track results for summary
     results: list[tuple[str, bool, str]] = []  # (ref, success, message)
