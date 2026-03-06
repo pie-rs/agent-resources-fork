@@ -63,6 +63,13 @@ Note: `username/skill-name` now defaults to a repo named `skills`. During a
 deprecation period, agr will fall back to `agent-resources` (with a warning) if
 the skill isn't found in `skills`.
 
+> **Custom repo name?** If your skills live in a repo named anything other than
+> `skills` or `agent-resources`, the two-part handle will fail. Use the
+> three-part format:
+> ```bash
+> agr add username/my-custom-repo/skill-name
+> ```
+
 ---
 
 ## Run Skills From Your Terminal
