@@ -178,7 +178,11 @@ agr onboard    # Interactive guided setup
 agr add dsjacobsen/golang-pro
 
 # Drupal development — @madsnorgaard
-agr add madsnorgaard/drupal-expert
+agr add madsnorgaard/drupal-agent-resources/drupal-expert
+agr add madsnorgaard/drupal-agent-resources/drupal-security
+agr add madsnorgaard/drupal-agent-resources/drupal-migration
+agr add madsnorgaard/drupal-agent-resources/ddev-expert
+agr add madsnorgaard/drupal-agent-resources/docker-local
 ```
 
 **Built something?** [Share it here](https://github.com/kasperjunge/agent-resources/issues).
