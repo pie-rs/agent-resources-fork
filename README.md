@@ -63,6 +63,13 @@ Note: `username/skill-name` now defaults to a repo named `skills`. During a
 deprecation period, agr will fall back to `agent-resources` (with a warning) if
 the skill isn't found in `skills`.
 
+> **Custom repo name?** If your skills live in a repo named anything other than
+> `skills` or `agent-resources`, the two-part handle will fail. Use the
+> three-part format:
+> ```bash
+> agr add username/my-custom-repo/skill-name
+> ```
+
 ---
 
 ## Run Skills From Your Terminal
@@ -171,7 +178,11 @@ agr onboard    # Interactive guided setup
 agr add dsjacobsen/golang-pro
 
 # Drupal development — @madsnorgaard
-agr add madsnorgaard/drupal-expert
+agr add madsnorgaard/drupal-agent-resources/drupal-expert
+agr add madsnorgaard/drupal-agent-resources/drupal-security
+agr add madsnorgaard/drupal-agent-resources/drupal-migration
+agr add madsnorgaard/drupal-agent-resources/ddev-expert
+agr add madsnorgaard/drupal-agent-resources/docker-local
 ```
 
 **Built something?** [Share it here](https://github.com/kasperjunge/agent-resources/issues).
