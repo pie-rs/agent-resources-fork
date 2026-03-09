@@ -172,7 +172,7 @@ class TestContentQuality:
     def test_index_has_quick_start(self):
         """Home page has a quick install example."""
         content = (DOCS_DIR / "index.md").read_text()
-        assert "uvx agr add" in content or "pip install agr" in content
+        assert "uvx agr add" in content or "uv tool install agr" in content
 
     def test_creating_has_skill_example(self):
         """Creating page has a complete skill example."""

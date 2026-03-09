@@ -17,7 +17,7 @@ A package and project manager for AI agent skills. Install, share, and run skill
 ## Install
 
 ```bash
-pip install agr
+uv tool install agr
 ```
 
 ## Choose Your Path

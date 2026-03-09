@@ -9,7 +9,7 @@ agr is a CLI tool that lets developers install, share, and manage AI agent skill
 ## Quick Start
 
 ```bash
-pip install agr
+uv tool install agr
 agr add anthropics/skills/frontend-design
 ```
 

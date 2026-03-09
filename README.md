@@ -18,7 +18,7 @@ Install agent skills from GitHub with one command.
 Install agr CLI:
 
 ```bash
-pip install agr
+uv tool install agr
 ```
 
 Install your first skill:
@@ -34,7 +34,7 @@ That's it. The skill is now available in your configured tool (Claude Code, Code
 ## What is agr?
 
 **agr** installs agent skills from GitHub directly into your tool's skills folder
-(`.claude/skills/`, `.codex/skills/`, `.cursor/skills/`, `.opencode/skill/`, `.github/skills/`, or `.agent/skills/`).
+(`.claude/skills/`, `.agents/skills/`, `.cursor/skills/`, `.opencode/skills/`, `.github/skills/`, or `.agent/skills/`).
 
 **agrx** runs skills instantly from your terminal — download, run, then clean up.
 
