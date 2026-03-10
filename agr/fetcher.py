@@ -1000,8 +1000,6 @@ def fetch_and_install_to_tools(
         f"{', '.join(s.name for s in resolver.ordered(source))}"
     )
 
-    return installed
-
 
 def uninstall_skill(
     handle: ParsedHandle,
