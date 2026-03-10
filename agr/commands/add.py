@@ -93,10 +93,7 @@ def run_add(
             if handle.is_local:
                 path_value = ref
                 if global_install and handle.local_path is not None:
-                    if handle.local_path.is_absolute():
-                        path_value = str(handle.local_path.resolve())
-                    else:
-                        path_value = str((Path.cwd() / handle.local_path).resolve())
+                    path_value = str(handle.resolve_local_path())
                 config.add_dependency(
                     Dependency(
                         type="skill",

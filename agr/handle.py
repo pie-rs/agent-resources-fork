@@ -141,6 +141,19 @@ class ParsedHandle:
             return Path(self.username or "") / self.name
         return Path(self.name)
 
+    def resolve_local_path(self) -> Path:
+        """Resolve local_path to an absolute path.
+
+        Returns:
+            The resolved absolute path.
+
+        Raises:
+            InvalidHandleError: If this is not a local handle or has no path.
+        """
+        if not self.is_local or self.local_path is None:
+            raise InvalidHandleError("Cannot resolve path for non-local handle")
+        return self.local_path.resolve()
+
     def get_skill_name_for_tool(self, tool: "ToolConfig") -> str:
         """Get the default SKILL.md name field value for a tool.
 

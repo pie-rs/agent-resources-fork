@@ -58,21 +58,16 @@ def run_remove(refs: list[str], global_install: bool = False) -> None:
             # Parse handle
             handle = parse_handle(ref)
 
+            # Compute the resolved absolute path once for local global installs
+            abs_path_str: str | None = None
+            if global_install and handle.is_local and handle.local_path is not None:
+                abs_path_str = str(handle.resolve_local_path())
+
             dep = config.get_by_identifier(ref)
             if dep is None and handle.is_local:
                 dep = config.get_by_identifier(str(handle.local_path))
-            if (
-                dep is None
-                and global_install
-                and handle.is_local
-                and handle.local_path is not None
-            ):
-                absolute_path = (
-                    handle.local_path.resolve()
-                    if handle.local_path.is_absolute()
-                    else (Path.cwd() / handle.local_path).resolve()
-                )
-                dep = config.get_by_identifier(str(absolute_path))
+            if dep is None and abs_path_str is not None:
+                dep = config.get_by_identifier(abs_path_str)
             if dep is None and not handle.is_local:
                 dep = config.get_by_identifier(handle.to_toml_handle())
 
@@ -101,18 +96,8 @@ def run_remove(refs: list[str], global_install: bool = False) -> None:
             if not removed_config and handle.is_local:
                 # Try with the path
                 removed_config = config.remove_dependency(str(handle.local_path))
-            if (
-                not removed_config
-                and global_install
-                and handle.is_local
-                and handle.local_path is not None
-            ):
-                absolute_path = (
-                    handle.local_path.resolve()
-                    if handle.local_path.is_absolute()
-                    else (Path.cwd() / handle.local_path).resolve()
-                )
-                removed_config = config.remove_dependency(str(absolute_path))
+            if not removed_config and abs_path_str is not None:
+                removed_config = config.remove_dependency(abs_path_str)
             if not removed_config:
                 # Try with toml handle
                 removed_config = config.remove_dependency(handle.to_toml_handle())
