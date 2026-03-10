@@ -391,8 +391,13 @@ def _git_list_files(repo_dir: Path) -> list[str]:
 
 
 def _checkout_full(repo_dir: Path) -> None:
-    """Checkout the full repository."""
-    checkout = _run_git(["git", "-C", str(repo_dir), "checkout", "-f", "main"])
+    """Checkout the working tree from HEAD.
+
+    Works regardless of the default branch name (main, master, etc.)
+    because it checks out whatever HEAD points to rather than
+    hardcoding a branch name.
+    """
+    checkout = _run_git(["git", "-C", str(repo_dir), "checkout", "-f", "HEAD"])
     if checkout.returncode != 0:
         raise AgrError("Failed to checkout repository.")
 
