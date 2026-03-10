@@ -604,55 +604,38 @@ def run_sync(global_install: bool = False) -> None:
         except Exception as e:
             results[index] = ("error", f"Unexpected: {e}")
 
-    # Local installs (no download)
-    for entry in pending_local:
-        handle = entry.handle
-        tools_needing_install = _filter_tools_needing_install(
-            handle, repo_root, tools, entry.source_name
-        )
-        if not tools_needing_install:
-            results[entry.index] = ("up-to-date", None)
-            continue
-        try:
-            fetch_and_install_to_tools(
-                handle,
-                repo_root,
-                tools_needing_install,
-                overwrite=False,
-                resolver=resolver,
-                source=entry.source_name,
+    def _sync_entries(entries: list[SyncEntry]) -> None:
+        """Fetch and install a list of sync entries individually."""
+        for entry in entries:
+            handle = entry.handle
+            tools_needing_install = _filter_tools_needing_install(
+                handle, repo_root, tools, entry.source_name
             )
-            results[entry.index] = ("installed", None)
-        except (FileExistsError, AgrError) as e:
-            results[entry.index] = ("error", str(e))
-        except Exception as e:
-            results[entry.index] = ("error", f"Unexpected: {e}")
+            if not tools_needing_install:
+                results[entry.index] = ("up-to-date", None)
+                continue
+            try:
+                fetch_and_install_to_tools(
+                    handle,
+                    repo_root,
+                    tools_needing_install,
+                    overwrite=False,
+                    resolver=resolver,
+                    source=entry.source_name,
+                )
+                results[entry.index] = ("installed", None)
+            except (FileExistsError, AgrError) as e:
+                results[entry.index] = ("error", str(e))
+            except Exception as e:
+                results[entry.index] = ("error", f"Unexpected: {e}")
+
+    # Local installs (no download)
+    _sync_entries(pending_local)
 
     pending_remote_default = [e for e in pending_remote if e.handle.repo is None]
     pending_remote_specific = [e for e in pending_remote if e.handle.repo is not None]
 
-    for entry in pending_remote_default:
-        handle = entry.handle
-        tools_needing_install = _filter_tools_needing_install(
-            handle, repo_root, tools, entry.source_name
-        )
-        if not tools_needing_install:
-            results[entry.index] = ("up-to-date", None)
-            continue
-        try:
-            fetch_and_install_to_tools(
-                handle,
-                repo_root,
-                tools_needing_install,
-                overwrite=False,
-                resolver=resolver,
-                source=entry.source_name,
-            )
-            results[entry.index] = ("installed", None)
-        except (FileExistsError, AgrError) as e:
-            results[entry.index] = ("error", str(e))
-        except Exception as e:
-            results[entry.index] = ("error", f"Unexpected: {e}")
+    _sync_entries(pending_remote_default)
 
     # Remote installs grouped by repo/source (download once per repo)
     grouped: dict[tuple[str, str, str], list[SyncEntry]] = {}
