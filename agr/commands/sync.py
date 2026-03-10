@@ -12,7 +12,6 @@ from agr.fetcher import (
     fetch_and_install_to_tools,
     install_skill_from_repo_to_tools,
     is_skill_installed,
-    prepare_repo_for_skill,
     prepare_repo_for_skills,
 )
 from agr.handle import (
@@ -650,40 +649,6 @@ def run_sync(global_install: bool = False) -> None:
         try:
             source_config = resolver.get(source_name)
             with downloaded_repo(source_config, owner, repo_name) as repo_dir:
-                if len(entries) == 1:
-                    entry = entries[0]
-                    handle = entry.handle
-                    tools_needing_install = _filter_tools_needing_install(
-                        handle, repo_root, tools, entry.source_name
-                    )
-                    if not tools_needing_install:
-                        results[entry.index] = ("up-to-date", None)
-                        continue
-                    skill_source = prepare_repo_for_skill(repo_dir, handle.name)
-                    if skill_source is None:
-                        results[entry.index] = (
-                            "error",
-                            _skill_not_found_message(handle.name),
-                        )
-                        continue
-                    try:
-                        install_skill_from_repo_to_tools(
-                            repo_dir,
-                            handle.name,
-                            handle,
-                            tools_needing_install,
-                            repo_root,
-                            overwrite=False,
-                            install_source=source_name,
-                            skill_source=skill_source,
-                        )
-                        results[entry.index] = ("installed", None)
-                    except (FileExistsError, AgrError) as e:
-                        results[entry.index] = ("error", str(e))
-                    except Exception as e:
-                        results[entry.index] = ("error", f"Unexpected: {e}")
-                    continue
-
                 skill_names = [entry.handle.name for entry in entries]
                 skill_sources = prepare_repo_for_skills(repo_dir, skill_names)
                 for entry in entries:
