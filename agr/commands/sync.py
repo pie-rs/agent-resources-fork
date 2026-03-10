@@ -36,6 +36,27 @@ from agr.skill import SKILL_MARKER, is_valid_skill_dir, update_skill_md_name
 from agr.tool import ToolConfig
 
 
+def _filter_tools_needing_install(
+    handle: ParsedHandle,
+    repo_root: Path | None,
+    tools: list[ToolConfig],
+    source_name: str | None,
+    skills_dirs: dict[str, Path] | None = None,
+) -> list[ToolConfig]:
+    """Return tools where the given skill is not yet installed."""
+    return [
+        tool
+        for tool in tools
+        if not is_skill_installed(
+            handle,
+            repo_root,
+            tool,
+            source_name,
+            skills_dir=skills_dirs.get(tool.name) if skills_dirs else None,
+        )
+    ]
+
+
 @dataclass
 class SyncEntry:
     index: int
@@ -453,17 +474,9 @@ def _run_global_sync() -> None:
                 handle = parse_handle(ref, prefer_local=False)
                 source_name = dep.source or config.default_source
 
-            tools_needing_install = [
-                tool
-                for tool in tools
-                if not is_skill_installed(
-                    handle,
-                    None,
-                    tool,
-                    source_name,
-                    skills_dir=skills_dirs[tool.name],
-                )
-            ]
+            tools_needing_install = _filter_tools_needing_install(
+                handle, None, tools, source_name, skills_dirs
+            )
 
             if not tools_needing_install:
                 console.print(f"[dim]Up to date:[/dim] {identifier}")
@@ -481,11 +494,7 @@ def _run_global_sync() -> None:
             )
             console.print(f"[green]Installed:[/green] {identifier}")
             installed += 1
-        except FileExistsError as e:
-            console.print(f"[red]Error:[/red] {identifier}")
-            console.print(f"  [dim]{e}[/dim]")
-            errors += 1
-        except AgrError as e:
+        except (FileExistsError, AgrError) as e:
             console.print(f"[red]Error:[/red] {identifier}")
             console.print(f"  [dim]{e}[/dim]")
             errors += 1
@@ -576,11 +585,9 @@ def run_sync(global_install: bool = False) -> None:
                 handle = parse_handle(ref, prefer_local=False)
             source_name = None if dep.is_local else dep.source or config.default_source
 
-            tools_needing_install = [
-                tool
-                for tool in tools
-                if not is_skill_installed(handle, repo_root, tool, source_name)
-            ]
+            tools_needing_install = _filter_tools_needing_install(
+                handle, repo_root, tools, source_name
+            )
 
             if not tools_needing_install:
                 results[index] = ("up-to-date", None)
@@ -604,11 +611,9 @@ def run_sync(global_install: bool = False) -> None:
     # Local installs (no download)
     for entry in pending_local:
         handle = entry.handle
-        tools_needing_install = [
-            tool
-            for tool in tools
-            if not is_skill_installed(handle, repo_root, tool, entry.source_name)
-        ]
+        tools_needing_install = _filter_tools_needing_install(
+            handle, repo_root, tools, entry.source_name
+        )
         if not tools_needing_install:
             results[entry.index] = ("up-to-date", None)
             continue
@@ -622,9 +627,7 @@ def run_sync(global_install: bool = False) -> None:
                 source=entry.source_name,
             )
             results[entry.index] = ("installed", None)
-        except FileExistsError as e:
-            results[entry.index] = ("error", str(e))
-        except AgrError as e:
+        except (FileExistsError, AgrError) as e:
             results[entry.index] = ("error", str(e))
         except Exception as e:
             results[entry.index] = ("error", f"Unexpected: {e}")
@@ -634,11 +637,9 @@ def run_sync(global_install: bool = False) -> None:
 
     for entry in pending_remote_default:
         handle = entry.handle
-        tools_needing_install = [
-            tool
-            for tool in tools
-            if not is_skill_installed(handle, repo_root, tool, entry.source_name)
-        ]
+        tools_needing_install = _filter_tools_needing_install(
+            handle, repo_root, tools, entry.source_name
+        )
         if not tools_needing_install:
             results[entry.index] = ("up-to-date", None)
             continue
@@ -652,9 +653,7 @@ def run_sync(global_install: bool = False) -> None:
                 source=entry.source_name,
             )
             results[entry.index] = ("installed", None)
-        except FileExistsError as e:
-            results[entry.index] = ("error", str(e))
-        except AgrError as e:
+        except (FileExistsError, AgrError) as e:
             results[entry.index] = ("error", str(e))
         except Exception as e:
             results[entry.index] = ("error", f"Unexpected: {e}")
@@ -675,13 +674,9 @@ def run_sync(global_install: bool = False) -> None:
                 if len(entries) == 1:
                     entry = entries[0]
                     handle = entry.handle
-                    tools_needing_install = [
-                        tool
-                        for tool in tools
-                        if not is_skill_installed(
-                            handle, repo_root, tool, entry.source_name
-                        )
-                    ]
+                    tools_needing_install = _filter_tools_needing_install(
+                        handle, repo_root, tools, entry.source_name
+                    )
                     if not tools_needing_install:
                         results[entry.index] = ("up-to-date", None)
                         continue
@@ -704,9 +699,7 @@ def run_sync(global_install: bool = False) -> None:
                             skill_source=skill_source,
                         )
                         results[entry.index] = ("installed", None)
-                    except FileExistsError as e:
-                        results[entry.index] = ("error", str(e))
-                    except AgrError as e:
+                    except (FileExistsError, AgrError) as e:
                         results[entry.index] = ("error", str(e))
                     except Exception as e:
                         results[entry.index] = ("error", f"Unexpected: {e}")
@@ -716,13 +709,9 @@ def run_sync(global_install: bool = False) -> None:
                 skill_sources = prepare_repo_for_skills(repo_dir, skill_names)
                 for entry in entries:
                     handle = entry.handle
-                    tools_needing_install = [
-                        tool
-                        for tool in tools
-                        if not is_skill_installed(
-                            handle, repo_root, tool, entry.source_name
-                        )
-                    ]
+                    tools_needing_install = _filter_tools_needing_install(
+                        handle, repo_root, tools, entry.source_name
+                    )
                     if not tools_needing_install:
                         results[entry.index] = ("up-to-date", None)
                         continue
@@ -745,9 +734,7 @@ def run_sync(global_install: bool = False) -> None:
                             skill_source=skill_source,
                         )
                         results[entry.index] = ("installed", None)
-                    except FileExistsError as e:
-                        results[entry.index] = ("error", str(e))
-                    except AgrError as e:
+                    except (FileExistsError, AgrError) as e:
                         results[entry.index] = ("error", str(e))
                     except Exception as e:
                         results[entry.index] = ("error", f"Unexpected: {e}")
