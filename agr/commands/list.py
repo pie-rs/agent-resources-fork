@@ -7,7 +7,7 @@ from rich.table import Table
 from agr.config import AgrConfig, find_config, get_global_config_path, require_repo_root
 from agr.console import get_console
 from agr.fetcher import is_skill_installed
-from agr.handle import ParsedHandle, parse_handle
+from agr.handle import ParsedHandle
 from agr.tool import ToolConfig, build_global_skills_dirs
 
 
@@ -89,8 +89,6 @@ def run_list(global_install: bool = False) -> None:
     table.add_column("Status")
 
     for dep in config.dependencies:
-        identifier = dep.identifier
-
         # Determine display name and status
         if dep.is_local:
             display_name = dep.path or ""
@@ -101,14 +99,8 @@ def run_list(global_install: bool = False) -> None:
 
         # Check installation status
         try:
-            if dep.is_local:
-                path = Path(identifier)
-                handle = ParsedHandle(is_local=True, name=path.name, local_path=path)
-            else:
-                handle = parse_handle(identifier, prefer_local=False)
-            source_name = (
-                None if dep.is_local else (dep.source or config.default_source)
-            )
+            handle = dep.to_parsed_handle()
+            source_name = dep.resolve_source_name(config.default_source)
             status = _get_installation_status(
                 handle, repo_root, tools, source_name, skills_dirs
             )

@@ -34,6 +34,23 @@ from agr.skill import SKILL_MARKER, is_valid_skill_dir, update_skill_md_name
 from agr.tool import ToolConfig
 
 
+def _print_sync_summary(installed: int, up_to_date: int, errors: int) -> None:
+    """Print sync summary and exit with error if any failures occurred."""
+    console = get_console()
+    console.print()
+    parts = []
+    if installed:
+        parts.append(f"{installed} installed")
+    if up_to_date:
+        parts.append(f"{up_to_date} up to date")
+    if errors:
+        parts.append(f"{errors} failed")
+    console.print(f"[bold]Summary:[/bold] {', '.join(parts)}")
+
+    if errors:
+        raise SystemExit(1)
+
+
 def _filter_tools_needing_install(
     handle: ParsedHandle,
     repo_root: Path | None,
@@ -489,18 +506,7 @@ def _run_global_sync() -> None:
             console.print(f"  [dim]Unexpected: {e}[/dim]")
             errors += 1
 
-    console.print()
-    parts = []
-    if installed:
-        parts.append(f"{installed} installed")
-    if up_to_date:
-        parts.append(f"{up_to_date} up to date")
-    if errors:
-        parts.append(f"{errors} failed")
-    console.print(f"[bold]Summary:[/bold] {', '.join(parts)}")
-
-    if errors:
-        raise SystemExit(1)
+    _print_sync_summary(installed, up_to_date, errors)
 
 
 def run_sync(global_install: bool = False) -> None:
@@ -690,17 +696,4 @@ def run_sync(global_install: bool = False) -> None:
                 console.print(f"  [dim]{error}[/dim]")
             errors += 1
 
-    # Summary
-    console.print()
-    parts = []
-    if installed:
-        parts.append(f"{installed} installed")
-    if up_to_date:
-        parts.append(f"{up_to_date} up to date")
-    if errors:
-        parts.append(f"{errors} failed")
-
-    console.print(f"[bold]Summary:[/bold] {', '.join(parts)}")
-
-    if errors:
-        raise SystemExit(1)
+    _print_sync_summary(installed, up_to_date, errors)
