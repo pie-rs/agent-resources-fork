@@ -3,13 +3,15 @@
 from pathlib import Path
 
 
-INSTRUCTION_FILES = ("CLAUDE.md", "AGENTS.md")
+INSTRUCTION_FILES = ("CLAUDE.md", "AGENTS.md", "GEMINI.md")
 
 
 def canonical_instruction_file(tool_name: str) -> str:
     """Resolve the canonical instruction file for a tool."""
     if tool_name == "claude":
         return "CLAUDE.md"
+    if tool_name == "antigravity":
+        return "GEMINI.md"
     return "AGENTS.md"
 
 
@@ -23,13 +25,16 @@ def sync_instruction_files(
 ) -> list[str]:
     """Sync instruction files to match the canonical file.
 
+    Creates missing instruction files from the canonical source and
+    updates existing ones that differ from the canonical content.
+
     Args:
         repo_root: Repository root path.
         canonical_file: Filename to copy from.
-        files: Existing instruction filenames to update.
+        files: Instruction filenames to sync (will be created if missing).
 
     Returns:
-        List of filenames that were updated.
+        List of filenames that were created or updated.
     """
     canonical_path = repo_root / canonical_file
     if not canonical_path.exists():
@@ -42,9 +47,7 @@ def sync_instruction_files(
         if filename == canonical_file:
             continue
         target_path = repo_root / filename
-        if not target_path.exists():
-            continue
-        if target_path.read_text() != canonical_content:
+        if not target_path.exists() or target_path.read_text() != canonical_content:
             target_path.write_text(canonical_content)
             updated.append(filename)
 

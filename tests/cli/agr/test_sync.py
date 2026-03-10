@@ -46,3 +46,44 @@ dependencies = []
         assert (cli_project / "AGENTS.md").read_text() == (
             cli_project / "CLAUDE.md"
         ).read_text()
+
+    def test_sync_instructions_creates_gemini_for_antigravity(
+        self, agr, cli_project, cli_config
+    ):
+        """agr sync creates GEMINI.md from CLAUDE.md when antigravity is configured."""
+        (cli_project / "CLAUDE.md").write_text("Claude instructions\n")
+        cli_config(
+            """
+tools = ["claude", "antigravity"]
+sync_instructions = true
+canonical_instructions = "CLAUDE.md"
+dependencies = []
+"""
+        )
+
+        result = agr("sync")
+
+        assert_cli(result).succeeded()
+        assert (cli_project / "GEMINI.md").exists()
+        assert (cli_project / "GEMINI.md").read_text() == "Claude instructions\n"
+
+    def test_sync_instructions_creates_agents_for_cursor(
+        self, agr, cli_project, cli_config
+    ):
+        """agr sync creates AGENTS.md from CLAUDE.md when only CLAUDE.md exists."""
+        (cli_project / "CLAUDE.md").write_text("Claude instructions\n")
+        cli_config(
+            """
+tools = ["claude", "cursor"]
+sync_instructions = true
+canonical_instructions = "CLAUDE.md"
+dependencies = []
+"""
+        )
+
+        result = agr("sync")
+
+        assert_cli(result).succeeded()
+        assert (cli_project / "AGENTS.md").exists()
+        assert (cli_project / "AGENTS.md").read_text() == "Claude instructions\n"
+

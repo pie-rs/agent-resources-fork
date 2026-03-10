@@ -23,7 +23,6 @@ from agr.handle import (
 )
 from agr.instructions import (
     canonical_instruction_file,
-    detect_instruction_files,
     sync_instruction_files,
 )
 from agr.metadata import (
@@ -54,23 +53,32 @@ def _sync_instructions_if_configured(
     if len(tools) < 2:
         return
 
-    existing_files = detect_instruction_files(repo_root)
-    if len(existing_files) < 2:
-        return
-
     if config.canonical_instructions:
         canonical_file = config.canonical_instructions
     else:
         tool_name = config.default_tool or tools[0].name
         canonical_file = canonical_instruction_file(tool_name)
 
-    if canonical_file not in existing_files:
+    # Canonical source must exist — otherwise there is nothing to sync from.
+    if not (repo_root / canonical_file).exists():
         console.print(
             f"[yellow]Instruction sync skipped:[/yellow] {canonical_file} not found."
         )
         return
 
-    updated = sync_instruction_files(repo_root, canonical_file, existing_files)
+    # Build the set of target files from all configured tools (excluding canonical).
+    target_files = sorted(
+        {
+            canonical_instruction_file(tool.name)
+            for tool in tools
+            if canonical_instruction_file(tool.name) != canonical_file
+        }
+    )
+
+    if not target_files:
+        return
+
+    updated = sync_instruction_files(repo_root, canonical_file, target_files)
     if updated:
         updated_list = ", ".join(updated)
         console.print(
