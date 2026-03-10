@@ -48,6 +48,32 @@ from agr.tool import DEFAULT_TOOL, ToolConfig
 logger = logging.getLogger(__name__)
 
 
+def _run_git(cmd: list[str]) -> subprocess.CompletedProcess[str]:
+    """Run a git command with consistent error handling.
+
+    Wraps subprocess.run with standard options (capture output, text mode,
+    no check) and ensures OSError is always converted to AgrError.
+
+    Args:
+        cmd: Full command list starting with "git".
+
+    Returns:
+        CompletedProcess with captured stdout/stderr.
+
+    Raises:
+        AgrError: If git cannot be executed (e.g., not installed).
+    """
+    try:
+        return subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError as e:
+        raise AgrError(f"Failed to run git: {type(e).__name__}") from None
+
+
 def _skill_dir_matches_handle(skill_dir: Path, handle_ids: list[str] | None) -> bool:
     """Check whether a skill directory matches a handle via metadata."""
     if not handle_ids:
@@ -173,15 +199,7 @@ def _is_github_source(source: SourceConfig) -> bool:
 
 def _get_default_branch(repo_url: str) -> str | None:
     """Return the default branch name for a remote repo, if detectable."""
-    try:
-        result = subprocess.run(
-            ["git", "ls-remote", "--symref", repo_url, "HEAD"],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-    except OSError as e:
-        raise AgrError(f"Failed to run git: {type(e).__name__}") from None
+    result = _run_git(["git", "ls-remote", "--symref", repo_url, "HEAD"])
 
     if result.returncode != 0:
         return None
@@ -290,15 +308,7 @@ def _clone_repo(
     if partial:
         cmd.extend(["--filter=blob:none", "--no-checkout"])
     cmd.extend([repo_url, str(repo_dir)])
-    try:
-        return subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-    except OSError as e:
-        raise AgrError(f"Failed to run git: {type(e).__name__}") from None
+    return _run_git(cmd)
 
 
 def _partial_clone_unsupported(stderr: str | None) -> bool:
@@ -372,11 +382,8 @@ def _raise_clone_error(
 
 def _git_list_files(repo_dir: Path) -> list[str]:
     """List files in the repo without checking out blobs."""
-    result = subprocess.run(
-        ["git", "-C", str(repo_dir), "ls-tree", "-r", "--name-only", "HEAD"],
-        capture_output=True,
-        text=True,
-        check=False,
+    result = _run_git(
+        ["git", "-C", str(repo_dir), "ls-tree", "-r", "--name-only", "HEAD"]
     )
     if result.returncode != 0:
         raise AgrError("Failed to list repository files.")
@@ -385,12 +392,7 @@ def _git_list_files(repo_dir: Path) -> list[str]:
 
 def _checkout_full(repo_dir: Path) -> None:
     """Checkout the full repository."""
-    checkout = subprocess.run(
-        ["git", "-C", str(repo_dir), "checkout", "-f", "main"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    checkout = _run_git(["git", "-C", str(repo_dir), "checkout", "-f", "main"])
     if checkout.returncode != 0:
         raise AgrError("Failed to checkout repository.")
 
@@ -399,22 +401,12 @@ def _checkout_sparse_paths(repo_dir: Path, rel_paths: list[Path]) -> None:
     """Checkout only the given paths using sparse checkout."""
     if not rel_paths:
         raise AgrError("No paths provided for sparse checkout.")
-    init = subprocess.run(
-        ["git", "-C", str(repo_dir), "sparse-checkout", "init", "--cone"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    init = _run_git(["git", "-C", str(repo_dir), "sparse-checkout", "init", "--cone"])
     if init.returncode != 0:
         raise AgrError("Failed to initialize sparse checkout.")
     cmd = ["git", "-C", str(repo_dir), "sparse-checkout", "set"]
     cmd.extend([rel_path.as_posix() for rel_path in rel_paths])
-    set_cmd = subprocess.run(
-        cmd,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    set_cmd = _run_git(cmd)
     if set_cmd.returncode != 0:
         raise AgrError("Failed to set sparse checkout path.")
     _checkout_full(repo_dir)
