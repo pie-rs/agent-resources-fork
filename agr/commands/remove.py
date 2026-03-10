@@ -11,8 +11,38 @@ from agr.config import (
 )
 from agr.console import get_console
 from agr.fetcher import uninstall_skill
-from agr.handle import parse_handle
+from agr.handle import ParsedHandle, parse_handle
 from agr.tool import build_global_skills_dirs
+
+
+def _identifier_candidates(
+    ref: str,
+    handle: ParsedHandle,
+    abs_path_str: str | None,
+) -> list[str]:
+    """Build ordered list of identifiers to try for dependency lookup/removal.
+
+    Dependencies can be stored under different identifier forms (raw ref,
+    local path string, resolved absolute path, or TOML handle).  This
+    helper produces the candidates in priority order so callers can stop
+    at the first match.
+    """
+    seen: set[str] = set()
+    candidates: list[str] = []
+
+    def _add(value: str) -> None:
+        if value not in seen:
+            seen.add(value)
+            candidates.append(value)
+
+    _add(ref)
+    if handle.is_local and handle.local_path is not None:
+        _add(str(handle.local_path))
+    if abs_path_str is not None:
+        _add(abs_path_str)
+    if not handle.is_local:
+        _add(handle.to_toml_handle())
+    return candidates
 
 
 def run_remove(refs: list[str], global_install: bool = False) -> None:
@@ -60,13 +90,13 @@ def run_remove(refs: list[str], global_install: bool = False) -> None:
             if global_install and handle.is_local and handle.local_path is not None:
                 abs_path_str = str(handle.resolve_local_path())
 
-            dep = config.get_by_identifier(ref)
-            if dep is None and handle.is_local:
-                dep = config.get_by_identifier(str(handle.local_path))
-            if dep is None and abs_path_str is not None:
-                dep = config.get_by_identifier(abs_path_str)
-            if dep is None and not handle.is_local:
-                dep = config.get_by_identifier(handle.to_toml_handle())
+            candidates = _identifier_candidates(ref, handle, abs_path_str)
+
+            dep = None
+            for identifier in candidates:
+                dep = config.get_by_identifier(identifier)
+                if dep is not None:
+                    break
 
             source_name = None
             if dep and dep.is_remote:
@@ -87,17 +117,12 @@ def run_remove(refs: list[str], global_install: bool = False) -> None:
                 ):
                     removed_fs = True
 
-            # Remove from config
-            # Try both handle format and path format
-            removed_config = config.remove_dependency(ref)
-            if not removed_config and handle.is_local:
-                # Try with the path
-                removed_config = config.remove_dependency(str(handle.local_path))
-            if not removed_config and abs_path_str is not None:
-                removed_config = config.remove_dependency(abs_path_str)
-            if not removed_config:
-                # Try with toml handle
-                removed_config = config.remove_dependency(handle.to_toml_handle())
+            # Remove from config (try same candidate identifiers)
+            removed_config = False
+            for identifier in candidates:
+                if config.remove_dependency(identifier):
+                    removed_config = True
+                    break
 
             if removed_fs or removed_config:
                 results.append((ref, True, "Removed"))
