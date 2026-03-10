@@ -17,7 +17,12 @@ from agr.exceptions import (
     RepoNotFoundError,
     SkillNotFoundError,
 )
-from agr.handle import INSTALLED_NAME_SEPARATOR, ParsedHandle, iter_repo_candidates
+from agr.handle import (
+    INSTALLED_NAME_SEPARATOR,
+    LEGACY_REPO_DEPRECATION_WARNING,
+    ParsedHandle,
+    iter_repo_candidates,
+)
 from agr.metadata import (
     build_handle_id,
     compute_content_hash,
@@ -789,10 +794,7 @@ def install_remote_skill(
                     )
                     if is_legacy:
                         warnings.warn(
-                            "Deprecated: owner-only handles now default to the 'skills' "
-                            "repo. Falling back to the legacy 'agent-resources' repo. "
-                            "Use an explicit handle like 'owner/agent-resources/skill' "
-                            "or move/rename your repo to 'skills'.",
+                            LEGACY_REPO_DEPRECATION_WARNING,
                             UserWarning,
                             stacklevel=2,
                         )
@@ -982,10 +984,7 @@ def fetch_and_install_to_tools(
                             raise
                     if is_legacy:
                         warnings.warn(
-                            "Deprecated: owner-only handles now default to the 'skills' "
-                            "repo. Falling back to the legacy 'agent-resources' repo. "
-                            "Use an explicit handle like 'owner/agent-resources/skill' "
-                            "or move/rename your repo to 'skills'.",
+                            LEGACY_REPO_DEPRECATION_WARNING,
                             UserWarning,
                             stacklevel=2,
                         )

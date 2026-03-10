@@ -14,7 +14,12 @@ from agr.exceptions import (
     SkillNotFoundError,
 )
 from agr.fetcher import downloaded_repo, prepare_repo_for_skill
-from agr.handle import ParsedHandle, iter_repo_candidates, parse_handle
+from agr.handle import (
+    LEGACY_REPO_DEPRECATION_WARNING,
+    ParsedHandle,
+    iter_repo_candidates,
+    parse_handle,
+)
 from agr.metadata import compute_content_hash, read_skill_metadata
 from agr.sdk.cache import cache_skill, get_skill_cache_path, is_cached
 from agr.skill import SKILL_MARKER, is_valid_skill_dir
@@ -131,10 +136,7 @@ class Skill:
                         )
                         if is_legacy:
                             warnings.warn(
-                                "Deprecated: owner-only handles now default to the 'skills' "
-                                "repo. Falling back to the legacy 'agent-resources' repo. "
-                                "Use an explicit handle like 'owner/agent-resources/skill' "
-                                "or move/rename your repo to 'skills'.",
+                                LEGACY_REPO_DEPRECATION_WARNING,
                                 UserWarning,
                                 stacklevel=2,
                             )
@@ -161,10 +163,7 @@ class Skill:
 
                     if is_legacy:
                         warnings.warn(
-                            "Deprecated: owner-only handles now default to the 'skills' "
-                            "repo. Falling back to the legacy 'agent-resources' repo. "
-                            "Use an explicit handle like 'owner/agent-resources/skill' "
-                            "or move/rename your repo to 'skills'.",
+                            LEGACY_REPO_DEPRECATION_WARNING,
                             UserWarning,
                             stacklevel=2,
                         )

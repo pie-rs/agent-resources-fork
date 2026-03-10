@@ -30,6 +30,12 @@ LOCAL_PREFIX = "local"
 LEGACY_SEPARATOR = ":"
 DEFAULT_REPO_NAME = "skills"
 LEGACY_DEFAULT_REPO_NAME = "agent-resources"
+LEGACY_REPO_DEPRECATION_WARNING = (
+    "Deprecated: owner-only handles now default to the 'skills' "
+    "repo. Falling back to the legacy 'agent-resources' repo. "
+    "Use an explicit handle like 'owner/agent-resources/skill' "
+    "or move/rename your repo to 'skills'."
+)
 
 
 def iter_repo_candidates(repo: str | None) -> list[tuple[str, bool]]:

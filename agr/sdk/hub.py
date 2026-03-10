@@ -18,18 +18,12 @@ import warnings
 from agr.handle import (
     DEFAULT_REPO_NAME,
     LEGACY_DEFAULT_REPO_NAME,
+    LEGACY_REPO_DEPRECATION_WARNING,
     iter_repo_candidates,
     parse_handle,
 )
 from agr.sdk.types import SkillInfo
 from agr.skill import SKILL_MARKER
-
-DEPRECATION_MESSAGE = (
-    "Deprecated: owner-only handles now default to the 'skills' repo. "
-    "Falling back to the legacy 'agent-resources' repo. "
-    "Use an explicit handle like '{owner}/{repo}/{name}' "
-    "or move/rename your repo to 'skills'."
-)
 
 
 def _get_github_token() -> str | None:
@@ -199,9 +193,7 @@ def list_skills(repo_handle: str) -> list[SkillInfo]:
     skills = []
     if used_legacy:
         warnings.warn(
-            DEPRECATION_MESSAGE.format(
-                owner=owner, repo=LEGACY_DEFAULT_REPO_NAME, name="skill-name"
-            ),
+            LEGACY_REPO_DEPRECATION_WARNING,
             UserWarning,
             stacklevel=2,
         )
@@ -333,9 +325,7 @@ def skill_info(handle: str) -> SkillInfo:
 
     if used_legacy:
         warnings.warn(
-            DEPRECATION_MESSAGE.format(
-                owner=owner, repo=LEGACY_DEFAULT_REPO_NAME, name=parsed.name
-            ),
+            LEGACY_REPO_DEPRECATION_WARNING,
             UserWarning,
             stacklevel=2,
         )
