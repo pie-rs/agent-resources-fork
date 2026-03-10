@@ -835,10 +835,7 @@ def fetch_and_install(
     Raises:
         Various exceptions on failure
     """
-    if skills_dir is None:
-        if repo_root is None:
-            raise ValueError("repo_root is required when skills_dir is not provided")
-        skills_dir = tool.get_skills_dir(repo_root)
+    skills_dir = _resolve_skills_dir(skills_dir, repo_root, tool)
 
     if handle.is_local:
         # Local skill installation
@@ -1009,14 +1006,8 @@ def uninstall_skill(
     Returns:
         True if removed, False if not found
     """
-    target_skills_dir = skills_dir
-    if target_skills_dir is None:
-        if repo_root is None:
-            raise ValueError("repo_root is required when skills_dir is not provided")
-        target_skills_dir = tool.get_skills_dir(repo_root)
-    skill_path = _find_existing_skill_dir(
-        handle, target_skills_dir, tool, repo_root, source
-    )
+    resolved_dir = _resolve_skills_dir(skills_dir, repo_root, tool)
+    skill_path = _find_existing_skill_dir(handle, resolved_dir, tool, repo_root, source)
 
     if not skill_path:
         return False
@@ -1025,9 +1016,32 @@ def uninstall_skill(
 
     # Clean up empty parent directories for nested structures
     if tool.supports_nested:
-        _cleanup_empty_parents(skill_path.parent, target_skills_dir)
+        _cleanup_empty_parents(skill_path.parent, resolved_dir)
 
     return True
+
+
+def _resolve_skills_dir(
+    skills_dir: Path | None, repo_root: Path | None, tool: ToolConfig
+) -> Path:
+    """Resolve skills directory from explicit path or repo_root + tool config.
+
+    Args:
+        skills_dir: Explicit skills directory, if provided.
+        repo_root: Repository root path (project installs) or None (global installs).
+        tool: Tool configuration for deriving the skills directory.
+
+    Returns:
+        Resolved skills directory path.
+
+    Raises:
+        ValueError: If both skills_dir and repo_root are None.
+    """
+    if skills_dir is not None:
+        return skills_dir
+    if repo_root is None:
+        raise ValueError("repo_root is required when skills_dir is not provided")
+    return tool.get_skills_dir(repo_root)
 
 
 def _cleanup_empty_parents(path: Path, stop_at: Path) -> None:
@@ -1107,12 +1121,6 @@ def is_skill_installed(
     Returns:
         True if installed
     """
-    target_skills_dir = skills_dir
-    if target_skills_dir is None:
-        if repo_root is None:
-            raise ValueError("repo_root is required when skills_dir is not provided")
-        target_skills_dir = tool.get_skills_dir(repo_root)
-    skill_path = _find_existing_skill_dir(
-        handle, target_skills_dir, tool, repo_root, source
-    )
+    resolved_dir = _resolve_skills_dir(skills_dir, repo_root, tool)
+    skill_path = _find_existing_skill_dir(handle, resolved_dir, tool, repo_root, source)
     return bool(skill_path and is_valid_skill_dir(skill_path))
