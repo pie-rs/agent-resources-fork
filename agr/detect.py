@@ -9,7 +9,7 @@ from agr.tool import TOOLS
 _TOOL_SIGNALS: dict[str, list[str]] = {
     "claude": [".claude", "CLAUDE.md"],
     "cursor": [".cursor", ".cursorrules"],
-    "codex": [".codex"],
+    "codex": [".agents", ".codex"],
     "opencode": [".opencode"],
     "copilot": [".github/copilot", ".github/skills"],
     "antigravity": [".agent"],

@@ -2,7 +2,10 @@
 
 from pathlib import Path
 
-from agr.commands.sync import migrate_codex_skills_directory
+from agr.commands.sync import (
+    migrate_codex_skills_directory,
+    migrate_opencode_skills_directory,
+)
 from agr.config import (
     AgrConfig,
     find_config,
@@ -54,11 +57,21 @@ def run_remove(refs: list[str], global_install: bool = False) -> None:
                 Path.home() / ".agents" / "skills",
                 tool,
             )
+            migrate_opencode_skills_directory(
+                Path.home() / ".config" / "opencode" / "skill",
+                Path.home() / ".config" / "opencode" / "skills",
+                tool,
+            )
     elif repo_root:
         for tool in tools:
             migrate_codex_skills_directory(
                 repo_root / ".codex" / "skills",
                 repo_root / ".agents" / "skills",
+                tool,
+            )
+            migrate_opencode_skills_directory(
+                repo_root / ".opencode" / "skill",
+                repo_root / ".opencode" / "skills",
                 tool,
             )
 

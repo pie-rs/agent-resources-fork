@@ -39,6 +39,22 @@ class TestDetectTools:
         assert "cursor" in result
         assert "codex" in result
 
+    def test_codex_detected_from_agents_dir(self, tmp_path):
+        """detect_tools finds codex from .agents/ directory."""
+        (tmp_path / ".agents").mkdir()
+
+        result = detect_tools(tmp_path)
+
+        assert "codex" in result
+
+    def test_codex_detected_from_legacy_codex_dir(self, tmp_path):
+        """detect_tools still finds codex from legacy .codex/ directory."""
+        (tmp_path / ".codex").mkdir()
+
+        result = detect_tools(tmp_path)
+
+        assert "codex" in result
+
     def test_file_signal_detected(self, tmp_path):
         """detect_tools detects tools from file signals (not just dirs)."""
         (tmp_path / "CLAUDE.md").write_text("# Instructions")

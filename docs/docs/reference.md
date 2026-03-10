@@ -26,8 +26,8 @@ title: Reference
 ### agr add
 
 Install skills from GitHub or local paths. Skills are installed into your tool's
-skills folder (e.g. `.claude/skills/`, `.codex/skills/`, `.cursor/skills/`,
-`.opencode/skill/`, `.github/skills/`, `.agent/skills/`).
+skills folder (e.g. `.claude/skills/`, `.agents/skills/`, `.cursor/skills/`,
+`.opencode/skills/`, `.github/skills/`, `.agent/skills/`).
 
 ```bash
 agr add <handle>...

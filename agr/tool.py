@@ -78,11 +78,11 @@ CURSOR = ToolConfig(
 
 # OpenAI Codex tool configuration (flat naming: <skill-name>)
 # Skill paths based on OpenAI Codex documentation:
-# - Project: .codex/skills/
-# - Personal: ~/.codex/skills/
+# - Project: .agents/skills/
+# - Personal: ~/.agents/skills/
 CODEX = ToolConfig(
     name="codex",
-    config_dir=".codex",
+    config_dir=".agents",
     skills_subdir="skills",
     supports_nested=False,
     cli_command="codex",
@@ -98,12 +98,12 @@ CODEX = ToolConfig(
 
 # OpenCode tool configuration (flat naming: <skill-name>)
 # Skill paths based on OpenCode documentation:
-# - Project: .opencode/skill/
-# - Personal: ~/.config/opencode/skill/
+# - Project: .opencode/skills/
+# - Personal: ~/.config/opencode/skills/
 OPENCODE = ToolConfig(
     name="opencode",
     config_dir=".opencode",
-    skills_subdir="skill",
+    skills_subdir="skills",
     supports_nested=False,
     global_config_dir=".config/opencode",
     cli_command="opencode",

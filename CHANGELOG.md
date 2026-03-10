@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### Changed
+- Codex skills directory from `.codex/skills/` to `.agents/skills/` (following Codex upstream change)
+
+### Added
+- Auto-migration from `.codex/skills/` to `.agents/skills/` during `agr sync`
+- Backwards-compatible detection of both `.agents/` and `.codex/` for Codex
+
 ## [0.7.9] - 2026-03-05
 
 ### Added

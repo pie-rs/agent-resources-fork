@@ -152,6 +152,67 @@ def migrate_codex_skills_directory(
         codex_parent.rmdir()
 
 
+def migrate_opencode_skills_directory(
+    old_skills_dir: Path, new_skills_dir: Path, tool: ToolConfig
+) -> None:
+    """Migrate skills from .opencode/skill/ to .opencode/skills/ for OpenCode.
+
+    OpenCode updated its skills directory from skill/ to skills/. This migrates
+    any existing skills installed under the old path.
+
+    Args:
+        old_skills_dir: The old skills directory (e.g., repo_root / ".opencode" / "skill").
+        new_skills_dir: The new skills directory (e.g., repo_root / ".opencode" / "skills").
+        tool: Tool configuration (only runs for opencode).
+    """
+    if tool.name != "opencode":
+        return
+
+    console = get_console()
+
+    if not old_skills_dir.exists():
+        return
+
+    new_skills_dir.mkdir(parents=True, exist_ok=True)
+
+    for skill_dir in old_skills_dir.iterdir():
+        if not skill_dir.is_dir():
+            continue
+
+        target = new_skills_dir / skill_dir.name
+        if target.exists():
+            console.print(
+                f"[yellow]Cannot migrate:[/yellow] .opencode/skill/{skill_dir.name}"
+            )
+            console.print(
+                f"  [dim]Target .opencode/skills/{skill_dir.name} already exists[/dim]"
+            )
+            continue
+
+        try:
+            shutil.move(str(skill_dir), target)
+            console.print(
+                f"[blue]Migrated:[/blue] .opencode/skill/{skill_dir.name} -> .opencode/skills/{skill_dir.name}"
+            )
+        except OSError as e:
+            console.print(
+                f"[red]Failed to migrate:[/red] .opencode/skill/{skill_dir.name}"
+            )
+            console.print(f"  [dim]{e}[/dim]")
+
+    # Warn about non-directory files left behind
+    if old_skills_dir.exists():
+        leftover = [f for f in old_skills_dir.iterdir() if not f.is_dir()]
+        if leftover:
+            console.print(
+                f"[yellow]Note:[/yellow] {len(leftover)} non-skill file(s) remain in .opencode/skill/"
+            )
+
+    # Clean up empty .opencode/skill/ directory (but NOT .opencode/ parent)
+    if old_skills_dir.exists() and not any(old_skills_dir.iterdir()):
+        old_skills_dir.rmdir()
+
+
 def _migrate_legacy_directories(skills_dir: Path, tool: ToolConfig) -> None:
     """Migrate colon-based directory names to the new separator format.
 
@@ -351,6 +412,11 @@ def _run_global_sync() -> None:
             Path.home() / ".agents" / "skills",
             tool,
         )
+        migrate_opencode_skills_directory(
+            Path.home() / ".config" / "opencode" / "skill",
+            Path.home() / ".config" / "opencode" / "skills",
+            tool,
+        )
 
     if not config.dependencies:
         console.print(
@@ -467,6 +533,11 @@ def run_sync(global_install: bool = False) -> None:
         migrate_codex_skills_directory(
             repo_root / ".codex" / "skills",
             repo_root / ".agents" / "skills",
+            tool,
+        )
+        migrate_opencode_skills_directory(
+            repo_root / ".opencode" / "skill",
+            repo_root / ".opencode" / "skills",
             tool,
         )
         skills_dir = tool.get_skills_dir(repo_root)
