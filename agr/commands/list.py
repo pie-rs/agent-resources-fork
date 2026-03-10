@@ -93,10 +93,10 @@ def run_list(global_install: bool = False) -> None:
         # Determine display name and status
         if dep.is_local:
             display_name = dep.path or ""
-            source = "local"
+            kind = "local"
         else:
             display_name = dep.handle or ""
-            source = "remote"
+            kind = "remote"
 
         # Check installation status
         try:
@@ -108,7 +108,7 @@ def run_list(global_install: bool = False) -> None:
         except (InvalidHandleError, AgrError):
             status = "[red]invalid[/red]"
 
-        table.add_row(display_name, source, status)
+        table.add_row(display_name, kind, status)
 
     console.print(table)
 

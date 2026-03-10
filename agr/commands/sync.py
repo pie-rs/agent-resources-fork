@@ -23,7 +23,7 @@ from agr.instructions import (
     canonical_instruction_file,
     sync_instruction_files,
 )
-from agr.tool import ToolConfig
+from agr.tool import ToolConfig, build_global_skills_dirs
 
 
 def _print_sync_summary(installed: int, up_to_date: int, errors: int) -> None:
@@ -125,7 +125,7 @@ def _run_global_sync() -> None:
 
     config = AgrConfig.load(config_path)
     tools = config.get_tools()
-    skills_dirs = {tool.name: tool.get_global_skills_dir() for tool in tools}
+    skills_dirs = build_global_skills_dirs(tools)
 
     run_tool_migrations(tools, repo_root=None, global_install=True)
 
