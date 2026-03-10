@@ -551,7 +551,7 @@ def run_sync(global_install: bool = False) -> None:
     resolver = config.get_source_resolver()
 
     # Track results per dependency (not per tool)
-    results: list[tuple[str, str | None] | None] = [None] * len(config.dependencies)
+    results: list[tuple[str, str | None] | None] = [None for _ in config.dependencies]
     pending_local: list[SyncEntry] = []
     pending_remote: list[SyncEntry] = []
 
