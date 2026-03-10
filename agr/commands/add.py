@@ -2,10 +2,7 @@
 
 from pathlib import Path
 
-from agr.commands.sync import (
-    migrate_codex_skills_directory,
-    migrate_opencode_skills_directory,
-)
+from agr.commands.sync import run_tool_migrations
 from agr.config import (
     AgrConfig,
     Dependency,
@@ -61,29 +58,7 @@ def run_add(
     resolver = config.get_source_resolver()
     if global_install:
         skills_dirs = {tool.name: tool.get_global_skills_dir() for tool in tools}
-        for tool in tools:
-            migrate_codex_skills_directory(
-                Path.home() / ".codex" / "skills",
-                Path.home() / ".agents" / "skills",
-                tool,
-            )
-            migrate_opencode_skills_directory(
-                Path.home() / ".config" / "opencode" / "skill",
-                Path.home() / ".config" / "opencode" / "skills",
-                tool,
-            )
-    elif repo_root:
-        for tool in tools:
-            migrate_codex_skills_directory(
-                repo_root / ".codex" / "skills",
-                repo_root / ".agents" / "skills",
-                tool,
-            )
-            migrate_opencode_skills_directory(
-                repo_root / ".opencode" / "skill",
-                repo_root / ".opencode" / "skills",
-                tool,
-            )
+    run_tool_migrations(tools, repo_root, global_install=global_install)
 
     # Track results for summary
     results: list[tuple[str, bool, str]] = []  # (ref, success, message)
