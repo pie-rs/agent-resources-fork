@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from agr.commands.sync import run_tool_migrations
+from agr.commands.migrations import run_tool_migrations
 from agr.config import (
     AgrConfig,
     Dependency,
