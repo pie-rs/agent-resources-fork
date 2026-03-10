@@ -173,6 +173,18 @@ DEFAULT_TOOL_NAMES: list[str] = ["claude"]
 DEFAULT_TOOL = CLAUDE
 
 
+def build_global_skills_dirs(tools: list[ToolConfig]) -> dict[str, Path]:
+    """Build a mapping of tool name to global skills directory.
+
+    Args:
+        tools: List of ToolConfig instances
+
+    Returns:
+        Dict mapping tool name to its global skills directory path
+    """
+    return {tool.name: tool.get_global_skills_dir() for tool in tools}
+
+
 def get_tool(name: str) -> ToolConfig:
     """Get tool configuration by name.
 

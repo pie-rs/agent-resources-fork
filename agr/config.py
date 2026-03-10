@@ -393,6 +393,30 @@ def find_repo_root(start_path: Path | None = None) -> Path | None:
         current = parent
 
 
+def require_repo_root(start_path: Path | None = None) -> Path:
+    """Find the git repository root or exit with an error.
+
+    Like ``find_repo_root``, but prints an error message and raises
+    ``SystemExit(1)`` when no git repository is found.
+
+    Args:
+        start_path: Directory to start searching from (defaults to cwd)
+
+    Returns:
+        Path to repo root
+
+    Raises:
+        SystemExit: If not inside a git repository
+    """
+    repo_root = find_repo_root(start_path)
+    if repo_root is None:
+        from agr.console import get_console
+
+        get_console().print("[red]Error:[/red] Not in a git repository")
+        raise SystemExit(1)
+    return repo_root
+
+
 def get_or_create_config(start_path: Path | None = None) -> tuple[Path, AgrConfig]:
     """Get existing config or create new one.
 

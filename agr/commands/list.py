@@ -4,11 +4,11 @@ from pathlib import Path
 
 from rich.table import Table
 
-from agr.config import AgrConfig, find_config, find_repo_root, get_global_config_path
+from agr.config import AgrConfig, find_config, get_global_config_path, require_repo_root
 from agr.console import get_console
 from agr.fetcher import is_skill_installed
 from agr.handle import ParsedHandle, parse_handle
-from agr.tool import ToolConfig
+from agr.tool import ToolConfig, build_global_skills_dirs
 
 
 def _get_installation_status(
@@ -63,11 +63,7 @@ def run_list(global_install: bool = False) -> None:
             console.print("[dim]Run 'agr add -g <handle>' to create one.[/dim]")
             return
     else:
-        # Find repo root
-        repo_root = find_repo_root()
-        if repo_root is None:
-            console.print("[red]Error:[/red] Not in a git repository")
-            raise SystemExit(1)
+        repo_root = require_repo_root()
 
         # Find config
         config_path = find_config()
@@ -79,7 +75,7 @@ def run_list(global_install: bool = False) -> None:
     config = AgrConfig.load(config_path)
     tools = config.get_tools()
     if global_install:
-        skills_dirs = {tool.name: tool.get_global_skills_dir() for tool in tools}
+        skills_dirs = build_global_skills_dirs(tools)
 
     if not config.dependencies:
         console.print("[yellow]No dependencies in agr.toml.[/yellow]")

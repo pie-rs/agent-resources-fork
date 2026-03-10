@@ -4,7 +4,7 @@ import shutil
 from dataclasses import dataclass
 from pathlib import Path
 
-from agr.config import AgrConfig, find_config, find_repo_root, get_global_config_path
+from agr.config import AgrConfig, find_config, get_global_config_path, require_repo_root
 from agr.console import get_console
 from agr.exceptions import AgrError
 from agr.fetcher import (
@@ -529,11 +529,7 @@ def run_sync(global_install: bool = False) -> None:
         _run_global_sync()
         return
 
-    # Find repo root
-    repo_root = find_repo_root()
-    if repo_root is None:
-        console.print("[red]Error:[/red] Not in a git repository")
-        raise SystemExit(1)
+    repo_root = require_repo_root()
 
     # Find config
     config_path = find_config()
