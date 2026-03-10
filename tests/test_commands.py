@@ -191,6 +191,29 @@ class TestMaybeSuggestRepoSkills:
         assert "agr add remorses/playwriter/playwright-test" in result
         assert "owner/repo/skill-name" in result
 
+    def test_suggests_sorted_unique_skills(self, monkeypatch):
+        """Suggestions should be sorted and unique."""
+        from agr.commands.add import _maybe_suggest_repo_skills
+        from agr.handle import ParsedHandle
+        from agr.source import SourceResolver, default_sources, DEFAULT_SOURCE_NAME
+
+        handle = ParsedHandle(username="owner", name="repo")
+        resolver = SourceResolver(default_sources(), DEFAULT_SOURCE_NAME)
+
+        monkeypatch.setattr(
+            "agr.commands.add.list_remote_repo_skills",
+            lambda *args, **kwargs: ["beta", "alpha", "beta", ""],
+        )
+
+        result = _maybe_suggest_repo_skills("owner/repo", handle, resolver, None)
+        assert result is not None
+
+        lines = [line.strip() for line in result.splitlines() if line.strip().startswith("agr add")]
+        assert lines == [
+            "agr add owner/repo/alpha",
+            "agr add owner/repo/beta",
+        ]
+
     def test_returns_none_for_three_part_handle(self):
         """Returns None for three-part handles (explicit repo)."""
         from agr.commands.add import _maybe_suggest_repo_skills
