@@ -269,7 +269,7 @@ class TestMaybeSuggestRepoSkills:
         resolver = SourceResolver(default_sources(), DEFAULT_SOURCE_NAME)
 
         def raise_error(*args, **kwargs):
-            raise RuntimeError("network error")
+            raise OSError("network error")
 
         monkeypatch.setattr(
             "agr.commands.add.list_remote_repo_skills",

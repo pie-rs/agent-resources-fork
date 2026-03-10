@@ -173,7 +173,7 @@ def _maybe_suggest_repo_skills(
 
     try:
         skills = list_remote_repo_skills(owner, repo_name, resolver, source)
-    except Exception:
+    except (AgrError, OSError):
         return None
 
     if not skills:

@@ -6,6 +6,7 @@ from rich.table import Table
 
 from agr.config import AgrConfig, find_config, get_global_config_path, require_repo_root
 from agr.console import get_console
+from agr.exceptions import AgrError, InvalidHandleError
 from agr.fetcher import is_skill_installed
 from agr.handle import ParsedHandle
 from agr.tool import ToolConfig, build_global_skills_dirs
@@ -104,7 +105,7 @@ def run_list(global_install: bool = False) -> None:
             status = _get_installation_status(
                 handle, repo_root, tools, source_name, skills_dirs
             )
-        except Exception:
+        except (InvalidHandleError, AgrError):
             status = "[red]invalid[/red]"
 
         table.add_row(display_name, source, status)

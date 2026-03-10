@@ -10,6 +10,7 @@ from agr.config import (
     require_repo_root,
 )
 from agr.console import get_console
+from agr.exceptions import AgrError
 from agr.fetcher import uninstall_skill
 from agr.handle import ParsedHandle, parse_handle
 from agr.tool import build_global_skills_dirs
@@ -129,7 +130,7 @@ def run_remove(refs: list[str], global_install: bool = False) -> None:
             else:
                 results.append((ref, False, "Not found"))
 
-        except Exception as e:
+        except (AgrError, OSError) as e:
             results.append((ref, False, str(e)))
 
     # Save config if any changes
