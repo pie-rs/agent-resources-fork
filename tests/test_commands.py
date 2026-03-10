@@ -208,7 +208,11 @@ class TestMaybeSuggestRepoSkills:
         result = _maybe_suggest_repo_skills("owner/repo", handle, resolver, None)
         assert result is not None
 
-        lines = [line.strip() for line in result.splitlines() if line.strip().startswith("agr add")]
+        lines = [
+            line.strip()
+            for line in result.splitlines()
+            if line.strip().startswith("agr add")
+        ]
         assert lines == [
             "agr add owner/repo/alpha",
             "agr add owner/repo/beta",
