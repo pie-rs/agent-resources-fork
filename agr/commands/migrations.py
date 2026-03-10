@@ -219,6 +219,26 @@ def migrate_legacy_directories(skills_dir: Path, tool: ToolConfig) -> None:
             console.print(f"  [dim]{e}[/dim]")
 
 
+def _update_dir_metadata(
+    skill_dir: Path,
+    handle: ParsedHandle,
+    repo_root: Path,
+    tool_name: str,
+    source_name: str | None,
+) -> None:
+    """Update SKILL.md name and write metadata for a skill directory."""
+    update_skill_md_name(skill_dir, skill_dir.name)
+    write_skill_metadata(
+        skill_dir,
+        handle,
+        repo_root,
+        tool_name,
+        skill_dir.name,
+        source_name,
+        compute_content_hash(skill_dir),
+    )
+
+
 def migrate_flat_installed_names(
     skills_dir: Path,
     tool: ToolConfig,
@@ -279,15 +299,8 @@ def migrate_flat_installed_names(
             if name_dir_is_skill:
                 meta = read_skill_metadata(name_dir)
                 if not meta or meta.get("id") != handle_id:
-                    update_skill_md_name(name_dir, name_dir.name)
-                    write_skill_metadata(
-                        name_dir,
-                        handle,
-                        repo_root,
-                        tool.name,
-                        name_dir.name,
-                        source_name,
-                        compute_content_hash(name_dir),
+                    _update_dir_metadata(
+                        name_dir, handle, repo_root, tool.name, source_name
                     )
                 continue
 
@@ -297,15 +310,8 @@ def migrate_flat_installed_names(
                 if not name_dir.exists():
                     try:
                         full_dir.rename(name_dir)
-                        update_skill_md_name(name_dir, name_dir.name)
-                        write_skill_metadata(
-                            name_dir,
-                            handle,
-                            repo_root,
-                            tool.name,
-                            name_dir.name,
-                            source_name,
-                            compute_content_hash(name_dir),
+                        _update_dir_metadata(
+                            name_dir, handle, repo_root, tool.name, source_name
                         )
                         console.print(
                             f"[blue]Migrated:[/blue] {full_dir.name} -> {name_dir.name}"
@@ -320,28 +326,14 @@ def migrate_flat_installed_names(
 
         # Multiple handles with same name: avoid renaming to plain name
         if matched_handle:
-            update_skill_md_name(name_dir, name_dir.name)
-            write_skill_metadata(
-                name_dir,
-                matched_handle[0],
-                repo_root,
-                tool.name,
-                name_dir.name,
-                matched_handle[1],
-                compute_content_hash(name_dir),
+            _update_dir_metadata(
+                name_dir, matched_handle[0], repo_root, tool.name, matched_handle[1]
             )
 
         # Ensure metadata on full-name dirs for all handles
         for handle, source_name in handles:
             full_dir = skills_dir / handle.to_installed_name()
             if is_valid_skill_dir(full_dir):
-                update_skill_md_name(full_dir, full_dir.name)
-                write_skill_metadata(
-                    full_dir,
-                    handle,
-                    repo_root,
-                    tool.name,
-                    full_dir.name,
-                    source_name,
-                    compute_content_hash(full_dir),
+                _update_dir_metadata(
+                    full_dir, handle, repo_root, tool.name, source_name
                 )
