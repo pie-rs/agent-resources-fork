@@ -18,7 +18,6 @@ from agr.handle import (
     INSTALLED_NAME_SEPARATOR,
     LEGACY_SEPARATOR,
     ParsedHandle,
-    parse_handle,
 )
 from agr.instructions import (
     canonical_instruction_file,
@@ -324,17 +323,11 @@ def _migrate_flat_installed_names(
     # Build handles from config dependencies
     handles_by_name: dict[str, list[tuple[ParsedHandle, str | None]]] = {}
     for dep in config.dependencies:
-        ref = dep.path or dep.handle or ""
-        if not ref:
+        if not (dep.path or dep.handle):
             continue
         try:
-            if dep.is_local:
-                path = Path(ref)
-                handle = ParsedHandle(is_local=True, name=path.name, local_path=path)
-                source_name = None
-            else:
-                handle = parse_handle(ref, prefer_local=False)
-                source_name = dep.source or config.default_source
+            handle = dep.to_parsed_handle()
+            source_name = dep.resolve_source_name(config.default_source)
         except Exception:
             continue
         handles_by_name.setdefault(handle.name, []).append((handle, source_name))
@@ -463,15 +456,9 @@ def _run_global_sync() -> None:
 
     for dep in config.dependencies:
         identifier = dep.identifier
-        ref = dep.path or dep.handle or ""
         try:
-            if dep.is_local:
-                path = Path(ref)
-                handle = ParsedHandle(is_local=True, name=path.name, local_path=path)
-                source_name = None
-            else:
-                handle = parse_handle(ref, prefer_local=False)
-                source_name = dep.source or config.default_source
+            handle = dep.to_parsed_handle()
+            source_name = dep.resolve_source_name(config.default_source)
 
             tools_needing_install = _filter_tools_needing_install(
                 handle, None, tools, source_name, skills_dirs
@@ -571,14 +558,8 @@ def run_sync(global_install: bool = False) -> None:
     for index, dep in enumerate(config.dependencies):
         identifier = dep.identifier
         try:
-            # Parse handle
-            ref = dep.path or dep.handle or ""
-            if dep.is_local:
-                path = Path(ref)
-                handle = ParsedHandle(is_local=True, name=path.name, local_path=path)
-            else:
-                handle = parse_handle(ref, prefer_local=False)
-            source_name = None if dep.is_local else dep.source or config.default_source
+            handle = dep.to_parsed_handle()
+            source_name = dep.resolve_source_name(config.default_source)
 
             tools_needing_install = _filter_tools_needing_install(
                 handle, repo_root, tools, source_name

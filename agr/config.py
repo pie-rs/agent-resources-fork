@@ -8,6 +8,7 @@ from tomlkit import TOMLDocument
 from tomlkit.exceptions import TOMLKitError
 
 from agr.exceptions import ConfigError
+from agr.handle import ParsedHandle, parse_handle
 from agr.source import (
     DEFAULT_SOURCE_NAME,
     SourceConfig,
@@ -56,6 +57,24 @@ class Dependency:
     def identifier(self) -> str:
         """Unique identifier (path or handle)."""
         return self.path or self.handle or ""
+
+    def to_parsed_handle(self) -> ParsedHandle:
+        """Parse this dependency's reference into a ParsedHandle."""
+        ref = self.path or self.handle or ""
+        if self.is_local:
+            path = Path(ref)
+            return ParsedHandle(is_local=True, name=path.name, local_path=path)
+        return parse_handle(ref, prefer_local=False)
+
+    def resolve_source_name(self, default_source: str | None = None) -> str | None:
+        """Get the effective source name for this dependency.
+
+        Returns None for local dependencies, otherwise the explicit
+        source or the provided default.
+        """
+        if self.is_local:
+            return None
+        return self.source or default_source
 
 
 @dataclass
