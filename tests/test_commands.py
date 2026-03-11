@@ -340,7 +340,7 @@ class TestSyncCommand:
             "agr.commands.sync.fetch_and_install_to_tools", fake_fetch_and_install
         )
         monkeypatch.setattr(
-            "agr.commands.sync.is_skill_installed", lambda *args, **kwargs: False
+            "agr.fetcher.is_skill_installed", lambda *args, **kwargs: False
         )
 
         run_sync()

@@ -15,8 +15,8 @@ from agr.exceptions import INSTALL_ERROR_TYPES, format_install_error
 from agr.fetcher import (
     downloaded_repo,
     fetch_and_install_to_tools,
+    filter_tools_needing_install,
     install_skill_from_repo_to_tools,
-    is_skill_installed,
     prepare_repo_for_skills,
     skill_not_found_message,
 )
@@ -43,27 +43,6 @@ def _print_sync_summary(installed: int, up_to_date: int, errors: int) -> None:
 
     if errors:
         raise SystemExit(1)
-
-
-def _filter_tools_needing_install(
-    handle: ParsedHandle,
-    repo_root: Path | None,
-    tools: list[ToolConfig],
-    source_name: str | None,
-    skills_dirs: dict[str, Path] | None = None,
-) -> list[ToolConfig]:
-    """Return tools where the given skill is not yet installed."""
-    return [
-        tool
-        for tool in tools
-        if not is_skill_installed(
-            handle,
-            repo_root,
-            tool,
-            source_name,
-            skills_dir=skills_dirs.get(tool.name) if skills_dirs else None,
-        )
-    ]
 
 
 class SyncStatus(Enum):
@@ -166,7 +145,7 @@ def _run_global_sync() -> None:
             handle = dep.to_parsed_handle()
             source_name = dep.resolve_source_name(config.default_source)
 
-            tools_needing_install = _filter_tools_needing_install(
+            tools_needing_install = filter_tools_needing_install(
                 handle, None, tools, source_name, skills_dirs
             )
 
@@ -247,7 +226,7 @@ def run_sync(global_install: bool = False) -> None:
             handle = dep.to_parsed_handle()
             source_name = dep.resolve_source_name(config.default_source)
 
-            tools_needing_install = _filter_tools_needing_install(
+            tools_needing_install = filter_tools_needing_install(
                 handle, repo_root, tools, source_name
             )
 
@@ -272,7 +251,7 @@ def run_sync(global_install: bool = False) -> None:
         """Fetch and install a list of sync entries individually."""
         for entry in entries:
             handle = entry.handle
-            tools_needing_install = _filter_tools_needing_install(
+            tools_needing_install = filter_tools_needing_install(
                 handle, repo_root, tools, entry.source_name
             )
             if not tools_needing_install:
@@ -318,7 +297,7 @@ def run_sync(global_install: bool = False) -> None:
                 skill_sources = prepare_repo_for_skills(repo_dir, skill_names)
                 for entry in entries:
                     handle = entry.handle
-                    tools_needing_install = _filter_tools_needing_install(
+                    tools_needing_install = filter_tools_needing_install(
                         handle, repo_root, tools, entry.source_name
                     )
                     if not tools_needing_install:

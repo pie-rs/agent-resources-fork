@@ -10,7 +10,7 @@ from pathlib import Path
 from agr.config import AgrConfig, find_repo_root
 from agr.console import get_console
 from agr.exceptions import INSTALL_ERROR_TYPES, format_install_error
-from agr.fetcher import fetch_and_install_to_tools, is_skill_installed
+from agr.fetcher import fetch_and_install_to_tools, filter_tools_needing_install
 from agr.tool import TOOLS
 
 
@@ -62,11 +62,9 @@ def sync_dependencies_to_tools(config: AgrConfig, tool_names: list[str]) -> int:
             handle = dep.to_parsed_handle()
             source_name = dep.resolve_source_name(config.default_source)
 
-            tools_needing_install = [
-                tool
-                for tool in new_tools
-                if not is_skill_installed(handle, repo_root, tool, source_name)
-            ]
+            tools_needing_install = filter_tools_needing_install(
+                handle, repo_root, new_tools, source_name
+            )
 
             if not tools_needing_install:
                 continue

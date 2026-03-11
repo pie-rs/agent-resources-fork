@@ -1124,3 +1124,35 @@ def is_skill_installed(
     resolved_dir = _resolve_skills_dir(skills_dir, repo_root, tool)
     skill_path = _find_existing_skill_dir(handle, resolved_dir, tool, repo_root, source)
     return bool(skill_path and is_valid_skill_dir(skill_path))
+
+
+def filter_tools_needing_install(
+    handle: ParsedHandle,
+    repo_root: Path | None,
+    tools: list[ToolConfig],
+    source_name: str | None,
+    skills_dirs: dict[str, Path] | None = None,
+) -> list[ToolConfig]:
+    """Return tools where the given skill is not yet installed.
+
+    Args:
+        handle: Parsed handle identifying the skill
+        repo_root: Repository root path (project installs) or None (global installs)
+        tools: List of tool configurations to check
+        source_name: Source name for remote skills
+        skills_dirs: Optional mapping of tool name to explicit skills directory
+
+    Returns:
+        Subset of tools where the skill still needs to be installed
+    """
+    return [
+        tool
+        for tool in tools
+        if not is_skill_installed(
+            handle,
+            repo_root,
+            tool,
+            source_name,
+            skills_dir=skills_dirs.get(tool.name) if skills_dirs else None,
+        )
+    ]
