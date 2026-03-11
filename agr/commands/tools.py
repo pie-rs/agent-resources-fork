@@ -1,19 +1,17 @@
 """agr tool-configuration command implementations (deprecated).
 
 The ``run_*`` functions here back the deprecated ``agr tools`` sub-commands.
-Shared helpers now live in ``agr.commands._tool_helpers``; this module
-re-exports them under their old ``_``-prefixed names so that existing
-callers continue to work.
+Shared helpers live in ``agr.commands._tool_helpers``.
 """
 
 from agr.config import AgrConfig, find_config, find_repo_root
 from agr.console import get_console
 from agr.commands._tool_helpers import (
-    delete_tool_skills as _delete_tool_skills,
-    ensure_valid_default_tool as _ensure_valid_default_tool,
-    normalize_tool_names as _normalize_tool_names,
-    sync_dependencies_to_tools as _sync_dependencies_to_tools,
-    validate_tool_names as _validate_tool_names,
+    delete_tool_skills,
+    ensure_valid_default_tool,
+    normalize_tool_names,
+    sync_dependencies_to_tools,
+    validate_tool_names,
 )
 
 from agr.tool import DEFAULT_TOOL_NAMES, TOOLS
@@ -60,8 +58,8 @@ def run_tools_list() -> None:
 def run_tools_add(tool_names: list[str]) -> None:
     """Add tools and sync existing dependencies to newly added tools."""
     console = get_console()
-    names = list(dict.fromkeys(_normalize_tool_names(tool_names)))
-    _validate_tool_names(names)
+    names = list(dict.fromkeys(normalize_tool_names(tool_names)))
+    validate_tool_names(names)
 
     config = _load_required_config()
 
@@ -79,7 +77,7 @@ def run_tools_add(tool_names: list[str]) -> None:
     for name in skipped:
         console.print(f"[dim]Already configured:[/dim] {name}")
 
-    sync_errors = _sync_dependencies_to_tools(config, added)
+    sync_errors = sync_dependencies_to_tools(config, added)
     config.save()
 
     if sync_errors:
@@ -92,13 +90,13 @@ def run_tools_add(tool_names: list[str]) -> None:
 def run_tools_set(tool_names: list[str]) -> None:
     """Replace configured tools with the provided list."""
     console = get_console()
-    names = list(dict.fromkeys(_normalize_tool_names(tool_names)))
+    names = list(dict.fromkeys(normalize_tool_names(tool_names)))
     if not names:
         console.print("[red]Error:[/red] Cannot set empty tools list.")
         console.print("[dim]At least one tool must be configured.[/dim]")
         raise SystemExit(1)
 
-    _validate_tool_names(names)
+    validate_tool_names(names)
     config = _load_required_config()
 
     previous_tools = list(config.tools)
@@ -107,7 +105,7 @@ def run_tools_set(tool_names: list[str]) -> None:
     removed = [name for name in previous_tools if name not in names]
 
     config.tools = names
-    _ensure_valid_default_tool(config, previous_default_tool)
+    ensure_valid_default_tool(config, previous_default_tool)
 
     if added:
         console.print(f"[green]Added:[/green] {', '.join(added)}")
@@ -118,7 +116,7 @@ def run_tools_set(tool_names: list[str]) -> None:
     elif not added and not removed:
         console.print("[green]Updated:[/green] Tool order changed")
 
-    sync_errors = _sync_dependencies_to_tools(config, added)
+    sync_errors = sync_dependencies_to_tools(config, added)
     config.save()
 
     if sync_errors:
@@ -131,8 +129,8 @@ def run_tools_set(tool_names: list[str]) -> None:
 def run_tools_remove(tool_names: list[str]) -> None:
     """Remove tools from configuration and delete their installed skills."""
     console = get_console()
-    names = list(dict.fromkeys(_normalize_tool_names(tool_names)))
-    _validate_tool_names(names)
+    names = list(dict.fromkeys(normalize_tool_names(tool_names)))
+    validate_tool_names(names)
 
     config = _load_required_config()
     previous_default_tool = config.default_tool
@@ -153,13 +151,13 @@ def run_tools_remove(tool_names: list[str]) -> None:
             continue
 
         console.print(f"[yellow]Removing:[/yellow] {name}")
-        if not _delete_tool_skills(name, repo_root):
+        if not delete_tool_skills(name, repo_root):
             continue
 
         config.tools.remove(name)
         removed.append(name)
 
-    _ensure_valid_default_tool(config, previous_default_tool)
+    ensure_valid_default_tool(config, previous_default_tool)
     config.save()
 
     for name in removed:
@@ -171,13 +169,13 @@ def run_tools_remove(tool_names: list[str]) -> None:
 def run_default_tool_set(tool_name: str) -> None:
     """Set default_tool in agr.toml."""
     console = get_console()
-    normalized = _normalize_tool_names([tool_name])
+    normalized = normalize_tool_names([tool_name])
     if not normalized:
         console.print("[red]Error:[/red] Tool name is required.")
         raise SystemExit(1)
 
     name = normalized[0]
-    _validate_tool_names([name])
+    validate_tool_names([name])
     config = _load_required_config()
 
     if name not in config.tools:
