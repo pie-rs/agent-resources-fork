@@ -48,15 +48,24 @@ This installs two commands:
 
 ## Step 2: Set up a project
 
-Navigate to a project where you use an AI coding tool, then initialize agr:
+Navigate to a project where you use an AI coding tool:
 
 ```bash
 cd your-project
+```
+
+You can optionally run `agr init` to create `agr.toml` up front:
+
+```bash
 agr init
 ```
 
 This creates an `agr.toml` file and auto-detects which tools you use based on
 repo signals (`.claude/`, `CLAUDE.md`, `.cursor/`, `.cursorrules`, etc.).
+
+??? tip "Skip this step"
+    `agr init` is optional. If you jump straight to `agr add` in the next step,
+    agr auto-creates `agr.toml` and detects your tools automatically.
 
 ??? tip "Prefer a guided setup?"
     Run `agr onboard` instead. It walks you through tool selection, skill

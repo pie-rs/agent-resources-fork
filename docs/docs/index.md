@@ -6,14 +6,6 @@ title: Home
 
 A package and project manager for AI agent skills. Install, share, and run skills from GitHub with a single command.
 
-!!! note "Migrating from rules, subagents, or slash commands?"
-    Support for rules, subagents, and slash commands has been removed. Most AI coding agents are converging on skills as the standard format, so agr now focuses exclusively on skills. To convert your existing files to skills, run:
-
-    ```bash
-    agrx kasperjunge/migrate-to-skills
-    agrx kasperjunge/migrate-to-skills -p "convert files in ./my-commands"
-    ```
-
 ## Install
 
 === "uv (recommended)"
@@ -46,6 +38,11 @@ This installs the skill into your tool's skills folder. Once installed, invoke
 it in your tool — type `/frontend-design` in Claude Code or Cursor,
 `$frontend-design` in Codex, or just `frontend-design` in OpenCode. Use
 `--source <name>` to pick a non-default source from `agr.toml`.
+
+!!! tip "No setup required"
+    `agr add` auto-creates `agr.toml` if it doesn't exist and detects which
+    tools you use. You don't need to run `agr init` first — just start adding
+    skills.
 
 ### Run a Skill Once (no install)
 
@@ -158,6 +155,19 @@ agr add anthropics/skills/pdf                # Work with PDF documents
 ```
 
 Browse more at [github.com/anthropics/skills](https://github.com/anthropics/skills).
+
+## Migrating from Rules, Subagents, or Slash Commands?
+
+Most AI coding agents are converging on skills as the standard format. If you
+have old `.claude/commands/`, `.cursorrules`, or similar files, convert them:
+
+```bash
+agrx kasperjunge/migrate-to-skills
+agrx kasperjunge/migrate-to-skills -p "convert files in ./my-commands"
+```
+
+See [Guides — Migrating](guides.md#migrating-from-manual-skill-management) for
+a full walkthrough.
 
 ## Next Steps
 

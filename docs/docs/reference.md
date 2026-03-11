@@ -29,6 +29,9 @@ Install skills from GitHub or local paths. Skills are installed into your tool's
 skills folder (e.g. `.claude/skills/`, `.agents/skills/`, `.cursor/skills/`,
 `.opencode/skills/`, `.github/skills/`, `.agent/skills/`).
 
+If no `agr.toml` exists, `agr add` creates one automatically and detects which
+tools you use from repo signals. You don't need to run `agr init` first.
+
 ```bash
 agr add <handle>...
 ```
