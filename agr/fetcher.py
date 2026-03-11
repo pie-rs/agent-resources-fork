@@ -1,11 +1,11 @@
 """GitHub download and skill installation."""
 
 import logging
-import warnings
 import os
 import shutil
 import subprocess
 import tempfile
+import warnings
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Generator, NamedTuple
@@ -1060,10 +1060,8 @@ def _cleanup_empty_parents(path: Path, stop_at: Path) -> None:
 
     while current != stop_at and current.exists():
         # Safety: ensure we're still within stop_at
-        try:
-            current.relative_to(stop_at)
-        except ValueError:
-            break  # Escaped the directory
+        if not current.is_relative_to(stop_at):
+            break
 
         if current.is_dir() and not any(current.iterdir()):
             try:
@@ -1097,13 +1095,13 @@ def get_installed_skills(repo_root: Path, tool: ToolConfig = DEFAULT_TOOL) -> li
             skill_path = skill_md.parent.relative_to(skills_dir)
             skills.append(str(skill_path))
         return skills
-    else:
-        # For flat tools, just list top-level directories
-        return [
-            d.name
-            for d in skills_dir.iterdir()
-            if d.is_dir() and (d / SKILL_MARKER).exists()
-        ]
+
+    # For flat tools, just list top-level directories
+    return [
+        d.name
+        for d in skills_dir.iterdir()
+        if d.is_dir() and (d / SKILL_MARKER).exists()
+    ]
 
 
 def is_skill_installed(
