@@ -1,8 +1,8 @@
 """agr add command implementation."""
 
-from dataclasses import dataclass
 from pathlib import Path
 
+from agr.commands import CommandResult
 from agr.commands.migrations import run_tool_migrations
 from agr.config import (
     AgrConfig,
@@ -23,15 +23,6 @@ from agr.fetcher import fetch_and_install_to_tools, list_remote_repo_skills
 from agr.handle import ParsedHandle, parse_handle
 from agr.source import SourceResolver
 from agr.tool import build_global_skills_dirs
-
-
-@dataclass
-class AddResult:
-    """Result of adding a single skill."""
-
-    ref: str
-    success: bool
-    message: str
 
 
 def run_add(
@@ -73,7 +64,7 @@ def run_add(
     run_tool_migrations(tools, repo_root, global_install=global_install)
 
     # Track results for summary
-    results: list[AddResult] = []
+    results: list[CommandResult] = []
 
     for ref in refs:
         try:
@@ -121,13 +112,13 @@ def run_add(
                     )
                 )
 
-            results.append(AddResult(ref, True, ", ".join(installed_paths)))
+            results.append(CommandResult(ref, True, ", ".join(installed_paths)))
 
         except SkillNotFoundError as e:
             message = _maybe_suggest_repo_skills(ref, handle, resolver, source)
-            results.append(AddResult(ref, False, message or str(e)))
+            results.append(CommandResult(ref, False, message or str(e)))
         except INSTALL_ERROR_TYPES as e:
-            results.append(AddResult(ref, False, format_install_error(e)))
+            results.append(CommandResult(ref, False, format_install_error(e)))
 
     # Save config if any successes
     successes = [r for r in results if r.success]

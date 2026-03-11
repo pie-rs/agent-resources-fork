@@ -1,8 +1,8 @@
 """agr remove command implementation."""
 
-from dataclasses import dataclass
 from pathlib import Path
 
+from agr.commands import CommandResult
 from agr.commands.migrations import run_tool_migrations
 from agr.config import (
     AgrConfig,
@@ -15,15 +15,6 @@ from agr.exceptions import INSTALL_ERROR_TYPES, format_install_error
 from agr.fetcher import uninstall_skill
 from agr.handle import ParsedHandle, parse_handle
 from agr.tool import build_global_skills_dirs
-
-
-@dataclass
-class RemoveResult:
-    """Result of removing a single skill."""
-
-    ref: str
-    success: bool
-    message: str
 
 
 def _identifier_candidates(
@@ -89,7 +80,7 @@ def run_remove(refs: list[str], global_install: bool = False) -> None:
     run_tool_migrations(tools, repo_root, global_install=global_install)
 
     # Track results
-    results: list[RemoveResult] = []
+    results: list[CommandResult] = []
 
     for ref in refs:
         try:
@@ -136,12 +127,12 @@ def run_remove(refs: list[str], global_install: bool = False) -> None:
                     break
 
             if removed_fs or removed_config:
-                results.append(RemoveResult(ref, True, "Removed"))
+                results.append(CommandResult(ref, True, "Removed"))
             else:
-                results.append(RemoveResult(ref, False, "Not found"))
+                results.append(CommandResult(ref, False, "Not found"))
 
         except INSTALL_ERROR_TYPES as e:
-            results.append(RemoveResult(ref, False, format_install_error(e)))
+            results.append(CommandResult(ref, False, format_install_error(e)))
 
     # Save config if any changes
     successes = [r for r in results if r.success]
