@@ -1,5 +1,6 @@
 """agr remove command implementation."""
 
+from dataclasses import dataclass
 from pathlib import Path
 
 from agr.commands.migrations import run_tool_migrations
@@ -14,6 +15,15 @@ from agr.exceptions import AgrError
 from agr.fetcher import uninstall_skill
 from agr.handle import ParsedHandle, parse_handle
 from agr.tool import build_global_skills_dirs
+
+
+@dataclass
+class RemoveResult:
+    """Result of removing a single skill."""
+
+    ref: str
+    success: bool
+    message: str
 
 
 def _identifier_candidates(
@@ -79,7 +89,7 @@ def run_remove(refs: list[str], global_install: bool = False) -> None:
     run_tool_migrations(tools, repo_root, global_install=global_install)
 
     # Track results
-    results: list[tuple[str, bool, str]] = []
+    results: list[RemoveResult] = []
 
     for ref in refs:
         try:
@@ -126,27 +136,27 @@ def run_remove(refs: list[str], global_install: bool = False) -> None:
                     break
 
             if removed_fs or removed_config:
-                results.append((ref, True, "Removed"))
+                results.append(RemoveResult(ref, True, "Removed"))
             else:
-                results.append((ref, False, "Not found"))
+                results.append(RemoveResult(ref, False, "Not found"))
 
         except (AgrError, OSError) as e:
-            results.append((ref, False, str(e)))
+            results.append(RemoveResult(ref, False, str(e)))
 
     # Save config if any changes
-    successes = [r for r in results if r[1]]
+    successes = [r for r in results if r.success]
     if successes:
         config.save(config_path)
 
     # Print results
-    for ref, success, message in results:
-        if success:
-            console.print(f"[green]Removed:[/green] {ref}")
-        elif message == "Not found":
-            console.print(f"[yellow]Not found:[/yellow] {ref}")
+    for result in results:
+        if result.success:
+            console.print(f"[green]Removed:[/green] {result.ref}")
+        elif result.message == "Not found":
+            console.print(f"[yellow]Not found:[/yellow] {result.ref}")
         else:
-            console.print(f"[red]Error:[/red] {ref}")
-            console.print(f"  [dim]{message}[/dim]")
+            console.print(f"[red]Error:[/red] {result.ref}")
+            console.print(f"  [dim]{result.message}[/dim]")
 
     # Summary
     if len(refs) > 1:
