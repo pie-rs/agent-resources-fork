@@ -169,7 +169,8 @@ def parse_handle(ref: str, *, prefer_local: bool = True) -> ParsedHandle:
     Args:
         ref: Handle string. Examples:
             - "kasperjunge/commit" -> remote, user=kasperjunge, name=commit
-            - "maragudk/skills/collaboration" -> remote, user=maragudk, repo=skills, name=collaboration
+            - "maragudk/skills/collaboration" -> remote,
+              user=maragudk, repo=skills, name=collaboration
             - "./my-skill" -> local, name=my-skill
             - "../other/skill" -> local, name=skill
         prefer_local: Prefer local paths when the ref exists on disk.
@@ -239,7 +240,8 @@ def parse_handle(ref: str, *, prefer_local: bool = True) -> ParsedHandle:
         )
 
     raise InvalidHandleError(
-        f"Invalid handle '{ref}': too many path segments (expected user/name or user/repo/name)"
+        f"Invalid handle '{ref}': too many path segments "
+        "(expected user/name or user/repo/name)"
     )
 
 
@@ -255,7 +257,9 @@ def _validate_no_separator_in_name(ref: str, name: str) -> None:
     """
     if INSTALLED_NAME_SEPARATOR in name:
         raise InvalidHandleError(
-            f"Invalid handle '{ref}': name '{name}' contains reserved sequence '{INSTALLED_NAME_SEPARATOR}'"
+            f"Invalid handle '{ref}': name '{name}' "
+            f"contains reserved sequence "
+            f"'{INSTALLED_NAME_SEPARATOR}'"
         )
 
 
@@ -285,14 +289,18 @@ def _validate_no_separator_in_components(
     ]:
         if name and sep in name:
             raise InvalidHandleError(
-                f"Invalid handle '{ref}': {component} '{name}' contains reserved sequence '{sep}'"
+                f"Invalid handle '{ref}': "
+                f"{component} '{name}' "
+                f"contains reserved sequence "
+                f"'{sep}'"
             )
 
 
 def installed_name_to_toml_handle(installed_name: str) -> str:
     """Convert installed directory name back to agr.toml handle.
 
-    Supports both new separator format and legacy colon format for backward compatibility.
+    Supports both new separator format and legacy colon format
+    for backward compatibility.
 
     Args:
         installed_name: Directory name like "kasperjunge--commit" or "local--my-skill"

@@ -113,7 +113,8 @@ def main(
             "--tool",
             "-t",
             help=(
-                "Tool CLI to use (claude, cursor, codex, opencode, copilot, antigravity)."
+                "Tool CLI to use (claude, cursor, codex, "
+                "opencode, copilot, antigravity)."
             ),
         ),
     ] = None,
@@ -185,7 +186,8 @@ def main(
         if repo_root is None:
             print_error("Not in a git repository")
             console.print(
-                f"[dim]Use --global to install to {tool_config.get_global_skills_dir()}[/dim]"
+                f"[dim]Use --global to install to "
+                f"{tool_config.get_global_skills_dir()}[/dim]"
             )
             raise typer.Exit(1)
         skills_dir = tool_config.get_skills_dir(repo_root)

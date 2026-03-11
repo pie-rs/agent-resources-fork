@@ -105,7 +105,8 @@ def delete_tool_skills(tool_name: str, repo_root: Path | None) -> bool:
     try:
         shutil.rmtree(skills_dir)
         console.print(
-            f"[dim]Deleted {skill_count} skills from {skills_dir.relative_to(repo_root)}/[/dim]"
+            f"[dim]Deleted {skill_count} skills from "
+            f"{skills_dir.relative_to(repo_root)}/[/dim]"
         )
     except OSError as e:
         console.print(f"[red]Error deleting skills:[/red] {e}")

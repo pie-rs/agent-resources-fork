@@ -271,7 +271,7 @@ class TestFindSkillInRepo:
         assert result is None
 
     def test_excluded_dir_name_in_parent_path_does_not_affect_discovery(self, tmp_path):
-        """Excluded dir names in parent path outside repo don't cause false exclusions."""
+        """Excluded dir names in parent path don't cause false exclusions."""
         # Simulate a repo inside a directory whose name matches EXCLUDED_DIRS
         repo_dir = tmp_path / "build" / "project"
         skill_dir = repo_dir / "my-skill"
@@ -449,7 +449,7 @@ class TestDiscoverSkillsInRepo:
         assert result[0][0] == "valid-skill"
 
     def test_excluded_dir_name_in_parent_path_does_not_affect_discovery(self, tmp_path):
-        """Excluded dir names in parent path outside repo don't cause false exclusions."""
+        """Excluded dir names in parent path don't cause false exclusions."""
         repo_dir = tmp_path / "dist" / "project"
         skill_dir = repo_dir / "my-skill"
         skill_dir.mkdir(parents=True)

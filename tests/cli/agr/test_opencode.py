@@ -99,7 +99,7 @@ class TestOpencodeMigration:
     def test_sync_migration_conflict_preserves_old_skill(
         self, agr, cli_project, cli_skill, cli_config
     ):
-        """When both .opencode/skill/foo and .opencode/skills/foo exist, old is preserved."""
+        """Old is preserved when both old and new dirs exist."""
         cli_config(
             """
 tools = ["opencode"]
@@ -219,7 +219,7 @@ dependencies = [
         agr("sync")
         assert (cli_project / ".opencode" / "skills" / "test-skill").exists()
 
-        # Simulate: move the installed skill back to .opencode/skill/ (as if old install)
+        # Simulate: move skill back to .opencode/skill/ (old)
         old_skills_dir = cli_project / ".opencode" / "skill"
         old_skills_dir.mkdir(parents=True)
         new_skill = cli_project / ".opencode" / "skills" / "test-skill"
@@ -228,7 +228,7 @@ dependencies = [
         result = agr("remove", "./skills/test-skill")
 
         assert_cli(result).succeeded()
-        # Migration should have moved it to .opencode/skills/ and then remove cleaned it up
+        # Migration moved to .opencode/skills/, then remove cleaned
         assert not (cli_project / ".opencode" / "skills" / "test-skill").exists()
         assert not (old_skills_dir / "test-skill").exists()
 

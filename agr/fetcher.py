@@ -424,7 +424,9 @@ def install_local_skill(
     # Validate skill name doesn't contain reserved separator (for flat tools)
     if not tool.supports_nested and INSTALLED_NAME_SEPARATOR in source_path.name:
         raise AgrError(
-            f"Skill name '{source_path.name}' contains reserved sequence '{INSTALLED_NAME_SEPARATOR}'"
+            f"Skill name '{source_path.name}' contains "
+            f"reserved sequence "
+            f"'{INSTALLED_NAME_SEPARATOR}'"
         )
 
     # Determine installed path using ParsedHandle for consistency
@@ -457,7 +459,11 @@ def install_local_skill(
         locations = ", ".join(str(path) for path in conflicts)
         hint = ""
         if has_unknown:
-            hint = " If this is a remote skill, run `agr sync` or reinstall it to add metadata."
+            hint = (
+                " If this is a remote skill, run "
+                "`agr sync` or reinstall it to "
+                "add metadata."
+            )
         raise AgrError(
             f"Local skill name '{handle.name}' is already installed at {locations}. "
             "agr allows only one local skill with a given name. "
@@ -761,7 +767,7 @@ def _resolve_skills_dir(
 
 
 def _rollback_installed(installed: dict[str, Path]) -> None:
-    """Remove all successfully installed skill directories to roll back partial installs."""
+    """Remove installed skill dirs to roll back partial installs."""
     for tool_name, rollback_path in installed.items():
         try:
             shutil.rmtree(rollback_path)

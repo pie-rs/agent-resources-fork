@@ -50,7 +50,8 @@ class ToolConfig:
         return Path.home() / base / self.skills_subdir
 
 
-# Claude Code tool configuration (flat naming: <skill-name>, fallback to user--repo--skill on collision)
+# Claude Code tool configuration
+# Flat naming: <skill-name>, fallback to user--repo--skill on collision
 CLAUDE = ToolConfig(
     name="claude",
     config_dir=".claude",
@@ -122,7 +123,8 @@ OPENCODE = ToolConfig(
     detection_signals=(".opencode",),
 )
 
-# GitHub Copilot tool configuration (flat naming: <skill-name>, fallback to user--repo--skill on collision)
+# GitHub Copilot tool configuration
+# Flat naming: <skill-name>, fallback to user--repo--skill on collision
 # Skills paths based on: https://docs.github.com/en/copilot/concepts/agents/about-agent-skills
 # Project: .github/skills/
 # Personal: ~/.copilot/skills/ (asymmetric from project path)

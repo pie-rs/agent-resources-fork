@@ -278,7 +278,8 @@ def config_tools_remove(
     ],
 ) -> None:
     """Remove tools and delete their installed skills."""
-    print_deprecation("agr config tools remove", f"agr config remove tools {' '.join(names)}")
+    new_cmd = f"agr config remove tools {' '.join(names)}"
+    print_deprecation("agr config tools remove", new_cmd)
     run_tools_remove(names)
 
 
@@ -290,7 +291,8 @@ def config_tools_unset(
     ],
 ) -> None:
     """Alias of remove."""
-    print_deprecation("agr config tools unset", f"agr config remove tools {' '.join(names)}")
+    new_cmd = f"agr config remove tools {' '.join(names)}"
+    print_deprecation("agr config tools unset", new_cmd)
     run_tools_remove(names)
 
 
@@ -302,7 +304,10 @@ def default_tool_set(
     ],
 ) -> None:
     """Set the default tool used by agrx."""
-    print_deprecation("agr config default-tool set", f"agr config set default_tool {name}")
+    new_cmd = f"agr config set default_tool {name}"
+    print_deprecation(
+        "agr config default-tool set", new_cmd
+    )
     run_default_tool_set(name)
 
 
@@ -419,7 +424,8 @@ def add(
         typer.Option(
             "--global",
             "-g",
-            help="Install globally using ~/.agr/agr.toml and per-tool global skill directories.",
+            help="Install globally using ~/.agr/agr.toml "
+            "and per-tool global skill directories.",
         ),
     ] = False,
 ) -> None:

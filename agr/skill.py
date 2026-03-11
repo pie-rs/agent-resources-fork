@@ -310,7 +310,9 @@ def create_skill_scaffold(name: str, base_dir: Path | None = None) -> Path:
     """
     if not validate_skill_name(name):
         raise ValueError(
-            f"Invalid skill name '{name}': must be alphanumeric with hyphens/underscores"
+            f"Invalid skill name '{name}': "
+            "must be alphanumeric with "
+            "hyphens/underscores"
         )
 
     base = base_dir or Path.cwd()

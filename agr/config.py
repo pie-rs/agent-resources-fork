@@ -16,7 +16,13 @@ from agr.source import (
     SourceResolver,
     default_sources,
 )
-from agr.tool import DEFAULT_TOOL_NAMES, TOOLS, ToolConfig, available_tools_string, get_tool
+from agr.tool import (
+    DEFAULT_TOOL_NAMES,
+    TOOLS,
+    ToolConfig,
+    available_tools_string,
+    get_tool,
+)
 
 VALID_CANONICAL_INSTRUCTIONS = {"AGENTS.md", "CLAUDE.md", "GEMINI.md"}
 
@@ -32,7 +38,8 @@ def _parse_tools_from_doc(doc: TOMLDocument) -> list[str]:
     for tool_name in tools:
         if tool_name not in TOOLS:
             raise ConfigError(
-                f"Unknown tool '{tool_name}' in agr.toml. Available: {available_tools_string()}"
+                f"Unknown tool '{tool_name}' in agr.toml. "
+                f"Available: {available_tools_string()}"
             )
     return tools
 
@@ -47,7 +54,9 @@ def _parse_default_tool_from_doc(doc: TOMLDocument, tools: list[str]) -> str | N
         return None
     if default_tool not in TOOLS:
         raise ConfigError(
-            f"Unknown default_tool '{default_tool}' in agr.toml. Available: {available_tools_string()}"
+            f"Unknown default_tool '{default_tool}' "
+            f"in agr.toml. Available: "
+            f"{available_tools_string()}"
         )
     if default_tool not in tools:
         raise ConfigError("default_tool must be listed in tools in agr.toml")
@@ -284,7 +293,9 @@ class AgrConfig:
             canonical_instructions = str(canonical_instructions)
             if canonical_instructions not in VALID_CANONICAL_INSTRUCTIONS:
                 raise ConfigError(
-                    "canonical_instructions must be 'AGENTS.md', 'CLAUDE.md', or 'GEMINI.md'"
+                    "canonical_instructions must be "
+                    "'AGENTS.md', 'CLAUDE.md', "
+                    "or 'GEMINI.md'"
                 )
             config.canonical_instructions = canonical_instructions
 

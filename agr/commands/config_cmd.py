@@ -150,7 +150,9 @@ def run_config_set(key: str, values: list[str], global_scope: bool) -> None:
 
     if key == "sources":
         print_error(
-            "Cannot set sources directly. Use 'agr config add sources' and 'agr config remove sources'."
+            "Cannot set sources directly. Use "
+            "'agr config add sources' and "
+            "'agr config remove sources'."
         )
         raise SystemExit(1)
 

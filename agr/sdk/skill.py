@@ -153,7 +153,9 @@ class Skill:
                     skill_path = prepare_repo_for_skill(repo_dir, parsed.name)
                     if skill_path is None:
                         last_error = SkillNotFoundError(
-                            f"Skill '{parsed.name}' not found in repository '{owner}/{repo_name}'."
+                            f"Skill '{parsed.name}' not found "
+                            f"in repository "
+                            f"'{owner}/{repo_name}'."
                         )
                         continue
 
@@ -188,7 +190,9 @@ class Skill:
         if last_repo_error:
             raise last_repo_error
         raise SkillNotFoundError(
-            f"Skill '{parsed.name}' not found in repository '{owner}/{repo_candidates[0][0]}'."
+            f"Skill '{parsed.name}' not found in "
+            f"repository "
+            f"'{owner}/{repo_candidates[0][0]}'."
         )
 
     @classmethod

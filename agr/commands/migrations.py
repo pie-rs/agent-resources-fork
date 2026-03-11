@@ -75,7 +75,9 @@ def _migrate_skills_directory(
         try:
             shutil.move(str(skill_dir), target)
             console.print(
-                f"[blue]Migrated:[/blue] {old_rel}/{skill_dir.name} -> {new_rel}/{skill_dir.name}"
+                f"[blue]Migrated:[/blue] "
+                f"{old_rel}/{skill_dir.name} -> "
+                f"{new_rel}/{skill_dir.name}"
             )
         except OSError as e:
             console.print(f"[red]Failed to migrate:[/red] {old_rel}/{skill_dir.name}")
@@ -86,7 +88,9 @@ def _migrate_skills_directory(
         leftover = [f for f in old_skills_dir.iterdir() if not f.is_dir()]
         if leftover:
             console.print(
-                f"[yellow]Note:[/yellow] {len(leftover)} non-skill file(s) remain in {old_rel}/"
+                f"[yellow]Note:[/yellow] "
+                f"{len(leftover)} non-skill file(s) "
+                f"remain in {old_rel}/"
             )
 
     # Clean up empty old directory

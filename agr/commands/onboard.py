@@ -238,7 +238,9 @@ def run_onboard(*, no_migrate: bool = False) -> None:
         if tool_folder_skills and not no_migrate:
             console.print()
             console.print(
-                f"[yellow]Note:[/yellow] {len(tool_folder_skills)} skill(s) are in tool folders "
+                f"[yellow]Note:[/yellow] "
+                f"{len(tool_folder_skills)} skill(s) "
+                "are in tool folders "
                 "(e.g. .claude/skills/)."
             )
             should_migrate = Confirm.ask(
@@ -256,7 +258,10 @@ def run_onboard(*, no_migrate: bool = False) -> None:
                         dest_dir = migrate_skill(skill, skills_root)
                         if dest_dir is None:
                             console.print(
-                                f"  [yellow]Skipping:[/yellow] {skills_root / skill.name} exists and is not a valid skill"
+                                f"  [yellow]Skipping:[/yellow] "
+                                f"{skills_root / skill.name} "
+                                "exists and is not a "
+                                "valid skill"
                             )
                             migrated_skills.append(skill)
                             continue
@@ -275,7 +280,8 @@ def run_onboard(*, no_migrate: bool = False) -> None:
                                 shutil.rmtree(old_path)
                             except OSError:
                                 console.print(
-                                    f"  [yellow]Warning:[/yellow] Failed to remove {old_path}"
+                                    "  [yellow]Warning:[/yellow] "
+                                    f"Failed to remove {old_path}"
                                 )
                     else:
                         migrated_skills.append(skill)
