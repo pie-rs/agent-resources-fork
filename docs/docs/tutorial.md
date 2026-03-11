@@ -99,6 +99,23 @@ List what's installed:
 agr list
 ```
 
+### Use the skill
+
+Open your AI coding tool and invoke the skill. How you invoke it depends on
+which tool you use:
+
+| Tool | Invoke with |
+|------|-------------|
+| Claude Code | Type `/frontend-design` in the chat |
+| Cursor | Type `/frontend-design` in the chat |
+| OpenAI Codex | Type `$frontend-design` in the chat |
+| OpenCode | Type `frontend-design` in the chat |
+| GitHub Copilot | Type `/frontend-design` in the chat |
+
+In most tools, skills also load as context automatically — the agent may apply
+them without you explicitly invoking them. See [Supported Tools](tools.md) for
+details on each tool's behavior.
+
 ---
 
 ## Step 4: Add more skills

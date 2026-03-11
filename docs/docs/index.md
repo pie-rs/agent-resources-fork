@@ -42,8 +42,10 @@ A package and project manager for AI agent skills. Install, share, and run skill
 agr add anthropics/skills/frontend-design
 ```
 
-This installs the skill into your tool's skills folder. Use `--source <name>` to
-pick a non-default source from `agr.toml`.
+This installs the skill into your tool's skills folder. Once installed, invoke
+it in your tool — type `/frontend-design` in Claude Code or Cursor,
+`$frontend-design` in Codex, or just `frontend-design` in OpenCode. Use
+`--source <name>` to pick a non-default source from `agr.toml`.
 
 ### Run a Skill Once (no install)
 
