@@ -28,23 +28,6 @@ from agr.instructions import (
 from agr.tool import ToolConfig, build_global_skills_dirs
 
 
-def _print_sync_summary(installed: int, up_to_date: int, errors: int) -> None:
-    """Print sync summary and exit with error if any failures occurred."""
-    console = get_console()
-    console.print()
-    parts = []
-    if installed:
-        parts.append(f"{installed} installed")
-    if up_to_date:
-        parts.append(f"{up_to_date} up to date")
-    if errors:
-        parts.append(f"{errors} failed")
-    console.print(f"[bold]Summary:[/bold] {', '.join(parts)}")
-
-    if errors:
-        raise SystemExit(1)
-
-
 class SyncStatus(Enum):
     """Status of a single dependency sync operation."""
 
@@ -68,6 +51,47 @@ class SyncEntry:
     identifier: str
     handle: ParsedHandle
     source_name: str | None
+
+
+def _print_results_and_summary(
+    results: list[tuple[str, SyncResult]],
+) -> None:
+    """Print per-dependency results and the final summary.
+
+    Each entry is an (identifier, SyncResult) pair. Installed and
+    up-to-date items are printed inline; errors include the message.
+    Raises SystemExit(1) when any dependency failed.
+    """
+    console = get_console()
+    installed = 0
+    up_to_date = 0
+    errors = 0
+
+    for identifier, result in results:
+        if result.status == SyncStatus.INSTALLED:
+            console.print(f"[green]Installed:[/green] {identifier}")
+            installed += 1
+        elif result.status == SyncStatus.UP_TO_DATE:
+            console.print(f"[dim]Up to date:[/dim] {identifier}")
+            up_to_date += 1
+        else:
+            print_error(identifier)
+            if result.error:
+                console.print(f"  [dim]{result.error}[/dim]")
+            errors += 1
+
+    console.print()
+    parts = []
+    if installed:
+        parts.append(f"{installed} installed")
+    if up_to_date:
+        parts.append(f"{up_to_date} up to date")
+    if errors:
+        parts.append(f"{errors} failed")
+    console.print(f"[bold]Summary:[/bold] {', '.join(parts)}")
+
+    if errors:
+        raise SystemExit(1)
 
 
 def _sync_instructions_if_configured(
@@ -135,9 +159,7 @@ def _run_global_sync() -> None:
 
     resolver = config.get_source_resolver()
 
-    installed = 0
-    up_to_date = 0
-    errors = 0
+    results: list[tuple[str, SyncResult]] = []
 
     for dep in config.dependencies:
         identifier = dep.identifier
@@ -150,8 +172,7 @@ def _run_global_sync() -> None:
             )
 
             if not tools_needing_install:
-                console.print(f"[dim]Up to date:[/dim] {identifier}")
-                up_to_date += 1
+                results.append((identifier, SyncResult(SyncStatus.UP_TO_DATE)))
                 continue
 
             fetch_and_install_to_tools(
@@ -163,14 +184,13 @@ def _run_global_sync() -> None:
                 source=source_name,
                 skills_dirs=skills_dirs,
             )
-            console.print(f"[green]Installed:[/green] {identifier}")
-            installed += 1
+            results.append((identifier, SyncResult(SyncStatus.INSTALLED)))
         except INSTALL_ERROR_TYPES as e:
-            print_error(identifier)
-            console.print(f"  [dim]{format_install_error(e)}[/dim]")
-            errors += 1
+            results.append(
+                (identifier, SyncResult(SyncStatus.ERROR, format_install_error(e)))
+            )
 
-    _print_sync_summary(installed, up_to_date, errors)
+    _print_results_and_summary(results)
 
 
 def run_sync(global_install: bool = False) -> None:
@@ -333,23 +353,8 @@ def run_sync(global_install: bool = False) -> None:
                 )
 
     # Print results
-    installed = 0
-    up_to_date = 0
-    errors = 0
-
-    for index, dep in enumerate(config.dependencies):
-        identifier = dep.identifier
-        result = results[index]
-        if result.status == SyncStatus.INSTALLED:
-            console.print(f"[green]Installed:[/green] {identifier}")
-            installed += 1
-        elif result.status == SyncStatus.UP_TO_DATE:
-            console.print(f"[dim]Up to date:[/dim] {identifier}")
-            up_to_date += 1
-        else:
-            print_error(identifier)
-            if result.error:
-                console.print(f"  [dim]{result.error}[/dim]")
-            errors += 1
-
-    _print_sync_summary(installed, up_to_date, errors)
+    labeled_results = [
+        (dep.identifier, results[index])
+        for index, dep in enumerate(config.dependencies)
+    ]
+    _print_results_and_summary(labeled_results)
