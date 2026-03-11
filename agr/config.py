@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Generator
 
 import tomlkit
 from tomlkit import TOMLDocument
@@ -391,6 +392,24 @@ class AgrConfig:
         return None
 
 
+def _walk_ancestors(start_path: Path | None = None) -> Generator[Path, None, None]:
+    """Yield directories from start_path up to the filesystem root.
+
+    Args:
+        start_path: Directory to start from (defaults to cwd)
+
+    Yields:
+        Each ancestor directory, starting with start_path itself.
+    """
+    current = start_path or Path.cwd()
+    while True:
+        yield current
+        parent = current.parent
+        if parent == current:
+            return
+        current = parent
+
+
 def find_config(start_path: Path | None = None) -> Path | None:
     """Find agr.toml by walking up from start path.
 
@@ -402,21 +421,13 @@ def find_config(start_path: Path | None = None) -> Path | None:
     Returns:
         Path to agr.toml if found, None otherwise
     """
-    current = start_path or Path.cwd()
-
-    while True:
-        config_path = current / "agr.toml"
+    for directory in _walk_ancestors(start_path):
+        config_path = directory / "agr.toml"
         if config_path.exists():
             return config_path
-
-        # Stop at git root
-        if (current / ".git").exists():
+        if (directory / ".git").exists():
             return None
-
-        parent = current.parent
-        if parent == current:
-            return None
-        current = parent
+    return None
 
 
 def find_repo_root(start_path: Path | None = None) -> Path | None:
@@ -428,16 +439,10 @@ def find_repo_root(start_path: Path | None = None) -> Path | None:
     Returns:
         Path to repo root if found, None otherwise
     """
-    current = start_path or Path.cwd()
-
-    while True:
-        if (current / ".git").exists():
-            return current
-
-        parent = current.parent
-        if parent == current:
-            return None
-        current = parent
+    for directory in _walk_ancestors(start_path):
+        if (directory / ".git").exists():
+            return directory
+    return None
 
 
 def require_repo_root(start_path: Path | None = None) -> Path:
