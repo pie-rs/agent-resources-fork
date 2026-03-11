@@ -1,28 +1,62 @@
 <div align="center">
 
-# 🧩 agent-resources (agr)
+# agr
 
-**A package manager for AI agents.**
+**A package manager for AI agent skills.**
 
-Install agent skills from GitHub with one command.
+Install, share, and sync skills across Claude Code, Cursor, Codex, OpenCode,
+Copilot, and Antigravity — with a single command.
 
 [![PyPI](https://img.shields.io/pypi/v/agr?color=blue)](https://pypi.org/project/agr/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Docs](https://img.shields.io/badge/docs-site-blue)](https://kasperjunge.github.io/agent-resources/)
 
 </div>
 
 ---
 
+## What are skills?
+
+Skills are reusable instructions that teach AI coding agents how to perform
+specific tasks. Each skill is a `SKILL.md` file in a directory, published on
+GitHub:
+
+```markdown
+---
+name: code-reviewer
+description: Reviews code for bugs, security issues, and best practices.
+---
+
+# Code Reviewer
+
+When reviewing code changes, follow these steps:
+
+1. Read every changed file completely before commenting
+2. Check for bugs: null references, off-by-one errors, race conditions
+3. Check for security issues: injection, auth bypass, data exposure
+4. Verify error handling: are errors caught, logged, and surfaced?
+
+Format each finding as:
+- **File and line:** `src/auth.py:42`
+- **Severity:** bug / security / style
+- **Fix:** concrete code or approach to resolve it
+```
+
+Install it, and your AI agent gains a new capability — no prompt engineering
+each time. Without a package manager, you'd copy these files manually into each
+tool's config folder, keep them updated by hand, and hope your teammates have
+the same versions. **agr automates all of that.**
+
+---
+
 ## Getting Started
 
-Install agr CLI:
+Install the CLI:
 
 ```bash
 uv tool install agr       # recommended
-# or
-pipx install agr           # alternative
-# or
-pip install agr            # if you prefer pip
+# or: pipx install agr
+# or: pip install agr
 ```
 
 Install your first skill:
@@ -31,7 +65,7 @@ Install your first skill:
 agr add anthropics/skills/frontend-design
 ```
 
-Then invoke it in your tool:
+Then invoke it in your AI tool:
 
 | Tool | Invoke with |
 |------|-------------|
@@ -41,186 +75,122 @@ Then invoke it in your tool:
 | OpenCode | `frontend-design` |
 | GitHub Copilot | `/frontend-design` |
 
----
-
-## What is agr?
-
-**agr** installs agent skills from GitHub directly into your tool's skills folder
-(`.claude/skills/`, `.agents/skills/`, `.cursor/skills/`, `.opencode/skills/`, `.github/skills/`, or `.agent/skills/`).
-
-**agrx** runs skills instantly from your terminal — download, run, then clean up.
+No setup required — `agr add` auto-creates `agr.toml` and detects which tools
+you use.
 
 ---
 
-## Install Skills
+## Run a skill without installing
+
+**agrx** downloads a skill, runs it with your tool's CLI, and cleans up. Nothing
+is saved to your project:
 
 ```bash
-agr add anthropics/skills/frontend-design     # Install a skill
-agr add -g anthropics/skills/frontend-design  # Install globally for your user
-agr add anthropics/skills/pdf anthropics/skills/mcp-builder   # Install multiple
-agr add anthropics/skills/pdf --source github # Install from an explicit source
-```
-
-Remote installs require `git` to be available on your system.
-
-### Handle format
-
-```
-username/skill-name         → From user's skills repo
-username/repo/skill-name    → From a specific repo
-./path/to/skill             → From local directory
-```
-
-Note: `username/skill-name` now defaults to a repo named `skills`. During a
-deprecation period, agr will fall back to `agent-resources` (with a warning) if
-the skill isn't found in `skills`.
-
-> **Custom repo name?** If your skills live in a repo named anything other than
-> `skills` or `agent-resources`, the two-part handle will fail. Use the
-> three-part format:
-> ```bash
-> agr add username/my-custom-repo/skill-name
-> ```
-
----
-
-## Run Skills From Your Terminal
-
-```bash
-agrx anthropics/skills/pdf                              # Run a skill instantly
-agrx anthropics/skills/pdf -p "Extract tables from report.pdf"   # With a prompt
-agrx anthropics/skills/skill-creator -i                 # Run, then continue chatting
-agrx anthropics/skills/pdf --tool cursor                # Use a specific tool
+agrx anthropics/skills/pdf -p "Extract tables from report.pdf"
+agrx anthropics/skills/skill-creator -i   # Interactive: skill + chat
 ```
 
 ---
 
-## Team Sync
+## Team sync
 
-Your dependencies are tracked in `agr.toml`:
+Dependencies are tracked in `agr.toml` — commit it, and teammates install
+everything with one command:
 
 ```toml
 dependencies = [
     {handle = "anthropics/skills/frontend-design", type = "skill"},
-    {handle = "anthropics/skills/brand-guidelines", type = "skill"},
+    {handle = "anthropics/skills/pdf", type = "skill"},
 ]
 ```
 
-Teammates run:
-
 ```bash
-agr sync
+agr sync   # Like npm install, but for agent skills
 ```
 
 ---
 
-## Create Your Own Skill
+## Create and share
 
 ```bash
-agr init my-skill
-```
-
-Creates `my-skill/SKILL.md`:
-
-```markdown
----
-name: my-skill
-description: What this skill does.
----
-
-# My Skill
-
-Instructions for the agent.
-```
-
-If you're adding it to this repo, place it under `./skills/`.
-
-Test it locally:
-
-```bash
-agr add ./skills/my-skill
-```
-
-Share it:
-
-```bash
+agr init my-skill                # Scaffold a new skill
+# Edit my-skill/SKILL.md with your instructions
+agr add ./my-skill               # Test locally
 # Push to GitHub, then others can:
 agr add your-username/my-skill
 ```
 
 ---
 
-## Initialize a Repo
+## Example skills
+
+**Documents & data:**
 
 ```bash
-agr init       # Create agr.toml (auto-detects tools)
-agr onboard    # Interactive guided setup
+agr add anthropics/skills/pdf       # Read, extract, create PDFs
+agr add anthropics/skills/docx      # Generate and edit Word documents
+agr add anthropics/skills/xlsx      # Build and manipulate spreadsheets
 ```
 
-`agr init` creates `agr.toml` and detects which tools you use from repo signals (`.claude/`, `CLAUDE.md`, `.cursor/`, etc.).
+**Design & frontend:**
 
-`agr onboard` walks you through tool selection, skill discovery, migration, and configuration interactively.
+```bash
+agr add anthropics/skills/frontend-design   # Production-grade interfaces
+agr add anthropics/skills/canvas-design     # Visual art in PNG and PDF
+```
+
+**Development:**
+
+```bash
+agr add anthropics/skills/claude-api        # Build apps with the Claude API
+agr add anthropics/skills/mcp-builder       # Create MCP servers
+agr add anthropics/skills/webapp-testing    # Test web apps with Playwright
+```
+
+Browse the full list in the [Skill Directory](https://kasperjunge.github.io/agent-resources/skills/).
 
 ---
 
-## All Commands
+## All commands
 
 | Command | Description |
 |---------|-------------|
 | `agr add <handle>` | Install a skill |
-| `agr add -g <handle>` | Install a skill globally |
 | `agr remove <handle>` | Uninstall a skill |
-| `agr remove -g <handle>` | Uninstall a global skill |
-| `agr sync` | Install all from agr.toml |
-| `agr sync -g` | Sync global dependencies |
+| `agr sync` | Install all from `agr.toml` |
 | `agr list` | Show installed skills |
-| `agr list -g` | Show global skills |
-| `agr init` | Create agr.toml |
+| `agr init` | Create `agr.toml` (auto-detects tools) |
 | `agr init <name>` | Create a new skill |
 | `agr onboard` | Interactive guided setup |
-| `agr config <cmd> <key>` | Manage agr.toml (show, get, set, add, remove, unset, edit, path) |
-| `agrx <handle>` | Run skill temporarily |
+| `agr config <cmd>` | Manage configuration |
+| `agrx <handle>` | Run a skill temporarily |
+
+Add `-g` to `add`, `remove`, `sync`, or `list` for global skills (available in
+all projects).
 
 ---
 
-## Community Skills
+## Community skills
 
 ```bash
-# Go development — @dsjacobsen
+# Go — @dsjacobsen
 agr add dsjacobsen/agent-resources/golang-pro
 
-# Drupal development — @madsnorgaard
+# Drupal — @madsnorgaard
 agr add madsnorgaard/drupal-agent-resources/drupal-expert
 agr add madsnorgaard/drupal-agent-resources/drupal-security
 agr add madsnorgaard/drupal-agent-resources/drupal-migration
-agr add madsnorgaard/drupal-agent-resources/ddev-expert
-agr add madsnorgaard/drupal-agent-resources/docker-local
+
+# Workflow — @maragudk
+agr add maragudk/skills/collaboration
 ```
 
-**Built something?** [Share it here](https://github.com/kasperjunge/agent-resources/issues).
-
----
-
-## Coming from npx skills?
-
-agr uses a slightly different handle format than `npx skills`:
-
-| What you want | npx skills | agr |
-|---|---|---|
-| Skill from a repo | `npx skills add owner/repo` | `agr add owner/repo/skill-name` |
-| Skill from user's default repo | — | `agr add owner/skill-name` |
-
-The key difference: `agr` handles always point to a **specific skill**, not a
-repo to scan. Use the three-part format `owner/repo/skill-name` when the skill
-lives in a non-default repo.
-
-If you use a two-part handle and the skill isn't found, `agr` will check if a
-matching repository exists and suggest the correct handles.
+**Built something?** [Share it here.](https://github.com/kasperjunge/agent-resources/issues)
 
 ---
 
 <div align="center">
 
-[Documentation](https://kasperjunge.github.io/agent-resources/) · [MIT License](LICENSE)
+[Documentation](https://kasperjunge.github.io/agent-resources/) · [Skill Directory](https://kasperjunge.github.io/agent-resources/skills/) · [Tutorial](https://kasperjunge.github.io/agent-resources/tutorial/) · [MIT License](LICENSE)
 
 </div>
