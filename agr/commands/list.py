@@ -25,9 +25,11 @@ def _get_installation_status(
         handle: Parsed handle for the skill
         repo_root: Repository root path
         tools: List of ToolConfig instances
+        source: Source name for remote skills (optional)
+        skills_dirs: Explicit skills directories per tool (optional)
 
     Returns:
-        Formatted status string
+        Rich-formatted status string
     """
     installed_tools = [
         tool.name

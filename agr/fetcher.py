@@ -716,6 +716,8 @@ def uninstall_skill(
         handle: Parsed handle identifying the skill
         repo_root: Repository root path (project installs) or None (global installs)
         tool: Tool configuration for path structure
+        source: Source name for metadata matching (optional)
+        skills_dir: Explicit skills directory override (optional)
 
     Returns:
         True if removed, False if not found
@@ -853,6 +855,8 @@ def is_skill_installed(
         handle: Parsed handle identifying the skill
         repo_root: Repository root path (project installs) or None (global installs)
         tool: Tool configuration for path structure
+        source: Source name for metadata matching (optional)
+        skills_dir: Explicit skills directory override (optional)
 
     Returns:
         True if installed
