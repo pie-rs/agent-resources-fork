@@ -42,10 +42,28 @@ Format each finding as:
 ```
 
 Install it, and your AI agent gains a new capability — no prompt engineering
-each time. Without a package manager, you'd copy these files manually into each
-tool's config folder, keep them updated by hand, and hope your teammates have
-the same versions. **agr automates all of that** — install from GitHub, sync
-across tools, share via `agr.toml`.
+each time.
+
+### Why a package manager?
+
+Without agr, managing skills means:
+
+- **Manual copying** — download files from GitHub, figure out which folder each
+  tool expects, copy them in
+- **No updates** — when a skill improves, you repeat the process by hand
+- **Team drift** — teammates have different skills, different versions, no
+  single source of truth
+- **Multi-tool pain** — using Claude Code *and* Cursor? Copy everything twice,
+  into different directories
+
+With agr:
+
+```bash
+agr add anthropics/skills/pdf          # Install from GitHub — one command
+agr add anthropics/skills/pdf -o       # Update to the latest version
+agr sync                               # Teammates get everything from agr.toml
+agr config set tools claude cursor     # Multi-tool — skills install everywhere
+```
 
 ## Install
 
@@ -118,12 +136,14 @@ agr sync
 | Command | What it does |
 |---------|-------------|
 | `agr add <handle>` | Install a skill |
+| `agr add <handle> -o` | Update a skill to the latest version |
 | `agr remove <handle>` | Uninstall a skill |
 | `agr sync` | Install all dependencies from `agr.toml` |
 | `agr list` | Show skills and installation status |
 | `agr init` | Create `agr.toml` (auto-detects tools) |
 | `agr init <name>` | Create a skill scaffold |
 | `agr onboard` | Interactive guided setup |
+| `agr config <cmd>` | Manage tools, sources, and settings |
 | `agrx <handle>` | Run a skill temporarily |
 
 ## Example skills
@@ -156,9 +176,13 @@ Browse the full list at the [Skill Directory](skills.md) or on
 
 ## Next steps
 
-- [Tutorial](tutorial.md) — hands-on walkthrough from zero to sharing skills
-- [Core Concepts](concepts.md) — understand handles, tools, sources, and how agr works
-- [Teams](teams.md) — set up agr for your team, CI/CD, and private skills
-- [Supported Tools](tools.md) — how agr works with each AI coding tool
-- [Creating Skills](creating.md) — write and publish your own skills
-- [CLI Reference](reference.md) — every command, flag, and option
+| I want to... | Go to |
+|--------------|-------|
+| Get started from scratch | [Tutorial](tutorial.md) — install agr, add skills, sync a team, and create your own |
+| Understand how it works | [Core Concepts](concepts.md) — handles, tools, sources, scopes, and the install flow |
+| Set this up for my team | [Teams](teams.md) — team sync, CI/CD, private repos |
+| See what's available | [Skill Directory](skills.md) — official and community skills |
+| Use a specific AI tool | [Supported Tools](tools.md) — Claude Code, Cursor, Codex, OpenCode, Copilot, Antigravity |
+| Build my own skill | [Creating Skills](creating.md) — write, test, and publish skills |
+| Look up a command | [CLI Reference](reference.md) — every command, flag, and option |
+| Fix a problem | [Troubleshooting](troubleshooting.md) — common errors and solutions |
