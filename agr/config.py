@@ -20,6 +20,87 @@ from agr.tool import DEFAULT_TOOL_NAMES, TOOLS, ToolConfig, get_tool
 VALID_CANONICAL_INSTRUCTIONS = {"AGENTS.md", "CLAUDE.md", "GEMINI.md"}
 
 
+def _parse_tools_from_doc(doc: TOMLDocument) -> list[str]:
+    """Parse and validate tools list from TOML document."""
+    tools_list = doc.get("tools", list(DEFAULT_TOOL_NAMES))
+    if isinstance(tools_list, list):
+        tools = [str(t) for t in tools_list]
+    else:
+        tools = list(DEFAULT_TOOL_NAMES)
+
+    for tool_name in tools:
+        if tool_name not in TOOLS:
+            available = ", ".join(TOOLS.keys())
+            raise ConfigError(
+                f"Unknown tool '{tool_name}' in agr.toml. Available: {available}"
+            )
+    return tools
+
+
+def _parse_default_tool_from_doc(doc: TOMLDocument, tools: list[str]) -> str | None:
+    """Parse and validate default_tool from TOML document."""
+    default_tool = doc.get("default_tool")
+    if default_tool is None:
+        return None
+    default_tool = str(default_tool)
+    if default_tool and default_tool not in TOOLS:
+        available = ", ".join(TOOLS.keys())
+        raise ConfigError(
+            f"Unknown default_tool '{default_tool}' in agr.toml. Available: {available}"
+        )
+    result = default_tool or None
+    if result and result not in tools:
+        raise ConfigError("default_tool must be listed in tools in agr.toml")
+    return result
+
+
+def _parse_sources_from_doc(
+    doc: TOMLDocument,
+) -> tuple[list[SourceConfig], str]:
+    """Parse sources and default_source from TOML document.
+
+    Returns:
+        Tuple of (sources list, default_source name).
+    """
+    sources_list = doc.get("source")
+    sources: list[SourceConfig] = []
+    if sources_list is None:
+        sources = default_sources()
+    else:
+        if not isinstance(sources_list, list):
+            raise ConfigError("Invalid [[source]] format in agr.toml")
+        for item in sources_list:
+            if not isinstance(item, dict):
+                raise ConfigError("Invalid [[source]] entry in agr.toml")
+            name = str(item.get("name", "")).strip()
+            source_type = str(item.get("type", "git")).strip()
+            url = item.get("url")
+            if not name:
+                raise ConfigError("Source entry missing name")
+            if source_type != "git":
+                raise ConfigError(
+                    f"Unsupported source type '{source_type}' for '{name}'"
+                )
+            if not url:
+                raise ConfigError(f"Source '{name}' missing url")
+            sources.append(SourceConfig(name=name, type=source_type, url=str(url)))
+
+    default_source = doc.get("default_source")
+    if default_source:
+        default_source = str(default_source)
+    elif sources:
+        default_source = sources[0].name
+    else:
+        default_source = DEFAULT_SOURCE_NAME
+
+    if not any(source.name == default_source for source in sources):
+        raise ConfigError(
+            f"default_source '{default_source}' not found in [[source]] list"
+        )
+
+    return sources, default_source
+
+
 @dataclass
 class Dependency:
     """A dependency in agr.toml.
@@ -75,6 +156,47 @@ class Dependency:
         if self.is_local:
             return None
         return self.source or default_source
+
+
+def _parse_dependencies_from_doc(
+    doc: TOMLDocument,
+    source_names: set[str],
+) -> list[Dependency]:
+    """Parse and validate dependencies from TOML document."""
+    sources_list = doc.get("source")
+    deps_list = doc.get("dependencies", [])
+    if "dependencies" not in doc and sources_list:
+        for item in sources_list:
+            if isinstance(item, dict) and "dependencies" in item:
+                raise ConfigError(
+                    "dependencies must be declared before [[source]] blocks"
+                )
+
+    dependencies: list[Dependency] = []
+    for item in deps_list:
+        if not isinstance(item, dict):
+            continue
+        dep_type = item.get("type", "skill")
+        handle = item.get("handle")
+        path_val = item.get("path")
+        source = item.get("source")
+        if source is not None:
+            source = str(source)
+
+        if handle:
+            dependencies.append(Dependency(handle=handle, type=dep_type, source=source))
+        elif path_val:
+            if source is not None:
+                raise ConfigError("Local dependencies cannot specify a source")
+            dependencies.append(Dependency(path=path_val, type=dep_type))
+
+    for dep in dependencies:
+        if dep.source and dep.source not in source_names:
+            raise ConfigError(
+                f"Unknown source '{dep.source}' in dependency '{dep.identifier}'"
+            )
+
+    return dependencies
 
 
 @dataclass
@@ -150,32 +272,8 @@ class AgrConfig:
         config = cls()
         config._path = path
 
-        # Parse tools list (defaults to DEFAULT_TOOL_NAMES)
-        tools_list = doc.get("tools", list(DEFAULT_TOOL_NAMES))
-        if isinstance(tools_list, list):
-            config.tools = [str(t) for t in tools_list]
-        else:
-            config.tools = list(DEFAULT_TOOL_NAMES)
-
-        # Validate tool names
-        for tool_name in config.tools:
-            if tool_name not in TOOLS:
-                available = ", ".join(TOOLS.keys())
-                raise ConfigError(
-                    f"Unknown tool '{tool_name}' in agr.toml. Available: {available}"
-                )
-
-        default_tool = doc.get("default_tool")
-        if default_tool is not None:
-            default_tool = str(default_tool)
-            if default_tool and default_tool not in TOOLS:
-                available = ", ".join(TOOLS.keys())
-                raise ConfigError(
-                    f"Unknown default_tool '{default_tool}' in agr.toml. Available: {available}"
-                )
-            config.default_tool = default_tool or None
-            if config.default_tool and config.default_tool not in config.tools:
-                raise ConfigError("default_tool must be listed in tools in agr.toml")
+        config.tools = _parse_tools_from_doc(doc)
+        config.default_tool = _parse_default_tool_from_doc(doc, config.tools)
 
         sync_instructions = doc.get("sync_instructions")
         if sync_instructions is not None:
@@ -190,79 +288,9 @@ class AgrConfig:
                 )
             config.canonical_instructions = canonical_instructions
 
-        # Parse sources list
-        sources_list = doc.get("source")
-        sources: list[SourceConfig] = []
-        if sources_list is None:
-            sources = default_sources()
-        else:
-            if not isinstance(sources_list, list):
-                raise ConfigError("Invalid [[source]] format in agr.toml")
-            for item in sources_list:
-                if not isinstance(item, dict):
-                    raise ConfigError("Invalid [[source]] entry in agr.toml")
-                name = str(item.get("name", "")).strip()
-                source_type = str(item.get("type", "git")).strip()
-                url = item.get("url")
-                if not name:
-                    raise ConfigError("Source entry missing name")
-                if source_type != "git":
-                    raise ConfigError(
-                        f"Unsupported source type '{source_type}' for '{name}'"
-                    )
-                if not url:
-                    raise ConfigError(f"Source '{name}' missing url")
-                sources.append(SourceConfig(name=name, type=source_type, url=str(url)))
-
-        default_source = doc.get("default_source")
-        if default_source:
-            default_source = str(default_source)
-        elif sources:
-            default_source = sources[0].name
-        else:
-            default_source = DEFAULT_SOURCE_NAME
-
-        if not any(source.name == default_source for source in sources):
-            raise ConfigError(
-                f"default_source '{default_source}' not found in [[source]] list"
-            )
-
-        config.sources = sources
-        config.default_source = default_source
-
-        # Parse dependencies list (must appear before [[source]] in TOML)
-        deps_list = doc.get("dependencies", [])
-        if "dependencies" not in doc and sources_list:
-            for item in sources_list:
-                if isinstance(item, dict) and "dependencies" in item:
-                    raise ConfigError(
-                        "dependencies must be declared before [[source]] blocks"
-                    )
-        for item in deps_list:
-            if not isinstance(item, dict):
-                continue
-            dep_type = item.get("type", "skill")
-            handle = item.get("handle")
-            path_val = item.get("path")
-            source = item.get("source")
-            if source is not None:
-                source = str(source)
-
-            if handle:
-                config.dependencies.append(
-                    Dependency(handle=handle, type=dep_type, source=source)
-                )
-            elif path_val:
-                if source is not None:
-                    raise ConfigError("Local dependencies cannot specify a source")
-                config.dependencies.append(Dependency(path=path_val, type=dep_type))
-
-        source_names = {source.name for source in sources}
-        for dep in config.dependencies:
-            if dep.source and dep.source not in source_names:
-                raise ConfigError(
-                    f"Unknown source '{dep.source}' in dependency '{dep.identifier}'"
-                )
+        config.sources, config.default_source = _parse_sources_from_doc(doc)
+        source_names = {s.name for s in config.sources}
+        config.dependencies = _parse_dependencies_from_doc(doc, source_names)
 
         return config
 
