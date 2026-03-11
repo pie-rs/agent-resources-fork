@@ -486,18 +486,38 @@ agr add user/skill --overwrite
 
 ### Official (Anthropic)
 
-```bash
-agr add anthropics/skills/frontend-design
-agr add anthropics/skills/pdf
-agr add anthropics/skills/skill-creator
-agr add anthropics/skills/mcp-builder
-```
+Documents & data:
+- pdf — Read, extract, create, and modify PDF files: `agr add anthropics/skills/pdf`
+- docx — Create, read, edit, and manipulate Word documents: `agr add anthropics/skills/docx`
+- pptx — Create and work with PowerPoint slide decks: `agr add anthropics/skills/pptx`
+- xlsx — Create and manipulate spreadsheet files: `agr add anthropics/skills/xlsx`
+- doc-coauthoring — Structured workflow for co-authoring documentation: `agr add anthropics/skills/doc-coauthoring`
+
+Design & frontend:
+- frontend-design — Build distinctive, production-grade frontend interfaces: `agr add anthropics/skills/frontend-design`
+- canvas-design — Create visual art in PNG and PDF: `agr add anthropics/skills/canvas-design`
+- algorithmic-art — Create algorithmic art with p5.js: `agr add anthropics/skills/algorithmic-art`
+- theme-factory — Style artifacts with themes: `agr add anthropics/skills/theme-factory`
+- brand-guidelines — Apply Anthropic's brand colors and typography: `agr add anthropics/skills/brand-guidelines`
+
+Development:
+- claude-api — Build apps with the Claude API and Anthropic SDKs: `agr add anthropics/skills/claude-api`
+- mcp-builder — Create MCP servers for LLM-to-service interaction: `agr add anthropics/skills/mcp-builder`
+- web-artifacts-builder — Create multi-component HTML artifacts: `agr add anthropics/skills/web-artifacts-builder`
+- webapp-testing — Test local web applications using Playwright: `agr add anthropics/skills/webapp-testing`
+
+Productivity:
+- skill-creator — Create, modify, and improve skills: `agr add anthropics/skills/skill-creator`
+- internal-comms — Write internal communications: `agr add anthropics/skills/internal-comms`
+- slack-gif-creator — Create animated GIFs optimized for Slack: `agr add anthropics/skills/slack-gif-creator`
+
+Browse full list: https://github.com/anthropics/skills
 
 ### Community
 
 ```bash
 # Go — @dsjacobsen
-agr add dsjacobsen/golang-pro
+agr add dsjacobsen/agent-resources/golang-pro
 
 # Drupal — @madsnorgaard
 agr add madsnorgaard/drupal-agent-resources/drupal-expert
@@ -507,10 +527,9 @@ agr add madsnorgaard/drupal-agent-resources/ddev-expert
 agr add madsnorgaard/drupal-agent-resources/docker-local
 
 # Workflow — @kasperjunge, @maragudk
-agr add kasperjunge/commit
-agr add kasperjunge/pr
 agr add maragudk/skills/collaboration
-agr add kasperjunge/migrate-to-skills
+agr add kasperjunge/commit-work
+agr add kasperjunge/agent-resources/migrate-to-skills
 ```
 
 Search GitHub for more: https://github.com/search?q=filename%3ASKILL.md&type=code

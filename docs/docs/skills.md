@@ -4,7 +4,12 @@ title: Skill Directory
 
 # Skill Directory
 
-Browse available skills and find ones that fit your workflow.
+Browse available skills and find ones that fit your workflow. Every skill below
+can be tried instantly without installing:
+
+```bash
+agrx anthropics/skills/pdf -p "Extract tables from report.pdf"
+```
 
 ---
 
@@ -12,18 +17,42 @@ Browse available skills and find ones that fit your workflow.
 
 Maintained by Anthropic in the [anthropics/skills](https://github.com/anthropics/skills) repository.
 
-| Skill | Install command |
-|-------|----------------|
-| Frontend Design | `agr add anthropics/skills/frontend-design` |
-| PDF | `agr add anthropics/skills/pdf` |
-| Skill Creator | `agr add anthropics/skills/skill-creator` |
-| MCP Builder | `agr add anthropics/skills/mcp-builder` |
+### Documents & Data
 
-Try any skill without installing:
+| Skill | Description | Install |
+|-------|-------------|---------|
+| PDF | Read, extract, create, and modify PDF files | `agr add anthropics/skills/pdf` |
+| DOCX | Create, read, edit, and manipulate Word documents | `agr add anthropics/skills/docx` |
+| PPTX | Create and work with PowerPoint slide decks | `agr add anthropics/skills/pptx` |
+| XLSX | Create and manipulate spreadsheet files | `agr add anthropics/skills/xlsx` |
+| Doc Co-authoring | Structured workflow for co-authoring documentation | `agr add anthropics/skills/doc-coauthoring` |
 
-```bash
-agrx anthropics/skills/pdf -p "Extract tables from report.pdf"
-```
+### Design & Frontend
+
+| Skill | Description | Install |
+|-------|-------------|---------|
+| Frontend Design | Build distinctive, production-grade frontend interfaces | `agr add anthropics/skills/frontend-design` |
+| Canvas Design | Create visual art in PNG and PDF using design principles | `agr add anthropics/skills/canvas-design` |
+| Algorithmic Art | Create algorithmic art with p5.js and seeded randomness | `agr add anthropics/skills/algorithmic-art` |
+| Theme Factory | Style artifacts (slides, docs, landing pages) with themes | `agr add anthropics/skills/theme-factory` |
+| Brand Guidelines | Apply Anthropic's official brand colors and typography | `agr add anthropics/skills/brand-guidelines` |
+
+### Development
+
+| Skill | Description | Install |
+|-------|-------------|---------|
+| Claude API | Build apps with the Claude API and Anthropic SDKs | `agr add anthropics/skills/claude-api` |
+| MCP Builder | Create MCP servers for LLM-to-service interaction | `agr add anthropics/skills/mcp-builder` |
+| Web Artifacts Builder | Create multi-component HTML artifacts with modern frontend tech | `agr add anthropics/skills/web-artifacts-builder` |
+| Webapp Testing | Test local web applications using Playwright | `agr add anthropics/skills/webapp-testing` |
+
+### Productivity
+
+| Skill | Description | Install |
+|-------|-------------|---------|
+| Skill Creator | Create, modify, and improve skills | `agr add anthropics/skills/skill-creator` |
+| Internal Comms | Write internal communications in your company's formats | `agr add anthropics/skills/internal-comms` |
+| Slack GIF Creator | Create animated GIFs optimized for Slack | `agr add anthropics/skills/slack-gif-creator` |
 
 Browse the full list at [github.com/anthropics/skills](https://github.com/anthropics/skills).
 
@@ -35,42 +64,41 @@ Skills built and shared by the community.
 
 ### Go
 
-| Skill | Author | Install command |
-|-------|--------|----------------|
-| Go Pro | [@dsjacobsen](https://github.com/dsjacobsen) | `agr add dsjacobsen/golang-pro` |
+| Skill | Description | Author | Install |
+|-------|-------------|--------|---------|
+| Go Pro | Expert Go 1.21+ development for concurrent, scalable systems | [@dsjacobsen](https://github.com/dsjacobsen) | `agr add dsjacobsen/agent-resources/golang-pro` |
 
 ### Drupal
 
-| Skill | Author | Install command |
-|-------|--------|----------------|
-| Drupal Expert | [@madsnorgaard](https://github.com/madsnorgaard) | `agr add madsnorgaard/drupal-agent-resources/drupal-expert` |
-| Drupal Security | [@madsnorgaard](https://github.com/madsnorgaard) | `agr add madsnorgaard/drupal-agent-resources/drupal-security` |
-| Drupal Migration | [@madsnorgaard](https://github.com/madsnorgaard) | `agr add madsnorgaard/drupal-agent-resources/drupal-migration` |
-| DDEV Expert | [@madsnorgaard](https://github.com/madsnorgaard) | `agr add madsnorgaard/drupal-agent-resources/ddev-expert` |
-| Docker Local | [@madsnorgaard](https://github.com/madsnorgaard) | `agr add madsnorgaard/drupal-agent-resources/docker-local` |
+| Skill | Description | Author | Install |
+|-------|-------------|--------|---------|
+| Drupal Expert | Drupal 10/11 modules, themes, hooks, services, and config | [@madsnorgaard](https://github.com/madsnorgaard) | `agr add madsnorgaard/drupal-agent-resources/drupal-expert` |
+| Drupal Security | Prevent XSS, SQL injection, and access bypass in Drupal | [@madsnorgaard](https://github.com/madsnorgaard) | `agr add madsnorgaard/drupal-agent-resources/drupal-security` |
+| Drupal Migration | D7-to-D10 migrations, CSV imports, and migration plugins | [@madsnorgaard](https://github.com/madsnorgaard) | `agr add madsnorgaard/drupal-agent-resources/drupal-migration` |
+| DDEV Expert | DDEV local development, containers, and configuration | [@madsnorgaard](https://github.com/madsnorgaard) | `agr add madsnorgaard/drupal-agent-resources/ddev-expert` |
+| Docker Local | Docker Compose local development patterns | [@madsnorgaard](https://github.com/madsnorgaard) | `agr add madsnorgaard/drupal-agent-resources/docker-local` |
 
 ### Workflow
 
-| Skill | Author | Install command |
-|-------|--------|----------------|
-| Commit | [@kasperjunge](https://github.com/kasperjunge) | `agr add kasperjunge/commit` |
-| PR | [@kasperjunge](https://github.com/kasperjunge) | `agr add kasperjunge/pr` |
-| Collaboration | [@maragudk](https://github.com/maragudk) | `agr add maragudk/skills/collaboration` |
-| Migrate to Skills | [@kasperjunge](https://github.com/kasperjunge) | `agr add kasperjunge/migrate-to-skills` |
+| Skill | Description | Author | Install |
+|-------|-------------|--------|---------|
+| Collaboration | Contributing to GitHub projects, PRs, and code reviews | [@maragudk](https://github.com/maragudk) | `agr add maragudk/skills/collaboration` |
+| Commit Work | Run quality checks, update changelog, and create commits | [@kasperjunge](https://github.com/kasperjunge) | `agr add kasperjunge/commit-work` |
+| Migrate to Skills | Convert legacy agent resources to the Agent Skills format | [@kasperjunge](https://github.com/kasperjunge) | `agr add kasperjunge/agent-resources/migrate-to-skills` |
 
 ---
 
 ## Discovering More Skills
 
-### Browse GitHub
+### Search GitHub
 
-Any GitHub repository with a `SKILL.md` file can be installed with agr. Search GitHub for repositories containing skill files:
+Any GitHub repository with a `SKILL.md` file can be installed with agr:
 
 - [Search for SKILL.md files on GitHub](https://github.com/search?q=filename%3ASKILL.md&type=code)
 
 ### List skills in a repository
 
-Use the Python SDK to list all skills in a repo:
+Use the Python SDK to list all skills in any repo:
 
 ```python
 from agr import list_skills
@@ -79,13 +107,16 @@ for info in list_skills("anthropics/skills"):
     print(f"{info.handle}: {info.description}")
 ```
 
+Or check a repo manually — agr looks for any directory containing a `SKILL.md`
+file.
+
 ### Try before you install
 
 Use `agrx` to run any skill without adding it to your project:
 
 ```bash
-agrx user/skill-name
-agrx user/skill-name -i   # Interactive: continue chatting after the skill runs
+agrx anthropics/skills/webapp-testing
+agrx anthropics/skills/pdf -i   # Interactive: continue chatting after the skill runs
 ```
 
 ---
