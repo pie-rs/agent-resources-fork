@@ -132,12 +132,15 @@ def _partial_clone_unsupported(stderr: str | None) -> bool:
     """Detect errors indicating partial clone is unsupported."""
     if not stderr:
         return False
+    # Different git versions and servers report partial clone failures with
+    # different messages. We check all known variants so the caller can
+    # fall back to a full clone.
     lowered = stderr.lower()
     return (
-        ("unknown option" in lowered and "--filter" in lowered)
-        or "filtering is not supported" in lowered
-        or "does not support filtering" in lowered
-        or "filtering not recognized" in lowered
+        ("unknown option" in lowered and "--filter" in lowered)  # old git client
+        or "filtering is not supported" in lowered  # server rejects filter
+        or "does not support filtering" in lowered  # alternate server phrasing
+        or "filtering not recognized" in lowered  # rare git builds
     )
 
 
@@ -154,13 +157,23 @@ def _raise_clone_error(
     source: SourceConfig,
     stdout: str | None = None,
 ) -> None:
-    """Raise a friendly error based on git clone output."""
+    """Raise a friendly error based on git clone output.
+
+    Classifies git stderr/stdout into specific exception types so callers
+    get actionable errors. The classification order matters: explicit auth
+    failures first, then repo-not-found, then network errors, then a
+    heuristic catch-all for missing tokens.
+    """
     message = "\n".join(
         part for part in ((stderr or "").strip(), (stdout or "").strip()) if part
     ).strip()
     lowered = message.lower()
+    # When no GitHub token is set, many "not found" errors are actually
+    # auth failures in disguise — GitHub returns 404 for private repos
+    # that the user can't access, rather than 403.
     token_missing = _is_github_source(source) and not get_github_token()
 
+    # 1. Explicit authentication failures (git credential helper responded)
     if "authentication failed" in lowered or "permission denied" in lowered:
         if token_missing:
             raise AuthenticationError(
@@ -170,6 +183,8 @@ def _raise_clone_error(
         raise AuthenticationError(
             f"Authentication failed for source '{source.name}'."
         ) from None
+
+    # 2. Explicit "not found" responses from the server
     if (
         "repository not found" in lowered
         or ("not found" in lowered and "repository" in lowered)
@@ -178,14 +193,21 @@ def _raise_clone_error(
         raise RepoNotFoundError(
             f"Repository '{owner}/{repo_name}' not found in source '{source.name}'."
         ) from None
+
+    # 3. DNS / network failures
     if "could not resolve host" in lowered:
         raise AgrError(
             f"Network error: could not resolve host for source '{source.name}'."
         ) from None
+
+    # 4. Heuristic: when no token is set, ambiguous errors likely mean the
+    # repo is private or doesn't exist. We report "not found" to guide the
+    # user toward setting GITHUB_TOKEN. This includes empty stderr (git
+    # sometimes exits non-zero with no output when auth is needed).
     if token_missing and (
         not lowered
-        or "could not read username" in lowered
-        or "terminal prompts disabled" in lowered
+        or "could not read username" in lowered  # no credential helper
+        or "terminal prompts disabled" in lowered  # GIT_TERMINAL_PROMPT=0
         or "authentication required" in lowered
         or "authorization failed" in lowered
         or "access denied" in lowered
@@ -194,6 +216,7 @@ def _raise_clone_error(
             f"Repository '{owner}/{repo_name}' not found in source '{source.name}'."
         ) from None
 
+    # 5. Catch-all for unrecognized errors
     raise AgrError(f"Failed to clone repository from source '{source.name}'.") from None
 
 
