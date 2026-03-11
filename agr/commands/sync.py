@@ -179,6 +179,8 @@ def _sync_batched_repo_entries(
     Groups entries by (source, owner, repo) so that multiple skills from
     the same repository share a single download.
     """
+    # Group entries by (source, owner, repo) so all skills from the same
+    # repository are installed from a single git clone.
     grouped: dict[tuple[str, str, str], list[SyncEntry]] = {}
     for entry in entries:
         handle = entry.handle
@@ -191,6 +193,7 @@ def _sync_batched_repo_entries(
         try:
             source_config = resolver.get(source_name)
             with downloaded_repo(source_config, owner, repo_name) as repo_dir:
+                # Prepare all skills from this repo in one sparse checkout pass.
                 skill_names = [entry.handle.name for entry in group]
                 skill_sources = prepare_repo_for_skills(repo_dir, skill_names)
                 for entry in group:
@@ -204,6 +207,8 @@ def _sync_batched_repo_entries(
                         source_name,
                     )
         except INSTALL_ERROR_TYPES as e:
+            # If the repo-level operation fails (clone, checkout), mark
+            # every skill in the group as failed.
             for entry in group:
                 results[entry.index] = SyncResult(
                     SyncStatus.ERROR, format_install_error(e)

@@ -108,14 +108,17 @@ will fall back to `agent-resources` (with a warning) if the skill isn't found in
 
 ## How Skill Discovery Works
 
-When you run `agr add user/repo/skill`, agr searches that repo for a skill named
-`skill`. It will be found if it exists in:
+When you run `agr add user/repo/skill`, agr recursively searches the entire repo
+for any directory named `skill` that contains a `SKILL.md` file. Common locations
+include:
 
-- `resources/skills/{skill}/SKILL.md`
 - `skills/{skill}/SKILL.md`
+- `resources/skills/{skill}/SKILL.md`
 - `{skill}/SKILL.md`
 
-If two skills have the same name, you'll get an error.
+but any nesting depth works. Directories like `.git`, `node_modules`, `__pycache__`,
+and other common non-source directories are excluded from the search. When multiple
+matches exist, the shallowest path wins.
 
 ## Project Setup
 

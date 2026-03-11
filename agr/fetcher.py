@@ -76,24 +76,30 @@ def _find_local_name_conflicts(
     conflicts: list[Path] = []
     has_unknown = False
 
+    # Nested tools store local skills under local/<name>; flat tools may
+    # use either the plain name or the full user--repo--skill form.
     if tool.supports_nested:
         candidates = [skills_dir / "local" / handle.name]
     else:
         candidates = [skills_dir / handle.name, skills_dir / handle.to_installed_name()]
 
     for path in candidates:
+        # Skip the path we'd install to (it's not a conflict with itself).
         if tool.supports_nested and path == default_dest:
             continue
         if not is_valid_skill_dir(path):
             continue
         meta = read_skill_metadata(path)
         if meta:
+            # Remote skills at this path are not local conflicts.
             if meta.get("type") != "local":
                 continue
+            # Same local handle — this is us, not a conflict.
             if meta.get("id") == handle_id:
                 continue
             conflicts.append(path)
             continue
+        # No metadata means we can't determine ownership — flag it.
         has_unknown = True
         conflicts.append(path)
 
@@ -107,19 +113,29 @@ def _find_existing_skill_dir(
     repo_root: Path | None,
     source: str | None = None,
 ) -> Path | None:
-    """Find an existing installed skill directory for this handle."""
+    """Find an existing installed skill directory for this handle.
+
+    For nested tools (Cursor), the path is deterministic from the handle.
+    For flat tools, we check two candidate paths in priority order:
+    1. Plain name (e.g. ``skill/``) — preferred, matched by metadata ID
+    2. Full name (e.g. ``user--repo--skill/``) — used on collision or legacy
+    """
     if tool.supports_nested:
         skill_path = skills_dir / handle.to_skill_path(tool)
         return skill_path if is_valid_skill_dir(skill_path) else None
 
+    # Build all possible metadata IDs for this handle, including legacy
+    # formats (with/without explicit source name).
     handle_ids = _build_handle_ids(handle, repo_root, source)
     name_path = skills_dir / handle.name
     full_path = skills_dir / handle.to_installed_name()
 
+    # Prefer the plain-name path if metadata confirms it's ours.
     if is_valid_skill_dir(name_path) and _skill_dir_matches_handle(
         name_path, handle_ids
     ):
         return name_path
+    # Fall back to the full (qualified) name path.
     if is_valid_skill_dir(full_path) and _skill_dir_matches_handle(
         full_path, handle_ids
     ):
@@ -173,6 +189,9 @@ def prepare_repo_for_skills(repo_dir: Path, skill_names: list[str]) -> dict[str,
         return {}
 
     try:
+        # Fast path: use git ls-tree to find SKILL.md locations without
+        # checking out the full repo, then sparse-checkout only the
+        # directories we need.
         paths = git_list_files(repo_dir)
         rel_paths: dict[str, Path] = {}
         for name in unique_names:
@@ -193,7 +212,8 @@ def prepare_repo_for_skills(repo_dir: Path, skill_names: list[str]) -> dict[str,
 
         return {}
     except AgrError:
-        # Fallback: full checkout + scan
+        # Slow fallback: if sparse checkout fails (e.g. older git or
+        # unusual repo layout), do a full checkout and scan the filesystem.
         checkout_full(repo_dir)
         resolved: dict[str, Path] = {}
         for name in unique_names:
@@ -239,7 +259,14 @@ def _build_handle_ids(
     repo_root: Path | None,
     source: str | None,
 ) -> list[str] | None:
-    """Build handle IDs to match, including legacy ids."""
+    """Build handle IDs to match, including legacy ids.
+
+    Remote skills may have been installed with or without an explicit source
+    name in their metadata. To find them regardless of when they were installed,
+    we generate both the current ID and the legacy variant:
+    - source=None  → also check with DEFAULT_SOURCE_NAME ("github")
+    - source="github" → also check without explicit source
+    """
     if handle.is_local:
         return [build_handle_id(handle, repo_root)]
     handle_ids = [build_handle_id(handle, repo_root, source)]
@@ -509,6 +536,10 @@ def _locate_remote_skill(
     resolver = resolver or SourceResolver.default()
     owner = handle.username or ""
 
+    # Two-level search: try each repo candidate (e.g. "skills" then
+    # "agent-resources") against each configured source (e.g. "github").
+    # First match wins. The outer loop is repo candidates so we prefer
+    # the primary repo name across all sources before trying fallbacks.
     for repo_name, is_legacy in iter_repo_candidates(handle.repo):
         for source_config in resolver.ordered(source):
             try:
@@ -524,6 +555,8 @@ def _locate_remote_skill(
                     )
                     return
             except RepoNotFoundError:
+                # When a specific source was requested, don't silently
+                # fall back to other sources — surface the error.
                 if source is not None:
                     raise
                 continue

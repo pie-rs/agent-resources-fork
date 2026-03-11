@@ -128,6 +128,18 @@ config.add_dependency(Dependency(handle="user/skill", type="skill"))
 config.save()
 ```
 
+### Skill discovery algorithm (`skill.py`)
+
+Skills are found by **recursive search**, not by checking hardcoded paths. The algorithm:
+
+1. List all files via `git ls-tree` (fast path) or `rglob("SKILL.md")` (fallback)
+2. Find entries where the filename is `SKILL.md`
+3. Exclude: root-level `SKILL.md`, paths within `.git`, `node_modules`, `__pycache__`, `.venv`, `vendor`, `build`, `dist`, etc.
+4. Match: directory name must equal the requested skill name
+5. When multiple matches exist, the **shallowest** path wins (fewest path components)
+
+This means `skills/my-skill/SKILL.md`, `src/tools/my-skill/SKILL.md`, and `my-skill/SKILL.md` would all match — with the shallowest returned.
+
 ### Uninstall (`agr remove user/skill`)
 
 ```

@@ -258,11 +258,14 @@ Note: `dependencies` must appear before any `[[source]]` blocks in `agr.toml`.
 
 ### Skill not found
 
-Check that the skill exists in the repository. agr searches:
+Check that the skill exists in the repository. agr recursively searches for any
+directory matching the skill name that contains `SKILL.md`. Common locations:
 
-- `resources/skills/{name}/SKILL.md`
 - `skills/{name}/SKILL.md`
+- `resources/skills/{name}/SKILL.md`
 - `{name}/SKILL.md`
+
+Any nesting depth works. The shallowest match is used when duplicates exist.
 
 ### Skill already exists
 
