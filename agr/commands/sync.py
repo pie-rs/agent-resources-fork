@@ -99,6 +99,12 @@ def _print_results_and_summary(
 def _sync_instructions_if_configured(
     repo_root: Path, config: AgrConfig, tools: list[ToolConfig]
 ) -> None:
+    """Copy the canonical instruction file to other tools' instruction files.
+
+    Skipped when sync_instructions is not enabled or fewer than two tools
+    are configured.  The canonical file is determined by
+    ``config.canonical_instructions`` or the default tool's instruction file.
+    """
     console = get_console()
     if not config.sync_instructions:
         return
