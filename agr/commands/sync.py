@@ -172,7 +172,7 @@ def _run_global_sync() -> None:
             console.print(f"[red]Error:[/red] {identifier}")
             console.print(f"  [dim]{e}[/dim]")
             errors += 1
-        except Exception as e:
+        except (OSError, ValueError) as e:
             console.print(f"[red]Error:[/red] {identifier}")
             console.print(f"  [dim]Unexpected: {e}[/dim]")
             errors += 1
@@ -251,7 +251,7 @@ def run_sync(global_install: bool = False) -> None:
                 pending_remote.append(entry)
         except AgrError as e:
             results[index] = ("error", str(e))
-        except Exception as e:
+        except (OSError, ValueError) as e:
             results[index] = ("error", f"Unexpected: {e}")
 
     def _sync_entries(entries: list[SyncEntry]) -> None:
@@ -276,7 +276,7 @@ def run_sync(global_install: bool = False) -> None:
                 results[entry.index] = ("installed", None)
             except (FileExistsError, AgrError) as e:
                 results[entry.index] = ("error", str(e))
-            except Exception as e:
+            except (OSError, ValueError) as e:
                 results[entry.index] = ("error", f"Unexpected: {e}")
 
     # Local installs (no download)
@@ -331,12 +331,12 @@ def run_sync(global_install: bool = False) -> None:
                         results[entry.index] = ("installed", None)
                     except (FileExistsError, AgrError) as e:
                         results[entry.index] = ("error", str(e))
-                    except Exception as e:
+                    except (OSError, ValueError) as e:
                         results[entry.index] = ("error", f"Unexpected: {e}")
         except AgrError as e:
             for entry in entries:
                 results[entry.index] = ("error", str(e))
-        except Exception as e:
+        except (OSError, ValueError) as e:
             for entry in entries:
                 results[entry.index] = ("error", f"Unexpected: {e}")
 
