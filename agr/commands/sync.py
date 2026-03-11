@@ -151,7 +151,12 @@ def _sync_individual_entries(
     tools: list[ToolConfig],
     resolver: SourceResolver,
 ) -> None:
-    """Sync entries one at a time, each downloading its own repo if needed."""
+    """Sync entries one at a time, each downloading its own repo if needed.
+
+    Used for local skills (no download) and default-repo remotes
+    (two-part handles like ``user/skill`` where the repo name must be
+    discovered by trying candidates).
+    """
     for entry in entries:
         try:
             results[entry.index] = _sync_one_dependency(
@@ -320,8 +325,15 @@ def run_sync(global_install: bool = False) -> None:
     """Run the sync command.
 
     Installs all dependencies from agr.toml that aren't already installed.
-    Also migrates any legacy colon-based directory names to the new
-    Windows-compatible double-hyphen format (for flat tools only).
+
+    The sync flow has four stages:
+    1. **Instruction sync** — copy the canonical instruction file (e.g.
+       CLAUDE.md) to other tools' instruction files when enabled.
+    2. **Migrations** — rename legacy skill directories to current naming
+       conventions (colon → double-hyphen, full names → plain names).
+    3. **Dependency install** — install missing skills, optimizing downloads
+       by batching same-repo remotes into a single git clone.
+    4. **Report** — print per-dependency status and a summary line.
     """
     console = get_console()
     if global_install:
@@ -330,20 +342,19 @@ def run_sync(global_install: bool = False) -> None:
 
     repo_root = require_repo_root()
 
-    # Find config
     config_path = find_config()
     if config_path is None:
         console.print("[yellow]No agr.toml found.[/yellow] Nothing to sync.")
         return
 
     config = AgrConfig.load(config_path)
-
-    # Get configured tools
     tools = config.get_tools()
 
+    # Stage 1: Sync instruction files across tools (e.g. CLAUDE.md → AGENTS.md).
     _sync_instructions_if_configured(repo_root, config, tools)
 
-    # Migrate legacy directories
+    # Stage 2: Run directory migrations before installing new skills so that
+    # existing installs are in the expected layout for duplicate detection.
     run_tool_migrations(tools, repo_root)
     for tool in tools:
         skills_dir = tool.get_skills_dir(repo_root)
@@ -356,7 +367,9 @@ def run_sync(global_install: bool = False) -> None:
 
     resolver = config.get_source_resolver()
 
-    # Track results per dependency (not per tool)
+    # --- Phase 1: Classify dependencies ---
+    # Pre-allocate a result slot per dependency so parallel paths can fill
+    # them by index without coordination.
     results: list[SyncResult] = [
         SyncResult(SyncStatus.PENDING) for _ in config.dependencies
     ]
@@ -368,6 +381,7 @@ def run_sync(global_install: bool = False) -> None:
             handle = dep.to_parsed_handle()
             source_name = dep.resolve_source_name(config.default_source)
 
+            # Skip dependencies already installed on every configured tool.
             tools_needing_install = filter_tools_needing_install(
                 handle, repo_root, tools, source_name
             )
@@ -388,9 +402,15 @@ def run_sync(global_install: bool = False) -> None:
         except INSTALL_ERROR_TYPES as e:
             results[index] = SyncResult(SyncStatus.ERROR, format_install_error(e))
 
-    # Local installs and default-repo remotes (each downloads individually)
+    # --- Phase 2: Install pending dependencies ---
+    # Three categories are processed separately for efficiency:
+    #
+    # 1. Local skills — no git download, just copy from the local path.
     _sync_individual_entries(pending_local, results, repo_root, tools, resolver)
 
+    # 2. Default-repo remotes (two-part handles like "user/skill") — the
+    #    repo name is unknown and must be discovered by trying candidates
+    #    ("skills", "agent-resources"), so each must download individually.
     pending_remote_default = [e for e in pending_remote if e.handle.repo is None]
     pending_remote_specific = [e for e in pending_remote if e.handle.repo is not None]
 
@@ -398,7 +418,9 @@ def run_sync(global_install: bool = False) -> None:
         pending_remote_default, results, repo_root, tools, resolver
     )
 
-    # Remote installs grouped by repo/source (download once per repo)
+    # 3. Specific-repo remotes (three-part handles like "user/repo/skill") —
+    #    grouped by (source, owner, repo) so multiple skills from the same
+    #    repository share a single git clone.
     _sync_batched_repo_entries(
         pending_remote_specific,
         results,
@@ -408,7 +430,7 @@ def run_sync(global_install: bool = False) -> None:
         config.default_source,
     )
 
-    # Print results
+    # --- Phase 3: Report ---
     labeled_results = [
         (dep.identifier, results[index])
         for index, dep in enumerate(config.dependencies)

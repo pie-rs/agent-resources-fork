@@ -221,22 +221,35 @@ def migrate_flat_installed_names(
     config: AgrConfig,
     repo_root: Path,
 ) -> None:
-    """Migrate flat skill names to the plain <skill> format when safe.
+    """Migrate flat skill names to the plain ``<skill>`` format when safe.
 
-    Only applies to flat tools. Uses agr.toml dependencies to resolve
-    handle identities and writes metadata for accurate future matching.
+    Older versions always installed skills under their full flat name
+    (``user--repo--skill``). This migration renames them to the shorter
+    plain name (``skill``) when there is no ambiguity.
+
+    The logic has three cases per skill name:
+
+    1. **Unique name** (one handle owns this name) — safe to use the plain
+       directory name. Rename ``user--repo--skill/`` → ``skill/`` if needed,
+       and ensure metadata is up to date.
+    2. **Ambiguous name** (multiple handles share the same skill name) —
+       keep the full flat names to avoid collisions, but stamp metadata
+       on each directory so future operations can identify them.
+    3. **Unknown installs** (not tracked in agr.toml) — skipped, because
+       we can't determine the correct handle identity.
+
+    Only applies to flat tools (e.g. Claude). Nested tools (e.g. Cursor)
+    already use ``user/repo/skill/`` paths and don't need this.
     """
     console = get_console()
-    # TODO(decide): consider best-effort migration for installs not in agr.toml.
-    # This is ambiguous for local skills because the original path is unknown,
-    # and for remotes because multiple handles can share the same skill name.
     if tool.supports_nested:
         return
 
     if not skills_dir.exists():
         return
 
-    # Build handles from config dependencies
+    # Index agr.toml dependencies by skill name so we can look up which
+    # handles claim each name. A name with >1 handle is ambiguous.
     handles_by_name: dict[str, list[tuple[ParsedHandle, str | None]]] = {}
     for dep in config.dependencies:
         if not (dep.path or dep.handle):
@@ -252,13 +265,17 @@ def migrate_flat_installed_names(
         name_dir = skills_dir / skill_name
         name_dir_is_skill = is_valid_skill_dir(name_dir)
 
-        # If a name dir exists, try to match metadata to a handle
+        # Check if the plain-name dir already belongs to one of the known
+        # handles (by comparing .agr.json metadata IDs). This tells us
+        # whether the directory is "claimed" and by whom.
         matched_handle: tuple[ParsedHandle, str | None] | None = None
         if name_dir_is_skill:
             meta = read_skill_metadata(name_dir)
             if meta:
                 for handle, source_name in handles:
                     handle_id = build_handle_id(handle, repo_root, source_name)
+                    # Also check the legacy ID format (without explicit source)
+                    # for backward compatibility with pre-source metadata.
                     legacy_id = (
                         build_handle_id(handle, repo_root)
                         if source_name == DEFAULT_SOURCE_NAME
@@ -268,11 +285,13 @@ def migrate_flat_installed_names(
                         matched_handle = (handle, source_name)
                         break
 
-        # If there is only one handle for this name, ensure name dir metadata
+        # --- Case 1: Unique name (single handle) ---
+        # Safe to use the short plain directory name.
         if len(handles) == 1:
             handle, source_name = handles[0]
             handle_id = build_handle_id(handle, repo_root, source_name)
             if name_dir_is_skill:
+                # Plain-name dir exists — just ensure metadata is current.
                 meta = read_skill_metadata(name_dir)
                 if not meta or meta.get("id") != handle_id:
                     _update_dir_metadata(
@@ -280,7 +299,8 @@ def migrate_flat_installed_names(
                     )
                 continue
 
-            # No name dir: try to migrate from full flat name
+            # Plain-name dir doesn't exist — try renaming from the full
+            # flat name (e.g. ``user--repo--skill`` → ``skill``).
             full_dir = skills_dir / handle.to_installed_name()
             if is_valid_skill_dir(full_dir):
                 if not name_dir.exists():
@@ -295,18 +315,17 @@ def migrate_flat_installed_names(
                     except OSError as e:
                         console.print(f"[red]Failed to migrate:[/red] {full_dir.name}")
                         console.print(f"  [dim]{e}[/dim]")
-                else:
-                    # Name exists but isn't a skill dir; skip rename
-                    pass
+                # else: something non-skill occupies the name; skip.
             continue
 
-        # Multiple handles with same name: avoid renaming to plain name
+        # --- Case 2: Ambiguous name (multiple handles) ---
+        # Can't safely rename to the short name, but stamp metadata on
+        # whichever directories exist so they can be identified later.
         if matched_handle:
             _update_dir_metadata(
                 name_dir, matched_handle[0], repo_root, tool.name, matched_handle[1]
             )
 
-        # Ensure metadata on full-name dirs for all handles
         for handle, source_name in handles:
             full_dir = skills_dir / handle.to_installed_name()
             if is_valid_skill_dir(full_dir):

@@ -137,7 +137,34 @@ config.remove_dependency() → config.save()
 
 ### Sync (`agr sync`)
 
-Iterates `config.dependencies`, calls `fetch_and_install()` for each one that isn't already installed (checked via `is_skill_installed()`).
+The sync command is the most complex workflow, with four stages:
+
+```
+1. Instruction sync
+   If sync_instructions is enabled and ≥2 tools configured:
+     Copy canonical instruction file (e.g. CLAUDE.md) → other tools' files
+
+2. Migrations (before installing, so duplicate detection works)
+   run_tool_migrations()        # Codex .codex/ → .agents/, OpenCode .opencode/skill/ → skills/
+   migrate_legacy_directories() # Colon separator → double-hyphen (user:skill → user--skill)
+   migrate_flat_installed_names()  # Full names → plain names when safe (user--repo--skill → skill)
+
+3. Dependency install (three categories for efficiency)
+   For each dependency in agr.toml:
+     Check is_skill_installed() on all configured tools
+     → UP_TO_DATE (skip) or classify as local / remote-default / remote-specific
+
+   a) Local skills           → copy from local path (no download)
+   b) Default-repo remotes   → "user/skill" handles where repo is unknown;
+                                each downloads individually (tries "skills", "agent-resources")
+   c) Specific-repo remotes  → "user/repo/skill" handles grouped by (source, owner, repo);
+                                each group shares a single git clone
+
+4. Report
+   Print per-dependency status (installed / up-to-date / error) + summary
+```
+
+Key optimization: step 3c groups multiple skills from the same repository into a single download via `_sync_batched_repo_entries()`, avoiding redundant git clones.
 
 ### Local install (`agr add ./my-skill`)
 
