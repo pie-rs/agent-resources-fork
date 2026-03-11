@@ -366,10 +366,8 @@ def install_skill_from_repo_to_tools(
     if not tools:
         raise ValueError("No tools provided for installation")
 
-    installed: dict[str, Path] = {}
-
-    for tool in tools:
-        try:
+    with _rollback_on_failure() as installed:
+        for tool in tools:
             skills_dir = tool.get_skills_dir(repo_root) if repo_root else None
             if skills_dir is None:
                 raise ValueError("repo_root is required for tool installation")
@@ -385,9 +383,6 @@ def install_skill_from_repo_to_tools(
                 skill_source=skill_source,
             )
             installed[tool.name] = path
-        except Exception:
-            _rollback_installed(installed)
-            raise
 
     return installed
 
@@ -659,12 +654,10 @@ def fetch_and_install_to_tools(
     if not tools:
         raise ValueError("No tools provided for installation")
 
-    installed: dict[str, Path] = {}
-
     if handle.is_local:
         # Local: no download needed, just iterate with rollback
-        for tool in tools:
-            try:
+        with _rollback_on_failure() as installed:
+            for tool in tools:
                 target_skills_dir = (
                     skills_dirs.get(tool.name) if skills_dirs is not None else None
                 )
@@ -677,15 +670,12 @@ def fetch_and_install_to_tools(
                     source,
                     skills_dir=target_skills_dir,
                 )
-            except Exception:
-                _rollback_installed(installed)
-                raise
         return installed
 
     # Remote: download once, install to all
-    with _locate_remote_skill(handle, resolver, source) as loc:
-        for tool in tools:
-            try:
+    with _rollback_on_failure() as installed:
+        with _locate_remote_skill(handle, resolver, source) as loc:
+            for tool in tools:
                 skills_dir = (
                     skills_dirs.get(tool.name) if skills_dirs is not None else None
                 )
@@ -707,16 +697,13 @@ def fetch_and_install_to_tools(
                     skill_source=loc.skill_source,
                 )
                 installed[tool.name] = path
-            except Exception:
-                _rollback_installed(installed)
-                raise
-        if loc.is_legacy:
-            warnings.warn(
-                LEGACY_REPO_DEPRECATION_WARNING,
-                UserWarning,
-                stacklevel=2,
-            )
-        return installed
+            if loc.is_legacy:
+                warnings.warn(
+                    LEGACY_REPO_DEPRECATION_WARNING,
+                    UserWarning,
+                    stacklevel=2,
+                )
+    return installed
 
 
 def uninstall_skill(
@@ -781,6 +768,21 @@ def _rollback_installed(installed: dict[str, Path]) -> None:
             shutil.rmtree(rollback_path)
         except OSError as e:
             logger.warning(f"Failed to rollback {tool_name} at {rollback_path}: {e}")
+
+
+@contextmanager
+def _rollback_on_failure() -> Generator[dict[str, Path], None, None]:
+    """Track installed paths and roll back all on failure.
+
+    Yields a dict that callers populate with {tool_name: path} entries.
+    If an exception propagates out, all recorded installs are removed.
+    """
+    installed: dict[str, Path] = {}
+    try:
+        yield installed
+    except Exception:
+        _rollback_installed(installed)
+        raise
 
 
 def _cleanup_empty_parents(path: Path, stop_at: Path) -> None:
