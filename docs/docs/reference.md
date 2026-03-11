@@ -116,7 +116,7 @@ discovery and migration.
 - `--tools` — Comma-separated tool list (e.g., `claude,codex,opencode`)
 - `--default-tool` — Default tool for `agrx` and instruction sync
 - `--sync-instructions/--no-sync-instructions` — Sync instruction files on `agr sync`
-- `--canonical-instructions` — Canonical instruction file (`AGENTS.md` or `CLAUDE.md`)
+- `--canonical-instructions` — Canonical instruction file (`AGENTS.md`, `CLAUDE.md`, or `GEMINI.md`)
 
 **Examples:**
 
@@ -252,7 +252,7 @@ Note: `dependencies` must appear before any `[[source]]` blocks in `agr.toml`.
 - `tools` — List of tools to sync instructions/skills to
 - `default_tool` — Default tool used by `agrx`
 - `sync_instructions` — Sync instruction files on `agr sync`
-- `canonical_instructions` — Canonical instruction file (`AGENTS.md` or `CLAUDE.md`)
+- `canonical_instructions` — Canonical instruction file (`AGENTS.md`, `CLAUDE.md`, or `GEMINI.md`)
 
 ## Troubleshooting
 

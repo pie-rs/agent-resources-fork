@@ -97,6 +97,28 @@ Frozen dataclass defining how a tool stores skills. Key fields:
 
 Six tools defined: `CLAUDE`, `CURSOR`, `CODEX`, `OPENCODE`, `COPILOT`, `ANTIGRAVITY`.
 
+**Detection signals** (used by `agr init` and `agr onboard` to auto-detect tools):
+
+| Tool | Detection signals |
+|------|-------------------|
+| Claude | `.claude`, `CLAUDE.md` |
+| Cursor | `.cursor`, `.cursorrules` |
+| Codex | `.agents`, `.codex` |
+| OpenCode | `.opencode` |
+| Copilot | `.github/copilot`, `.github/skills` |
+| Antigravity | `.agent` |
+
+**CLI command mapping** (used by `agrx` to invoke tools):
+
+| Tool | CLI | Exec command | Prompt flag | Skill prefix |
+|------|-----|-------------|-------------|--------------|
+| Claude | `claude` | — | `-p` | `/` |
+| Cursor | `agent` | — | `-p` | `/` |
+| Codex | `codex` | `codex exec` | positional | `$` |
+| OpenCode | `opencode` | `opencode run` | positional / `--prompt` | (none) |
+| Copilot | `copilot` | — | `-p` | `/` |
+| Antigravity | — | — | — | (none) |
+
 ### AgrConfig (`config.py`)
 
 Loaded from `agr.toml`. Contains:
@@ -200,9 +222,23 @@ The sync command is the most complex workflow, with four stages:
 
 Key optimization: step 3c groups multiple skills from the same repository into a single download via `_sync_batched_repo_entries()`, avoiding redundant git clones.
 
+### Skill destination resolution (`_resolve_skill_destination`)
+
+For flat tools, the install path is determined by this priority:
+1. **Already installed** — if the skill is found (by metadata ID) at any path, reuse it
+2. **Plain name free** — install as `<skills-dir>/<skill-name>/`
+3. **Name collision** — another skill owns the plain name, so fall back to `<skills-dir>/<user>--<repo>--<skill>/`
+
+Finding existing installs (`_find_existing_skill_dir`) checks:
+1. Plain name path, matched by `.agr.json` metadata ID
+2. Full qualified name path, matched by metadata ID
+3. Full qualified name path without metadata (legacy fallback)
+
 ### Local install (`agr add ./my-skill`)
 
 Copies the local directory to the tool's skills dir. Validates `SKILL.md` exists. Checks for name conflicts with other local skills.
+
+Special case: if the source path is already the install destination (e.g. `agr add ./skills/my-skill` when `.claude/skills/` points to `skills/`), the copy is skipped and only metadata is stamped.
 
 ## Naming conventions
 
@@ -299,6 +335,10 @@ All errors inherit from `AgrError` (`exceptions.py`):
 - `RateLimitError` — GitHub API rate limit
 
 Multi-tool installs use `_rollback_on_failure()` context manager to clean up partial installs.
+
+### Error formatting
+
+`format_install_error()` in `exceptions.py` provides user-facing error messages. `AgrError` and `FileExistsError` are shown directly; other exceptions get an "Unexpected: " prefix. The `INSTALL_ERROR_TYPES` tuple defines which exception types are caught per-dependency during `agr sync` (so one failing skill doesn't abort the entire sync).
 
 ## Testing
 

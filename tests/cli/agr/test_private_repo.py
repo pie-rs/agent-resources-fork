@@ -98,16 +98,9 @@ class TestPrivateRepoRealNetwork:
 
     def test_sync_with_private_dependency_succeeds(self, agr, cli_project, cli_config):
         """agr sync with private dependency succeeds."""
-        handle = (
-            "kasperjunge"
-            "/agent-resources-private-test-repo"
-            "/test-skill"
-        )
+        handle = "kasperjunge/agent-resources-private-test-repo/test-skill"
         cli_config(
-            f'dependencies = [\n'
-            f'    {{ handle = "{handle}",'
-            f' type = "skill" }},\n'
-            f']\n'
+            f'dependencies = [\n    {{ handle = "{handle}", type = "skill" }},\n]\n'
         )
 
         result = agr("sync")

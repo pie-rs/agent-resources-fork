@@ -158,22 +158,52 @@ def test_missing_skill_raises(self):
 
 ```
 tests/
-├── conftest.py              # Shared fixtures
-├── test_fetcher.py          # agr/fetcher.py tests
-├── test_config.py           # agr/config.py tests
-├── test_handle.py           # agr/handle.py tests
-├── test_skill.py            # agr/skill.py tests
-├── test_metadata.py         # agr/metadata.py tests
-├── test_tool.py             # agr/tool.py tests
-├── test_copilot.py          # Copilot-specific tests
-├── test_cursor.py           # Cursor nested-dir tests
-├── test_commands.py         # CLI command integration tests
+├── conftest.py                    # Shared fixtures (git_project, skill_fixture)
+├── test_fetcher.py                # agr/fetcher.py tests
+├── test_config.py                 # agr/config.py tests
+├── test_handle.py                 # agr/handle.py tests
+├── test_skill.py                  # agr/skill.py tests
+├── test_metadata.py               # agr/metadata.py tests
+├── test_tool.py                   # agr/tool.py tests
+├── test_copilot.py                # Copilot-specific tests
+├── test_cursor.py                 # Cursor nested-dir tests
+├── test_commands.py               # CLI command integration tests
 ├── test_agrx_command_building.py  # agrx CLI command building
-├── test_docs.py             # Documentation accuracy tests
-├── test_gh_issue_phase.py   # Regression tests for GitHub issues
-├── cli/                     # CLI end-to-end tests
-├── sdk/                     # SDK tests
-└── unit/                    # Isolated unit tests
+├── test_docs.py                   # Documentation accuracy tests
+├── test_gh_issue_phase.py         # Regression tests for GitHub issues
+├── cli/                           # CLI end-to-end tests
+│   ├── conftest.py                # CLI test fixtures (mock git, subprocess)
+│   ├── runner.py                  # Test runner helpers for CLI invocation
+│   ├── assertions.py              # Common CLI assertion helpers
+│   ├── agr/                       # agr CLI tests
+│   │   ├── test_add.py            # agr add end-to-end
+│   │   ├── test_remove.py         # agr remove end-to-end
+│   │   ├── test_sync.py           # agr sync end-to-end
+│   │   ├── test_list.py           # agr list end-to-end
+│   │   ├── test_init.py           # agr init end-to-end
+│   │   ├── test_onboard.py        # agr onboard end-to-end
+│   │   ├── test_config_commands.py # agr config subcommands
+│   │   ├── test_tools.py          # agr config tools (deprecated)
+│   │   ├── test_sources.py        # Source-related CLI tests
+│   │   ├── test_global_flags.py   # --global flag tests
+│   │   ├── test_quiet.py          # --quiet flag tests
+│   │   ├── test_version.py        # --version flag tests
+│   │   ├── test_private_repo.py   # Private repo handling
+│   │   ├── test_antigravity.py    # Antigravity tool CLI tests
+│   │   ├── test_codex.py          # Codex tool CLI tests
+│   │   ├── test_copilot.py        # Copilot tool CLI tests
+│   │   ├── test_cursor.py         # Cursor tool CLI tests
+│   │   └── test_opencode.py       # OpenCode tool CLI tests
+│   └── agrx/                      # agrx CLI tests
+│       ├── test_run.py            # agrx run end-to-end
+│       └── test_tool_flag.py      # agrx --tool flag tests
+├── sdk/                           # SDK tests
+│   ├── conftest.py                # SDK test fixtures
+│   ├── test_skill.py              # Skill class tests
+│   ├── test_cache.py              # Cache management tests
+│   └── test_hub.py                # Hub discovery tests
+└── unit/                          # Isolated unit tests
+    └── test_detect.py             # Tool detection tests
 ```
 
 ## Error handling patterns

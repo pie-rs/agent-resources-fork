@@ -151,10 +151,7 @@ def run_init(
             changed = True
 
     if config.default_tool and config.default_tool not in config.tools:
-        print_error(
-            "default_tool must be listed in tools. "
-            "Use --tools to include it."
-        )
+        print_error("default_tool must be listed in tools. Use --tools to include it.")
         raise SystemExit(1)
 
     # Instruction sync
@@ -165,7 +162,8 @@ def run_init(
 
     if canonical_instructions:
         if canonical_instructions not in VALID_CANONICAL_INSTRUCTIONS:
-            print_error("canonical instructions must be AGENTS.md or CLAUDE.md")
+            valid = ", ".join(sorted(VALID_CANONICAL_INSTRUCTIONS))
+            print_error(f"canonical_instructions must be one of: {valid}")
             raise SystemExit(1)
         config.canonical_instructions = canonical_instructions
         if config.canonical_instructions != original_canonical_instructions:

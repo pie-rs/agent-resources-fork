@@ -157,7 +157,14 @@ def _resolve_skill_destination(
     repo_root: Path | None,
     source: str | None = None,
 ) -> Path:
-    """Resolve the destination path for installing a skill."""
+    """Resolve the destination path for installing a skill.
+
+    For flat tools, the resolution order is:
+    1. If the skill is already installed (any name form), reuse that path.
+    2. If the plain name (e.g. ``skill/``) is free, use it.
+    3. If the plain name is taken by a *different* skill, fall back to the
+       fully qualified name (e.g. ``user--repo--skill/``).
+    """
     if tool.supports_nested:
         return skills_dir / handle.to_skill_path(tool)
 
@@ -165,6 +172,7 @@ def _resolve_skill_destination(
     if existing:
         return existing
 
+    # Plain name is occupied by a different skill — use full name to avoid collision.
     name_path = skills_dir / handle.name
     if is_valid_skill_dir(name_path):
         return skills_dir / handle.to_installed_name()
@@ -465,6 +473,9 @@ def install_local_skill(
     if repo_root is None:
         repo_root = Path.cwd()
 
+    # Self-install case: the source path is already the install destination
+    # (e.g. `agr add ./skills/my-skill` when skills/ is the tool's skills dir).
+    # Skip copying; just stamp metadata if missing.
     default_dest = dest_dir / handle.to_skill_path(tool)
     if source_path.resolve() == default_dest.resolve() and is_valid_skill_dir(
         default_dest
@@ -715,7 +726,9 @@ def fetch_and_install_to_tools(
                 )
         return installed
 
-    # Remote: download once, install to all
+    # Remote: download once via _locate_remote_skill, then install the same
+    # checked-out skill to every tool. The context manager keeps the temp
+    # repo directory alive until all tools are done.
     with _rollback_on_failure() as installed:
         with _locate_remote_skill(handle, resolver, source) as loc:
             for tool in tools:
@@ -735,6 +748,8 @@ def fetch_and_install_to_tools(
                     skill_source=loc.skill_source,
                 )
                 installed[tool.name] = path
+            # Warn after successful install so the user sees it once,
+            # not on partial failure.
             if loc.is_legacy:
                 warnings.warn(
                     LEGACY_REPO_DEPRECATION_WARNING,

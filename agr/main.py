@@ -305,9 +305,7 @@ def default_tool_set(
 ) -> None:
     """Set the default tool used by agrx."""
     new_cmd = f"agr config set default_tool {name}"
-    print_deprecation(
-        "agr config default-tool set", new_cmd
-    )
+    print_deprecation("agr config default-tool set", new_cmd)
     run_default_tool_set(name)
 
 
@@ -351,7 +349,7 @@ def init(
         Optional[str],
         typer.Option(
             "--canonical-instructions",
-            help="Canonical instruction file (AGENTS.md or CLAUDE.md).",
+            help="Canonical instruction file (AGENTS.md, CLAUDE.md, or GEMINI.md).",
         ),
     ] = None,
 ) -> None:
