@@ -43,86 +43,13 @@ agr sync
 
 ## Setting Up a Team
 
-agr uses `agr.toml` as a lockfile-like manifest. Commit it to version control
-so the whole team shares the same skills.
+See the dedicated [Teams](teams.md) page for complete instructions on:
 
-### 1. Initialize
-
-```bash
-agr init --tools claude,cursor
-```
-
-### 2. Add the skills your team needs
-
-```bash
-agr add anthropics/skills/frontend-design
-agr add anthropics/skills/pdf
-agr add ./skills/internal-review   # Local skills work too
-```
-
-### 3. Commit `agr.toml`
-
-```bash
-git add agr.toml
-git commit -m "Add agr skill dependencies"
-```
-
-### 4. Teammates install
-
-After cloning the repo, teammates run:
-
-```bash
-uv tool install agr   # One-time install (or: pipx install agr)
-agr sync              # Install all skills from agr.toml
-```
-
-That's it — everyone has the same skills in their tool.
-
-### Multi-tool teams
-
-If your team uses different tools, configure all of them:
-
-```bash
-agr config set tools claude cursor codex
-```
-
-When anyone runs `agr add` or `agr sync`, skills are installed into every
-configured tool's skills directory simultaneously.
-
----
-
-## CI/CD Integration
-
-Add `agr sync` to your CI pipeline to ensure skills are available in automated
-environments.
-
-### GitHub Actions example
-
-```yaml
-- name: Install agr
-  run: uv tool install agr
-
-- name: Sync skills
-  run: agr sync
-  env:
-    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # For private repos
-```
-
-### Private skills in CI
-
-If your team uses private skill repos, the CI runner needs a token:
-
-1. Create a fine-grained GitHub token with **Contents: Read-only** on your
-   skill repositories
-2. Add it as a repository secret (e.g., `SKILL_TOKEN`)
-3. Pass it as `GITHUB_TOKEN`:
-
-```yaml
-- name: Sync skills
-  run: agr sync
-  env:
-    GITHUB_TOKEN: ${{ secrets.SKILL_TOKEN }}
-```
+- Setting up `agr.toml` for your team
+- Multi-tool teams
+- Private skill repositories
+- CI/CD integration
+- Onboarding existing projects
 
 ---
 

@@ -71,6 +71,7 @@ nav:
     - Tutorial: tutorial.md
     - Core Concepts: concepts.md
     - Skill Directory: skills.md
+    - Teams: teams.md
     - Guides: guides.md
   - Tools & Config:
     - Supported Tools: tools.md

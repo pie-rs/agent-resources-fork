@@ -163,6 +163,8 @@ agr sync
 This installs every skill listed in `agr.toml` that isn't already present. It's
 like `npm install` for agent skills.
 
+For a full walkthrough on multi-tool teams, CI/CD, and private repos, see [Teams](teams.md).
+
 ---
 
 ## Step 6: Try a skill without installing
