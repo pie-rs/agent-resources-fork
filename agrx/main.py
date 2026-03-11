@@ -69,7 +69,7 @@ def _cleanup_skill(skill_path: Path) -> None:
     if skill_path.exists():
         try:
             shutil.rmtree(skill_path)
-        except Exception:
+        except OSError:
             pass  # Best effort cleanup
 
 
@@ -303,11 +303,11 @@ def main(
         raise typer.Exit(1)
 
 
-if __name__ == "__main__":
-    app()
-
-
 def _build_temp_skill_name(skill_name: str) -> str:
     """Build a unique temp skill name to avoid collisions."""
     suffix = uuid.uuid4().hex[:AGRX_SUFFIX_LEN]
     return f"{AGRX_PREFIX}{skill_name}-{suffix}"
+
+
+if __name__ == "__main__":
+    app()
