@@ -34,7 +34,9 @@ print(skill.prompt)
 
 ### From GitHub
 
-`Skill.from_git()` downloads a skill from GitHub and caches it locally. Subsequent calls use the cache unless the remote has new commits.
+`Skill.from_git()` downloads a skill from GitHub and caches it locally. On
+subsequent calls, agr checks the remote HEAD commit — if the cached revision
+matches, it returns the cached copy without re-downloading.
 
 ```python
 from agr import Skill
@@ -45,7 +47,7 @@ skill = Skill.from_git("kasperjunge/commit")
 # Explicit repo
 skill = Skill.from_git("anthropics/skills/code-review")
 
-# Force re-download (skip cache)
+# Force re-download even if cached (useful after upstream changes)
 skill = Skill.from_git("kasperjunge/commit", force_download=True)
 ```
 
@@ -62,12 +64,52 @@ skill = Skill.from_local("/absolute/path/to/skill")
 
 | Property | Type | Description |
 |----------|------|-------------|
-| `name` | `str` | Skill name |
+| `name` | `str` | Skill name (directory name) |
 | `path` | `Path` | Path to skill directory (cached or local) |
-| `prompt` | `str` | Contents of `SKILL.md` (lazy-loaded) |
-| `files` | `list[str]` | Relative file paths in the skill directory (lazy-loaded) |
-| `metadata` | `dict` | Skill metadata (name, path, source, revision, handle, is_local) |
+| `handle` | `ParsedHandle \| None` | Parsed handle with owner, repo, and name components |
+| `source` | `str \| None` | Source name the skill was fetched from (e.g., `"github"`) |
+| `revision` | `str \| None` | Git commit hash (first 12 chars) of the fetched revision |
+| `prompt` | `str` | Contents of `SKILL.md` (lazy-loaded on first access) |
+| `files` | `list[str]` | Relative file paths in the skill directory (lazy-loaded on first access) |
+| `metadata` | `dict` | Combined metadata dict (see below) |
 | `content_hash` | `str \| None` | Content hash from `.agr.json`, if present |
+
+The `handle`, `source`, and `revision` attributes are set by `from_git()`. For
+locally loaded skills, `source` and `revision` are `None`.
+
+### Provenance: handle, source, revision
+
+When you load a skill from GitHub, agr records where it came from:
+
+```python
+skill = Skill.from_git("anthropics/skills/code-review")
+
+# Which repo was it fetched from?
+print(skill.source)    # "github"
+print(skill.revision)  # "a1b2c3d4e5f6" (short commit hash)
+
+# Access handle components
+print(skill.handle.username)  # "anthropics"
+print(skill.handle.repo)      # "skills"
+print(skill.handle.name)      # "code-review"
+```
+
+### The metadata dict
+
+The `metadata` property returns a dict combining all provenance info:
+
+```python
+skill = Skill.from_git("anthropics/skills/code-review")
+print(skill.metadata)
+# {
+#     "name": "code-review",
+#     "path": "/Users/you/.cache/agr/skills/anthropics/skills/code-review/a1b2c3d4e5f6",
+#     "source": "github",
+#     "revision": "a1b2c3d4e5f6",
+#     "handle": "anthropics/skills/code-review",
+#     "is_local": False,
+# }
+```
 
 ### Reading Files
 
