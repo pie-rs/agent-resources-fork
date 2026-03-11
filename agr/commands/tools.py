@@ -5,7 +5,6 @@ from pathlib import Path
 
 from agr.config import AgrConfig, find_config, find_repo_root
 from agr.console import get_console
-from agr.exceptions import AgrError
 from agr.fetcher import fetch_and_install_to_tools, is_skill_installed
 
 from agr.tool import DEFAULT_TOOL_NAMES, TOOLS
@@ -91,9 +90,6 @@ def _sync_dependencies_to_tools(config: AgrConfig, tool_names: list[str]) -> int
             tool_list = ", ".join(t.name for t in tools_needing_install)
             console.print(f"[green]Installed:[/green] {dep.identifier} ({tool_list})")
 
-        except AgrError as e:
-            console.print(f"[red]Error:[/red] {dep.identifier}: {e}")
-            sync_errors += 1
         except Exception as e:
             console.print(f"[red]Error:[/red] {dep.identifier}: {e}")
             sync_errors += 1
