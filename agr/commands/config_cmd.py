@@ -41,8 +41,8 @@ SCALAR_KEYS = {
 LIST_KEYS = {"tools", "sources"}
 
 
-def _load_config(global_scope: bool) -> tuple[AgrConfig, Path]:
-    """Load config for local or global scope."""
+def _require_config_path(global_scope: bool) -> Path:
+    """Locate the config file path, exiting with a user-facing error if missing."""
     console = get_console()
     if global_scope:
         config_path = get_global_config_path()
@@ -50,13 +50,19 @@ def _load_config(global_scope: bool) -> tuple[AgrConfig, Path]:
             console.print(f"[red]Error:[/red] No global config found at {config_path}")
             console.print("[dim]Run 'agr init' or create it manually.[/dim]")
             raise SystemExit(1)
-        return AgrConfig.load(config_path), config_path
+        return config_path
 
     config_path = find_config()
     if config_path is None:
         console.print("[red]Error:[/red] No agr.toml found.")
         console.print("[dim]Run 'agr init' first to create one.[/dim]")
         raise SystemExit(1)
+    return config_path
+
+
+def _load_config(global_scope: bool) -> tuple[AgrConfig, Path]:
+    """Load config for local or global scope."""
+    config_path = _require_config_path(global_scope)
     return AgrConfig.load(config_path), config_path
 
 
@@ -99,22 +105,7 @@ def run_config_show(global_scope: bool) -> None:
 
 def run_config_path(global_scope: bool) -> None:
     """Print resolved agr.toml path."""
-    console = get_console()
-    if global_scope:
-        path = get_global_config_path()
-        if not path.exists():
-            console.print(f"[red]Error:[/red] No global config found at {path}")
-            console.print("[dim]Run 'agr init' or create it manually.[/dim]")
-            raise SystemExit(1)
-        print(path)
-        return
-
-    config_path = find_config()
-    if config_path is None:
-        console.print("[red]Error:[/red] No agr.toml found.")
-        console.print("[dim]Run 'agr init' first to create one.[/dim]")
-        raise SystemExit(1)
-    print(config_path)
+    print(_require_config_path(global_scope))
 
 
 def run_config_edit(global_scope: bool) -> None:
@@ -125,16 +116,7 @@ def run_config_edit(global_scope: bool) -> None:
         console.print("[red]Error:[/red] Neither $VISUAL nor $EDITOR is set.")
         raise SystemExit(1)
 
-    if global_scope:
-        path = get_global_config_path()
-        if not path.exists():
-            console.print("[red]Error:[/red] No global config found at ~/.agr/agr.toml")
-            raise SystemExit(1)
-    else:
-        path = find_config()
-        if path is None:
-            console.print("[red]Error:[/red] No agr.toml found.")
-            raise SystemExit(1)
+    path = _require_config_path(global_scope)
 
     result = subprocess.run([*shlex.split(editor), str(path)])
     if result.returncode != 0:
