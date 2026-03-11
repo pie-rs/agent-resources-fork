@@ -259,65 +259,6 @@ Note: `dependencies` must appear before any `[[source]]` blocks in `agr.toml`.
 
 ## Troubleshooting
 
-### Skill not found
-
-Check that the skill exists in the repository. agr recursively searches for any
-directory matching the skill name that contains `SKILL.md`. Common locations:
-
-- `skills/{name}/SKILL.md`
-- `resources/skills/{name}/SKILL.md`
-- `{name}/SKILL.md`
-
-Any nesting depth works. The shallowest match is used when duplicates exist.
-
-### Skill already exists
-
-Use `--overwrite`:
-
-```bash
-agr add user/skill --overwrite
-```
-
-### Repository not found
-
-Check:
-
-- Username and repo name are correct
-- Repository is public, **or** you have `GITHUB_TOKEN` / `GH_TOKEN` set (see
-  [Private Repositories](configuration.md#private-repositories))
-- The repository's default branch exists (agr auto-detects it)
-
-### Authentication failed
-
-If you see "Authentication failed" or "Repository not found" for a private repo:
-
-1. Ensure `GITHUB_TOKEN` or `GH_TOKEN` is set in your environment
-2. Verify the token has read access to the repository
-3. Check the token hasn't expired
-
-```bash
-# Quick test — should show your username
-curl -s -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/user | grep login
-```
-
-!!! note
-    GitHub returns "not found" (not "forbidden") for private repos you can't
-    access. If you see "Repository not found" for a repo you know exists, it's
-    almost always an authentication issue.
-
-### Git not installed
-
-Remote installs require `git` to be available on your system.
-
-### Not in a git repository
-
-`agrx` requires a git repository (or use `--global`):
-
-```bash
-agrx user/skill --global
-```
-
-### Network errors
-
-Ensure the repository is accessible and you have internet access. For private
-repos, ensure your token is valid (see above).
+See the [Troubleshooting](troubleshooting.md) page for solutions to common
+errors — installation failures, handle format issues, authentication problems,
+and more.
