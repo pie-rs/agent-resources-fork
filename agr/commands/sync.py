@@ -156,10 +156,6 @@ def _sync_one_dependency(
     if not tools_needing_install:
         return SyncResult(SyncStatus.UP_TO_DATE)
 
-    install_kwargs: dict[str, object] = {}
-    if skills_dirs is not None:
-        install_kwargs["skills_dirs"] = skills_dirs
-
     fetch_and_install_to_tools(
         handle,
         repo_root,
@@ -167,7 +163,7 @@ def _sync_one_dependency(
         overwrite=False,
         resolver=resolver,
         source=source_name,
-        **install_kwargs,
+        skills_dirs=skills_dirs,
     )
     return SyncResult(SyncStatus.INSTALLED)
 

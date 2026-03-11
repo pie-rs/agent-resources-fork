@@ -332,7 +332,7 @@ class TestSyncCommand:
         captured: dict[str, str | None] = {}
 
         def fake_fetch_and_install(
-            handle, repo_root, tools, overwrite, resolver, source
+            handle, repo_root, tools, overwrite, resolver, source, skills_dirs=None
         ) -> None:
             captured["source"] = source
 
