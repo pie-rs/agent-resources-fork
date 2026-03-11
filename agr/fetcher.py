@@ -45,12 +45,10 @@ from agr.source import (
     DEFAULT_SOURCE_NAME,
     SourceConfig,
     SourceResolver,
-    default_sources,
 )
 from agr.tool import DEFAULT_TOOL, ToolConfig
 
 logger = logging.getLogger(__name__)
-
 
 
 def _skill_dir_matches_handle(skill_dir: Path, handle_ids: list[str] | None) -> bool:
@@ -223,7 +221,7 @@ def list_remote_repo_skills(
     Returns:
         Sorted list of skill names found, or empty list on any error.
     """
-    resolver = resolver or SourceResolver(default_sources(), DEFAULT_SOURCE_NAME)
+    resolver = resolver or SourceResolver.default()
     for source_config in resolver.ordered(source):
         try:
             with downloaded_repo(source_config, owner, repo_name) as repo_dir:
@@ -503,7 +501,7 @@ def _locate_remote_skill(
     Raises:
         SkillNotFoundError: If skill not found in any source.
     """
-    resolver = resolver or SourceResolver(default_sources(), DEFAULT_SOURCE_NAME)
+    resolver = resolver or SourceResolver.default()
     owner = handle.username or ""
 
     for repo_name, is_legacy in iter_repo_candidates(handle.repo):
