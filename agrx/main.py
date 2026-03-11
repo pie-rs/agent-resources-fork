@@ -12,7 +12,7 @@ import typer
 from rich.console import Console
 
 from agr.config import AgrConfig, find_config, find_repo_root
-from agr.exceptions import AgrError, InvalidHandleError
+from agr.exceptions import AgrError
 from agr.fetcher import install_remote_skill
 from agr.handle import parse_handle
 from agr.tool import DEFAULT_TOOL_NAMES, TOOLS, ToolConfig, available_tools_string, get_tool
@@ -294,9 +294,6 @@ def main(
                 cleanup_done = True
                 _cleanup_skill(temp_skill_path)
 
-    except InvalidHandleError as e:
-        console.print(f"[red]Error:[/red] {e}")
-        raise typer.Exit(1)
     except AgrError as e:
         console.print(f"[red]Error:[/red] {e}")
         raise typer.Exit(1)
