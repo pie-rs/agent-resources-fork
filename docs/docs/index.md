@@ -146,6 +146,7 @@ Browse more at [github.com/anthropics/skills](https://github.com/anthropics/skil
 ## Next Steps
 
 - [Tutorial](tutorial.md) — hands-on walkthrough from zero to sharing skills
+- [Supported Tools](tools.md) — how agr works with Claude Code, Cursor, Codex, OpenCode, Copilot, and Antigravity
 - [Guides](guides.md) — practical recipes for updating, teams, CI/CD, and more
 - [Create your own skill](creating.md)
 - [Python SDK](sdk.md) — use agr as a library
