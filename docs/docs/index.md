@@ -4,7 +4,21 @@ title: Home
 
 # AGR — Skills for AI Agents
 
-A package and project manager for AI agent skills. Install, share, and run skills from GitHub with a single command.
+A package manager for AI agent skills. Install, share, and run skills across
+Claude Code, Cursor, Codex, OpenCode, Copilot, and Antigravity — with a single
+command.
+
+## What are skills?
+
+Skills are reusable instructions that teach AI coding agents how to perform
+specific tasks — reviewing code, generating components, preparing releases, or
+anything else you'd normally explain in a prompt. Each skill is a `SKILL.md`
+file in a directory, published on GitHub.
+
+Without a package manager, you'd copy these files manually into each tool's
+config folder, keep them updated by hand, and hope your teammates have the same
+versions. **agr automates all of that** — install from GitHub, sync across
+tools, share via `agr.toml`.
 
 ## Install
 
@@ -26,36 +40,36 @@ A package and project manager for AI agent skills. Install, share, and run skill
     pip install agr
     ```
 
-## Choose Your Path
-
-### Install a Skill (persist it)
+## Add your first skill
 
 ```bash
 agr add anthropics/skills/frontend-design
 ```
 
-This installs the skill into your tool's skills folder. Once installed, invoke
-it in your tool — type `/frontend-design` in Claude Code or Cursor,
-`$frontend-design` in Codex, or just `frontend-design` in OpenCode. Use
-`--source <name>` to pick a non-default source from `agr.toml`.
+That's it. The skill is now installed in your tool's skills folder. Invoke it:
+
+| Tool | Invoke with |
+|------|-------------|
+| Claude Code | `/frontend-design` |
+| Cursor | `/frontend-design` |
+| OpenAI Codex | `$frontend-design` |
+| OpenCode | `frontend-design` |
+| GitHub Copilot | `/frontend-design` |
 
 !!! tip "No setup required"
     `agr add` auto-creates `agr.toml` if it doesn't exist and detects which
-    tools you use. You don't need to run `agr init` first — just start adding
-    skills.
+    tools you use. You don't need to run `agr init` first.
 
-### Run a Skill Once (no install)
+## Run a skill without installing
 
 ```bash
-agrx anthropics/skills/pdf                  # Run once, then clean up
 agrx anthropics/skills/pdf -p "Extract tables from report.pdf"
-agrx anthropics/skills/pdf -i               # Interactive: run skill, then continue chatting
 ```
 
-The `-i` flag runs the skill first, then starts an interactive session so you can
-continue the conversation.
+`agrx` downloads the skill, runs it with your tool, and cleans up. Nothing is
+saved to your project.
 
-### Share with Your Team
+## Sync skills across a team
 
 Dependencies are tracked in `agr.toml`:
 
@@ -72,22 +86,7 @@ Teammates install everything with:
 agr sync
 ```
 
-### Create a Skill
-
-```bash
-agr init my-skill
-```
-
-Then edit `my-skill/SKILL.md`. If you want it in this repo, place it under
-`./skills/`.
-
-### Migrate Old Rules or Commands
-
-```bash
-agrx kasperjunge/migrate-to-skills
-```
-
-## Commands (Quick Reference)
+## Commands
 
 | Command | What it does |
 |---------|-------------|
@@ -100,53 +99,7 @@ agrx kasperjunge/migrate-to-skills
 | `agr onboard` | Interactive guided setup |
 | `agrx <handle>` | Run a skill temporarily |
 
-## Handle Format
-
-```bash
-agr add user/skill              # From user's "skills" repo
-agr add user/repo/skill         # From a different repo
-agr add ./path/to/skill         # Local path
-```
-
-If a user's repo is named `skills`, you can skip the repo name:
-
-```bash
-agr add kasperjunge/commit                    # From kasperjunge/skills
-agr add kasperjunge/skills/commit             # Same thing (explicit)
-```
-
-Note: `user/skill` now defaults to `skills`. During a deprecation period, agr
-will fall back to `agent-resources` (with a warning) if the skill isn't found in
-`skills`.
-
-## How Skill Discovery Works
-
-When you run `agr add user/repo/skill`, agr recursively searches the entire repo
-for any directory named `skill` that contains a `SKILL.md` file. Common locations
-include:
-
-- `skills/{skill}/SKILL.md`
-- `resources/skills/{skill}/SKILL.md`
-- `{skill}/SKILL.md`
-
-but any nesting depth works. Directories like `.git`, `node_modules`, `__pycache__`,
-and other common non-source directories are excluded from the search. When multiple
-matches exist, the shallowest path wins.
-
-## Project Setup
-
-```bash
-agr init       # Create agr.toml (auto-detects tools)
-agr onboard    # Interactive guided setup
-```
-
-`agr init` creates `agr.toml` and detects which tools you use from repo signals
-(`.claude/`, `CLAUDE.md`, `.cursor/`, `.cursorrules`, etc.).
-
-`agr onboard` walks you through tool selection, skill discovery, migration from
-tool folders into `./skills/`, and configuration.
-
-## Example Skills
+## Example skills
 
 ```bash
 agr add anthropics/skills/frontend-design    # Build production-grade UIs
@@ -154,28 +107,14 @@ agr add anthropics/skills/skill-creator      # Create new skills
 agr add anthropics/skills/pdf                # Work with PDF documents
 ```
 
-Browse more at [github.com/anthropics/skills](https://github.com/anthropics/skills).
+Browse more at the [Skill Directory](skills.md) or on
+[GitHub](https://github.com/anthropics/skills).
 
-## Migrating from Rules, Subagents, or Slash Commands?
-
-Most AI coding agents are converging on skills as the standard format. If you
-have old `.claude/commands/`, `.cursorrules`, or similar files, convert them:
-
-```bash
-agrx kasperjunge/migrate-to-skills
-agrx kasperjunge/migrate-to-skills -p "convert files in ./my-commands"
-```
-
-See [Guides — Migrating](guides.md#migrating-from-manual-skill-management) for
-a full walkthrough.
-
-## Next Steps
+## Next steps
 
 - [Tutorial](tutorial.md) — hands-on walkthrough from zero to sharing skills
-- [Core Concepts](concepts.md) — understand handles, tools, sources, scopes, and the install flow
-- [Supported Tools](tools.md) — how agr works with Claude Code, Cursor, Codex, OpenCode, Copilot, and Antigravity
-- [Guides](guides.md) — practical recipes for updating, teams, CI/CD, and more
-- [Create your own skill](creating.md)
-- [Python SDK](sdk.md) — use agr as a library
-- [Troubleshooting](troubleshooting.md) — common errors and how to fix them
-- [CLI reference](reference.md)
+- [Core Concepts](concepts.md) — understand handles, tools, sources, and how agr works
+- [Supported Tools](tools.md) — how agr works with each AI coding tool
+- [Creating Skills](creating.md) — write and publish your own skills
+- [Guides](guides.md) — team workflows, CI/CD, custom sources, and more
+- [CLI Reference](reference.md) — every command, flag, and option
