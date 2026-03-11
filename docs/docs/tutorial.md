@@ -39,6 +39,10 @@ Verify it works:
 agr --version
 ```
 
+```
+agr 0.7.10
+```
+
 This installs two commands:
 
 - **`agr`** — the main CLI for installing, managing, and syncing skills
@@ -61,7 +65,13 @@ agr init
 ```
 
 This creates an `agr.toml` file and auto-detects which tools you use based on
-repo signals (`.claude/`, `CLAUDE.md`, `.cursor/`, `.cursorrules`, etc.).
+repo signals (`.claude/`, `CLAUDE.md`, `.cursor/`, `.cursorrules`, etc.):
+
+```
+Created: agr.toml
+Tools: claude
+Next: agr add <handle> or agr onboard
+```
 
 ??? tip "Skip this step"
     `agr init` is optional. If you jump straight to `agr add` in the next step,
@@ -87,6 +97,11 @@ Install a skill from GitHub:
 agr add anthropics/skills/frontend-design
 ```
 
+```
+Added: anthropics/skills/frontend-design
+  Installed to claude: .claude/skills/frontend-design
+```
+
 What just happened:
 
 1. agr cloned the `anthropics/skills` repo (via sparse checkout — fast, even for large repos)
@@ -106,6 +121,14 @@ List what's installed:
 
 ```bash
 agr list
+```
+
+```
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━┓
+┃ Skill                             ┃ Type   ┃ Status    ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━┩
+│ anthropics/skills/frontend-design │ remote │ installed │
+└───────────────────────────────────┴────────┴───────────┘
 ```
 
 ### Use the skill
@@ -161,7 +184,15 @@ agr sync
 ```
 
 This installs every skill listed in `agr.toml` that isn't already present. It's
-like `npm install` for agent skills.
+like `npm install` for agent skills:
+
+```
+Up to date: anthropics/skills/frontend-design
+Up to date: anthropics/skills/pdf
+Up to date: anthropics/skills/skill-creator
+
+Summary: 3 up to date
+```
 
 For a full walkthrough on multi-tool teams, CI/CD, and private repos, see [Teams](teams.md).
 
@@ -193,6 +224,11 @@ Scaffold a new skill:
 
 ```bash
 agr init my-skill
+```
+
+```
+Created skill scaffold: my-skill
+  Edit my-skill/SKILL.md to customize your skill
 ```
 
 This creates `my-skill/SKILL.md` with a starter template:
@@ -278,6 +314,10 @@ agr add your-username/my-repo/my-skill
 agr remove anthropics/skills/frontend-design
 ```
 
+```
+Removed: anthropics/skills/frontend-design
+```
+
 This deletes the skill from your tool's skills folder and removes the entry from
 `agr.toml`.
 
@@ -290,6 +330,11 @@ globally:
 
 ```bash
 agr add -g anthropics/skills/skill-creator
+```
+
+```
+Added: anthropics/skills/skill-creator
+  Installed to claude: ~/.claude/skills/skill-creator
 ```
 
 Global skills are tracked in `~/.agr/agr.toml` and installed into your tool's

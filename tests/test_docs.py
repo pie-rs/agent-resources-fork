@@ -67,11 +67,16 @@ class TestInternalLinks:
         links = extract_internal_links(content)
 
         for link in links:
+            # Strip fragment identifiers (e.g., configuration.md#sources → configuration.md)
+            file_part = link.split("#")[0]
+            if not file_part:
+                continue  # Pure fragment link, skip
+
             # Handle relative links
-            if link.startswith("./"):
-                target = DOCS_DIR / link[2:]
+            if file_part.startswith("./"):
+                target = DOCS_DIR / file_part[2:]
             else:
-                target = DOCS_DIR / link
+                target = DOCS_DIR / file_part
 
             # Remove .md extension handling for directory-style links
             if not target.exists() and not target.suffix:
