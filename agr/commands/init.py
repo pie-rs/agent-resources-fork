@@ -96,10 +96,7 @@ def run_init(
             console.print(
                 f"  [dim]Edit {skill_path}/SKILL.md to customize your skill[/dim]"
             )
-        except ValueError as e:
-            print_error(str(e))
-            raise SystemExit(1)
-        except FileExistsError as e:
+        except (ValueError, FileExistsError) as e:
             print_error(str(e))
             raise SystemExit(1)
         return
