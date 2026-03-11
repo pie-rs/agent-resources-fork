@@ -4,7 +4,7 @@
 
 - Source: https://github.com/kasperjunge/agent-resources
 - PyPI: https://pypi.org/project/agr/
-- Docs: https://kasperjunge.github.io/agent-resources/site/
+- Docs: https://kasperjunge.github.io/agent-resources/
 - Skills Specification: https://agentskills.io/specification
 - Example Skills: https://github.com/anthropics/skills
 
