@@ -11,8 +11,18 @@ site_dir: docs/site
 theme:
   name: material
   palette:
-    primary: black
-    accent: deep orange
+    - scheme: slate
+      primary: black
+      accent: deep orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: black
+      accent: deep orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
 
   font:
     code: Roboto Mono
@@ -22,7 +32,13 @@ theme:
   features:
     - navigation.instant
     - navigation.tracking
+    - navigation.sections
+    - navigation.top
+    - navigation.indexes
     - content.code.copy
+    - search.suggest
+    - search.highlight
+    - toc.follow
   custom_dir: docs/overrides
 
 extra:
@@ -46,15 +62,21 @@ markdown_extensions:
   - tables
   - attr_list
   - meta
+  - toc:
+      permalink: true
 
 nav:
-  - Home: index.md
-  - Tutorial: tutorial.md
-  - Guides: guides.md
-  - Supported Tools: tools.md
-  - Creating Skills: creating.md
-  - Configuration: configuration.md
-  - agrx: agrx.md
-  - Python SDK: sdk.md
-  - Troubleshooting: troubleshooting.md
-  - Reference: reference.md
+  - Getting Started:
+    - Home: index.md
+    - Tutorial: tutorial.md
+    - Guides: guides.md
+  - Tools & Config:
+    - Supported Tools: tools.md
+    - Configuration: configuration.md
+    - agrx: agrx.md
+  - Building:
+    - Creating Skills: creating.md
+    - Python SDK: sdk.md
+  - Help:
+    - Troubleshooting: troubleshooting.md
+    - Reference: reference.md
