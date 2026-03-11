@@ -208,8 +208,8 @@ def main(
         # Create prefixed name for temporary skill
         prefixed_name = _build_temp_skill_name(parsed.name)
 
-        # Download and install
-        installed_path = install_remote_skill(
+        # Download and install to a temporary location
+        temp_skill_path = install_remote_skill(
             parsed,
             repo_root,
             tool_config,
@@ -219,9 +219,6 @@ def main(
             source=source,
             install_name=prefixed_name,
         )
-
-        # For consistency, update temp_skill_path to match
-        temp_skill_path = installed_path
 
         # Set up cleanup handlers
         cleanup_done = False
