@@ -66,6 +66,14 @@ def _filter_tools_needing_install(
 
 
 @dataclass
+class SyncResult:
+    """Result of syncing a single dependency."""
+
+    status: str  # "pending", "up-to-date", "installed", "error"
+    error: str | None = None
+
+
+@dataclass
 class SyncEntry:
     index: int
     identifier: str
@@ -217,7 +225,7 @@ def run_sync(global_install: bool = False) -> None:
     resolver = config.get_source_resolver()
 
     # Track results per dependency (not per tool)
-    results: list[tuple[str, str | None] | None] = [None for _ in config.dependencies]
+    results: list[SyncResult] = [SyncResult("pending") for _ in config.dependencies]
     pending_local: list[SyncEntry] = []
     pending_remote: list[SyncEntry] = []
 
@@ -232,7 +240,7 @@ def run_sync(global_install: bool = False) -> None:
             )
 
             if not tools_needing_install:
-                results[index] = ("up-to-date", None)
+                results[index] = SyncResult("up-to-date")
                 continue
 
             entry = SyncEntry(
@@ -246,7 +254,7 @@ def run_sync(global_install: bool = False) -> None:
             else:
                 pending_remote.append(entry)
         except INSTALL_ERROR_TYPES as e:
-            results[index] = ("error", format_install_error(e))
+            results[index] = SyncResult("error", format_install_error(e))
 
     def _sync_entries(entries: list[SyncEntry]) -> None:
         """Fetch and install a list of sync entries individually."""
@@ -256,7 +264,7 @@ def run_sync(global_install: bool = False) -> None:
                 handle, repo_root, tools, entry.source_name
             )
             if not tools_needing_install:
-                results[entry.index] = ("up-to-date", None)
+                results[entry.index] = SyncResult("up-to-date")
                 continue
             try:
                 fetch_and_install_to_tools(
@@ -267,9 +275,9 @@ def run_sync(global_install: bool = False) -> None:
                     resolver=resolver,
                     source=entry.source_name,
                 )
-                results[entry.index] = ("installed", None)
+                results[entry.index] = SyncResult("installed")
             except INSTALL_ERROR_TYPES as e:
-                results[entry.index] = ("error", format_install_error(e))
+                results[entry.index] = SyncResult("error", format_install_error(e))
 
     # Local installs (no download)
     _sync_entries(pending_local)
@@ -300,11 +308,11 @@ def run_sync(global_install: bool = False) -> None:
                         handle, repo_root, tools, entry.source_name
                     )
                     if not tools_needing_install:
-                        results[entry.index] = ("up-to-date", None)
+                        results[entry.index] = SyncResult("up-to-date")
                         continue
                     skill_source = skill_sources.get(handle.name)
                     if skill_source is None:
-                        results[entry.index] = (
+                        results[entry.index] = SyncResult(
                             "error",
                             skill_not_found_message(handle.name),
                         )
@@ -320,12 +328,14 @@ def run_sync(global_install: bool = False) -> None:
                             install_source=source_name,
                             skill_source=skill_source,
                         )
-                        results[entry.index] = ("installed", None)
+                        results[entry.index] = SyncResult("installed")
                     except INSTALL_ERROR_TYPES as e:
-                        results[entry.index] = ("error", format_install_error(e))
+                        results[entry.index] = SyncResult(
+                            "error", format_install_error(e)
+                        )
         except INSTALL_ERROR_TYPES as e:
             for entry in entries:
-                results[entry.index] = ("error", format_install_error(e))
+                results[entry.index] = SyncResult("error", format_install_error(e))
 
     # Print results
     installed = 0
@@ -334,17 +344,17 @@ def run_sync(global_install: bool = False) -> None:
 
     for index, dep in enumerate(config.dependencies):
         identifier = dep.identifier
-        status, error = results[index] or ("error", "Unexpected error")
-        if status == "installed":
+        result = results[index]
+        if result.status == "installed":
             console.print(f"[green]Installed:[/green] {identifier}")
             installed += 1
-        elif status == "up-to-date":
+        elif result.status == "up-to-date":
             console.print(f"[dim]Up to date:[/dim] {identifier}")
             up_to_date += 1
         else:
             console.print(f"[red]Error:[/red] {identifier}")
-            if error:
-                console.print(f"  [dim]{error}[/dim]")
+            if result.error:
+                console.print(f"  [dim]{result.error}[/dim]")
             errors += 1
 
     _print_sync_summary(installed, up_to_date, errors)
