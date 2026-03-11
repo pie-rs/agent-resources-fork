@@ -143,4 +143,5 @@ Browse more at [github.com/anthropics/skills](https://github.com/anthropics/skil
 ## Next Steps
 
 - [Create your own skill](creating.md)
+- [Python SDK](sdk.md) — use agr as a library
 - [CLI reference](reference.md)

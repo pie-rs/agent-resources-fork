@@ -205,12 +205,22 @@ Programmatic API for using agr from Python code:
 ```python
 from agr import Skill, cache, list_skills, skill_info
 
-# Load a skill
-skill = Skill("user/skill")
-print(skill.content)
+# Load a skill from GitHub (cached locally)
+skill = Skill.from_git("user/skill")
+print(skill.prompt)   # Contents of SKILL.md
+print(skill.files)    # List of files in the skill directory
 
-# List available skills
-skills = list_skills("user")
+# Load a local skill
+skill = Skill.from_local("./my-skill")
+
+# Discover skills in a repo
+skills = list_skills("anthropics/skills")
+info = skill_info("anthropics/skills/code-review")
+
+# Cache management
+cache.info()          # {"skills_count": N, "size_bytes": N, ...}
+cache.clear()         # Clear all cached skills
+cache.clear("user/*") # Clear by pattern
 ```
 
-The SDK uses a GitHub API cache (`sdk/cache.py`) stored in `~/.cache/agr/` to avoid repeated API calls.
+Skills are cached in `~/.cache/agr/skills/` keyed by `source/owner/repo/skill/revision`. The cache uses file locking for concurrent safety and atomic writes via temp dir + rename.

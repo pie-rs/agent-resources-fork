@@ -50,4 +50,5 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Creating Skills: creating.md
+  - Python SDK: sdk.md
   - Reference: reference.md
