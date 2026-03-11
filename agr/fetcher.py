@@ -266,6 +266,7 @@ def _copy_skill_to_destination(
         tool: Tool configuration
         overwrite: Whether to overwrite existing
         repo_root: Repository root for metadata resolution (optional)
+        install_source: Source name to record in metadata (optional)
 
     Returns:
         Path to installed skill
@@ -326,6 +327,9 @@ def install_skill_from_repo(
         tool: Tool configuration for path structure
         repo_root: Repository root for metadata resolution (optional)
         overwrite: Whether to overwrite existing
+        install_source: Source name to record in metadata (optional)
+        skill_source: Pre-resolved skill path within repo (optional,
+            skips repo scanning when provided)
 
     Returns:
         Path to installed skill
