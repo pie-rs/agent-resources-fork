@@ -166,6 +166,52 @@ class TestCliCommands:
         assert "agrx" in reference
 
 
+class TestToolDocumentation:
+    """Test that all supported tools are documented in key MkDocs pages."""
+
+    # Canonical list of supported tools from the codebase
+    from agr.tool import TOOLS
+
+    ALL_TOOL_NAMES = set(TOOLS.keys())
+
+    def test_configuration_mentions_all_tools(self):
+        """configuration.md tools table lists all supported tools."""
+        content = (DOCS_DIR / "configuration.md").read_text()
+        # Check the Multi-Tool Setup section which has the tools table.
+        section_marker = "## Multi-Tool Setup"
+        assert section_marker in content, (
+            "configuration.md missing 'Multi-Tool Setup' section"
+        )
+        section = content[content.index(section_marker):]
+        for tool in self.ALL_TOOL_NAMES:
+            assert tool in section.lower(), (
+                f"Tool '{tool}' not in configuration.md Multi-Tool Setup section"
+            )
+
+    def test_agrx_cli_table_mentions_all_tools(self):
+        """agrx.md CLI Requirements table lists all supported tools."""
+        content = (DOCS_DIR / "agrx.md").read_text()
+        # Extract just the CLI Requirements section to ensure tools appear
+        # in the table, not just in passing mentions elsewhere on the page.
+        cli_section_marker = "## Tool CLI Requirements"
+        assert cli_section_marker in content, (
+            "agrx.md missing 'Tool CLI Requirements' section"
+        )
+        cli_section = content[content.index(cli_section_marker):]
+        for tool in self.ALL_TOOL_NAMES:
+            assert tool in cli_section.lower(), (
+                f"Tool '{tool}' not in agrx.md CLI Requirements table"
+            )
+
+    def test_reference_agrx_section_mentions_all_tools(self):
+        """reference.md agrx --tool flag lists all supported tools."""
+        content = (DOCS_DIR / "reference.md").read_text()
+        for tool in self.ALL_TOOL_NAMES:
+            assert tool in content.lower(), (
+                f"Tool '{tool}' not mentioned in reference.md"
+            )
+
+
 class TestContentQuality:
     """Test documentation content quality."""
 

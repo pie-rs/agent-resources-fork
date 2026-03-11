@@ -95,3 +95,4 @@ error with installation instructions:
 | OpenAI Codex | `codex` | `npm i -g @openai/codex` |
 | OpenCode | `opencode` | [opencode.ai/docs/cli](https://opencode.ai/docs/cli/) |
 | GitHub Copilot | `copilot` | Install GitHub Copilot CLI |
+| Antigravity | — | No CLI available; use `agr add` to install skills instead |
