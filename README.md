@@ -31,7 +31,15 @@ Install your first skill:
 agr add anthropics/skills/frontend-design
 ```
 
-That's it. The skill is now available in your configured tool (Claude Code, Codex, Cursor, OpenCode, Copilot, or Antigravity).
+Then invoke it in your tool:
+
+| Tool | Invoke with |
+|------|-------------|
+| Claude Code | `/frontend-design` |
+| Cursor | `/frontend-design` |
+| OpenAI Codex | `$frontend-design` |
+| OpenCode | `frontend-design` |
+| GitHub Copilot | `/frontend-design` |
 
 ---
 
