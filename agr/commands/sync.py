@@ -48,6 +48,8 @@ class SyncResult:
 
 @dataclass
 class SyncEntry:
+    """A dependency queued for sync, with its position in the results list."""
+
     index: int
     handle: ParsedHandle
     source_name: str | None
@@ -134,6 +136,107 @@ def _sync_instructions_if_configured(
         console.print(
             f"[green]Synced instructions:[/green] {canonical_file} -> {updated_list}"
         )
+
+
+def _sync_individual_entries(
+    entries: list[SyncEntry],
+    results: list[SyncResult],
+    repo_root: Path | None,
+    tools: list[ToolConfig],
+    resolver: SourceResolver,
+) -> None:
+    """Sync entries one at a time, each downloading its own repo if needed."""
+    for entry in entries:
+        try:
+            results[entry.index] = _sync_one_dependency(
+                entry.handle, entry.source_name, repo_root, tools, resolver
+            )
+        except INSTALL_ERROR_TYPES as e:
+            results[entry.index] = SyncResult(SyncStatus.ERROR, format_install_error(e))
+
+
+def _sync_batched_repo_entries(
+    entries: list[SyncEntry],
+    results: list[SyncResult],
+    repo_root: Path | None,
+    tools: list[ToolConfig],
+    resolver: SourceResolver,
+    default_source: str,
+) -> None:
+    """Sync remote entries grouped by repo, downloading each repo only once.
+
+    Groups entries by (source, owner, repo) so that multiple skills from
+    the same repository share a single download.
+    """
+    grouped: dict[tuple[str, str, str], list[SyncEntry]] = {}
+    for entry in entries:
+        handle = entry.handle
+        source_name = entry.source_name or default_source
+        owner, repo_name = handle.get_github_repo()
+        key = (source_name, owner, repo_name)
+        grouped.setdefault(key, []).append(entry)
+
+    for (source_name, owner, repo_name), group in grouped.items():
+        try:
+            source_config = resolver.get(source_name)
+            with downloaded_repo(source_config, owner, repo_name) as repo_dir:
+                skill_names = [entry.handle.name for entry in group]
+                skill_sources = prepare_repo_for_skills(repo_dir, skill_names)
+                for entry in group:
+                    _install_one_from_repo(
+                        entry,
+                        results,
+                        repo_dir,
+                        skill_sources,
+                        repo_root,
+                        tools,
+                        source_name,
+                    )
+        except INSTALL_ERROR_TYPES as e:
+            for entry in group:
+                results[entry.index] = SyncResult(
+                    SyncStatus.ERROR, format_install_error(e)
+                )
+
+
+def _install_one_from_repo(
+    entry: SyncEntry,
+    results: list[SyncResult],
+    repo_dir: Path,
+    skill_sources: dict[str, Path],
+    repo_root: Path | None,
+    tools: list[ToolConfig],
+    source_name: str,
+) -> None:
+    """Install a single skill from an already-downloaded repo."""
+    handle = entry.handle
+    tools_needing_install = filter_tools_needing_install(
+        handle, repo_root, tools, entry.source_name
+    )
+    if not tools_needing_install:
+        results[entry.index] = SyncResult(SyncStatus.UP_TO_DATE)
+        return
+    skill_source = skill_sources.get(handle.name)
+    if skill_source is None:
+        results[entry.index] = SyncResult(
+            SyncStatus.ERROR,
+            skill_not_found_message(handle.name),
+        )
+        return
+    try:
+        install_skill_from_repo_to_tools(
+            repo_dir,
+            handle.name,
+            handle,
+            tools_needing_install,
+            repo_root,
+            overwrite=False,
+            install_source=source_name,
+            skill_source=skill_source,
+        )
+        results[entry.index] = SyncResult(SyncStatus.INSTALLED)
+    except INSTALL_ERROR_TYPES as e:
+        results[entry.index] = SyncResult(SyncStatus.ERROR, format_install_error(e))
 
 
 def _sync_one_dependency(
@@ -279,77 +382,25 @@ def run_sync(global_install: bool = False) -> None:
         except INSTALL_ERROR_TYPES as e:
             results[index] = SyncResult(SyncStatus.ERROR, format_install_error(e))
 
-    def _sync_entries(entries: list[SyncEntry]) -> None:
-        """Fetch and install a list of sync entries individually."""
-        for entry in entries:
-            try:
-                results[entry.index] = _sync_one_dependency(
-                    entry.handle, entry.source_name, repo_root, tools, resolver
-                )
-            except INSTALL_ERROR_TYPES as e:
-                results[entry.index] = SyncResult(
-                    SyncStatus.ERROR, format_install_error(e)
-                )
-
-    # Local installs (no download)
-    _sync_entries(pending_local)
+    # Local installs and default-repo remotes (each downloads individually)
+    _sync_individual_entries(pending_local, results, repo_root, tools, resolver)
 
     pending_remote_default = [e for e in pending_remote if e.handle.repo is None]
     pending_remote_specific = [e for e in pending_remote if e.handle.repo is not None]
 
-    _sync_entries(pending_remote_default)
+    _sync_individual_entries(
+        pending_remote_default, results, repo_root, tools, resolver
+    )
 
     # Remote installs grouped by repo/source (download once per repo)
-    grouped: dict[tuple[str, str, str], list[SyncEntry]] = {}
-    for entry in pending_remote_specific:
-        handle = entry.handle
-        source_name = entry.source_name or config.default_source
-        owner, repo_name = handle.get_github_repo()
-        key = (source_name, owner, repo_name)
-        grouped.setdefault(key, []).append(entry)
-
-    for (source_name, owner, repo_name), entries in grouped.items():
-        try:
-            source_config = resolver.get(source_name)
-            with downloaded_repo(source_config, owner, repo_name) as repo_dir:
-                skill_names = [entry.handle.name for entry in entries]
-                skill_sources = prepare_repo_for_skills(repo_dir, skill_names)
-                for entry in entries:
-                    handle = entry.handle
-                    tools_needing_install = filter_tools_needing_install(
-                        handle, repo_root, tools, entry.source_name
-                    )
-                    if not tools_needing_install:
-                        results[entry.index] = SyncResult(SyncStatus.UP_TO_DATE)
-                        continue
-                    skill_source = skill_sources.get(handle.name)
-                    if skill_source is None:
-                        results[entry.index] = SyncResult(
-                            SyncStatus.ERROR,
-                            skill_not_found_message(handle.name),
-                        )
-                        continue
-                    try:
-                        install_skill_from_repo_to_tools(
-                            repo_dir,
-                            handle.name,
-                            handle,
-                            tools_needing_install,
-                            repo_root,
-                            overwrite=False,
-                            install_source=source_name,
-                            skill_source=skill_source,
-                        )
-                        results[entry.index] = SyncResult(SyncStatus.INSTALLED)
-                    except INSTALL_ERROR_TYPES as e:
-                        results[entry.index] = SyncResult(
-                            SyncStatus.ERROR, format_install_error(e)
-                        )
-        except INSTALL_ERROR_TYPES as e:
-            for entry in entries:
-                results[entry.index] = SyncResult(
-                    SyncStatus.ERROR, format_install_error(e)
-                )
+    _sync_batched_repo_entries(
+        pending_remote_specific,
+        results,
+        repo_root,
+        tools,
+        resolver,
+        config.default_source,
+    )
 
     # Print results
     labeled_results = [
