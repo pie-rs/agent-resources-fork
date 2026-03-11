@@ -77,13 +77,12 @@ nav:
   - Getting Started:
     - Tutorial: tutorial.md
     - Core Concepts: concepts.md
-  - Using Skills:
+  - Guides:
+    - Supported Tools: tools.md
     - Skill Directory: skills.md
     - Teams: teams.md
-    - "agrx — Try Without Installing": agrx.md
-  - Configuration:
-    - Supported Tools: tools.md
     - Configuration: configuration.md
+    - "agrx — Try Without Installing": agrx.md
   - Building Skills:
     - Creating Skills: creating.md
     - Python SDK: sdk.md

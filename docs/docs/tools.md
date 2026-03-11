@@ -226,8 +226,10 @@ To start syncing skills to an additional tool after initial setup:
 
 ```bash
 agr config add tools cursor
-agr sync                       # Installs all existing skills into the new tool
 ```
+
+This automatically installs all existing dependencies into the new tool — no
+separate `agr sync` needed.
 
 To stop syncing to a tool:
 
