@@ -5,8 +5,8 @@ site_author: Kasper Junge
 repo_url: https://github.com/kasperjunge/agent-resources
 repo_name: kasperjunge/agent-resources
 
-docs_dir: docs
-site_dir: site
+docs_dir: docs/docs
+site_dir: docs/site
 
 theme:
   name: material
@@ -23,7 +23,7 @@ theme:
     - navigation.instant
     - navigation.tracking
     - content.code.copy
-  custom_dir: overrides
+  custom_dir: docs/overrides
 
 extra:
   social:

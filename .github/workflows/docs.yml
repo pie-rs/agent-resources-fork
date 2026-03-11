@@ -33,7 +33,6 @@ jobs:
         run: pip install mkdocs-material
 
       - name: Build docs
-        working-directory: docs
         run: mkdocs build
 
       - name: Prepare deploy directory
