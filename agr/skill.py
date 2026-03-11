@@ -59,7 +59,7 @@ def is_valid_skill_dir(path: Path) -> bool:
     return (path / SKILL_MARKER).exists()
 
 
-def _iter_valid_skill_dirs(repo_dir: Path) -> list[Path]:
+def _find_skill_dirs(repo_dir: Path) -> list[Path]:
     """Find all valid skill directories in a repo.
 
     Recursively scans for SKILL.md files, excluding root-level markers
@@ -96,7 +96,7 @@ def find_skill_in_repo(repo_dir: Path, skill_name: str) -> Path | None:
     Returns:
         Path to skill directory if found, None otherwise
     """
-    matches = [d for d in _iter_valid_skill_dirs(repo_dir) if d.name == skill_name]
+    matches = [d for d in _find_skill_dirs(repo_dir) if d.name == skill_name]
     if not matches:
         return None
 
@@ -104,7 +104,7 @@ def find_skill_in_repo(repo_dir: Path, skill_name: str) -> Path | None:
     return min(matches, key=lambda p: len(p.parts))
 
 
-def _iter_skill_dirs_in_listing(paths: list[str]) -> list[PurePosixPath]:
+def _find_skill_dirs_in_listing(paths: list[str]) -> list[PurePosixPath]:
     """Return valid skill directories from a git file listing.
 
     Filters SKILL.md entries, excluding root-level markers and paths
@@ -142,7 +142,7 @@ def find_skill_in_repo_listing(
     Returns:
         Path to skill directory (posix-style, relative), or None if not found.
     """
-    matches = [d for d in _iter_skill_dirs_in_listing(paths) if d.name == skill_name]
+    matches = [d for d in _find_skill_dirs_in_listing(paths) if d.name == skill_name]
     if not matches:
         return None
     return min(matches, key=lambda p: len(p.parts))
@@ -159,7 +159,7 @@ def discover_skills_in_repo_listing(paths: list[str]) -> list[str]:
     Returns:
         Sorted list of unique skill names found in the listing.
     """
-    return sorted({d.name for d in _iter_skill_dirs_in_listing(paths)})
+    return sorted({d.name for d in _find_skill_dirs_in_listing(paths)})
 
 
 def discover_skills_in_repo(repo_dir: Path) -> list[tuple[str, Path]]:
@@ -179,7 +179,7 @@ def discover_skills_in_repo(repo_dir: Path) -> list[tuple[str, Path]]:
     """
     skills_by_name: dict[str, Path] = {}
 
-    for skill_dir in _iter_valid_skill_dirs(repo_dir):
+    for skill_dir in _find_skill_dirs(repo_dir):
         name = skill_dir.name
         # Keep shallowest path for duplicate names
         if name not in skills_by_name or len(skill_dir.parts) < len(
@@ -199,7 +199,7 @@ def discover_all_skill_dirs(repo_dir: Path) -> list[Path]:
     Returns:
         List of skill directories, sorted by path for determinism
     """
-    return sorted(_iter_valid_skill_dirs(repo_dir), key=lambda p: p.as_posix())
+    return sorted(_find_skill_dirs(repo_dir), key=lambda p: p.as_posix())
 
 
 def _parse_frontmatter(content: str) -> tuple[str, str] | None:
