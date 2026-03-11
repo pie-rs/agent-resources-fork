@@ -10,7 +10,7 @@ from agr.config import (
     get_global_config_path,
     require_repo_root,
 )
-from agr.console import get_console
+from agr.console import get_console, print_error
 from agr.exceptions import INSTALL_ERROR_TYPES, format_install_error
 from agr.fetcher import uninstall_skill
 from agr.handle import ParsedHandle, parse_handle
@@ -59,7 +59,7 @@ def run_remove(refs: list[str], global_install: bool = False) -> None:
         repo_root = None
         config_path = get_global_config_path()
         if not config_path.exists():
-            console.print("[red]Error:[/red] No global agr.toml found")
+            print_error("No global agr.toml found")
             console.print("[dim]Run 'agr add -g <handle>' first.[/dim]")
             raise SystemExit(1)
     else:
@@ -68,7 +68,7 @@ def run_remove(refs: list[str], global_install: bool = False) -> None:
         # Find config
         config_path = find_config()
         if config_path is None:
-            console.print("[red]Error:[/red] No agr.toml found")
+            print_error("No agr.toml found")
             raise SystemExit(1)
 
     config = AgrConfig.load(config_path)
@@ -146,7 +146,7 @@ def run_remove(refs: list[str], global_install: bool = False) -> None:
         elif result.message == "Not found":
             console.print(f"[yellow]Not found:[/yellow] {result.ref}")
         else:
-            console.print(f"[red]Error:[/red] {result.ref}")
+            print_error(result.ref)
             console.print(f"  [dim]{result.message}[/dim]")
 
     # Summary

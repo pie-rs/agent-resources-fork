@@ -10,7 +10,7 @@ from agr.commands.migrations import (
     run_tool_migrations,
 )
 from agr.config import AgrConfig, find_config, get_global_config_path, require_repo_root
-from agr.console import get_console
+from agr.console import get_console, print_error
 from agr.exceptions import INSTALL_ERROR_TYPES, format_install_error
 from agr.fetcher import (
     downloaded_repo,
@@ -166,7 +166,7 @@ def _run_global_sync() -> None:
             console.print(f"[green]Installed:[/green] {identifier}")
             installed += 1
         except INSTALL_ERROR_TYPES as e:
-            console.print(f"[red]Error:[/red] {identifier}")
+            print_error(identifier)
             console.print(f"  [dim]{format_install_error(e)}[/dim]")
             errors += 1
 
@@ -347,7 +347,7 @@ def run_sync(global_install: bool = False) -> None:
             console.print(f"[dim]Up to date:[/dim] {identifier}")
             up_to_date += 1
         else:
-            console.print(f"[red]Error:[/red] {identifier}")
+            print_error(identifier)
             if result.error:
                 console.print(f"  [dim]{result.error}[/dim]")
             errors += 1

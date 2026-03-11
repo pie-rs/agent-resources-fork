@@ -457,9 +457,9 @@ def require_repo_root(start_path: Path | None = None) -> Path:
     """
     repo_root = find_repo_root(start_path)
     if repo_root is None:
-        from agr.console import get_console
+        from agr.console import print_error
 
-        get_console().print("[red]Error:[/red] Not in a git repository")
+        print_error("Not in a git repository")
         raise SystemExit(1)
     return repo_root
 

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from agr.console import get_console
+from agr.console import get_console, print_error
 from agr.config import (
     VALID_CANONICAL_INSTRUCTIONS,
     AgrConfig,
@@ -96,10 +96,10 @@ def run_init(
                 f"  [dim]Edit {skill_path}/SKILL.md to customize your skill[/dim]"
             )
         except ValueError as e:
-            console.print(f"[red]Error:[/red] {e}")
+            print_error(str(e))
             raise SystemExit(1)
         except FileExistsError as e:
-            console.print(f"[red]Error:[/red] {e}")
+            print_error(str(e))
             raise SystemExit(1)
         return
 
@@ -125,7 +125,7 @@ def run_init(
         try:
             _validate_tools(tools_override)
         except ValueError as exc:
-            console.print(f"[red]Error:[/red] {exc}")
+            print_error(str(exc))
             raise SystemExit(1)
         config.tools = tools_override
         tools_display = tools_override
@@ -145,17 +145,15 @@ def run_init(
     if default_tool:
         if default_tool not in TOOLS:
             available = ", ".join(TOOLS.keys())
-            console.print(
-                f"[red]Error:[/red] Unknown tool '{default_tool}'. Available: {available}"
-            )
+            print_error(f"Unknown tool '{default_tool}'. Available: {available}")
             raise SystemExit(1)
         config.default_tool = default_tool
         if config.default_tool != original_default_tool:
             changed = True
 
     if config.default_tool and config.default_tool not in config.tools:
-        console.print(
-            "[red]Error:[/red] default_tool must be listed in tools. "
+        print_error(
+            "default_tool must be listed in tools. "
             "Use --tools to include it."
         )
         raise SystemExit(1)
@@ -168,9 +166,7 @@ def run_init(
 
     if canonical_instructions:
         if canonical_instructions not in VALID_CANONICAL_INSTRUCTIONS:
-            console.print(
-                "[red]Error:[/red] canonical instructions must be AGENTS.md or CLAUDE.md"
-            )
+            print_error("canonical instructions must be AGENTS.md or CLAUDE.md")
             raise SystemExit(1)
         config.canonical_instructions = canonical_instructions
         if config.canonical_instructions != original_canonical_instructions:

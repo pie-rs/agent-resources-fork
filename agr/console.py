@@ -14,3 +14,8 @@ def set_quiet(value: bool) -> None:
 def get_console() -> Console:
     """Get a Console instance respecting the global quiet setting."""
     return Console(quiet=_quiet)
+
+
+def print_error(message: str) -> None:
+    """Print a styled error message to the console."""
+    get_console().print(f"[red]Error:[/red] {message}")

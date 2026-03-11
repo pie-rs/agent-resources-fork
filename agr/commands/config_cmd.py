@@ -19,7 +19,7 @@ from agr.commands._tool_helpers import (
     sync_dependencies_to_tools,
     validate_tool_names,
 )
-from agr.console import get_console
+from agr.console import get_console, print_error
 from agr.source import DEFAULT_SOURCE_NAME, SourceConfig
 from agr.tool import DEFAULT_TOOL_NAMES
 
@@ -47,14 +47,14 @@ def _require_config_path(global_scope: bool) -> Path:
     if global_scope:
         config_path = get_global_config_path()
         if not config_path.exists():
-            console.print(f"[red]Error:[/red] No global config found at {config_path}")
+            print_error(f"No global config found at {config_path}")
             console.print("[dim]Run 'agr init' or create it manually.[/dim]")
             raise SystemExit(1)
         return config_path
 
     config_path = find_config()
     if config_path is None:
-        console.print("[red]Error:[/red] No agr.toml found.")
+        print_error("No agr.toml found.")
         console.print("[dim]Run 'agr init' first to create one.[/dim]")
         raise SystemExit(1)
     return config_path
@@ -71,7 +71,7 @@ def _validate_key(key: str) -> None:
     console = get_console()
     if key not in VALID_KEYS:
         valid = ", ".join(sorted(VALID_KEYS))
-        console.print(f"[red]Error:[/red] Unknown config key '{key}'")
+        print_error(f"Unknown config key '{key}'")
         console.print(f"[dim]Valid keys: {valid}[/dim]")
         raise SystemExit(1)
 
@@ -110,10 +110,9 @@ def run_config_path(global_scope: bool) -> None:
 
 def run_config_edit(global_scope: bool) -> None:
     """Open agr.toml in $EDITOR."""
-    console = get_console()
     editor = os.environ.get("VISUAL") or os.environ.get("EDITOR")
     if not editor:
-        console.print("[red]Error:[/red] Neither $VISUAL nor $EDITOR is set.")
+        print_error("Neither $VISUAL nor $EDITOR is set.")
         raise SystemExit(1)
 
     path = _require_config_path(global_scope)
@@ -155,18 +154,18 @@ def run_config_set(key: str, values: list[str], global_scope: bool) -> None:
     config, _ = _load_config(global_scope)
 
     if key == "sources":
-        console.print(
-            "[red]Error:[/red] Cannot set sources directly. Use 'agr config add sources' and 'agr config remove sources'."
+        print_error(
+            "Cannot set sources directly. Use 'agr config add sources' and 'agr config remove sources'."
         )
         raise SystemExit(1)
 
     if key == "tools":
         if not values:
-            console.print("[red]Error:[/red] At least one tool is required.")
+            print_error("At least one tool is required.")
             raise SystemExit(1)
         names = list(dict.fromkeys(normalize_tool_names(values)))
         if not names:
-            console.print("[red]Error:[/red] At least one tool is required.")
+            print_error("At least one tool is required.")
             raise SystemExit(1)
         validate_tool_names(names)
         previous_default = config.default_tool
@@ -187,7 +186,7 @@ def run_config_set(key: str, values: list[str], global_scope: bool) -> None:
 
     # Scalar keys expect exactly one value
     if len(values) != 1:
-        console.print(f"[red]Error:[/red] '{key}' expects exactly one value.")
+        print_error(f"'{key}' expects exactly one value.")
         raise SystemExit(1)
 
     value = values[0]
@@ -195,13 +194,13 @@ def run_config_set(key: str, values: list[str], global_scope: bool) -> None:
     if key == "default_tool":
         normalized = normalize_tool_names([value])
         if not normalized:
-            console.print("[red]Error:[/red] Tool name is required.")
+            print_error("Tool name is required.")
             raise SystemExit(1)
         name = normalized[0]
         validate_tool_names([name])
         if name not in config.tools:
-            console.print(
-                f"[red]Error:[/red] Tool '{name}' is not in configured tools. "
+            print_error(
+                f"Tool '{name}' is not in configured tools. "
                 f"Add it first with 'agr config add tools {name}'."
             )
             raise SystemExit(1)
@@ -212,9 +211,7 @@ def run_config_set(key: str, values: list[str], global_scope: bool) -> None:
     elif key == "default_source":
         source_names = [s.name for s in config.sources]
         if value not in source_names:
-            console.print(
-                f"[red]Error:[/red] Source '{value}' not found in sources list."
-            )
+            print_error(f"Source '{value}' not found in sources list.")
             console.print(f"[dim]Available sources: {', '.join(source_names)}[/dim]")
             raise SystemExit(1)
         config.default_source = value
@@ -223,9 +220,7 @@ def run_config_set(key: str, values: list[str], global_scope: bool) -> None:
 
     elif key == "sync_instructions":
         if value.lower() not in ("true", "false"):
-            console.print(
-                "[red]Error:[/red] sync_instructions must be 'true' or 'false'."
-            )
+            print_error("sync_instructions must be 'true' or 'false'.")
             raise SystemExit(1)
         config.sync_instructions = value.lower() == "true"
         config.save()
@@ -234,7 +229,7 @@ def run_config_set(key: str, values: list[str], global_scope: bool) -> None:
     elif key == "canonical_instructions":
         if value not in VALID_CANONICAL_INSTRUCTIONS:
             valid = ", ".join(f"'{v}'" for v in sorted(VALID_CANONICAL_INSTRUCTIONS))
-            console.print(f"[red]Error:[/red] canonical_instructions must be {valid}.")
+            print_error(f"canonical_instructions must be {valid}.")
             raise SystemExit(1)
         config.canonical_instructions = value
         config.save()
@@ -251,9 +246,7 @@ def run_config_unset(key: str, global_scope: bool) -> None:
     config, _ = _load_config(global_scope)
 
     if key == "sources":
-        console.print(
-            "[red]Error:[/red] Cannot unset sources. Use 'agr config remove sources <name>'."
-        )
+        print_error("Cannot unset sources. Use 'agr config remove sources <name>'.")
         raise SystemExit(1)
 
     if key == "tools":
@@ -308,21 +301,17 @@ def run_config_add(
     config, _ = _load_config(global_scope)
 
     if key in SCALAR_KEYS:
-        console.print(
-            f"[red]Error:[/red] '{key}' is a scalar. Use 'agr config set {key} <value>'."
-        )
+        print_error(f"'{key}' is a scalar. Use 'agr config set {key} <value>'.")
         raise SystemExit(1)
 
     # Reject --type/--url on non-sources keys
     if key != "sources" and (source_type is not None or source_url is not None):
-        console.print(
-            "[red]Error:[/red] --type and --url are only valid for 'sources'."
-        )
+        print_error("--type and --url are only valid for 'sources'.")
         raise SystemExit(1)
 
     if key == "tools":
         if not values:
-            console.print("[red]Error:[/red] At least one tool name is required.")
+            print_error("At least one tool name is required.")
             raise SystemExit(1)
         names = list(dict.fromkeys(normalize_tool_names(values)))
         validate_tool_names(names)
@@ -353,27 +342,27 @@ def run_config_add(
 
     elif key == "sources":
         if not values:
-            console.print("[red]Error:[/red] Source name is required.")
+            print_error("Source name is required.")
             raise SystemExit(1)
         if len(values) > 1:
-            console.print("[red]Error:[/red] Only one source name allowed at a time.")
+            print_error("Only one source name allowed at a time.")
             raise SystemExit(1)
         name = values[0]
 
         if source_type is None:
             source_type = "git"
         if source_type != "git":
-            console.print(
-                f"[red]Error:[/red] Unsupported source type '{source_type}'. Only 'git' is supported."
+            print_error(
+                f"Unsupported source type '{source_type}'. Only 'git' is supported."
             )
             raise SystemExit(1)
         if source_url is None:
-            console.print("[red]Error:[/red] --url is required when adding a source.")
+            print_error("--url is required when adding a source.")
             raise SystemExit(1)
 
         existing_names = {s.name for s in config.sources}
         if name in existing_names:
-            console.print(f"[red]Error:[/red] Source '{name}' already exists.")
+            print_error(f"Source '{name}' already exists.")
             raise SystemExit(1)
 
         config.sources.append(SourceConfig(name=name, type=source_type, url=source_url))
@@ -390,23 +379,19 @@ def run_config_remove(key: str, values: list[str], global_scope: bool) -> None:
     config, _ = _load_config(global_scope)
 
     if key in SCALAR_KEYS:
-        console.print(
-            f"[red]Error:[/red] '{key}' is a scalar. Use 'agr config unset {key}'."
-        )
+        print_error(f"'{key}' is a scalar. Use 'agr config unset {key}'.")
         raise SystemExit(1)
 
     if key == "tools":
         if not values:
-            console.print("[red]Error:[/red] At least one tool name is required.")
+            print_error("At least one tool name is required.")
             raise SystemExit(1)
         names = list(dict.fromkeys(normalize_tool_names(values)))
         validate_tool_names(names)
 
         remaining = [t for t in config.tools if t not in names]
         if not remaining:
-            console.print(
-                "[red]Error:[/red] Cannot remove all tools. At least one must remain."
-            )
+            print_error("Cannot remove all tools. At least one must remain.")
             raise SystemExit(1)
 
         previous_default = config.default_tool
@@ -433,23 +418,23 @@ def run_config_remove(key: str, values: list[str], global_scope: bool) -> None:
 
     elif key == "sources":
         if not values:
-            console.print("[red]Error:[/red] Source name is required.")
+            print_error("Source name is required.")
             raise SystemExit(1)
         if len(values) > 1:
-            console.print("[red]Error:[/red] Only one source name allowed at a time.")
+            print_error("Only one source name allowed at a time.")
             raise SystemExit(1)
         name = values[0]
 
         if name == config.default_source:
-            console.print(
-                f"[red]Error:[/red] Cannot remove default source '{name}'. Change default_source first."
+            print_error(
+                f"Cannot remove default source '{name}'. Change default_source first."
             )
             raise SystemExit(1)
 
         original_len = len(config.sources)
         config.sources = [s for s in config.sources if s.name != name]
         if len(config.sources) == original_len:
-            console.print(f"[red]Error:[/red] Source '{name}' not found.")
+            print_error(f"Source '{name}' not found.")
             raise SystemExit(1)
 
         config.save()

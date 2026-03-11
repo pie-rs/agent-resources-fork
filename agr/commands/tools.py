@@ -5,7 +5,7 @@ Shared helpers live in ``agr.commands._tool_helpers``.
 """
 
 from agr.config import AgrConfig, find_config, find_repo_root
-from agr.console import get_console
+from agr.console import get_console, print_error
 from agr.commands._tool_helpers import (
     delete_tool_skills,
     ensure_valid_default_tool,
@@ -22,7 +22,7 @@ def _load_required_config() -> AgrConfig:
     console = get_console()
     config_path = find_config()
     if config_path is None:
-        console.print("[red]Error:[/red] No agr.toml found.")
+        print_error("No agr.toml found.")
         console.print("[dim]Run 'agr init' first to create one.[/dim]")
         raise SystemExit(1)
     return AgrConfig.load(config_path)
@@ -92,7 +92,7 @@ def run_tools_set(tool_names: list[str]) -> None:
     console = get_console()
     names = list(dict.fromkeys(normalize_tool_names(tool_names)))
     if not names:
-        console.print("[red]Error:[/red] Cannot set empty tools list.")
+        print_error("Cannot set empty tools list.")
         console.print("[dim]At least one tool must be configured.[/dim]")
         raise SystemExit(1)
 
@@ -137,7 +137,7 @@ def run_tools_remove(tool_names: list[str]) -> None:
 
     remaining = [tool for tool in config.tools if tool not in names]
     if not remaining:
-        console.print("[red]Error:[/red] Cannot remove all tools.")
+        print_error("Cannot remove all tools.")
         console.print("[dim]At least one tool must be configured.[/dim]")
         raise SystemExit(1)
 
@@ -171,7 +171,7 @@ def run_default_tool_set(tool_name: str) -> None:
     console = get_console()
     normalized = normalize_tool_names([tool_name])
     if not normalized:
-        console.print("[red]Error:[/red] Tool name is required.")
+        print_error("Tool name is required.")
         raise SystemExit(1)
 
     name = normalized[0]
@@ -179,8 +179,8 @@ def run_default_tool_set(tool_name: str) -> None:
     config = _load_required_config()
 
     if name not in config.tools:
-        console.print(
-            f"[red]Error:[/red] Tool '{name}' is not configured. "
+        print_error(
+            f"Tool '{name}' is not configured. "
             f"Add it first with 'agr config tools add {name}'."
         )
         raise SystemExit(1)

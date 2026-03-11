@@ -8,7 +8,7 @@ import shutil
 from pathlib import Path
 
 from agr.config import AgrConfig, find_repo_root
-from agr.console import get_console
+from agr.console import get_console, print_error
 from agr.exceptions import INSTALL_ERROR_TYPES, format_install_error
 from agr.fetcher import fetch_and_install_to_tools, filter_tools_needing_install
 from agr.tool import TOOLS
@@ -25,7 +25,7 @@ def validate_tool_names(tool_names: list[str]) -> None:
     invalid = [name for name in tool_names if name not in TOOLS]
     if invalid:
         available = ", ".join(TOOLS.keys())
-        console.print(f"[red]Error:[/red] Unknown tool(s): {', '.join(invalid)}")
+        print_error(f"Unknown tool(s): {', '.join(invalid)}")
         console.print(f"[dim]Available tools: {available}[/dim]")
         raise SystemExit(1)
 
@@ -82,9 +82,7 @@ def sync_dependencies_to_tools(config: AgrConfig, tool_names: list[str]) -> int:
             console.print(f"[green]Installed:[/green] {dep.identifier} ({tool_list})")
 
         except INSTALL_ERROR_TYPES as e:
-            console.print(
-                f"[red]Error:[/red] {dep.identifier}: {format_install_error(e)}"
-            )
+            print_error(f"{dep.identifier}: {format_install_error(e)}")
             sync_errors += 1
 
     return sync_errors
