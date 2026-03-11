@@ -17,6 +17,7 @@ from agr.fetcher import (
     install_skill_from_repo_to_tools,
     is_skill_installed,
     prepare_repo_for_skills,
+    skill_not_found_message,
 )
 from agr.handle import ParsedHandle
 from agr.instructions import (
@@ -224,13 +225,6 @@ def run_sync(global_install: bool = False) -> None:
     pending_local: list[SyncEntry] = []
     pending_remote: list[SyncEntry] = []
 
-    def _skill_not_found_message(name: str) -> str:
-        return (
-            f"Skill '{name}' not found in repository.\n"
-            f"No directory named '{name}' containing SKILL.md was found.\n"
-            f"Hint: Create a skill at 'skills/{name}/SKILL.md' or '{name}/SKILL.md'"
-        )
-
     for index, dep in enumerate(config.dependencies):
         identifier = dep.identifier
         try:
@@ -320,7 +314,7 @@ def run_sync(global_install: bool = False) -> None:
                     if skill_source is None:
                         results[entry.index] = (
                             "error",
-                            _skill_not_found_message(handle.name),
+                            skill_not_found_message(handle.name),
                         )
                         continue
                     try:

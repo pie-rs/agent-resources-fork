@@ -573,6 +573,18 @@ def _copy_skill_to_destination(
     return dest
 
 
+def skill_not_found_message(name: str) -> str:
+    """Build a user-friendly message for a missing skill in a repository.
+
+    Used by both fetcher and sync to produce consistent error text.
+    """
+    return (
+        f"Skill '{name}' not found in repository.\n"
+        f"No directory named '{name}' containing SKILL.md was found.\n"
+        f"Hint: Create a skill at 'skills/{name}/SKILL.md' or '{name}/SKILL.md'"
+    )
+
+
 def install_skill_from_repo(
     repo_dir: Path,
     skill_name: str,
@@ -606,11 +618,7 @@ def install_skill_from_repo(
     if skill_source is None:
         skill_source = find_skill_in_repo(repo_dir, skill_name)
     if skill_source is None:
-        raise SkillNotFoundError(
-            f"Skill '{skill_name}' not found in repository.\n"
-            f"No directory named '{skill_name}' containing SKILL.md was found.\n"
-            f"Hint: Create a skill at 'skills/{skill_name}/SKILL.md' or '{skill_name}/SKILL.md'"
-        )
+        raise SkillNotFoundError(skill_not_found_message(skill_name))
 
     skill_dest = _resolve_skill_destination(
         handle, dest_dir, tool, repo_root, install_source
