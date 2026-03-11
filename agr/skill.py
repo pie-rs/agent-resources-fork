@@ -1,15 +1,7 @@
 """Skill validation and SKILL.md handling."""
 
 import re
-from enum import Enum
 from pathlib import Path, PurePosixPath
-
-
-class ResourceType(Enum):
-    """Resource types supported by agr."""
-
-    SKILL = "skill"
-    # Future: INSTRUCTION = "instruction"
 
 
 # Marker file for skills
