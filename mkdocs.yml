@@ -69,6 +69,7 @@ nav:
   - Getting Started:
     - Home: index.md
     - Tutorial: tutorial.md
+    - Core Concepts: concepts.md
     - Skill Directory: skills.md
     - Guides: guides.md
   - Tools & Config:

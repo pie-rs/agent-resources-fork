@@ -307,6 +307,7 @@ agr list -g
 
 ## What's next
 
+- [Core Concepts](concepts.md) — understand handles, tools, sources, and how agr works under the hood
 - [Creating Skills](creating.md) — detailed guide on writing effective skills, including frontmatter options and supporting files
 - [Configuration](configuration.md) — multi-tool setup, custom sources, private repos, and instruction syncing
 - [agrx](agrx.md) — full reference for the ephemeral skill runner
