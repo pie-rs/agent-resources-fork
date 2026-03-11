@@ -1,8 +1,8 @@
 """Hub functions for discovering skills on GitHub."""
 
 import json
-import os
 import urllib.request
+import warnings
 from typing import Any
 from urllib.error import HTTPError, URLError
 
@@ -13,8 +13,7 @@ from agr.exceptions import (
     RepoNotFoundError,
     SkillNotFoundError,
 )
-import warnings
-
+from agr.git import get_github_token
 from agr.handle import (
     DEFAULT_REPO_NAME,
     LEGACY_DEFAULT_REPO_NAME,
@@ -24,15 +23,6 @@ from agr.handle import (
 )
 from agr.sdk.types import SkillInfo
 from agr.skill import SKILL_MARKER
-
-
-def _get_github_token() -> str | None:
-    """Get GitHub token from environment."""
-    for env_var in ("GITHUB_TOKEN", "GH_TOKEN"):
-        token = os.environ.get(env_var, "")
-        if token.strip():
-            return token.strip()
-    return None
 
 
 def _github_api_request(url: str) -> dict[str, Any]:
@@ -53,7 +43,7 @@ def _github_api_request(url: str) -> dict[str, Any]:
         "User-Agent": "agr-sdk",
     }
 
-    token = _get_github_token()
+    token = get_github_token()
     if token:
         headers["Authorization"] = f"Bearer {token}"
 

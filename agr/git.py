@@ -43,7 +43,7 @@ def _run_git(cmd: list[str]) -> subprocess.CompletedProcess[str]:
         raise AgrError(f"Failed to run git: {type(e).__name__}") from None
 
 
-def _get_github_token() -> str | None:
+def get_github_token() -> str | None:
     """Get GitHub token from environment.
 
     Checks GITHUB_TOKEN first, then falls back to GH_TOKEN (used by gh CLI).
@@ -85,7 +85,7 @@ def _get_default_branch(repo_url: str) -> str | None:
 
 def _apply_github_token(repo_url: str) -> str:
     """Inject GitHub token into HTTPS URL if available."""
-    token = _get_github_token()
+    token = get_github_token()
     if not token:
         return repo_url
     parsed = urlparse(repo_url)
@@ -159,7 +159,7 @@ def _raise_clone_error(
         part for part in ((stderr or "").strip(), (stdout or "").strip()) if part
     ).strip()
     lowered = message.lower()
-    token_missing = _is_github_source(source) and not _get_github_token()
+    token_missing = _is_github_source(source) and not get_github_token()
 
     if "authentication failed" in lowered or "permission denied" in lowered:
         if token_missing:
