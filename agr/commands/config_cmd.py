@@ -20,7 +20,7 @@ from agr.commands._tool_helpers import (
     validate_tool_names,
 )
 from agr.console import get_console
-from agr.source import SourceConfig
+from agr.source import DEFAULT_SOURCE_NAME, SourceConfig
 from agr.tool import DEFAULT_TOOL_NAMES
 
 VALID_KEYS = {
@@ -271,8 +271,6 @@ def run_config_unset(key: str, global_scope: bool) -> None:
         console.print("[green]Unset:[/green] default_tool")
 
     elif key == "default_source":
-        from agr.source import DEFAULT_SOURCE_NAME
-
         config.default_source = DEFAULT_SOURCE_NAME
         config.save()
         console.print(f"[green]Reset:[/green] default_source = {DEFAULT_SOURCE_NAME}")
