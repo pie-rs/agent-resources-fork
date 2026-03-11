@@ -8,7 +8,7 @@ import subprocess
 import tempfile
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Generator
+from typing import Generator, NamedTuple
 from urllib.parse import quote, urlparse, urlunparse
 
 from agr.exceptions import (
@@ -738,6 +738,60 @@ def install_local_skill(
     )
 
 
+class _RemoteSkillLocation(NamedTuple):
+    """Result of locating a remote skill across sources."""
+
+    repo_dir: Path
+    skill_source: Path
+    source_config: SourceConfig
+    is_legacy: bool
+
+
+@contextmanager
+def _locate_remote_skill(
+    handle: ParsedHandle,
+    resolver: SourceResolver | None = None,
+    source: str | None = None,
+) -> Generator[_RemoteSkillLocation, None, None]:
+    """Search for a remote skill across sources and repo candidates.
+
+    Downloads the repository and prepares the skill, keeping the temp
+    directory alive while the caller processes the result.
+
+    Yields:
+        _RemoteSkillLocation with repo_dir, skill_source, source_config, is_legacy.
+
+    Raises:
+        SkillNotFoundError: If skill not found in any source.
+    """
+    resolver = resolver or SourceResolver(default_sources(), DEFAULT_SOURCE_NAME)
+    owner = handle.username or ""
+
+    for repo_name, is_legacy in iter_repo_candidates(handle.repo):
+        for source_config in resolver.ordered(source):
+            try:
+                with downloaded_repo(source_config, owner, repo_name) as repo_dir:
+                    skill_source = prepare_repo_for_skill(repo_dir, handle.name)
+                    if skill_source is None:
+                        continue
+                    yield _RemoteSkillLocation(
+                        repo_dir=repo_dir,
+                        skill_source=skill_source,
+                        source_config=source_config,
+                        is_legacy=is_legacy,
+                    )
+                    return
+            except RepoNotFoundError:
+                if source is not None:
+                    raise
+                continue
+
+    raise SkillNotFoundError(
+        f"Skill '{handle.name}' not found in sources: "
+        f"{', '.join(s.name for s in resolver.ordered(source))}"
+    )
+
+
 def install_remote_skill(
     handle: ParsedHandle,
     repo_root: Path | None,
@@ -753,52 +807,33 @@ def install_remote_skill(
     if handle.is_local:
         raise ValueError("install_remote_skill requires a remote handle")
 
-    resolver = resolver or SourceResolver(default_sources(), DEFAULT_SOURCE_NAME)
-    owner = handle.username or ""
-    repo_candidates = iter_repo_candidates(handle.repo)
-
-    for repo_name, is_legacy in repo_candidates:
-        for source_config in resolver.ordered(source):
-            try:
-                with downloaded_repo(source_config, owner, repo_name) as repo_dir:
-                    skill_source = prepare_repo_for_skill(repo_dir, handle.name)
-                    if skill_source is None:
-                        continue
-                    install_handle = (
-                        ParsedHandle(
-                            username=handle.username,
-                            repo=handle.repo,
-                            name=install_name,
-                        )
-                        if install_name
-                        else handle
-                    )
-                    if is_legacy:
-                        warnings.warn(
-                            LEGACY_REPO_DEPRECATION_WARNING,
-                            UserWarning,
-                            stacklevel=2,
-                        )
-                    return install_skill_from_repo(
-                        repo_dir,
-                        handle.name,
-                        install_handle,
-                        skills_dir,
-                        tool,
-                        repo_root,
-                        overwrite,
-                        install_source=source_config.name,
-                        skill_source=skill_source,
-                    )
-            except RepoNotFoundError:
-                if source is not None:
-                    raise
-                continue
-
-    raise SkillNotFoundError(
-        f"Skill '{handle.name}' not found in sources: "
-        f"{', '.join(s.name for s in resolver.ordered(source))}"
-    )
+    with _locate_remote_skill(handle, resolver, source) as loc:
+        install_handle = (
+            ParsedHandle(
+                username=handle.username,
+                repo=handle.repo,
+                name=install_name,
+            )
+            if install_name
+            else handle
+        )
+        if loc.is_legacy:
+            warnings.warn(
+                LEGACY_REPO_DEPRECATION_WARNING,
+                UserWarning,
+                stacklevel=2,
+            )
+        return install_skill_from_repo(
+            loc.repo_dir,
+            handle.name,
+            install_handle,
+            skills_dir,
+            tool,
+            repo_root,
+            overwrite,
+            install_source=loc.source_config.name,
+            skill_source=loc.skill_source,
+        )
 
 
 def fetch_and_install(
@@ -911,61 +946,40 @@ def fetch_and_install_to_tools(
         return installed
 
     # Remote: download once, install to all
-    resolver = resolver or SourceResolver(default_sources(), DEFAULT_SOURCE_NAME)
-    owner = handle.username or ""
-    repo_candidates = iter_repo_candidates(handle.repo)
-
-    for repo_name, is_legacy in repo_candidates:
-        for source_config in resolver.ordered(source):
+    with _locate_remote_skill(handle, resolver, source) as loc:
+        for tool in tools:
             try:
-                with downloaded_repo(source_config, owner, repo_name) as repo_dir:
-                    skill_source = prepare_repo_for_skill(repo_dir, handle.name)
-                    if skill_source is None:
-                        continue
-                    for tool in tools:
-                        try:
-                            skills_dir = (
-                                skills_dirs.get(tool.name)
-                                if skills_dirs is not None
-                                else None
-                            )
-                            if skills_dir is None:
-                                if repo_root is None:
-                                    raise ValueError(
-                                        "repo_root is required when skills_dirs is not provided"
-                                    )
-                                skills_dir = tool.get_skills_dir(repo_root)
-                            path = install_skill_from_repo(
-                                repo_dir,
-                                handle.name,
-                                handle,
-                                skills_dir,
-                                tool,
-                                repo_root,
-                                overwrite,
-                                install_source=source_config.name,
-                                skill_source=skill_source,
-                            )
-                            installed[tool.name] = path
-                        except Exception:
-                            _rollback_installed(installed)
-                            raise
-                    if is_legacy:
-                        warnings.warn(
-                            LEGACY_REPO_DEPRECATION_WARNING,
-                            UserWarning,
-                            stacklevel=2,
+                skills_dir = (
+                    skills_dirs.get(tool.name) if skills_dirs is not None else None
+                )
+                if skills_dir is None:
+                    if repo_root is None:
+                        raise ValueError(
+                            "repo_root is required when skills_dirs is not provided"
                         )
-                    return installed
-            except RepoNotFoundError:
-                if source is not None:
-                    raise
-                continue
-
-    raise SkillNotFoundError(
-        f"Skill '{handle.name}' not found in sources: "
-        f"{', '.join(s.name for s in resolver.ordered(source))}"
-    )
+                    skills_dir = tool.get_skills_dir(repo_root)
+                path = install_skill_from_repo(
+                    loc.repo_dir,
+                    handle.name,
+                    handle,
+                    skills_dir,
+                    tool,
+                    repo_root,
+                    overwrite,
+                    install_source=loc.source_config.name,
+                    skill_source=loc.skill_source,
+                )
+                installed[tool.name] = path
+            except Exception:
+                _rollback_installed(installed)
+                raise
+        if loc.is_legacy:
+            warnings.warn(
+                LEGACY_REPO_DEPRECATION_WARNING,
+                UserWarning,
+                stacklevel=2,
+            )
+        return installed
 
 
 def uninstall_skill(
