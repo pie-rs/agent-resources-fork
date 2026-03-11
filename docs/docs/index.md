@@ -1,5 +1,8 @@
 ---
 title: Home
+hide:
+  - navigation
+  - toc
 ---
 
 # AGR — Skills for AI Agents

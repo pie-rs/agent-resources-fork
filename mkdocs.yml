@@ -29,13 +29,19 @@ theme:
 
   logo: images/puzzle.png
 
+  favicon: images/puzzle.png
+
   features:
     - navigation.instant
     - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.sections
     - navigation.top
     - navigation.indexes
+    - navigation.footer
     - content.code.copy
+    - content.tabs.link
     - search.suggest
     - search.highlight
     - toc.follow
