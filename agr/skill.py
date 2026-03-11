@@ -28,7 +28,7 @@ def _is_excluded_path(path: Path, repo_dir: Path) -> bool:
     """Check if a path should be excluded from skill discovery.
 
     Args:
-        path: Path to check
+        path: Path to check (absolute, within repo_dir)
         repo_dir: Root of the repository (to detect root-level SKILL.md)
 
     Returns:
@@ -38,8 +38,11 @@ def _is_excluded_path(path: Path, repo_dir: Path) -> bool:
     if path.parent == repo_dir:
         return True
 
-    # Exclude paths containing excluded directories
-    return any(part in EXCLUDED_DIRS for part in path.parts)
+    # Only check path components relative to repo_dir, so that
+    # parent directories outside the repo (e.g. /home/user/build/project)
+    # don't trigger false exclusions.
+    rel = path.relative_to(repo_dir)
+    return any(part in EXCLUDED_DIRS for part in rel.parts)
 
 
 def is_valid_skill_dir(path: Path) -> bool:
