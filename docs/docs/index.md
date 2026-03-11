@@ -18,10 +18,34 @@ specific tasks — reviewing code, generating components, preparing releases, or
 anything else you'd normally explain in a prompt. Each skill is a `SKILL.md`
 file in a directory, published on GitHub.
 
-Without a package manager, you'd copy these files manually into each tool's
-config folder, keep them updated by hand, and hope your teammates have the same
-versions. **agr automates all of that** — install from GitHub, sync across
-tools, share via `agr.toml`.
+Here's what one looks like:
+
+```markdown
+---
+name: code-reviewer
+description: Reviews code for bugs, security issues, and best practices.
+---
+
+# Code Reviewer
+
+When reviewing code changes, follow these steps:
+
+1. Read every changed file completely before commenting
+2. Check for bugs: null references, off-by-one errors, race conditions
+3. Check for security issues: injection, auth bypass, data exposure
+4. Verify error handling: are errors caught, logged, and surfaced?
+
+Format each finding as:
+- **File and line:** `src/auth.py:42`
+- **Severity:** bug / security / style
+- **Fix:** concrete code or approach to resolve it
+```
+
+Install it, and your AI agent gains a new capability — no prompt engineering
+each time. Without a package manager, you'd copy these files manually into each
+tool's config folder, keep them updated by hand, and hope your teammates have
+the same versions. **agr automates all of that** — install from GitHub, sync
+across tools, share via `agr.toml`.
 
 ## Install
 
@@ -104,13 +128,30 @@ agr sync
 
 ## Example skills
 
+**Documents & data** — read, create, and transform office files:
+
 ```bash
-agr add anthropics/skills/frontend-design    # Build production-grade UIs
-agr add anthropics/skills/skill-creator      # Create new skills
-agr add anthropics/skills/pdf                # Work with PDF documents
+agr add anthropics/skills/pdf       # Extract tables, summarize, create PDFs
+agr add anthropics/skills/docx      # Generate and edit Word documents
+agr add anthropics/skills/xlsx      # Build and manipulate spreadsheets
 ```
 
-Browse more at the [Skill Directory](skills.md) or on
+**Design & frontend** — build UIs and visual assets:
+
+```bash
+agr add anthropics/skills/frontend-design   # Production-grade interfaces
+agr add anthropics/skills/canvas-design     # Visual art in PNG and PDF
+```
+
+**Development** — build integrations and test apps:
+
+```bash
+agr add anthropics/skills/claude-api        # Build apps with the Claude API
+agr add anthropics/skills/mcp-builder       # Create MCP servers
+agr add anthropics/skills/webapp-testing    # Test web apps with Playwright
+```
+
+Browse the full list at the [Skill Directory](skills.md) or on
 [GitHub](https://github.com/anthropics/skills).
 
 ## Next steps
