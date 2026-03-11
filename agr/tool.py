@@ -38,6 +38,7 @@ class ToolConfig:
     skill_prompt_prefix: str = "/"  # Prefix for invoking a skill
     install_hint: str | None = None  # Help text for installation
     detection_signals: tuple[str, ...] = ()  # Paths that indicate tool presence
+    instruction_file: str = "AGENTS.md"  # Canonical instruction file for this tool
 
     def get_skills_dir(self, repo_root: Path) -> Path:
         """Get the skills directory for this tool in a repo."""
@@ -62,6 +63,7 @@ CLAUDE = ToolConfig(
     cli_interactive_prompt_positional=True,
     install_hint="Install from: https://claude.ai/download",
     detection_signals=(".claude", "CLAUDE.md"),
+    instruction_file="CLAUDE.md",
 )
 
 # Cursor tool configuration (nested dirs: maragudk/skills/bluesky/)
@@ -161,6 +163,7 @@ ANTIGRAVITY = ToolConfig(
     skill_prompt_prefix="",
     install_hint=None,
     detection_signals=(".agent",),
+    instruction_file="GEMINI.md",
 )
 
 # Registry of all supported tools

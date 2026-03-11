@@ -95,9 +95,9 @@ def _sync_instructions_if_configured(
     # Build the set of target files from all configured tools (excluding canonical).
     target_files = sorted(
         {
-            canonical_instruction_file(tool.name)
+            tool.instruction_file
             for tool in tools
-            if canonical_instruction_file(tool.name) != canonical_file
+            if tool.instruction_file != canonical_file
         }
     )
 
