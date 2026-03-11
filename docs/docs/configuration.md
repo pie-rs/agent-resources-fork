@@ -116,6 +116,78 @@ instruction files needed by your configured tools. For example, with
 `canonical_instructions = "CLAUDE.md"` and `tools = ["claude", "codex"]`, running
 `agr sync` copies `CLAUDE.md` content to `AGENTS.md` (used by Codex).
 
+## Private Repositories
+
+agr supports private GitHub repositories. Set a GitHub personal access token in
+your environment and agr will use it automatically for all remote operations.
+
+### Setup
+
+Export one of these environment variables:
+
+```bash
+export GITHUB_TOKEN="ghp_your_token_here"
+```
+
+Or, if you use the [GitHub CLI](https://cli.github.com/):
+
+```bash
+export GH_TOKEN="$(gh auth token)"
+```
+
+agr checks `GITHUB_TOKEN` first, then falls back to `GH_TOKEN`.
+
+### How It Works
+
+When a `GITHUB_TOKEN` or `GH_TOKEN` is set, agr injects the token into HTTPS
+clone URLs for GitHub sources. This happens transparently — no config changes
+needed. The token is used for:
+
+- `agr add` — cloning private repos
+- `agr sync` — syncing private dependencies
+- `agrx` — ephemeral runs from private repos
+- Python SDK — `Skill.from_git()`, `list_skills()`, `skill_info()`
+
+### Token Permissions
+
+The token needs **read access** to the repositories containing your skills:
+
+- **Fine-grained tokens** (recommended): Grant `Contents: Read-only` on the
+  specific repositories
+- **Classic tokens**: The `repo` scope works but grants broader access
+
+### Per-Shell vs Permanent
+
+Add the export to your shell profile for permanent access:
+
+=== "bash"
+
+    ```bash
+    echo 'export GITHUB_TOKEN="ghp_your_token"' >> ~/.bashrc
+    ```
+
+=== "zsh"
+
+    ```bash
+    echo 'export GITHUB_TOKEN="ghp_your_token"' >> ~/.zshrc
+    ```
+
+Or use a secrets manager and load it dynamically:
+
+```bash
+export GITHUB_TOKEN="$(gh auth token)"
+```
+
+### Non-GitHub Sources
+
+Token injection only applies to GitHub URLs. For self-hosted Git servers, embed
+credentials in the source URL or configure them through your system's Git
+credential helper:
+
+```bash
+git config --global credential.helper store
+```
+
 ## Global Installs
 
 Skills can be installed globally (available in all projects) using the `-g` flag:

@@ -280,8 +280,27 @@ agr add user/skill --overwrite
 Check:
 
 - Username and repo name are correct
-- Repository is public
-- Default branch is `main`
+- Repository is public, **or** you have `GITHUB_TOKEN` / `GH_TOKEN` set (see
+  [Private Repositories](configuration.md#private-repositories))
+- The repository's default branch exists (agr auto-detects it)
+
+### Authentication failed
+
+If you see "Authentication failed" or "Repository not found" for a private repo:
+
+1. Ensure `GITHUB_TOKEN` or `GH_TOKEN` is set in your environment
+2. Verify the token has read access to the repository
+3. Check the token hasn't expired
+
+```bash
+# Quick test — should show your username
+curl -s -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/user | grep login
+```
+
+!!! note
+    GitHub returns "not found" (not "forbidden") for private repos you can't
+    access. If you see "Repository not found" for a repo you know exists, it's
+    almost always an authentication issue.
 
 ### Git not installed
 
@@ -297,4 +316,5 @@ agrx user/skill --global
 
 ### Network errors
 
-Ensure the repository is public and you have internet access.
+Ensure the repository is accessible and you have internet access. For private
+repos, ensure your token is valid (see above).
