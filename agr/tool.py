@@ -195,6 +195,11 @@ def build_global_skills_dirs(tools: list[ToolConfig]) -> dict[str, Path]:
     return {tool.name: tool.get_global_skills_dir() for tool in tools}
 
 
+def available_tools_string() -> str:
+    """Return a comma-separated string of all supported tool names."""
+    return ", ".join(TOOLS.keys())
+
+
 def get_tool(name: str) -> ToolConfig:
     """Get tool configuration by name.
 
@@ -208,6 +213,7 @@ def get_tool(name: str) -> ToolConfig:
         AgrError: If tool name is not recognized
     """
     if name not in TOOLS:
-        available = ", ".join(TOOLS.keys())
-        raise AgrError(f"Unknown tool '{name}'. Available tools: {available}")
+        raise AgrError(
+            f"Unknown tool '{name}'. Available tools: {available_tools_string()}"
+        )
     return TOOLS[name]

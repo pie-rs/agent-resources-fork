@@ -15,7 +15,7 @@ from agr.config import AgrConfig, find_config, find_repo_root
 from agr.exceptions import AgrError, InvalidHandleError
 from agr.fetcher import install_remote_skill
 from agr.handle import parse_handle
-from agr.tool import DEFAULT_TOOL_NAMES, TOOLS, ToolConfig, get_tool
+from agr.tool import DEFAULT_TOOL_NAMES, TOOLS, ToolConfig, available_tools_string, get_tool
 
 app = typer.Typer(
     name="agrx",
@@ -165,9 +165,8 @@ def main(
 
     # Validate tool name
     if tool_name not in TOOLS:
-        available = ", ".join(TOOLS.keys())
         console.print(f"[red]Error:[/red] Unknown tool '{tool_name}'")
-        console.print(f"[dim]Available tools: {available}[/dim]")
+        console.print(f"[dim]Available tools: {available_tools_string()}[/dim]")
         raise typer.Exit(1)
 
     tool_config = get_tool(tool_name)

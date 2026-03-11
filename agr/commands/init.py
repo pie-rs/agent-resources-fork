@@ -14,7 +14,7 @@ from agr.config import (
 from agr.detect import detect_tools
 from agr.instructions import canonical_instruction_file
 from agr.skill import create_skill_scaffold
-from agr.tool import TOOLS
+from agr.tool import TOOLS, available_tools_string
 
 
 def init_config(path: Path | None = None) -> tuple[Path, bool]:
@@ -68,8 +68,9 @@ def _parse_tools_flag(value: str | None) -> list[str] | None:
 def _validate_tools(tools: list[str]) -> None:
     for name in tools:
         if name not in TOOLS:
-            available = ", ".join(TOOLS.keys())
-            raise ValueError(f"Unknown tool '{name}'. Available: {available}")
+            raise ValueError(
+                f"Unknown tool '{name}'. Available: {available_tools_string()}"
+            )
 
 
 def run_init(
@@ -144,8 +145,9 @@ def run_init(
     # Default tool
     if default_tool:
         if default_tool not in TOOLS:
-            available = ", ".join(TOOLS.keys())
-            print_error(f"Unknown tool '{default_tool}'. Available: {available}")
+            print_error(
+                f"Unknown tool '{default_tool}'. Available: {available_tools_string()}"
+            )
             raise SystemExit(1)
         config.default_tool = default_tool
         if config.default_tool != original_default_tool:

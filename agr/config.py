@@ -16,7 +16,7 @@ from agr.source import (
     SourceResolver,
     default_sources,
 )
-from agr.tool import DEFAULT_TOOL_NAMES, TOOLS, ToolConfig, get_tool
+from agr.tool import DEFAULT_TOOL_NAMES, TOOLS, ToolConfig, available_tools_string, get_tool
 
 VALID_CANONICAL_INSTRUCTIONS = {"AGENTS.md", "CLAUDE.md", "GEMINI.md"}
 
@@ -31,9 +31,8 @@ def _parse_tools_from_doc(doc: TOMLDocument) -> list[str]:
 
     for tool_name in tools:
         if tool_name not in TOOLS:
-            available = ", ".join(TOOLS.keys())
             raise ConfigError(
-                f"Unknown tool '{tool_name}' in agr.toml. Available: {available}"
+                f"Unknown tool '{tool_name}' in agr.toml. Available: {available_tools_string()}"
             )
     return tools
 
@@ -45,9 +44,8 @@ def _parse_default_tool_from_doc(doc: TOMLDocument, tools: list[str]) -> str | N
         return None
     default_tool = str(default_tool)
     if default_tool and default_tool not in TOOLS:
-        available = ", ".join(TOOLS.keys())
         raise ConfigError(
-            f"Unknown default_tool '{default_tool}' in agr.toml. Available: {available}"
+            f"Unknown default_tool '{default_tool}' in agr.toml. Available: {available_tools_string()}"
         )
     result = default_tool or None
     if result and result not in tools:

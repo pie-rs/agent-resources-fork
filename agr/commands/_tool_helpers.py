@@ -11,7 +11,7 @@ from agr.config import AgrConfig, find_repo_root
 from agr.console import get_console, print_error
 from agr.exceptions import INSTALL_ERROR_TYPES, format_install_error
 from agr.fetcher import fetch_and_install_to_tools, filter_tools_needing_install
-from agr.tool import TOOLS
+from agr.tool import TOOLS, available_tools_string
 
 
 def normalize_tool_names(tool_names: list[str]) -> list[str]:
@@ -24,9 +24,8 @@ def validate_tool_names(tool_names: list[str]) -> None:
     console = get_console()
     invalid = [name for name in tool_names if name not in TOOLS]
     if invalid:
-        available = ", ".join(TOOLS.keys())
         print_error(f"Unknown tool(s): {', '.join(invalid)}")
-        console.print(f"[dim]Available tools: {available}[/dim]")
+        console.print(f"[dim]Available tools: {available_tools_string()}[/dim]")
         raise SystemExit(1)
 
 
