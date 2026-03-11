@@ -43,14 +43,15 @@ def _parse_default_tool_from_doc(doc: TOMLDocument, tools: list[str]) -> str | N
     if default_tool is None:
         return None
     default_tool = str(default_tool)
-    if default_tool and default_tool not in TOOLS:
+    if not default_tool:
+        return None
+    if default_tool not in TOOLS:
         raise ConfigError(
             f"Unknown default_tool '{default_tool}' in agr.toml. Available: {available_tools_string()}"
         )
-    result = default_tool or None
-    if result and result not in tools:
+    if default_tool not in tools:
         raise ConfigError("default_tool must be listed in tools in agr.toml")
-    return result
+    return default_tool
 
 
 def _parse_sources_from_doc(
