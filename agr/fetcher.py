@@ -640,13 +640,6 @@ def install_skill_from_repo_to_tools(
 
     installed: dict[str, Path] = {}
 
-    def _rollback() -> None:
-        for rollback_path in installed.values():
-            try:
-                shutil.rmtree(rollback_path)
-            except OSError as e:
-                logger.warning(f"Failed to rollback {rollback_path}: {e}")
-
     for tool in tools:
         try:
             skills_dir = tool.get_skills_dir(repo_root) if repo_root else None
@@ -665,7 +658,7 @@ def install_skill_from_repo_to_tools(
             )
             installed[tool.name] = path
         except Exception:
-            _rollback()
+            _rollback_installed(installed)
             raise
 
     return installed
@@ -905,16 +898,6 @@ def fetch_and_install_to_tools(
 
     installed: dict[str, Path] = {}
 
-    def _rollback():
-        """Remove all successfully installed skills."""
-        for tool_name, rollback_path in installed.items():
-            try:
-                shutil.rmtree(rollback_path)
-            except OSError as e:
-                logger.warning(
-                    f"Failed to rollback {tool_name} at {rollback_path}: {e}"
-                )
-
     if handle.is_local:
         # Local: no download needed, just iterate with rollback
         for tool in tools:
@@ -932,7 +915,7 @@ def fetch_and_install_to_tools(
                     skills_dir=target_skills_dir,
                 )
             except Exception:
-                _rollback()
+                _rollback_installed(installed)
                 raise
         return installed
 
@@ -974,7 +957,7 @@ def fetch_and_install_to_tools(
                             )
                             installed[tool.name] = path
                         except Exception:
-                            _rollback()
+                            _rollback_installed(installed)
                             raise
                     if is_legacy:
                         warnings.warn(
@@ -1047,6 +1030,15 @@ def _resolve_skills_dir(
     if repo_root is None:
         raise ValueError("repo_root is required when skills_dir is not provided")
     return tool.get_skills_dir(repo_root)
+
+
+def _rollback_installed(installed: dict[str, Path]) -> None:
+    """Remove all successfully installed skill directories to roll back partial installs."""
+    for tool_name, rollback_path in installed.items():
+        try:
+            shutil.rmtree(rollback_path)
+        except OSError as e:
+            logger.warning(f"Failed to rollback {tool_name} at {rollback_path}: {e}")
 
 
 def _cleanup_empty_parents(path: Path, stop_at: Path) -> None:
