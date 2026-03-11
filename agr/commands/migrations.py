@@ -100,42 +100,6 @@ def _migrate_skills_directory(
             parent.rmdir()
 
 
-def migrate_codex_skills_directory(
-    old_skills_dir: Path, new_skills_dir: Path, tool: ToolConfig
-) -> None:
-    """Migrate skills from .codex/skills/ to .agents/skills/ for Codex.
-
-    Codex moved its skills directory from .codex/ to .agents/. This migrates
-    any existing skills installed under the old path.
-
-    Args:
-        old_skills_dir: The old skills directory (e.g., repo_root / ".codex" / "skills").
-        new_skills_dir: The new skills directory (e.g., repo_root / ".agents" / "skills").
-        tool: Tool configuration (only runs for codex).
-    """
-    if tool.name != "codex":
-        return
-    _migrate_skills_directory(old_skills_dir, new_skills_dir, cleanup_parent=True)
-
-
-def migrate_opencode_skills_directory(
-    old_skills_dir: Path, new_skills_dir: Path, tool: ToolConfig
-) -> None:
-    """Migrate skills from .opencode/skill/ to .opencode/skills/ for OpenCode.
-
-    OpenCode updated its skills directory from skill/ to skills/. This migrates
-    any existing skills installed under the old path.
-
-    Args:
-        old_skills_dir: The old skills directory (e.g., repo_root / ".opencode" / "skill").
-        new_skills_dir: The new skills directory (e.g., repo_root / ".opencode" / "skills").
-        tool: Tool configuration (only runs for opencode).
-    """
-    if tool.name != "opencode":
-        return
-    _migrate_skills_directory(old_skills_dir, new_skills_dir, cleanup_parent=False)
-
-
 def run_tool_migrations(
     tools: list[ToolConfig],
     repo_root: Path | None,
@@ -144,7 +108,7 @@ def run_tool_migrations(
     """Run all tool-specific directory migrations.
 
     Handles Codex (.codex/ -> .agents/) and OpenCode (.opencode/skill/ ->
-    .opencode/skills/) migrations for each tool.
+    .opencode/skills/) migrations when those tools are configured.
 
     Args:
         tools: List of tool configurations to migrate.
@@ -155,22 +119,29 @@ def run_tool_migrations(
     if base is None:
         return
 
-    for tool in tools:
-        migrate_codex_skills_directory(
+    tool_by_name = {tool.name: tool for tool in tools}
+
+    # Codex migration: .codex/skills/ -> .agents/skills/
+    if "codex" in tool_by_name:
+        _migrate_skills_directory(
             base / ".codex" / "skills",
             base / ".agents" / "skills",
-            tool,
+            cleanup_parent=True,
         )
+
+    # OpenCode migration: .opencode/skill/ -> .opencode/skills/
+    if "opencode" in tool_by_name:
+        tool = tool_by_name["opencode"]
         # Use global_config_dir for global installs (e.g., .config/opencode)
         opencode_dir = (
             tool.global_config_dir
             if global_install and tool.global_config_dir
             else tool.config_dir
         )
-        migrate_opencode_skills_directory(
+        _migrate_skills_directory(
             base / opencode_dir / "skill",
             base / opencode_dir / "skills",
-            tool,
+            cleanup_parent=False,
         )
 
 
