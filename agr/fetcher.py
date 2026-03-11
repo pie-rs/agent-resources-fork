@@ -368,9 +368,7 @@ def install_skill_from_repo_to_tools(
 
     with _rollback_on_failure() as installed:
         for tool in tools:
-            skills_dir = tool.get_skills_dir(repo_root) if repo_root else None
-            if skills_dir is None:
-                raise ValueError("repo_root is required for tool installation")
+            skills_dir = _resolve_skills_dir(None, repo_root, tool)
             path = install_skill_from_repo(
                 repo_dir,
                 skill_name,
@@ -676,15 +674,10 @@ def fetch_and_install_to_tools(
     with _rollback_on_failure() as installed:
         with _locate_remote_skill(handle, resolver, source) as loc:
             for tool in tools:
-                skills_dir = (
+                explicit_dir = (
                     skills_dirs.get(tool.name) if skills_dirs is not None else None
                 )
-                if skills_dir is None:
-                    if repo_root is None:
-                        raise ValueError(
-                            "repo_root is required when skills_dirs is not provided"
-                        )
-                    skills_dir = tool.get_skills_dir(repo_root)
+                skills_dir = _resolve_skills_dir(explicit_dir, repo_root, tool)
                 path = install_skill_from_repo(
                     loc.repo_dir,
                     handle.name,
