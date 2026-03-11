@@ -50,6 +50,7 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Tutorial: tutorial.md
+  - Guides: guides.md
   - Creating Skills: creating.md
   - Configuration: configuration.md
   - agrx: agrx.md
