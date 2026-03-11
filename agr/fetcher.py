@@ -417,27 +417,10 @@ def _checkout_sparse_paths(repo_dir: Path, rel_paths: list[Path]) -> None:
     _checkout_full(repo_dir)
 
 
-def _checkout_sparse(repo_dir: Path, rel_path: Path) -> None:
-    """Checkout only the given path using sparse checkout."""
-    _checkout_sparse_paths(repo_dir, [rel_path])
-
-
 def prepare_repo_for_skill(repo_dir: Path, skill_name: str) -> Path | None:
     """Prepare a repo so that only the skill path is checked out."""
-    try:
-        paths = _git_list_files(repo_dir)
-        skill_rel = find_skill_in_repo_listing(paths, skill_name)
-        if skill_rel is None:
-            return None
-        _checkout_sparse(repo_dir, Path(skill_rel))
-        skill_path = repo_dir / skill_rel
-        if not skill_path.exists():
-            raise AgrError("Failed to checkout skill path.")
-        return skill_path
-    except AgrError:
-        # Fallback: full checkout + scan
-        _checkout_full(repo_dir)
-        return find_skill_in_repo(repo_dir, skill_name)
+    result = prepare_repo_for_skills(repo_dir, [skill_name])
+    return result.get(skill_name)
 
 
 def prepare_repo_for_skills(repo_dir: Path, skill_names: list[str]) -> dict[str, Path]:
