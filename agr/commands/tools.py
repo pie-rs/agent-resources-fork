@@ -16,18 +16,6 @@ def _normalize_tool_names(tool_names: list[str]) -> list[str]:
     return [name.strip().lower() for name in tool_names if name.strip()]
 
 
-def _dedupe_preserve_order(items: list[str]) -> list[str]:
-    """Remove duplicates while preserving order."""
-    seen: set[str] = set()
-    result: list[str] = []
-    for item in items:
-        if item in seen:
-            continue
-        seen.add(item)
-        result.append(item)
-    return result
-
-
 def _validate_tool_names(tool_names: list[str]) -> None:
     """Validate tool names against TOOLS registry."""
     console = get_console()
@@ -189,7 +177,7 @@ def run_tools_list() -> None:
 def run_tools_add(tool_names: list[str]) -> None:
     """Add tools and sync existing dependencies to newly added tools."""
     console = get_console()
-    names = _dedupe_preserve_order(_normalize_tool_names(tool_names))
+    names = list(dict.fromkeys(_normalize_tool_names(tool_names)))
     _validate_tool_names(names)
 
     config = _load_required_config()
@@ -221,7 +209,7 @@ def run_tools_add(tool_names: list[str]) -> None:
 def run_tools_set(tool_names: list[str]) -> None:
     """Replace configured tools with the provided list."""
     console = get_console()
-    names = _dedupe_preserve_order(_normalize_tool_names(tool_names))
+    names = list(dict.fromkeys(_normalize_tool_names(tool_names)))
     if not names:
         console.print("[red]Error:[/red] Cannot set empty tools list.")
         console.print("[dim]At least one tool must be configured.[/dim]")
@@ -260,7 +248,7 @@ def run_tools_set(tool_names: list[str]) -> None:
 def run_tools_remove(tool_names: list[str]) -> None:
     """Remove tools from configuration and delete their installed skills."""
     console = get_console()
-    names = _dedupe_preserve_order(_normalize_tool_names(tool_names))
+    names = list(dict.fromkeys(_normalize_tool_names(tool_names)))
     _validate_tool_names(names)
 
     config = _load_required_config()

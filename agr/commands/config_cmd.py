@@ -9,17 +9,16 @@ from agr.config import (
     AgrConfig,
     VALID_CANONICAL_INSTRUCTIONS,
     find_config,
+    find_repo_root,
     get_global_config_path,
 )
 from agr.commands.tools import (
     _normalize_tool_names,
-    _dedupe_preserve_order,
     _validate_tool_names,
     _sync_dependencies_to_tools,
     _delete_tool_skills,
     _ensure_valid_default_tool,
 )
-from agr.config import find_repo_root
 from agr.console import get_console
 from agr.source import SourceConfig
 from agr.tool import DEFAULT_TOOL_NAMES
@@ -183,7 +182,7 @@ def run_config_set(key: str, values: list[str], global_scope: bool) -> None:
         if not values:
             console.print("[red]Error:[/red] At least one tool is required.")
             raise SystemExit(1)
-        names = _dedupe_preserve_order(_normalize_tool_names(values))
+        names = list(dict.fromkeys(_normalize_tool_names(values)))
         if not names:
             console.print("[red]Error:[/red] At least one tool is required.")
             raise SystemExit(1)
@@ -345,7 +344,7 @@ def run_config_add(
         if not values:
             console.print("[red]Error:[/red] At least one tool name is required.")
             raise SystemExit(1)
-        names = _dedupe_preserve_order(_normalize_tool_names(values))
+        names = list(dict.fromkeys(_normalize_tool_names(values)))
         _validate_tool_names(names)
 
         added: list[str] = []
@@ -420,7 +419,7 @@ def run_config_remove(key: str, values: list[str], global_scope: bool) -> None:
         if not values:
             console.print("[red]Error:[/red] At least one tool name is required.")
             raise SystemExit(1)
-        names = _dedupe_preserve_order(_normalize_tool_names(values))
+        names = list(dict.fromkeys(_normalize_tool_names(values)))
         _validate_tool_names(names)
 
         remaining = [t for t in config.tools if t not in names]
