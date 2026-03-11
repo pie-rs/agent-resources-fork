@@ -76,6 +76,10 @@ The URL template uses `{owner}` and `{repo}` placeholders, which are filled from
 the handle. For example, `agr add user/repo/skill --source my-server` clones
 `https://git.example.com/user/repo.git`.
 
+!!! note "Only `git` type is supported"
+    The `--type` flag currently only accepts `git`. Other source types may be
+    added in the future.
+
 ### Default Source
 
 Set which source is tried first for remote installs:
@@ -83,6 +87,14 @@ Set which source is tried first for remote installs:
 ```bash
 agr config set default_source my-server
 ```
+
+!!! warning "Cannot remove the default source"
+    You can't remove a source that is set as `default_source`. Change the
+    default first, then remove the source:
+    ```bash
+    agr config set default_source github
+    agr config remove sources my-server
+    ```
 
 ### Per-Dependency Source
 
@@ -115,6 +127,24 @@ When `agr sync` runs, it copies the canonical file's content to the other
 instruction files needed by your configured tools. For example, with
 `canonical_instructions = "CLAUDE.md"` and `tools = ["claude", "codex"]`, running
 `agr sync` copies `CLAUDE.md` content to `AGENTS.md` (used by Codex).
+
+!!! important "Requires 2+ tools"
+    Instruction syncing only runs when you have **two or more tools** configured.
+    With a single tool there's nothing to sync to, so `agr sync` silently skips
+    this step — even if `sync_instructions = true`.
+
+### Auto-detection of canonical file
+
+If you set `sync_instructions = true` but don't set `canonical_instructions`,
+agr picks the instruction file of your **default tool** (or the first tool in
+your `tools` list). For example, if your default tool is `claude`, the canonical
+file is `CLAUDE.md`.
+
+To be explicit, set it yourself:
+
+```bash
+agr config set canonical_instructions CLAUDE.md
+```
 
 ## Private Repositories
 

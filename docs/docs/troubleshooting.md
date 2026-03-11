@@ -248,6 +248,24 @@ touch CLAUDE.md
 
 Then run `agr sync` again.
 
+### Instruction sync enabled but nothing happens
+
+You have `sync_instructions = true` but `agr sync` doesn't copy any instruction
+files. Two common causes:
+
+1. **Only one tool configured.** Instruction syncing requires **two or more
+   tools** — with a single tool, there's nothing to sync to. Add another tool:
+   ```bash
+   agr config set tools claude cursor
+   agr sync
+   ```
+
+2. **All tools use the same instruction file.** If all your configured tools
+   share the same instruction file (e.g., Cursor, Codex, and OpenCode all use
+   `AGENTS.md`), there's nothing to copy. Syncing only helps when tools need
+   *different* instruction files (e.g., Claude uses `CLAUDE.md`, Codex uses
+   `AGENTS.md`).
+
 ### Sync shows "Up to date" but skill seems outdated
 
 agr caches cloned repos. To force a fresh install:
@@ -255,6 +273,41 @@ agr caches cloned repos. To force a fresh install:
 ```bash
 agr remove user/skill
 agr add user/skill
+```
+
+---
+
+## Sources
+
+### "Cannot remove default source"
+
+```
+Error: Cannot remove default source 'my-server'. Change the default source first.
+```
+
+You can't remove a source that is currently set as `default_source`. Change the
+default first:
+
+```bash
+agr config set default_source github
+agr config remove sources my-server
+```
+
+### "Local skills cannot specify a source"
+
+```
+Error: Local skills cannot specify a source
+```
+
+The `--source` flag only applies to remote handles. Local paths (`./my-skill`)
+are installed directly from disk — they don't go through any source:
+
+```bash
+# Wrong
+agr add ./my-skill --source github
+
+# Right
+agr add ./my-skill
 ```
 
 ---
