@@ -10,7 +10,7 @@ from agr.commands.migrations import (
 )
 from agr.config import AgrConfig, find_config, get_global_config_path, require_repo_root
 from agr.console import get_console
-from agr.exceptions import AgrError
+from agr.exceptions import INSTALL_ERROR_TYPES, format_install_error
 from agr.fetcher import (
     downloaded_repo,
     fetch_and_install_to_tools,
@@ -168,13 +168,9 @@ def _run_global_sync() -> None:
             )
             console.print(f"[green]Installed:[/green] {identifier}")
             installed += 1
-        except (FileExistsError, AgrError) as e:
+        except INSTALL_ERROR_TYPES as e:
             console.print(f"[red]Error:[/red] {identifier}")
-            console.print(f"  [dim]{e}[/dim]")
-            errors += 1
-        except (OSError, ValueError) as e:
-            console.print(f"[red]Error:[/red] {identifier}")
-            console.print(f"  [dim]Unexpected: {e}[/dim]")
+            console.print(f"  [dim]{format_install_error(e)}[/dim]")
             errors += 1
 
     _print_sync_summary(installed, up_to_date, errors)
@@ -249,10 +245,8 @@ def run_sync(global_install: bool = False) -> None:
                 pending_local.append(entry)
             else:
                 pending_remote.append(entry)
-        except AgrError as e:
-            results[index] = ("error", str(e))
-        except (OSError, ValueError) as e:
-            results[index] = ("error", f"Unexpected: {e}")
+        except INSTALL_ERROR_TYPES as e:
+            results[index] = ("error", format_install_error(e))
 
     def _sync_entries(entries: list[SyncEntry]) -> None:
         """Fetch and install a list of sync entries individually."""
@@ -274,10 +268,8 @@ def run_sync(global_install: bool = False) -> None:
                     source=entry.source_name,
                 )
                 results[entry.index] = ("installed", None)
-            except (FileExistsError, AgrError) as e:
-                results[entry.index] = ("error", str(e))
-            except (OSError, ValueError) as e:
-                results[entry.index] = ("error", f"Unexpected: {e}")
+            except INSTALL_ERROR_TYPES as e:
+                results[entry.index] = ("error", format_install_error(e))
 
     # Local installs (no download)
     _sync_entries(pending_local)
@@ -329,16 +321,11 @@ def run_sync(global_install: bool = False) -> None:
                             skill_source=skill_source,
                         )
                         results[entry.index] = ("installed", None)
-                    except (FileExistsError, AgrError) as e:
-                        results[entry.index] = ("error", str(e))
-                    except (OSError, ValueError) as e:
-                        results[entry.index] = ("error", f"Unexpected: {e}")
-        except AgrError as e:
+                    except INSTALL_ERROR_TYPES as e:
+                        results[entry.index] = ("error", format_install_error(e))
+        except INSTALL_ERROR_TYPES as e:
             for entry in entries:
-                results[entry.index] = ("error", str(e))
-        except (OSError, ValueError) as e:
-            for entry in entries:
-                results[entry.index] = ("error", f"Unexpected: {e}")
+                results[entry.index] = ("error", format_install_error(e))
 
     # Print results
     installed = 0

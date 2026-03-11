@@ -12,7 +12,12 @@ from agr.config import (
 )
 from agr.console import get_console
 from agr.detect import detect_tools
-from agr.exceptions import AgrError, SkillNotFoundError
+from agr.exceptions import (
+    INSTALL_ERROR_TYPES,
+    AgrError,
+    SkillNotFoundError,
+    format_install_error,
+)
 from agr.fetcher import fetch_and_install_to_tools, list_remote_repo_skills
 from agr.handle import ParsedHandle, parse_handle
 from agr.source import SourceResolver
@@ -111,10 +116,8 @@ def run_add(
         except SkillNotFoundError as e:
             message = _maybe_suggest_repo_skills(ref, handle, resolver, source)
             results.append((ref, False, message or str(e)))
-        except (FileExistsError, AgrError) as e:
-            results.append((ref, False, str(e)))
-        except (OSError, ValueError) as e:
-            results.append((ref, False, f"Unexpected error: {e}"))
+        except INSTALL_ERROR_TYPES as e:
+            results.append((ref, False, format_install_error(e)))
 
     # Save config if any successes
     successes = [r for r in results if r[1]]

@@ -9,7 +9,7 @@ from pathlib import Path
 
 from agr.config import AgrConfig, find_repo_root
 from agr.console import get_console
-from agr.exceptions import AgrError
+from agr.exceptions import INSTALL_ERROR_TYPES, format_install_error
 from agr.fetcher import fetch_and_install_to_tools, is_skill_installed
 from agr.tool import TOOLS
 
@@ -83,11 +83,10 @@ def sync_dependencies_to_tools(config: AgrConfig, tool_names: list[str]) -> int:
             tool_list = ", ".join(t.name for t in tools_needing_install)
             console.print(f"[green]Installed:[/green] {dep.identifier} ({tool_list})")
 
-        except (FileExistsError, AgrError) as e:
-            console.print(f"[red]Error:[/red] {dep.identifier}: {e}")
-            sync_errors += 1
-        except (OSError, ValueError) as e:
-            console.print(f"[red]Error:[/red] {dep.identifier}: Unexpected: {e}")
+        except INSTALL_ERROR_TYPES as e:
+            console.print(
+                f"[red]Error:[/red] {dep.identifier}: {format_install_error(e)}"
+            )
             sync_errors += 1
 
     return sync_errors
