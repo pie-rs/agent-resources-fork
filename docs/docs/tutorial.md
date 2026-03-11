@@ -9,15 +9,29 @@ skills to a project, syncing with a team, and creating your own skill. By the
 end you'll understand how all the pieces fit together.
 
 **Time:** ~10 minutes
-**Prerequisites:** Python 3.10+, [uv](https://docs.astral.sh/uv/), git, and at least one supported AI coding tool (Claude Code, Cursor, Codex, OpenCode, Copilot, or Antigravity)
+**Prerequisites:** Python 3.10+, git, a Python package installer ([uv](https://docs.astral.sh/uv/), [pipx](https://pipx.pypa.io/), or pip), and at least one supported AI coding tool (Claude Code, Cursor, Codex, OpenCode, Copilot, or Antigravity)
 
 ---
 
 ## Step 1: Install agr
 
-```bash
-uv tool install agr
-```
+=== "uv (recommended)"
+
+    ```bash
+    uv tool install agr
+    ```
+
+=== "pipx"
+
+    ```bash
+    pipx install agr
+    ```
+
+=== "pip"
+
+    ```bash
+    pip install agr
+    ```
 
 Verify it works:
 

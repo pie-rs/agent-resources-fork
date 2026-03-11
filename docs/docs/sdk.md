@@ -9,8 +9,11 @@ Use `agr` as a Python library to load, inspect, and cache skills programmaticall
 ## Install
 
 ```bash
-pip install agr
+pip install agr   # As a library dependency in your project
 ```
+
+!!! tip
+    If you want the `agr` and `agrx` CLI tools (not just the SDK), install with `uv tool install agr` or `pipx install agr` instead.
 
 ## Quick Start
 

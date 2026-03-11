@@ -18,7 +18,11 @@ Install agent skills from GitHub with one command.
 Install agr CLI:
 
 ```bash
-uv tool install agr
+uv tool install agr       # recommended
+# or
+pipx install agr           # alternative
+# or
+pip install agr            # if you prefer pip
 ```
 
 Install your first skill:

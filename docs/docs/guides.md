@@ -72,7 +72,7 @@ git commit -m "Add agr skill dependencies"
 After cloning the repo, teammates run:
 
 ```bash
-uv tool install agr   # One-time install
+uv tool install agr   # One-time install (or: pipx install agr)
 agr sync              # Install all skills from agr.toml
 ```
 
