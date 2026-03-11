@@ -9,6 +9,7 @@ from pathlib import Path
 
 from agr.config import AgrConfig
 from agr.console import get_console
+from agr.exceptions import AgrError
 from agr.handle import (
     INSTALLED_NAME_SEPARATOR,
     LEGACY_SEPARATOR,
@@ -268,7 +269,7 @@ def migrate_flat_installed_names(
         try:
             handle = dep.to_parsed_handle()
             source_name = dep.resolve_source_name(config.default_source)
-        except Exception:
+        except (AgrError, ValueError):
             continue
         handles_by_name.setdefault(handle.name, []).append((handle, source_name))
 
