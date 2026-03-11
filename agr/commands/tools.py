@@ -7,7 +7,7 @@ from agr.config import AgrConfig, find_config, find_repo_root
 from agr.console import get_console
 from agr.exceptions import AgrError
 from agr.fetcher import fetch_and_install_to_tools, is_skill_installed
-from agr.handle import ParsedHandle, parse_handle
+
 from agr.tool import DEFAULT_TOOL_NAMES, TOOLS
 
 
@@ -79,18 +79,8 @@ def _sync_dependencies_to_tools(config: AgrConfig, tool_names: list[str]) -> int
 
     for dep in config.dependencies:
         try:
-            if dep.is_local:
-                ref = dep.path or ""
-                source_name = None
-            else:
-                ref = dep.handle or ""
-                source_name = dep.source or config.default_source
-
-            if dep.is_local:
-                path = Path(ref)
-                handle = ParsedHandle(is_local=True, name=path.name, local_path=path)
-            else:
-                handle = parse_handle(ref, prefer_local=False)
+            handle = dep.to_parsed_handle()
+            source_name = dep.resolve_source_name(config.default_source)
 
             tools_needing_install = [
                 tool
