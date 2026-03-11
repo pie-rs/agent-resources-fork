@@ -187,7 +187,7 @@ agr onboard    # Interactive guided setup
 
 ```bash
 # Go development — @dsjacobsen
-agr add dsjacobsen/golang-pro
+agr add dsjacobsen/agent-resources/golang-pro
 
 # Drupal development — @madsnorgaard
 agr add madsnorgaard/drupal-agent-resources/drupal-expert

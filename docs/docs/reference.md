@@ -4,17 +4,81 @@ title: Reference
 
 # Reference
 
-## Common Workflows
+## Quick Reference
 
-| Goal | Command(s) |
-|------|------------|
-| Install a skill for your tool | `agr add <handle>` |
-| Run a skill once | `agrx <handle>` |
-| Team sync | Add to `agr.toml`, then `agr sync` |
-| Configure tool targets | `agr config set tools claude codex` |
-| Interactive guided setup | `agr onboard` |
-| Create a new skill | `agr init <name>` |
-| Migrate old rules/commands | `agrx kasperjunge/migrate-to-skills` |
+### Install & Remove
+
+```bash
+agr add user/skill                     # Install from GitHub
+agr add user/repo/skill                # Install from a specific repo
+agr add ./path/to/skill                # Install from local directory
+agr add user/skill user/other-skill    # Install multiple at once
+agr add user/skill --overwrite         # Update to latest version
+agr remove user/skill                  # Uninstall a skill
+```
+
+### Global Skills
+
+```bash
+agr add -g user/skill                  # Install globally (all projects)
+agr list -g                            # List global skills
+agr sync -g                            # Sync global dependencies
+agr remove -g user/skill               # Remove a global skill
+```
+
+### Team Sync
+
+```bash
+agr sync                               # Install all skills from agr.toml
+agr list                               # Show skills and install status
+```
+
+### Try Without Installing
+
+```bash
+agrx user/skill                        # Run once, then clean up
+agrx user/skill -p "Extract tables"    # Pass a prompt
+agrx user/skill -i                     # Interactive: skill + chat
+agrx user/skill --tool cursor          # Use a specific tool
+```
+
+### Create & Share
+
+```bash
+agr init my-skill                      # Scaffold a new skill
+agr add ./my-skill                     # Test locally
+agr add ./my-skill -o                  # Reinstall after editing
+```
+
+### Configuration
+
+```bash
+agr init                               # Create agr.toml (auto-detects tools)
+agr onboard                            # Interactive guided setup
+agr config show                        # View current config
+agr config set tools claude cursor     # Target multiple tools
+agr config set default_tool claude     # Set default for agrx
+agr config add tools codex             # Add a tool without replacing
+agr config remove tools codex          # Stop syncing to a tool
+```
+
+### Sources & Private Repos
+
+```bash
+export GITHUB_TOKEN="ghp_..."                    # Authenticate for private repos
+agr config add sources gitlab \
+  --type git --url "https://gitlab.com/{owner}/{repo}.git"   # Custom source
+agr add user/skill --source gitlab               # Use a specific source
+agr config set default_source gitlab             # Change default source
+```
+
+### Instruction Syncing
+
+```bash
+agr config set sync_instructions true             # Enable syncing
+agr config set canonical_instructions CLAUDE.md   # Set source of truth
+agr sync                                          # Copies to AGENTS.md, GEMINI.md
+```
 
 ## Global Options
 

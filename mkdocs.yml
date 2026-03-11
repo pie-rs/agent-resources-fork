@@ -4,6 +4,7 @@ site_description: A package manager for AI agent skills.
 site_author: Kasper Junge
 repo_url: https://github.com/kasperjunge/agent-resources
 repo_name: kasperjunge/agent-resources
+edit_uri: edit/main/docs/docs/
 
 docs_dir: docs/docs
 site_dir: docs/site
