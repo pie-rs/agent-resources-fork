@@ -13,13 +13,13 @@ from agr.config import AgrConfig, find_config, get_global_config_path, require_r
 from agr.console import get_console, print_error
 from agr.exceptions import INSTALL_ERROR_TYPES, format_install_error
 from agr.fetcher import (
-    downloaded_repo,
     fetch_and_install_to_tools,
     filter_tools_needing_install,
     install_skill_from_repo_to_tools,
     prepare_repo_for_skills,
     skill_not_found_message,
 )
+from agr.git import downloaded_repo
 from agr.handle import ParsedHandle
 from agr.instructions import (
     canonical_instruction_file,

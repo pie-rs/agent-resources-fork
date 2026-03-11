@@ -13,7 +13,8 @@ from agr.exceptions import (
     RepoNotFoundError,
     SkillNotFoundError,
 )
-from agr.fetcher import downloaded_repo, prepare_repo_for_skill
+from agr.fetcher import prepare_repo_for_skill
+from agr.git import downloaded_repo
 from agr.handle import (
     LEGACY_REPO_DEPRECATION_WARNING,
     ParsedHandle,

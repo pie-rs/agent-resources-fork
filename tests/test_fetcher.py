@@ -14,8 +14,6 @@ from agr.exceptions import (
 )
 from agr.fetcher import (
     _cleanup_empty_parents,
-    _get_github_token,
-    downloaded_repo,
     fetch_and_install_to_tools,
     get_installed_skills,
     install_local_skill,
@@ -24,6 +22,7 @@ from agr.fetcher import (
     list_remote_repo_skills,
     uninstall_skill,
 )
+from agr.git import _get_github_token, downloaded_repo
 from agr.handle import ParsedHandle
 from agr.metadata import build_handle_id, read_skill_metadata
 from agr.source import SourceConfig
@@ -535,7 +534,7 @@ class TestDownloadedRepo:
     @pytest.mark.e2e
     def test_download_existing_repo(self):
         """Download a real repository."""
-        from agr.fetcher import downloaded_repo
+        from agr.git import downloaded_repo
         from agr.source import SourceConfig
         import subprocess
 
@@ -560,7 +559,7 @@ class TestDownloadedRepo:
     def test_download_nonexistent_raises(self):
         """Downloading nonexistent repo raises."""
         from agr.exceptions import RepoNotFoundError
-        from agr.fetcher import downloaded_repo
+        from agr.git import downloaded_repo
         from agr.source import SourceConfig
 
         source = SourceConfig(

@@ -1,21 +1,25 @@
-"""GitHub download and skill installation."""
+"""Skill installation, uninstallation, and query operations.
+
+Git operations (cloning, checkout, etc.) live in agr.git.
+"""
 
 import logging
-import os
 import shutil
-import subprocess
-import tempfile
 import warnings
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Generator, NamedTuple
-from urllib.parse import quote, urlparse, urlunparse
 
 from agr.exceptions import (
     AgrError,
-    AuthenticationError,
     RepoNotFoundError,
     SkillNotFoundError,
+)
+from agr.git import (
+    checkout_full,
+    checkout_sparse_paths,
+    downloaded_repo,
+    git_list_files,
 )
 from agr.handle import (
     INSTALLED_NAME_SEPARATOR,
@@ -47,31 +51,6 @@ from agr.tool import DEFAULT_TOOL, ToolConfig
 
 logger = logging.getLogger(__name__)
 
-
-def _run_git(cmd: list[str]) -> subprocess.CompletedProcess[str]:
-    """Run a git command with consistent error handling.
-
-    Wraps subprocess.run with standard options (capture output, text mode,
-    no check) and ensures OSError is always converted to AgrError.
-
-    Args:
-        cmd: Full command list starting with "git".
-
-    Returns:
-        CompletedProcess with captured stdout/stderr.
-
-    Raises:
-        AgrError: If git cannot be executed (e.g., not installed).
-    """
-    try:
-        return subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-    except OSError as e:
-        raise AgrError(f"Failed to run git: {type(e).__name__}") from None
 
 
 def _skill_dir_matches_handle(skill_dir: Path, handle_ids: list[str] | None) -> bool:
@@ -177,246 +156,6 @@ def _resolve_skill_destination(
     return name_path
 
 
-def _get_github_token() -> str | None:
-    """Get GitHub token from environment.
-
-    Checks GITHUB_TOKEN first, then falls back to GH_TOKEN (used by gh CLI).
-
-    Returns:
-        Token string if set and non-empty, None otherwise.
-    """
-    for env_var in ("GITHUB_TOKEN", "GH_TOKEN"):
-        token = os.environ.get(env_var, "")
-        if token.strip():
-            return token.strip()
-    return None
-
-
-def _is_github_source(source: SourceConfig) -> bool:
-    """Return True if the source URL points to GitHub."""
-    return "github.com" in source.url.lower()
-
-
-def _get_default_branch(repo_url: str) -> str | None:
-    """Return the default branch name for a remote repo, if detectable."""
-    result = _run_git(["git", "ls-remote", "--symref", repo_url, "HEAD"])
-
-    if result.returncode != 0:
-        return None
-
-    # Expected: "ref: refs/heads/main\tHEAD"
-    for line in result.stdout.splitlines():
-        if not line.startswith("ref:"):
-            continue
-        parts = line.split()
-        if len(parts) < 2:
-            continue
-        ref = parts[1]
-        if ref.startswith("refs/heads/"):
-            return ref.replace("refs/heads/", "", 1)
-    return None
-
-
-@contextmanager
-def downloaded_repo(
-    source: SourceConfig, owner: str, repo_name: str
-) -> Generator[Path, None, None]:
-    """Download a git repo and yield the extracted directory.
-
-    Args:
-        source: Source configuration
-        owner: Repo owner/username
-        repo_name: Repository name
-
-    Yields:
-        Path to cloned repository directory
-
-    Raises:
-        RepoNotFoundError: If the repository doesn't exist
-        AuthenticationError: If authentication fails (private repo without valid token)
-        AgrError: If download fails
-    """
-    if shutil.which("git") is None:
-        raise AgrError("git CLI not found. Install git to fetch remote skills.")
-
-    repo_url = source.build_repo_url(owner, repo_name)
-    repo_url = _apply_github_token(repo_url)
-    default_branch = _get_default_branch(repo_url)
-
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        tmp_path = Path(tmp_dir)
-        repo_dir = tmp_path / "repo"
-
-        result = _clone_repo(repo_url, repo_dir, partial=True, branch=default_branch)
-        if result.returncode != 0 and _partial_clone_unsupported(result.stderr):
-            _reset_repo_dir(repo_dir)
-            result = _clone_repo(
-                repo_url, repo_dir, partial=False, branch=default_branch
-            )
-
-        if result.returncode != 0:
-            _raise_clone_error(
-                result.stderr,
-                owner,
-                repo_name,
-                source,
-                stdout=result.stdout,
-            )
-
-        yield repo_dir
-
-
-def _apply_github_token(repo_url: str) -> str:
-    """Inject GitHub token into HTTPS URL if available."""
-    token = _get_github_token()
-    if not token:
-        return repo_url
-    parsed = urlparse(repo_url)
-    if parsed.scheme != "https":
-        return repo_url
-    if not parsed.netloc.endswith("github.com"):
-        return repo_url
-    if "@" in parsed.netloc:
-        return repo_url
-    encoded = quote(token, safe="")
-    netloc = f"{encoded}:x-oauth-basic@{parsed.netloc}"
-    return urlunparse(
-        (
-            parsed.scheme,
-            netloc,
-            parsed.path,
-            parsed.params,
-            parsed.query,
-            parsed.fragment,
-        )
-    )
-
-
-def _clone_repo(
-    repo_url: str, repo_dir: Path, partial: bool, branch: str | None
-) -> subprocess.CompletedProcess:
-    """Clone a repository using git, optionally with partial clone flags."""
-    cmd = [
-        "git",
-        "clone",
-        "--depth",
-        "1",
-        "--single-branch",
-    ]
-    if branch:
-        cmd.extend(["--branch", branch])
-    if partial:
-        cmd.extend(["--filter=blob:none", "--no-checkout"])
-    cmd.extend([repo_url, str(repo_dir)])
-    return _run_git(cmd)
-
-
-def _partial_clone_unsupported(stderr: str | None) -> bool:
-    """Detect errors indicating partial clone is unsupported."""
-    if not stderr:
-        return False
-    lowered = stderr.lower()
-    return (
-        ("unknown option" in lowered and "--filter" in lowered)
-        or "filtering is not supported" in lowered
-        or "does not support filtering" in lowered
-        or "filtering not recognized" in lowered
-    )
-
-
-def _reset_repo_dir(repo_dir: Path) -> None:
-    """Remove a partially created repo directory."""
-    if repo_dir.exists():
-        shutil.rmtree(repo_dir, ignore_errors=True)
-
-
-def _raise_clone_error(
-    stderr: str | None,
-    owner: str,
-    repo_name: str,
-    source: SourceConfig,
-    stdout: str | None = None,
-) -> None:
-    """Raise a friendly error based on git clone output."""
-    message = "\n".join(
-        part for part in ((stderr or "").strip(), (stdout or "").strip()) if part
-    ).strip()
-    lowered = message.lower()
-    token_missing = _is_github_source(source) and not _get_github_token()
-
-    if "authentication failed" in lowered or "permission denied" in lowered:
-        if token_missing:
-            raise AuthenticationError(
-                f"Authentication failed for source '{source.name}'. "
-                "Repository not found or requires authentication."
-            ) from None
-        raise AuthenticationError(
-            f"Authentication failed for source '{source.name}'."
-        ) from None
-    if (
-        "repository not found" in lowered
-        or ("not found" in lowered and "repository" in lowered)
-        or "does not exist" in lowered
-    ):
-        raise RepoNotFoundError(
-            f"Repository '{owner}/{repo_name}' not found in source '{source.name}'."
-        ) from None
-    if "could not resolve host" in lowered:
-        raise AgrError(
-            f"Network error: could not resolve host for source '{source.name}'."
-        ) from None
-    if token_missing and (
-        not lowered
-        or "could not read username" in lowered
-        or "terminal prompts disabled" in lowered
-        or "authentication required" in lowered
-        or "authorization failed" in lowered
-        or "access denied" in lowered
-    ):
-        raise RepoNotFoundError(
-            f"Repository '{owner}/{repo_name}' not found in source '{source.name}'."
-        ) from None
-
-    raise AgrError(f"Failed to clone repository from source '{source.name}'.") from None
-
-
-def _git_list_files(repo_dir: Path) -> list[str]:
-    """List files in the repo without checking out blobs."""
-    result = _run_git(
-        ["git", "-C", str(repo_dir), "ls-tree", "-r", "--name-only", "HEAD"]
-    )
-    if result.returncode != 0:
-        raise AgrError("Failed to list repository files.")
-    return [line for line in result.stdout.splitlines() if line.strip()]
-
-
-def _checkout_full(repo_dir: Path) -> None:
-    """Checkout the working tree from HEAD.
-
-    Works regardless of the default branch name (main, master, etc.)
-    because it checks out whatever HEAD points to rather than
-    hardcoding a branch name.
-    """
-    checkout = _run_git(["git", "-C", str(repo_dir), "checkout", "-f", "HEAD"])
-    if checkout.returncode != 0:
-        raise AgrError("Failed to checkout repository.")
-
-
-def _checkout_sparse_paths(repo_dir: Path, rel_paths: list[Path]) -> None:
-    """Checkout only the given paths using sparse checkout."""
-    if not rel_paths:
-        raise AgrError("No paths provided for sparse checkout.")
-    init = _run_git(["git", "-C", str(repo_dir), "sparse-checkout", "init", "--cone"])
-    if init.returncode != 0:
-        raise AgrError("Failed to initialize sparse checkout.")
-    cmd = ["git", "-C", str(repo_dir), "sparse-checkout", "set"]
-    cmd.extend([rel_path.as_posix() for rel_path in rel_paths])
-    set_cmd = _run_git(cmd)
-    if set_cmd.returncode != 0:
-        raise AgrError("Failed to set sparse checkout path.")
-    _checkout_full(repo_dir)
-
-
 def prepare_repo_for_skill(repo_dir: Path, skill_name: str) -> Path | None:
     """Prepare a repo so that only the skill path is checked out."""
     result = prepare_repo_for_skills(repo_dir, [skill_name])
@@ -434,7 +173,7 @@ def prepare_repo_for_skills(repo_dir: Path, skill_names: list[str]) -> dict[str,
         return {}
 
     try:
-        paths = _git_list_files(repo_dir)
+        paths = git_list_files(repo_dir)
         rel_paths: dict[str, Path] = {}
         for name in unique_names:
             skill_rel = find_skill_in_repo_listing(paths, name)
@@ -443,7 +182,7 @@ def prepare_repo_for_skills(repo_dir: Path, skill_names: list[str]) -> dict[str,
             rel_paths[name] = Path(skill_rel)
 
         if rel_paths:
-            _checkout_sparse_paths(repo_dir, list(rel_paths.values()))
+            checkout_sparse_paths(repo_dir, list(rel_paths.values()))
             resolved = {
                 name: repo_dir / rel_path for name, rel_path in rel_paths.items()
             }
@@ -455,7 +194,7 @@ def prepare_repo_for_skills(repo_dir: Path, skill_names: list[str]) -> dict[str,
         return {}
     except AgrError:
         # Fallback: full checkout + scan
-        _checkout_full(repo_dir)
+        checkout_full(repo_dir)
         resolved: dict[str, Path] = {}
         for name in unique_names:
             skill_path = find_skill_in_repo(repo_dir, name)
@@ -488,7 +227,7 @@ def list_remote_repo_skills(
     for source_config in resolver.ordered(source):
         try:
             with downloaded_repo(source_config, owner, repo_name) as repo_dir:
-                paths = _git_list_files(repo_dir)
+                paths = git_list_files(repo_dir)
                 return discover_skills_in_repo_listing(paths)
         except AgrError:
             continue
