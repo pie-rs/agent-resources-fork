@@ -19,3 +19,11 @@ def get_console() -> Console:
 def print_error(message: str) -> None:
     """Print a styled error message to the console."""
     get_console().print(f"[red]Error:[/red] {message}")
+
+
+def print_deprecation(old_cmd: str, new_cmd: str) -> None:
+    """Print a styled deprecation warning to the console."""
+    get_console().print(
+        f"[yellow]Warning:[/yellow] '{old_cmd}' is deprecated. Use '{new_cmd}'.",
+        soft_wrap=True,
+    )
