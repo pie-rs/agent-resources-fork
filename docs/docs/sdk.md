@@ -63,7 +63,7 @@ skill = Skill.from_local("/absolute/path/to/skill")
 | `path` | `Path` | Path to skill directory (cached or local) |
 | `prompt` | `str` | Contents of `SKILL.md` (lazy-loaded) |
 | `files` | `list[str]` | Relative file paths in the skill directory (lazy-loaded) |
-| `metadata` | `dict` | Skill metadata (name, path, source, revision, handle) |
+| `metadata` | `dict` | Skill metadata (name, path, source, revision, handle, is_local) |
 | `content_hash` | `str \| None` | Content hash from `.agr.json`, if present |
 
 ### Reading Files
@@ -167,6 +167,11 @@ except AuthenticationError:
     print("Set GITHUB_TOKEN for private repos")
 except RateLimitError:
     print("GitHub API rate limit exceeded")
+
+try:
+    skill = Skill.from_local("./missing-skill")
+except InvalidLocalPathError:
+    print("Path does not exist or is missing SKILL.md")
 ```
 
 ## Types

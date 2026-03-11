@@ -35,7 +35,7 @@ agr/                  # Core library
   sdk/                 # Programmatic Python API
     __init__.py        # Public exports: Skill, cache, list_skills, skill_info
     skill.py           # Skill class for loading and running skills
-    cache.py           # GitHub API caching (skill listings, metadata)
+    cache.py           # Disk cache for downloaded skills (file locking, atomic writes)
     hub.py             # Hub operations (search, list from GitHub API)
     types.py           # SkillInfo type definition
 
@@ -184,6 +184,7 @@ All errors inherit from `AgrError` (`exceptions.py`):
 - `SkillNotFoundError` — skill directory not found in repo
 - `ConfigError` — invalid agr.toml
 - `InvalidHandleError` — unparseable handle string
+- `InvalidLocalPathError` — local skill path is invalid (missing SKILL.md, path doesn't exist)
 - `CacheError` — SDK cache failures
 - `RateLimitError` — GitHub API rate limit
 

@@ -119,7 +119,10 @@ class Skill:
             )
         )
 
-        # Download and cache
+        # Try each repo candidate (e.g. "skills", then legacy "agent-resources").
+        # Track errors separately: SkillNotFoundError means the repo exists but
+        # the skill isn't in it; RepoNotFoundError means the repo doesn't exist.
+        # We re-raise the most specific error after exhausting all candidates.
         last_error: SkillNotFoundError | None = None
         last_repo_error: RepoNotFoundError | None = None
         for repo_name, is_legacy in repo_candidates:

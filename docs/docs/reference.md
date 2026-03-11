@@ -40,7 +40,7 @@ agr add <handle>...
 **Options:**
 
 - `--overwrite`, `-o` — Replace existing skills
-- `--source <name>` — Use a specific source from `agr.toml`
+- `--source`, `-s` `<name>` — Use a specific source from `agr.toml`
 - `--global`, `-g` — Install globally using `~/.agr/agr.toml` and tool global directories
 
 **Examples:**
@@ -205,7 +205,7 @@ Downloads the skill, runs it with the selected tool, and cleans up afterwards.
 - `--interactive`, `-i` — Run skill, then continue in interactive mode
 - `--prompt`, `-p` — Prompt to pass to the skill
 - `--global`, `-g` — Install to the global tool skills directory instead of the repo-local one
-- `--source <name>` — Use a specific source from `agr.toml`
+- `--source`, `-s` `<name>` — Use a specific source from `agr.toml`
 
 **Examples:**
 

@@ -296,6 +296,8 @@ class _CacheManager:
                 if path.is_file():
                     size_bytes += path.stat().st_size
                 elif path.is_dir() and (path / "SKILL.md").exists():
+                    # Each revision directory containing SKILL.md is one cached skill.
+                    # Intermediate directories (source/owner/repo) are not counted.
                     skills_count += 1
 
         return {

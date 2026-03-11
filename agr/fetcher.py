@@ -125,7 +125,9 @@ def _find_existing_skill_dir(
     ):
         return full_path
 
-    # Legacy fallback: flat installs used full path names
+    # Legacy fallback: older versions always used full path names
+    # (user--repo--skill) even when no collision existed. Match by
+    # directory name alone so those installs are still found.
     if is_valid_skill_dir(full_path):
         return full_path
 
