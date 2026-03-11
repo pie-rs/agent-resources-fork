@@ -148,4 +148,5 @@ Browse more at [github.com/anthropics/skills](https://github.com/anthropics/skil
 - [Tutorial](tutorial.md) — hands-on walkthrough from zero to sharing skills
 - [Create your own skill](creating.md)
 - [Python SDK](sdk.md) — use agr as a library
+- [Troubleshooting](troubleshooting.md) — common errors and how to fix them
 - [CLI reference](reference.md)

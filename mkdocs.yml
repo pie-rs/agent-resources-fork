@@ -54,4 +54,5 @@ nav:
   - Configuration: configuration.md
   - agrx: agrx.md
   - Python SDK: sdk.md
+  - Troubleshooting: troubleshooting.md
   - Reference: reference.md
