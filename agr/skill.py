@@ -203,21 +203,35 @@ def discover_all_skill_dirs(repo_dir: Path) -> list[Path]:
     return sorted(skill_dirs, key=lambda p: p.as_posix())
 
 
+def _parse_frontmatter(content: str) -> tuple[str, str] | None:
+    """Parse YAML frontmatter from SKILL.md content.
+
+    Args:
+        content: Full file content.
+
+    Returns:
+        Tuple of (frontmatter_text, body) if valid ``---`` delimited
+        frontmatter exists, None otherwise.
+    """
+    if not content.startswith("---"):
+        return None
+    parts = content.split("---", 2)
+    if len(parts) < 3:
+        return None
+    return parts[1], parts[2]
+
+
 def get_skill_frontmatter_name(skill_dir: Path) -> str | None:
     """Extract the frontmatter name from SKILL.md if present."""
     skill_md = skill_dir / SKILL_MARKER
     if not skill_md.exists():
         return None
 
-    content = skill_md.read_text()
-    if not content.startswith("---"):
+    parsed = _parse_frontmatter(skill_md.read_text())
+    if parsed is None:
         return None
 
-    parts = content.split("---", 2)
-    if len(parts) < 3:
-        return None
-
-    frontmatter = parts[1]
+    frontmatter, _ = parsed
     for line in frontmatter.splitlines():
         match = re.match(r"^\s*name\s*:\s*(.+)\s*$", line)
         if match:
@@ -237,24 +251,14 @@ def update_skill_md_name(skill_dir: Path, new_name: str) -> None:
         return
 
     content = skill_md.read_text()
+    parsed = _parse_frontmatter(content)
 
-    # Check if file has YAML frontmatter
-    if not content.startswith("---"):
-        # No frontmatter, add it
-        new_content = f"---\nname: {new_name}\n---\n\n{content}"
-        skill_md.write_text(new_content)
+    if parsed is None:
+        # No valid frontmatter — prepend one
+        skill_md.write_text(f"---\nname: {new_name}\n---\n\n{content}")
         return
 
-    # Split by frontmatter delimiter
-    parts = content.split("---", 2)
-    if len(parts) < 3:
-        # Malformed frontmatter
-        new_content = f"---\nname: {new_name}\n---\n\n{content}"
-        skill_md.write_text(new_content)
-        return
-
-    frontmatter = parts[1]
-    body = parts[2]
+    frontmatter, body = parsed
 
     # Update or add name in frontmatter
     lines = frontmatter.strip().split("\n")
@@ -272,8 +276,7 @@ def update_skill_md_name(skill_dir: Path, new_name: str) -> None:
         new_lines.insert(0, f"name: {new_name}")
 
     new_frontmatter = "\n".join(new_lines)
-    new_content = f"---\n{new_frontmatter}\n---{body}"
-    skill_md.write_text(new_content)
+    skill_md.write_text(f"---\n{new_frontmatter}\n---{body}")
 
 
 def validate_skill_name(name: str) -> bool:
