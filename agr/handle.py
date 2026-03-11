@@ -155,15 +155,10 @@ class ParsedHandle:
         return self.local_path.resolve()
 
     def get_skill_name_for_tool(self, tool: "ToolConfig") -> str:
-        """Get the default SKILL.md name field value for a tool.
+        """Get the skill name to use in SKILL.md frontmatter.
 
-        Args:
-            tool: Tool configuration determining naming convention
-
-        Returns:
-            Name to use in SKILL.md frontmatter by default.
-            - Flat tools (Claude): Skill name (e.g., "bluesky")
-            - Nested tools (Cursor): Skill name (e.g., "bluesky")
+        Currently returns the skill name for all tools. The ``tool``
+        parameter is accepted for future extensibility.
         """
         return self.name
 
