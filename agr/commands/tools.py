@@ -1,29 +1,22 @@
-"""agr tool-configuration command implementations."""
+"""agr tool-configuration command implementations (deprecated).
 
-import shutil
-from pathlib import Path
+The ``run_*`` functions here back the deprecated ``agr tools`` sub-commands.
+Shared helpers now live in ``agr.commands._tool_helpers``; this module
+re-exports them under their old ``_``-prefixed names so that existing
+callers continue to work.
+"""
 
 from agr.config import AgrConfig, find_config, find_repo_root
 from agr.console import get_console
-from agr.fetcher import fetch_and_install_to_tools, is_skill_installed
+from agr.commands._tool_helpers import (
+    delete_tool_skills as _delete_tool_skills,
+    ensure_valid_default_tool as _ensure_valid_default_tool,
+    normalize_tool_names as _normalize_tool_names,
+    sync_dependencies_to_tools as _sync_dependencies_to_tools,
+    validate_tool_names as _validate_tool_names,
+)
 
 from agr.tool import DEFAULT_TOOL_NAMES, TOOLS
-
-
-def _normalize_tool_names(tool_names: list[str]) -> list[str]:
-    """Normalize user-provided tool names."""
-    return [name.strip().lower() for name in tool_names if name.strip()]
-
-
-def _validate_tool_names(tool_names: list[str]) -> None:
-    """Validate tool names against TOOLS registry."""
-    console = get_console()
-    invalid = [name for name in tool_names if name not in TOOLS]
-    if invalid:
-        available = ", ".join(TOOLS.keys())
-        console.print(f"[red]Error:[/red] Unknown tool(s): {', '.join(invalid)}")
-        console.print(f"[dim]Available tools: {available}[/dim]")
-        raise SystemExit(1)
 
 
 def _load_required_config() -> AgrConfig:
@@ -35,112 +28,6 @@ def _load_required_config() -> AgrConfig:
         console.print("[dim]Run 'agr init' first to create one.[/dim]")
         raise SystemExit(1)
     return AgrConfig.load(config_path)
-
-
-def _sync_dependencies_to_tools(config: AgrConfig, tool_names: list[str]) -> int:
-    """Install existing dependencies into newly added tools.
-
-    Returns:
-        Number of dependencies that failed to sync.
-    """
-    console = get_console()
-    if not tool_names or not config.dependencies:
-        return 0
-
-    repo_root = find_repo_root()
-    if repo_root is None:
-        console.print(
-            "[yellow]Warning:[/yellow] Not in a git repository, "
-            "cannot sync dependencies."
-        )
-        return 0
-
-    console.print()
-    console.print(
-        f"[dim]Syncing {len(config.dependencies)} dependencies to new tools...[/dim]"
-    )
-
-    new_tools = [TOOLS[name] for name in tool_names]
-    resolver = config.get_source_resolver()
-    sync_errors = 0
-
-    for dep in config.dependencies:
-        try:
-            handle = dep.to_parsed_handle()
-            source_name = dep.resolve_source_name(config.default_source)
-
-            tools_needing_install = [
-                tool
-                for tool in new_tools
-                if not is_skill_installed(handle, repo_root, tool, source_name)
-            ]
-
-            if not tools_needing_install:
-                continue
-
-            fetch_and_install_to_tools(
-                handle,
-                repo_root,
-                tools_needing_install,
-                overwrite=False,
-                resolver=resolver,
-                source=source_name,
-            )
-
-            tool_list = ", ".join(t.name for t in tools_needing_install)
-            console.print(f"[green]Installed:[/green] {dep.identifier} ({tool_list})")
-
-        except Exception as e:
-            console.print(f"[red]Error:[/red] {dep.identifier}: {e}")
-            sync_errors += 1
-
-    return sync_errors
-
-
-def _delete_tool_skills(tool_name: str, repo_root: Path | None) -> bool:
-    """Delete all skills for a configured tool."""
-    console = get_console()
-    if repo_root is None:
-        return True
-
-    tool_config = TOOLS[tool_name]
-    skills_dir = tool_config.get_skills_dir(repo_root)
-    if not skills_dir.exists():
-        return True
-
-    skill_count = sum(1 for entry in skills_dir.iterdir() if entry.is_dir())
-    try:
-        shutil.rmtree(skills_dir)
-        console.print(
-            f"[dim]Deleted {skill_count} skills from {skills_dir.relative_to(repo_root)}/[/dim]"
-        )
-    except OSError as e:
-        console.print(f"[red]Error deleting skills:[/red] {e}")
-        console.print(f"[dim]Tool '{tool_name}' not removed from config[/dim]")
-        return False
-
-    return True
-
-
-def _ensure_valid_default_tool(
-    config: AgrConfig, previous_default_tool: str | None
-) -> None:
-    """Keep default_tool valid after tool list updates."""
-    console = get_console()
-    if config.default_tool and config.default_tool in config.tools:
-        return
-    if previous_default_tool is None:
-        return
-
-    replacement = config.tools[0] if config.tools else None
-    config.default_tool = replacement
-    if replacement:
-        console.print(
-            "[yellow]Default tool updated:[/yellow] "
-            f"{previous_default_tool} -> {replacement}"
-        )
-    else:
-        console.print("[yellow]Default tool unset:[/yellow] no tools configured")
 
 
 def run_tools_list() -> None:

@@ -12,12 +12,12 @@ from agr.config import (
     find_repo_root,
     get_global_config_path,
 )
-from agr.commands.tools import (
-    _normalize_tool_names,
-    _validate_tool_names,
-    _sync_dependencies_to_tools,
-    _delete_tool_skills,
-    _ensure_valid_default_tool,
+from agr.commands._tool_helpers import (
+    delete_tool_skills,
+    ensure_valid_default_tool,
+    normalize_tool_names,
+    sync_dependencies_to_tools,
+    validate_tool_names,
 )
 from agr.console import get_console
 from agr.source import SourceConfig
@@ -182,18 +182,18 @@ def run_config_set(key: str, values: list[str], global_scope: bool) -> None:
         if not values:
             console.print("[red]Error:[/red] At least one tool is required.")
             raise SystemExit(1)
-        names = list(dict.fromkeys(_normalize_tool_names(values)))
+        names = list(dict.fromkeys(normalize_tool_names(values)))
         if not names:
             console.print("[red]Error:[/red] At least one tool is required.")
             raise SystemExit(1)
-        _validate_tool_names(names)
+        validate_tool_names(names)
         previous_default = config.default_tool
         previous_tools = list(config.tools)
         config.tools = names
-        _ensure_valid_default_tool(config, previous_default)
+        ensure_valid_default_tool(config, previous_default)
         added = [n for n in names if n not in previous_tools]
         if not global_scope:
-            sync_errors = _sync_dependencies_to_tools(config, added)
+            sync_errors = sync_dependencies_to_tools(config, added)
             if sync_errors:
                 console.print(
                     f"[yellow]Warning:[/yellow] {sync_errors} dependency sync(s) failed"
@@ -211,12 +211,12 @@ def run_config_set(key: str, values: list[str], global_scope: bool) -> None:
     value = values[0]
 
     if key == "default_tool":
-        normalized = _normalize_tool_names([value])
+        normalized = normalize_tool_names([value])
         if not normalized:
             console.print("[red]Error:[/red] Tool name is required.")
             raise SystemExit(1)
         name = normalized[0]
-        _validate_tool_names([name])
+        validate_tool_names([name])
         if name not in config.tools:
             console.print(
                 f"[red]Error:[/red] Tool '{name}' is not in configured tools. "
@@ -344,8 +344,8 @@ def run_config_add(
         if not values:
             console.print("[red]Error:[/red] At least one tool name is required.")
             raise SystemExit(1)
-        names = list(dict.fromkeys(_normalize_tool_names(values)))
-        _validate_tool_names(names)
+        names = list(dict.fromkeys(normalize_tool_names(values)))
+        validate_tool_names(names)
 
         added: list[str] = []
         skipped: list[str] = []
@@ -357,7 +357,7 @@ def run_config_add(
                 added.append(name)
 
         if not global_scope:
-            sync_errors = _sync_dependencies_to_tools(config, added)
+            sync_errors = sync_dependencies_to_tools(config, added)
             if sync_errors:
                 console.print(
                     f"[yellow]Warning:[/yellow] {sync_errors} dependency sync(s) failed"
@@ -419,8 +419,8 @@ def run_config_remove(key: str, values: list[str], global_scope: bool) -> None:
         if not values:
             console.print("[red]Error:[/red] At least one tool name is required.")
             raise SystemExit(1)
-        names = list(dict.fromkeys(_normalize_tool_names(values)))
-        _validate_tool_names(names)
+        names = list(dict.fromkeys(normalize_tool_names(values)))
+        validate_tool_names(names)
 
         remaining = [t for t in config.tools if t not in names]
         if not remaining:
@@ -439,11 +439,11 @@ def run_config_remove(key: str, values: list[str], global_scope: bool) -> None:
                 not_configured.append(name)
                 continue
             if not global_scope:
-                _delete_tool_skills(name, repo_root)
+                delete_tool_skills(name, repo_root)
             config.tools.remove(name)
             removed.append(name)
 
-        _ensure_valid_default_tool(config, previous_default)
+        ensure_valid_default_tool(config, previous_default)
         config.save()
 
         for name in removed:
