@@ -66,12 +66,34 @@ Key methods:
 
 Frozen dataclass defining how a tool stores skills. Key fields:
 
+**Path fields** (where skills are installed):
+
 - `name` — tool identifier (e.g., `"claude"`, `"cursor"`)
 - `config_dir` — project-level config directory (e.g., `".claude"`)
 - `skills_subdir` — subdirectory for skills (always `"skills"`)
 - `supports_nested` — `True` for Cursor (nested `user/repo/skill/` dirs), `False` for others (flat naming)
+- `global_config_dir` — personal/global path when it differs from project path (e.g., Copilot uses `.github/skills/` locally but `~/.copilot/skills/` globally)
 - `get_skills_dir(repo_root)` → `repo_root / config_dir / skills_subdir`
-- CLI fields (`cli_command`, `cli_prompt_flag`, etc.) — used by agrx to invoke the tool
+- `get_global_skills_dir()` → `Path.home() / (global_config_dir or config_dir) / skills_subdir`
+
+**CLI fields** (used by `agrx` to invoke the tool):
+
+- `cli_command` — executable name (e.g., `"claude"`, `"codex"`)
+- `cli_prompt_flag` — flag for passing prompts (`"-p"` or `None` for positional)
+- `cli_force_flag` — flag to skip permission prompts (e.g., `"--dangerously-skip-permissions"`)
+- `cli_continue_flag` — flag to continue a session (e.g., `"--continue"`)
+- `cli_exec_command` — full command for non-interactive runs (e.g., `["codex", "exec"]`)
+- `cli_continue_command` — command to resume a session (e.g., `["codex", "resume", "--last"]`)
+- `cli_interactive_prompt_positional` — `True` if interactive mode passes prompt as positional arg
+- `cli_interactive_prompt_flag` — flag for interactive prompt (e.g., `"--prompt"` for OpenCode)
+- `suppress_stderr_non_interactive` — hide streaming output in non-interactive mode (Codex)
+- `skill_prompt_prefix` — prefix for invoking a skill (`"/"` for Claude, `"$"` for Codex, `""` for others)
+
+**Detection and instruction fields**:
+
+- `detection_signals` — paths that indicate tool presence (e.g., `(".claude", "CLAUDE.md")`)
+- `instruction_file` — canonical instruction file for this tool (`"CLAUDE.md"`, `"AGENTS.md"`, or `"GEMINI.md"`)
+- `install_hint` — help text shown when CLI is not found
 
 Six tools defined: `CLAUDE`, `CURSOR`, `CODEX`, `OPENCODE`, `COPILOT`, `ANTIGRAVITY`.
 
@@ -213,6 +235,55 @@ Each installed skill directory contains `.agr.json` with:
 ```
 
 Used for: matching skills to handles during uninstall/sync, detecting name conflicts, content change detection.
+
+## Migrations (`commands/migrations.py`)
+
+The sync command runs migrations before installing to ensure existing installs are in the expected layout. Three migration types:
+
+### Tool-specific directory migrations (`run_tool_migrations`)
+
+- **Codex**: `.codex/skills/` → `.agents/skills/` (Codex changed its config directory)
+- **OpenCode**: `.opencode/skill/` → `.opencode/skills/` (singular to plural)
+
+### Legacy separator migration (`migrate_legacy_directories`)
+
+Renames colon-based directory names (e.g., `user:skill`) to the Windows-compatible double-hyphen format (`user--skill`). Only applies to flat tools.
+
+### Flat name simplification (`migrate_flat_installed_names`)
+
+Older versions always installed under the full flat name (`user--repo--skill`). This migration renames to the shorter plain name (`skill`) when there is no ambiguity. Three cases:
+
+1. **Unique name** — one handle owns this name → safe to rename to plain name
+2. **Ambiguous name** — multiple handles share the same skill name → keep full names, stamp metadata
+3. **Unknown installs** — not tracked in agr.toml → skipped
+
+## Instruction sync (`instructions.py`)
+
+When `sync_instructions` is enabled and ≥2 tools are configured, `agr sync` copies the canonical instruction file to other tools' instruction files. The mapping is:
+
+- Claude → `CLAUDE.md`
+- Codex, Cursor, OpenCode, Copilot → `AGENTS.md`
+- Antigravity → `GEMINI.md`
+
+For example, with `canonical_instructions = "CLAUDE.md"` and `tools = ["claude", "codex", "antigravity"]`, sync copies `CLAUDE.md` content to `AGENTS.md` and `GEMINI.md`.
+
+## agrx workflow (`agrx/main.py`)
+
+The ephemeral skill runner downloads a skill, runs it with a tool's CLI, and cleans up:
+
+```
+1. Determine tool (--tool flag > config default_tool > first in tools list > "claude")
+2. Validate tool CLI is installed (shutil.which)
+3. Parse handle and download skill
+4. Install to a temp name: _agrx_<skill>-<uuid8> in the tool's skills dir
+5. Build CLI command using ToolConfig's CLI fields
+   - Non-interactive (default): use cli_exec_command or cli_command + cli_prompt_flag
+   - Interactive (-i): use cli_command + cli_interactive_prompt_flag/positional
+6. Run the tool's CLI via subprocess
+7. Clean up temp skill directory (also on SIGINT/SIGTERM)
+```
+
+Key design choice: agrx installs to the real skills directory (not a temp dir) because tools discover skills by scanning their config directory. The `_agrx_` prefix + UUID suffix prevents collisions.
 
 ## Error handling
 

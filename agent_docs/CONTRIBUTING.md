@@ -36,6 +36,10 @@ uv run agrx --help
 | Change metadata format | `agr/metadata.py` |
 | Change agrx behavior | `agrx/main.py` |
 | Add SDK functionality | `agr/sdk/` |
+| Change instruction syncing | `agr/instructions.py` |
+| Change migration logic | `agr/commands/migrations.py` |
+| Add a new exception type | `agr/exceptions.py` — add class, register in `INSTALL_ERROR_TYPES` if catchable during sync |
+| Change sync command stages | `agr/commands/sync.py` |
 | Update MkDocs site | `docs/docs/` |
 
 ## Conventions

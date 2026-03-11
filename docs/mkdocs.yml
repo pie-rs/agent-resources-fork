@@ -51,5 +51,6 @@ nav:
   - Home: index.md
   - Creating Skills: creating.md
   - Configuration: configuration.md
+  - agrx: agrx.md
   - Python SDK: sdk.md
   - Reference: reference.md
