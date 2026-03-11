@@ -59,6 +59,26 @@ def is_valid_skill_dir(path: Path) -> bool:
     return (path / SKILL_MARKER).exists()
 
 
+def _iter_valid_skill_dirs(repo_dir: Path) -> list[Path]:
+    """Find all valid skill directories in a repo.
+
+    Recursively scans for SKILL.md files, excluding root-level markers
+    and common non-skill directories (.git, node_modules, etc.).
+
+    Args:
+        repo_dir: Path to repository root
+
+    Returns:
+        List of skill directory paths (unsorted)
+    """
+    dirs: list[Path] = []
+    for skill_md in repo_dir.rglob(SKILL_MARKER):
+        if _is_excluded_path(skill_md, repo_dir):
+            continue
+        dirs.append(skill_md.parent)
+    return dirs
+
+
 def find_skill_in_repo(repo_dir: Path, skill_name: str) -> Path | None:
     """Find a skill directory in a downloaded repo.
 
@@ -76,14 +96,7 @@ def find_skill_in_repo(repo_dir: Path, skill_name: str) -> Path | None:
     Returns:
         Path to skill directory if found, None otherwise
     """
-    matches: list[Path] = []
-
-    for skill_md in repo_dir.rglob(SKILL_MARKER):
-        if _is_excluded_path(skill_md, repo_dir):
-            continue
-        if skill_md.parent.name == skill_name:
-            matches.append(skill_md.parent)
-
+    matches = [d for d in _iter_valid_skill_dirs(repo_dir) if d.name == skill_name]
     if not matches:
         return None
 
@@ -164,23 +177,16 @@ def discover_skills_in_repo(repo_dir: Path) -> list[tuple[str, Path]]:
     Returns:
         List of (skill_name, skill_path) tuples, deduplicated by name
     """
-    # Collect all skills, keyed by name (shallowest path wins)
     skills_by_name: dict[str, Path] = {}
 
-    for skill_md in repo_dir.rglob(SKILL_MARKER):
-        if _is_excluded_path(skill_md, repo_dir):
-            continue
-
-        skill_dir = skill_md.parent
-        skill_name = skill_dir.name
-
+    for skill_dir in _iter_valid_skill_dirs(repo_dir):
+        name = skill_dir.name
         # Keep shallowest path for duplicate names
-        if skill_name not in skills_by_name:
-            skills_by_name[skill_name] = skill_dir
-        elif len(skill_dir.parts) < len(skills_by_name[skill_name].parts):
-            skills_by_name[skill_name] = skill_dir
+        if name not in skills_by_name or len(skill_dir.parts) < len(
+            skills_by_name[name].parts
+        ):
+            skills_by_name[name] = skill_dir
 
-    # Return sorted by name for deterministic output
     return sorted(skills_by_name.items(), key=lambda x: x[0])
 
 
@@ -193,14 +199,7 @@ def discover_all_skill_dirs(repo_dir: Path) -> list[Path]:
     Returns:
         List of skill directories, sorted by path for determinism
     """
-    skill_dirs: list[Path] = []
-
-    for skill_md in repo_dir.rglob(SKILL_MARKER):
-        if _is_excluded_path(skill_md, repo_dir):
-            continue
-        skill_dirs.append(skill_md.parent)
-
-    return sorted(skill_dirs, key=lambda p: p.as_posix())
+    return sorted(_iter_valid_skill_dirs(repo_dir), key=lambda p: p.as_posix())
 
 
 def _parse_frontmatter(content: str) -> tuple[str, str] | None:
