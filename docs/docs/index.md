@@ -117,5 +117,4 @@ Browse more at the [Skill Directory](skills.md) or on
 - [Teams](teams.md) — set up agr for your team, CI/CD, and private skills
 - [Supported Tools](tools.md) — how agr works with each AI coding tool
 - [Creating Skills](creating.md) — write and publish your own skills
-- [Guides](guides.md) — updating skills, global installs, custom sources, and more
 - [CLI Reference](reference.md) — every command, flag, and option

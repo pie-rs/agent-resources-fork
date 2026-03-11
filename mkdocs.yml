@@ -66,21 +66,21 @@ markdown_extensions:
       permalink: true
 
 nav:
+  - Home: index.md
   - Getting Started:
-    - Home: index.md
     - Tutorial: tutorial.md
     - Core Concepts: concepts.md
+  - Using Skills:
     - Skill Directory: skills.md
     - Teams: teams.md
-    - Guides: guides.md
-  - Tools & Config:
+    - "agrx — Try Without Installing": agrx.md
+  - Configuration:
     - Supported Tools: tools.md
     - Configuration: configuration.md
-    - agrx: agrx.md
-  - Building:
+  - Building Skills:
     - Creating Skills: creating.md
     - Python SDK: sdk.md
-  - Help:
+  - Reference:
+    - CLI Reference: reference.md
     - Troubleshooting: troubleshooting.md
-    - Reference: reference.md
     - What's New: changelog.md
