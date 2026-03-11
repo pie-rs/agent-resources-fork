@@ -2,7 +2,7 @@
 
 > A package and project manager for AI agent skills.
 
-For the complete documentation in a single file, see [llms-full.txt](https://kasperjunge.github.io/agent-resources/site/llms-full.txt).
+For the complete documentation in a single file, see [llms-full.txt](https://kasperjunge.github.io/agent-resources/llms-full.txt).
 
 ## What This Is
 

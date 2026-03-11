@@ -41,6 +41,9 @@ jobs:
           mkdir -p deploy/site
           cp docs/index.html deploy/
           cp -r docs/site/* deploy/site/
+          # Serve llms.txt files at site root (convention for AI tool discovery)
+          cp docs/site/llms.txt deploy/llms.txt
+          cp docs/site/llms-full.txt deploy/llms-full.txt
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
