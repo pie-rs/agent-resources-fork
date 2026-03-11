@@ -37,6 +37,7 @@ class ToolConfig:
     suppress_stderr_non_interactive: bool = False  # Hide streaming output
     skill_prompt_prefix: str = "/"  # Prefix for invoking a skill
     install_hint: str | None = None  # Help text for installation
+    detection_signals: tuple[str, ...] = ()  # Paths that indicate tool presence
 
     def get_skills_dir(self, repo_root: Path) -> Path:
         """Get the skills directory for this tool in a repo."""
@@ -60,6 +61,7 @@ CLAUDE = ToolConfig(
     cli_continue_flag="--continue",
     cli_interactive_prompt_positional=True,
     install_hint="Install from: https://claude.ai/download",
+    detection_signals=(".claude", "CLAUDE.md"),
 )
 
 # Cursor tool configuration (nested dirs: maragudk/skills/bluesky/)
@@ -74,6 +76,7 @@ CURSOR = ToolConfig(
     cli_continue_flag="--continue",
     cli_interactive_prompt_positional=True,
     install_hint="Install Cursor IDE to get the agent CLI",
+    detection_signals=(".cursor", ".cursorrules"),
 )
 
 # OpenAI Codex tool configuration (flat naming: <skill-name>)
@@ -94,6 +97,7 @@ CODEX = ToolConfig(
     suppress_stderr_non_interactive=True,
     skill_prompt_prefix="$",
     install_hint="Install OpenAI Codex CLI (npm i -g @openai/codex)",
+    detection_signals=(".agents", ".codex"),
 )
 
 # OpenCode tool configuration (flat naming: <skill-name>)
@@ -113,6 +117,7 @@ OPENCODE = ToolConfig(
     cli_interactive_prompt_flag="--prompt",
     skill_prompt_prefix="",
     install_hint="Install OpenCode CLI (https://opencode.ai/docs/cli/)",
+    detection_signals=(".opencode",),
 )
 
 # GitHub Copilot tool configuration (flat naming: <skill-name>, fallback to user--repo--skill on collision)
@@ -131,6 +136,7 @@ COPILOT = ToolConfig(
     cli_continue_flag="--continue",
     cli_interactive_prompt_flag="-i",
     install_hint="Install GitHub Copilot CLI",
+    detection_signals=(".github/copilot", ".github/skills"),
 )
 
 # Antigravity tool configuration (flat naming: <skill-name>)
@@ -154,6 +160,7 @@ ANTIGRAVITY = ToolConfig(
     suppress_stderr_non_interactive=False,
     skill_prompt_prefix="",
     install_hint=None,
+    detection_signals=(".agent",),
 )
 
 # Registry of all supported tools

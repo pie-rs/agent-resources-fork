@@ -1,15 +1,16 @@
 """Unit tests for agr.detect module."""
 
-from agr.detect import _TOOL_SIGNALS, detect_tools
+from agr.detect import detect_tools
 from agr.tool import TOOLS
 
 
-class TestToolSignalsRegistry:
-    """Tests that _TOOL_SIGNALS stays in sync with TOOLS."""
+class TestDetectionSignals:
+    """Tests that detection signals are configured on all tools."""
 
-    def test_tool_signals_keys_match_tools_keys(self):
-        """_TOOL_SIGNALS must cover exactly the same tools as TOOLS."""
-        assert set(_TOOL_SIGNALS.keys()) == set(TOOLS.keys())
+    def test_all_tools_have_detection_signals(self):
+        """Every registered tool must define at least one detection signal."""
+        for name, tool in TOOLS.items():
+            assert tool.detection_signals, f"Tool '{name}' has no detection_signals"
 
 
 class TestDetectTools:
