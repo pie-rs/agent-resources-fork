@@ -21,6 +21,7 @@ from agr.fetcher import (
 )
 from agr.git import downloaded_repo
 from agr.handle import ParsedHandle
+from agr.source import SourceResolver
 from agr.instructions import (
     canonical_instruction_file,
     sync_instruction_files,
@@ -48,7 +49,6 @@ class SyncResult:
 @dataclass
 class SyncEntry:
     index: int
-    identifier: str
     handle: ParsedHandle
     source_name: str | None
 
@@ -136,6 +136,42 @@ def _sync_instructions_if_configured(
         )
 
 
+def _sync_one_dependency(
+    handle: ParsedHandle,
+    source_name: str | None,
+    repo_root: Path | None,
+    tools: list[ToolConfig],
+    resolver: SourceResolver,
+    skills_dirs: dict[str, Path] | None = None,
+) -> SyncResult:
+    """Sync a single dependency: check install status and install if needed.
+
+    Returns UP_TO_DATE when all tools already have the skill installed,
+    or INSTALLED after a successful install.  Raises on failure so the
+    caller can handle errors per-entry.
+    """
+    tools_needing_install = filter_tools_needing_install(
+        handle, repo_root, tools, source_name, skills_dirs
+    )
+    if not tools_needing_install:
+        return SyncResult(SyncStatus.UP_TO_DATE)
+
+    install_kwargs: dict[str, object] = {}
+    if skills_dirs is not None:
+        install_kwargs["skills_dirs"] = skills_dirs
+
+    fetch_and_install_to_tools(
+        handle,
+        repo_root,
+        tools_needing_install,
+        overwrite=False,
+        resolver=resolver,
+        source=source_name,
+        **install_kwargs,
+    )
+    return SyncResult(SyncStatus.INSTALLED)
+
+
 def _run_global_sync() -> None:
     """Sync global dependencies from ~/.agr/agr.toml."""
     console = get_console()
@@ -162,33 +198,15 @@ def _run_global_sync() -> None:
     results: list[tuple[str, SyncResult]] = []
 
     for dep in config.dependencies:
-        identifier = dep.identifier
         try:
             handle = dep.to_parsed_handle()
             source_name = dep.resolve_source_name(config.default_source)
-
-            tools_needing_install = filter_tools_needing_install(
-                handle, None, tools, source_name, skills_dirs
+            result = _sync_one_dependency(
+                handle, source_name, None, tools, resolver, skills_dirs
             )
-
-            if not tools_needing_install:
-                results.append((identifier, SyncResult(SyncStatus.UP_TO_DATE)))
-                continue
-
-            fetch_and_install_to_tools(
-                handle,
-                None,
-                tools_needing_install,
-                overwrite=False,
-                resolver=resolver,
-                source=source_name,
-                skills_dirs=skills_dirs,
-            )
-            results.append((identifier, SyncResult(SyncStatus.INSTALLED)))
         except INSTALL_ERROR_TYPES as e:
-            results.append(
-                (identifier, SyncResult(SyncStatus.ERROR, format_install_error(e)))
-            )
+            result = SyncResult(SyncStatus.ERROR, format_install_error(e))
+        results.append((dep.identifier, result))
 
     _print_results_and_summary(results)
 
@@ -241,7 +259,6 @@ def run_sync(global_install: bool = False) -> None:
     pending_remote: list[SyncEntry] = []
 
     for index, dep in enumerate(config.dependencies):
-        identifier = dep.identifier
         try:
             handle = dep.to_parsed_handle()
             source_name = dep.resolve_source_name(config.default_source)
@@ -256,7 +273,6 @@ def run_sync(global_install: bool = False) -> None:
 
             entry = SyncEntry(
                 index=index,
-                identifier=identifier,
                 handle=handle,
                 source_name=source_name,
             )
@@ -270,23 +286,10 @@ def run_sync(global_install: bool = False) -> None:
     def _sync_entries(entries: list[SyncEntry]) -> None:
         """Fetch and install a list of sync entries individually."""
         for entry in entries:
-            handle = entry.handle
-            tools_needing_install = filter_tools_needing_install(
-                handle, repo_root, tools, entry.source_name
-            )
-            if not tools_needing_install:
-                results[entry.index] = SyncResult(SyncStatus.UP_TO_DATE)
-                continue
             try:
-                fetch_and_install_to_tools(
-                    handle,
-                    repo_root,
-                    tools_needing_install,
-                    overwrite=False,
-                    resolver=resolver,
-                    source=entry.source_name,
+                results[entry.index] = _sync_one_dependency(
+                    entry.handle, entry.source_name, repo_root, tools, resolver
                 )
-                results[entry.index] = SyncResult(SyncStatus.INSTALLED)
             except INSTALL_ERROR_TYPES as e:
                 results[entry.index] = SyncResult(
                     SyncStatus.ERROR, format_install_error(e)
