@@ -4,7 +4,7 @@ The ``run_*`` functions here back the deprecated ``agr tools`` sub-commands.
 Shared helpers live in ``agr.commands._tool_helpers``.
 """
 
-from agr.config import AgrConfig, find_config, find_repo_root
+from agr.config import AgrConfig, find_config, find_repo_root, require_config
 from agr.console import get_console, print_error
 from agr.commands._tool_helpers import (
     delete_tool_skills,
@@ -19,13 +19,7 @@ from agr.tool import DEFAULT_TOOL_NAMES, TOOLS
 
 def _load_required_config() -> AgrConfig:
     """Load agr.toml or exit with a user-facing error."""
-    console = get_console()
-    config_path = find_config()
-    if config_path is None:
-        print_error("No agr.toml found.")
-        console.print("[dim]Run 'agr init' first to create one.[/dim]")
-        raise SystemExit(1)
-    return AgrConfig.load(config_path)
+    return AgrConfig.load(require_config())
 
 
 def run_tools_list() -> None:

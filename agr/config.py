@@ -468,6 +468,31 @@ def require_repo_root(start_path: Path | None = None) -> Path:
     return repo_root
 
 
+def require_config(start_path: Path | None = None) -> Path:
+    """Find agr.toml or exit with a user-facing error.
+
+    Like ``find_config``, but prints an error message and raises
+    ``SystemExit(1)`` when no config file is found.
+
+    Args:
+        start_path: Directory to start searching from (defaults to cwd)
+
+    Returns:
+        Path to config file
+
+    Raises:
+        SystemExit: If no agr.toml is found
+    """
+    config_path = find_config(start_path)
+    if config_path is None:
+        from agr.console import get_console, print_error
+
+        print_error("No agr.toml found.")
+        get_console().print("[dim]Run 'agr init' first to create one.[/dim]")
+        raise SystemExit(1)
+    return config_path
+
+
 def get_or_create_config(start_path: Path | None = None) -> tuple[Path, AgrConfig]:
     """Get existing config or create new one.
 

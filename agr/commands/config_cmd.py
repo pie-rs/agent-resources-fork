@@ -8,9 +8,9 @@ from pathlib import Path
 from agr.config import (
     AgrConfig,
     VALID_CANONICAL_INSTRUCTIONS,
-    find_config,
     find_repo_root,
     get_global_config_path,
+    require_config,
 )
 from agr.commands._tool_helpers import (
     delete_tool_skills,
@@ -43,19 +43,14 @@ LIST_KEYS = {"tools", "sources"}
 
 def _require_config_path(global_scope: bool) -> Path:
     """Locate the config file path, exiting with a user-facing error if missing."""
-    console = get_console()
-    if global_scope:
-        config_path = get_global_config_path()
-        if not config_path.exists():
-            print_error(f"No global config found at {config_path}")
-            console.print("[dim]Run 'agr init' or create it manually.[/dim]")
-            raise SystemExit(1)
-        return config_path
+    if not global_scope:
+        return require_config()
 
-    config_path = find_config()
-    if config_path is None:
-        print_error("No agr.toml found.")
-        console.print("[dim]Run 'agr init' first to create one.[/dim]")
+    config_path = get_global_config_path()
+    if not config_path.exists():
+        console = get_console()
+        print_error(f"No global config found at {config_path}")
+        console.print("[dim]Run 'agr init' or create it manually.[/dim]")
         raise SystemExit(1)
     return config_path
 
