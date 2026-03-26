@@ -1,6 +1,6 @@
 ---
 title: "CLI Reference — All agr and agrx Commands, Flags, and Options"
-description: Complete CLI reference for agr — all commands, flags, and handle formats in one place.
+description: Complete CLI reference for agr and agrx — all commands, flags, and handle formats for managing skills across Claude Code, Cursor, Codex, OpenCode, Copilot, and Antigravity.
 keywords:
   - agr CLI reference
   - agr commands
@@ -12,6 +12,12 @@ keywords:
   - agr handle format
   - agr.toml format
   - agr flags and options
+  - Claude Code skill commands
+  - Cursor skill commands
+  - Codex skill commands
+  - OpenCode skill commands
+  - Copilot skill commands
+  - Antigravity skill commands
 ---
 
 # Reference

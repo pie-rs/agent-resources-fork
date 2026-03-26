@@ -1,6 +1,6 @@
 ---
 title: "Get Started with agr: Install, Add, and Share AI Agent Skills"
-description: Step-by-step quickstart for agr — install the CLI, add your first AI agent skill, sync skills across a team, and create your own skill in 10 minutes.
+description: Step-by-step quickstart for agr — install the CLI, add your first AI agent skill to Claude Code, Cursor, Codex, OpenCode, Copilot, or Antigravity, sync skills across a team, and create your own.
 keywords:
   - agr tutorial
   - install agr
@@ -12,6 +12,12 @@ keywords:
   - share skills across team
   - create custom AI skill
   - agr add skill example
+  - Claude Code skills tutorial
+  - Cursor skills setup
+  - Codex skills tutorial
+  - OpenCode skills setup
+  - Copilot skills tutorial
+  - Antigravity skills setup
 ---
 
 # Get Started with agr

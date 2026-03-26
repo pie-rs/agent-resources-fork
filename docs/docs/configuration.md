@@ -1,6 +1,6 @@
 ---
 title: "Configure agr.toml — Multi-Tool Setup, Sources, and Instruction Syncing"
-description: Configure agr.toml for multi-tool setup, custom Git sources, instruction syncing, and global installs.
+description: Configure agr.toml for multi-tool setup across Claude Code, Cursor, Codex, OpenCode, Copilot, and Antigravity — custom Git sources, instruction syncing, and global installs.
 keywords:
   - agr.toml configuration
   - agr config command
@@ -10,6 +10,12 @@ keywords:
   - instruction syncing
   - multi-tool AI setup
   - agr config set tools
+  - Claude Code agr config
+  - Cursor agr setup
+  - Codex agr config
+  - OpenCode agr setup
+  - GitHub Copilot agr config
+  - Antigravity agr setup
 ---
 
 # Configuration
