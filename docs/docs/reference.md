@@ -5,6 +5,9 @@ description: Complete CLI reference for agr — all commands, flags, and handle 
 
 # Reference
 
+Complete reference for all `agr` and [`agrx`](agrx.md) commands. For guided
+setup, start with the [Tutorial](tutorial.md).
+
 ## Quick Reference
 
 ### Install & Remove

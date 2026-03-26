@@ -123,7 +123,7 @@ DNS resolution failed. Check your internet connection, VPN, or proxy settings.
 Error: Invalid handle 'commit': remote handles require username/name format
 ```
 
-A single word is treated as a local path. For remote skills, include the username:
+A single word is treated as a local path. For remote skills, use the [handle format](concepts.md#handles):
 
 ```bash
 # Wrong
@@ -190,7 +190,7 @@ git init
 Error: Unknown tool 'photoshop' in agr.toml. Available: claude, cursor, codex, opencode, copilot, antigravity
 ```
 
-Check your `agr.toml` for typos in the `tools` list. The supported tools are:
+Check your `agr.toml` for typos in the `tools` list. See [Supported Tools](tools.md) for details on each:
 
 | Config name | Tool |
 |-------------|------|
@@ -383,3 +383,9 @@ The global config lives at `~/.agr/agr.toml`.
 - Run the failing command with details and check the output carefully — agr prints hints below most errors.
 - Check [GitHub Issues](https://github.com/kasperjunge/agent-resources/issues) for known problems.
 - [Open a new issue](https://github.com/kasperjunge/agent-resources/issues/new) with the full error output and your `agr.toml` contents.
+
+## Related Pages
+
+- [**Configuration**](configuration.md) — Full `agr.toml` reference and setup options
+- [**CLI Reference**](reference.md) — Every command, flag, and option
+- [**Creating Skills**](creating.md) — Fix skill authoring issues

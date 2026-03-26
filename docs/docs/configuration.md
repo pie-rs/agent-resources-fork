@@ -6,8 +6,9 @@ description: Configure agr.toml for multi-tool setup, custom Git sources, instru
 # Configuration
 
 agr uses `agr.toml` for project-level configuration and `~/.agr/agr.toml` for
-global configuration. This page covers multi-tool setup, custom sources,
-instruction syncing, and global installs.
+global configuration. For an overview of how config fits into agr's architecture,
+see [Core Concepts](concepts.md). This page covers multi-tool setup, custom
+sources, instruction syncing, and global installs.
 
 ## Multi-Tool Setup
 
@@ -288,3 +289,9 @@ Add `-g` to any command to operate on the global config (`~/.agr/agr.toml`).
     ```
 
 See the [CLI Reference](reference.md) for full details.
+
+## Next Steps
+
+- [**Supported Tools**](tools.md) — Details on each tool's skills directory and behavior
+- [**Teams**](teams.md) — Set up multi-tool teams with shared skills and CI/CD
+- [**Troubleshooting**](troubleshooting.md) — Fix common config and sync issues

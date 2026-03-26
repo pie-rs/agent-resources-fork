@@ -5,9 +5,9 @@ description: Use agrx to download and run AI agent skills ephemerally — no agr
 
 # agrx — Run Skills Without Installing
 
-`agrx` is an ephemeral skill runner. It downloads a skill from GitHub, runs it
-with your AI coding tool's CLI, and cleans up afterwards. Nothing is added to
-`agr.toml`.
+`agrx` is an ephemeral skill runner. It downloads a [skill](concepts.md#skills)
+from GitHub, runs it with your AI coding tool's CLI, and cleans up afterwards.
+Nothing is added to [`agr.toml`](configuration.md).
 
 ## Quick Start
 
@@ -19,8 +19,8 @@ agrx kasperjunge/commit -i                          # Interactive: skill + chat
 
 ## How It Works
 
-1. **Determine tool** — Uses `--tool` flag, or `default_tool` from `agr.toml`, or the first tool in `tools`, or `claude`
-2. **Download skill** — Clones the repo and extracts the skill (same as `agr add`)
+1. **Determine tool** — Uses `--tool` flag, or `default_tool` from `agr.toml`, or the first tool in `tools`, or `claude` (see [Supported Tools](tools.md))
+2. **Download skill** — Clones the repo and extracts the skill (same as `agr add`, using [handles](concepts.md#handles))
 3. **Install temporarily** — Places the skill in your tool's skills directory with a unique `_agrx_` prefix so it doesn't conflict with permanent installs
 4. **Run the tool's CLI** — Invokes the tool (e.g., `claude -p "/skill-name"`) to execute the skill
 5. **Clean up** — Removes the temporary skill directory, even on Ctrl+C
@@ -62,6 +62,8 @@ agrx anthropics/skills/pdf -p "Extract all tables from report.pdf as CSV"
 
 ### Use a custom source
 
+See [Configuration — Sources](configuration.md#sources) for how to set up custom sources.
+
 ```bash
 agrx team/internal-skill --source my-server
 ```
@@ -97,3 +99,10 @@ error with installation instructions:
 | OpenCode | `opencode` | [opencode.ai/docs/cli](https://opencode.ai/docs/cli/) |
 | GitHub Copilot | `copilot` | Install GitHub Copilot CLI |
 | Antigravity | — | No CLI available; use `agr add` to install skills instead |
+
+## Next Steps
+
+- [**Tutorial**](tutorial.md) — Full walkthrough including using `agrx` to try skills
+- [**Skill Directory**](skills.md) — Browse available skills to run with `agrx`
+- [**CLI Reference**](reference.md) — Complete `agrx` command reference with all flags
+- [**Troubleshooting**](troubleshooting.md) — Fix common errors with skill downloads and tool CLIs
