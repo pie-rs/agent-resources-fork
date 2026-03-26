@@ -16,6 +16,12 @@ keywords:
 
 # Share AI Agent Skills Across Your Team
 
+!!! tldr
+    Commit `agr.toml` to your repo — teammates run `agr sync` to get every
+    skill. Multi-tool teams set `tools = ["claude", "cursor", ...]` so one
+    `agr add` installs everywhere. Use `GITHUB_TOKEN` for private repos and
+    CI/CD.
+
 Set up agr so everyone shares the same AI coding skills, stays in sync
 across Claude Code, Cursor, Codex, and other tools — and gets productive on
 day one.
