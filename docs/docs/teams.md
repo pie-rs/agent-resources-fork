@@ -1,12 +1,24 @@
 ---
-title: Teams
-description: Set up agr for your team so everyone shares the same AI agent skills and stays in sync.
+title: How to Share AI Agent Skills Across a Team
+description: Set up agr so your team shares the same AI coding agent skills across Claude Code, Cursor, and Codex — with agr.toml as a single source of truth.
+keywords:
+  - share AI agent skills
+  - team AI coding tools
+  - sync AI skills across team
+  - AI agent skill management
+  - Claude Code team setup
+  - Cursor team skills
+  - agr team sync
+  - CI/CD AI agent skills
+  - private AI skills GitHub
+  - multi-tool AI team
 ---
 
-# Teams
+# Share AI Agent Skills Across Your Team
 
-Set up agr for your team so everyone shares the same skills, stays in sync,
-and gets productive on day one.
+Set up agr so everyone shares the same AI coding skills, stays in sync
+across Claude Code, Cursor, Codex, and other tools — and gets productive on
+day one.
 
 ---
 
