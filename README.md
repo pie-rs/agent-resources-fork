@@ -176,14 +176,20 @@ all projects).
 # Go — @dsjacobsen
 agr add dsjacobsen/agent-resources/golang-pro
 
-# Drupal — @madsnorgaard
+# Drupal & DevOps — @madsnorgaard
 agr add madsnorgaard/drupal-agent-resources/drupal-expert
 agr add madsnorgaard/drupal-agent-resources/drupal-security
 agr add madsnorgaard/drupal-agent-resources/drupal-migration
+agr add madsnorgaard/drupal-agent-resources/ddev-expert
+agr add madsnorgaard/drupal-agent-resources/docker-local
 
-# Workflow — @maragudk
+# Workflow — @maragudk, @kasperjunge
 agr add maragudk/skills/collaboration
+agr add kasperjunge/commit-work
+agr add kasperjunge/agent-resources/migrate-to-skills
 ```
+
+Browse all community skills in the [Skill Directory](https://kasperjunge.github.io/agent-resources/skills/).
 
 **Built something?** [Share it here.](https://github.com/kasperjunge/agent-resources/issues)
 
