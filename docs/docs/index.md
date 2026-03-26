@@ -1,6 +1,15 @@
 ---
 title: Home
 description: A package manager for AI agent skills. Install, share, and run skills across Claude Code, Cursor, Codex, Copilot, and more.
+keywords:
+  - agr
+  - AI agent skills
+  - package manager for AI agents
+  - install AI coding skills
+  - Claude Code skills
+  - Cursor skills
+  - Codex skills
+  - skill manager
 hide:
   - navigation
   - toc
