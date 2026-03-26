@@ -101,6 +101,7 @@ That's it. The skill is now installed in your tool's skills folder. Invoke it:
 | OpenAI Codex | `$frontend-design` |
 | OpenCode | `frontend-design` |
 | GitHub Copilot | `/frontend-design` |
+| Antigravity | *(via IDE)* |
 
 !!! tip "No setup required"
     `agr add` auto-creates `agr.toml` if it doesn't exist and detects which

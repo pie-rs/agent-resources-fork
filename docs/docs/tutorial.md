@@ -144,6 +144,7 @@ which tool you use:
 | OpenAI Codex | Type `$frontend-design` in the chat |
 | OpenCode | Type `frontend-design` in the chat |
 | GitHub Copilot | Type `/frontend-design` in the chat |
+| Antigravity | Use through the IDE interface |
 
 In most tools, skills also load as context automatically — the agent may apply
 them without you explicitly invoking them. See [Supported Tools](tools.md) for
