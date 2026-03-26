@@ -1,14 +1,17 @@
 ---
-title: Supported Tools
-description: How agr installs skills into Claude Code, Cursor, Codex, GitHub Copilot, Open Code, and Antigravity.
+title: "Install AI Skills in Claude Code, Cursor, Codex, Copilot, OpenCode, and Antigravity"
+description: How agr installs skills into Claude Code, Cursor, Codex, GitHub Copilot, OpenCode, and Antigravity — directories, detection, and multi-tool setup.
 keywords:
-  - Claude Code skills
-  - Cursor skills
-  - Codex skills
+  - agr supported tools
+  - Claude Code skills directory
+  - Cursor skills setup
+  - Codex skills install
   - GitHub Copilot skills
   - OpenCode skills
   - Antigravity skills
   - multi-tool AI setup
+  - install skills multiple AI tools
+  - agr config set tools
 ---
 
 # Supported Tools
