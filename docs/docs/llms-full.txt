@@ -305,12 +305,18 @@ Creates `my-skill/SKILL.md`:
 ```markdown
 ---
 name: my-skill
-description: What this skill does.
+description: TODO — describe what this skill does and when to use it
 ---
 
-# My Skill
+# my-skill
 
-Instructions for the agent.
+## When to use
+
+Describe when this skill should be used.
+
+## Instructions
+
+Provide detailed instructions here.
 ```
 
 ### SKILL.md Format

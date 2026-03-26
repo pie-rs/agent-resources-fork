@@ -254,12 +254,18 @@ This creates `my-skill/SKILL.md` with a starter template:
 ```markdown
 ---
 name: my-skill
-description: What this skill does.
+description: TODO — describe what this skill does and when to use it
 ---
 
-# My Skill
+# my-skill
 
-Instructions for the agent.
+## When to use
+
+Describe when this skill should be used.
+
+## Instructions
+
+Provide detailed instructions here.
 ```
 
 Edit the file to describe what you want the agent to do. The frontmatter
