@@ -74,6 +74,7 @@ Then invoke it in your AI tool:
 | OpenAI Codex | `$frontend-design` |
 | OpenCode | `frontend-design` |
 | GitHub Copilot | `/frontend-design` |
+| Antigravity | *(via IDE)* |
 
 No setup required — `agr add` auto-creates `agr.toml` and detects which tools
 you use.
