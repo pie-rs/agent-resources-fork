@@ -71,7 +71,7 @@ Instructions for the agent go here.
 
 | Field | Constraints |
 |-------|-------------|
-| `name` | Max 64 chars. Alphanumeric, hyphens, underscores. Must start with a letter or number. Must match directory name. |
+| `name` | 1–64 chars. Lowercase alphanumeric and hyphens only. Cannot start/end with a hyphen or contain consecutive hyphens (`--`). Must match directory name. |
 | `description` | Max 1024 chars. Describes what the skill does and when to use it. |
 
 ### Optional Fields

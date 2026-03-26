@@ -153,7 +153,7 @@ Handles support at most three parts: `user/repo/skill`. Check for extra slashes.
 Error: Invalid handle 'user/my--skill': skill name 'my--skill' contains reserved sequence '--'
 ```
 
-Skill names cannot contain `--`. Rename the skill to use single hyphens.
+Skill names cannot contain consecutive hyphens. Rename the skill to use single hyphens (e.g., `my-skill` instead of `my--skill`).
 
 ---
 
@@ -440,20 +440,22 @@ agr add ./my-skill
 ### How do I fix "Invalid skill name"?
 
 ```text
-Error: Invalid skill name 'my skill': must be alphanumeric with hyphens/underscores
+Error: Invalid skill name 'My_Skill': must be 1-64 lowercase alphanumeric characters and hyphens, cannot start/end with a hyphen
 ```
 
-Skill names must be alphanumeric with hyphens or underscores, and must start with a letter or number. No spaces or special characters:
+Skill names must be lowercase alphanumeric with hyphens. No uppercase, underscores, spaces, or special characters. Names cannot start or end with a hyphen, and consecutive hyphens (`--`) are not allowed.
 
 ```bash
 # Wrong
 agr init "my skill"
-agr init "My Skill!"
+agr init My_Skill
+agr init MySkill
+agr init -my-skill
 
 # Right
 agr init my-skill
-agr init my_skill
-agr init MySkill
+agr init myskill
+agr init code-reviewer
 ```
 
 ### How do I fix "Directory already exists"?
