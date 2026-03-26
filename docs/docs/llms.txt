@@ -25,16 +25,18 @@ agrx anthropics/skills/pdf -p "Extract tables from report.pdf"
 - [Core Concepts](https://agentskills.io/concepts/) — How skills, handles, sources, and scopes work
 
 ### Guides
-- [Creating Skills](https://agentskills.io/creating/) — Write, test, and publish AI agent skills
-- [Teams](https://agentskills.io/teams/) — Set up agr for a team with shared skills and CI/CD
 - [Supported Tools](https://agentskills.io/tools/) — Claude Code, Cursor, Codex, OpenCode, Copilot, Antigravity
+- [Skill Directory](https://agentskills.io/skills/) — Browse official and community skills
+- [Teams](https://agentskills.io/teams/) — Set up agr for a team with shared skills and CI/CD
 - [Configuration](https://agentskills.io/configuration/) — Multi-tool setup, custom sources, instruction syncing
 - [agrx](https://agentskills.io/agrx/) — Run skills ephemerally without installing
 
+### Building Skills
+- [Creating Skills](https://agentskills.io/creating/) — Write, test, and publish AI agent skills
+- [Python SDK](https://agentskills.io/sdk/) — Use agr as a library to load and inspect skills
+
 ### Reference
 - [CLI Reference](https://agentskills.io/reference/) — Every command, flag, and config option
-- [Python SDK](https://agentskills.io/sdk/) — Use agr as a library to load and inspect skills
-- [Skill Directory](https://agentskills.io/skills/) — Browse official and community skills
 - [Troubleshooting](https://agentskills.io/troubleshooting/) — Common errors and how to fix them
 - [What's New](https://agentskills.io/changelog/) — Release notes and breaking changes
 
