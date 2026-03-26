@@ -325,22 +325,23 @@ def create_skill_scaffold(name: str, base_dir: Path | None = None) -> Path:
     skill_dir.mkdir(parents=True)
 
     # Create SKILL.md with scaffold content
+    # The description field is required by Cursor, Codex, and OpenCode
+    # and recommended by Claude Code.
     skill_md = skill_dir / SKILL_MARKER
     skill_md.write_text(f"""---
 name: {name}
+description: TODO — describe what this skill does and when to use it
 ---
 
 # {name}
 
-Description of what this skill does.
-
 ## When to use
 
-Describe when Claude should use this skill.
+Describe when this skill should be used.
 
 ## Instructions
 
-Provide detailed instructions for Claude here.
+Provide detailed instructions here.
 """)
 
     return skill_dir

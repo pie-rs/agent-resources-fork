@@ -174,6 +174,17 @@ class TestCreateSkillScaffold:
         assert "name: my-skill" in content
         assert "# my-skill" in content
 
+    def test_scaffold_includes_description_field(self, tmp_path):
+        """Scaffold includes description in frontmatter (required by Cursor, Codex, OpenCode)."""
+        skill_path = create_skill_scaffold("my-skill", tmp_path)
+        content = (skill_path / SKILL_MARKER).read_text()
+        assert "description:" in content
+        # Verify description is inside frontmatter (between --- markers)
+        parts = content.split("---")
+        assert len(parts) >= 3, "SKILL.md should have frontmatter"
+        frontmatter = parts[1]
+        assert "description:" in frontmatter
+
     def test_invalid_name_raises(self, tmp_path):
         """Invalid name raises ValueError."""
         with pytest.raises(ValueError, match="Invalid skill name"):
