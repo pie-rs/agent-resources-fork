@@ -16,6 +16,11 @@ keywords:
 
 # Get Started with agr
 
+!!! tldr
+    `uv tool install agr` → `cd your-project` → `agr add anthropics/skills/frontend-design`
+    → use `/frontend-design` in your AI tool. Share via `agr.toml` in git;
+    teammates run `agr sync`. Create your own: `agr init my-skill`.
+
 This tutorial walks you through a complete workflow — installing agr, adding
 skills to a project, syncing with a team, and creating your own skill. By the
 end you'll understand how all the pieces fit together.
