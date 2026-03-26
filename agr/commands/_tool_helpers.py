@@ -110,16 +110,28 @@ def validate_tool_names(tool_names: list[str]) -> None:
         raise SystemExit(1)
 
 
-def normalize_and_validate_tool_names(tool_names: list[str]) -> list[str]:
+def normalize_and_validate_tool_names(
+    tool_names: list[str],
+    *,
+    allow_empty: bool = False,
+) -> list[str]:
     """Normalize, deduplicate, and validate tool names in one step.
 
     Combines the normalize → deduplicate → validate pipeline that is
     repeated across tool-management commands.
 
+    Args:
+        tool_names: Raw tool name strings from user input.
+        allow_empty: If False (default), exits with an error when no
+            valid tool names remain after normalization.
+
     Returns:
         Deduplicated list of validated, normalized tool names.
     """
     names = list(dict.fromkeys(normalize_tool_names(tool_names)))
+    if not allow_empty and not names:
+        print_error("At least one tool name is required.")
+        raise SystemExit(1)
     validate_tool_names(names)
     return names
 

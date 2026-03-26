@@ -83,10 +83,6 @@ def run_tools_set(tool_names: list[str]) -> None:
     """Replace configured tools with the provided list."""
     console = get_console()
     names = normalize_and_validate_tool_names(tool_names)
-    if not names:
-        print_error("Cannot set empty tools list.")
-        console.print("[dim]At least one tool must be configured.[/dim]")
-        raise SystemExit(1)
     config = _load_required_config()
 
     previous_tools = list(config.tools)
@@ -159,9 +155,6 @@ def run_default_tool_set(tool_name: str) -> None:
     """Set default_tool in agr.toml."""
     console = get_console()
     names = normalize_and_validate_tool_names([tool_name])
-    if not names:
-        print_error("Tool name is required.")
-        raise SystemExit(1)
     name = names[0]
     config = _load_required_config()
 

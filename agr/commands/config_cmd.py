@@ -168,13 +168,7 @@ def run_config_set(key: str, values: list[str], global_scope: bool) -> None:
         raise SystemExit(1)
 
     if key == "tools":
-        if not values:
-            print_error("At least one tool is required.")
-            raise SystemExit(1)
         names = normalize_and_validate_tool_names(values)
-        if not names:
-            print_error("At least one tool is required.")
-            raise SystemExit(1)
         previous_default = config.default_tool
         previous_tools = list(config.tools)
         config.tools = names
@@ -200,9 +194,6 @@ def run_config_set(key: str, values: list[str], global_scope: bool) -> None:
 
     if key == "default_tool":
         names = normalize_and_validate_tool_names([value])
-        if not names:
-            print_error("Tool name is required.")
-            raise SystemExit(1)
         name = names[0]
         if name not in config.tools:
             print_error(
@@ -319,9 +310,6 @@ def run_config_add(
         raise SystemExit(1)
 
     if key == "tools":
-        if not values:
-            print_error("At least one tool name is required.")
-            raise SystemExit(1)
         names = normalize_and_validate_tool_names(values)
 
         added: list[str] = []
@@ -385,9 +373,6 @@ def run_config_remove(key: str, values: list[str], global_scope: bool) -> None:
         raise SystemExit(1)
 
     if key == "tools":
-        if not values:
-            print_error("At least one tool name is required.")
-            raise SystemExit(1)
         names = normalize_and_validate_tool_names(values)
 
         remaining = [t for t in config.tools if t not in names]
