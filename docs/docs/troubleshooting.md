@@ -321,15 +321,17 @@ agr add ./my-skill
 Error: Invalid skill name 'my skill': must be alphanumeric with hyphens/underscores
 ```
 
-Skill names must be lowercase letters, numbers, and hyphens only. No spaces or special characters:
+Skill names must be alphanumeric with hyphens or underscores, and must start with a letter or number. No spaces or special characters:
 
 ```bash
 # Wrong
 agr init "my skill"
-agr init My_Skill!
+agr init "My Skill!"
 
 # Right
 agr init my-skill
+agr init my_skill
+agr init MySkill
 ```
 
 ### "Directory already exists"
