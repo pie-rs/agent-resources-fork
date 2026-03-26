@@ -1,10 +1,14 @@
 ---
-title: What's New
-description: User-facing changes in each agr release — new features, fixes, and breaking changes.
+title: "agr Changelog — New Features, Fixes, and Breaking Changes by Release"
+description: User-facing changes in each agr release — new features, bug fixes, and breaking changes for the AI agent skill manager.
 keywords:
   - agr changelog
   - agr release notes
+  - agr new features
+  - agr breaking changes
+  - agr version history
   - agr updates
+  - what's new in agr
 ---
 
 # What's New
