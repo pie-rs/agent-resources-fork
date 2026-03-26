@@ -57,8 +57,8 @@ class TestDetectInstructionFiles:
         (tmp_path / "AGENTS.md").write_text("b")
         (tmp_path / "GEMINI.md").write_text("c")
         assert detect_instruction_files(tmp_path) == [
-            "CLAUDE.md",
             "AGENTS.md",
+            "CLAUDE.md",
             "GEMINI.md",
         ]
 
