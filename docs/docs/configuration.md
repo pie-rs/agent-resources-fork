@@ -12,10 +12,15 @@ keywords:
 
 # Configuration
 
+!!! tldr
+    `agr.toml` is your skill manifest. Key settings: **tools** (which AI tools
+    to sync to), **sources** (where to fetch skills from), **sync_instructions**
+    (keep `CLAUDE.md`/`AGENTS.md`/`GEMINI.md` aligned). Use `agr config` to
+    manage everything from the CLI. Add `-g` for global config at `~/.agr/agr.toml`.
+
 agr uses `agr.toml` for project-level configuration and `~/.agr/agr.toml` for
 global configuration. For an overview of how config fits into agr's architecture,
-see [Core Concepts](concepts.md). This page covers multi-tool setup, custom
-sources, instruction syncing, and global installs.
+see [Core Concepts](concepts.md).
 
 ## Multi-Tool Setup
 
