@@ -1,12 +1,15 @@
 ---
-title: Troubleshooting
-description: Fix common agr problems — installation errors, GitHub auth, sync failures, and skill conflicts.
+title: "Fix agr Errors — Troubleshooting Installs, Auth, Sync, Handles, and Skills"
+description: Fix common agr problems — installation errors, GitHub auth, sync failures, handle formats, skill conflicts, and configuration issues.
 keywords:
   - agr troubleshooting
-  - agr errors
-  - GitHub authentication
-  - skill sync failures
-  - agr not working
+  - agr error messages
+  - fix agr not working
+  - GitHub authentication failed agr
+  - agr sync not working
+  - skill not found agr
+  - agr.toml errors
+  - agr handle format
 ---
 
 # Troubleshooting
