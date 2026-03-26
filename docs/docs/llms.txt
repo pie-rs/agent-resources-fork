@@ -2,7 +2,7 @@
 
 > A package manager for AI agent skills. Install, share, and run skills across Claude Code, Cursor, Codex, OpenCode, Copilot, and Antigravity with a single command.
 
-For the complete documentation in a single file, see [llms-full.txt](https://agentskills.io/llms-full.txt).
+For the complete documentation in a single file, see [llms-full.txt](https://kasperjunge.github.io/agent-resources/llms-full.txt).
 
 ## Quick Start
 
@@ -20,25 +20,25 @@ agrx anthropics/skills/pdf -p "Extract tables from report.pdf"
 ## Documentation Map
 
 ### Getting Started
-- [Home](https://agentskills.io/) — Install agr, add your first skill, and see what's available
-- [Tutorial](https://agentskills.io/tutorial/) — Step-by-step guide from install to sharing your own skill
-- [Core Concepts](https://agentskills.io/concepts/) — How skills, handles, sources, and scopes work
+- [Home](https://kasperjunge.github.io/agent-resources/) — Install agr, add your first skill, and see what's available
+- [Tutorial](https://kasperjunge.github.io/agent-resources/tutorial/) — Step-by-step guide from install to sharing your own skill
+- [Core Concepts](https://kasperjunge.github.io/agent-resources/concepts/) — How skills, handles, sources, and scopes work
 
 ### Guides
-- [Supported Tools](https://agentskills.io/tools/) — Claude Code, Cursor, Codex, OpenCode, Copilot, Antigravity
-- [Skill Directory](https://agentskills.io/skills/) — Browse official and community skills
-- [Teams](https://agentskills.io/teams/) — Set up agr for a team with shared skills and CI/CD
-- [Configuration](https://agentskills.io/configuration/) — Multi-tool setup, custom sources, instruction syncing
-- [agrx](https://agentskills.io/agrx/) — Run skills ephemerally without installing
+- [Supported Tools](https://kasperjunge.github.io/agent-resources/tools/) — Claude Code, Cursor, Codex, OpenCode, Copilot, Antigravity
+- [Skill Directory](https://kasperjunge.github.io/agent-resources/skills/) — Browse official and community skills
+- [Teams](https://kasperjunge.github.io/agent-resources/teams/) — Set up agr for a team with shared skills and CI/CD
+- [Configuration](https://kasperjunge.github.io/agent-resources/configuration/) — Multi-tool setup, custom sources, instruction syncing
+- [agrx](https://kasperjunge.github.io/agent-resources/agrx/) — Run skills ephemerally without installing
 
 ### Building Skills
-- [Creating Skills](https://agentskills.io/creating/) — Write, test, and publish AI agent skills
-- [Python SDK](https://agentskills.io/sdk/) — Use agr as a library to load and inspect skills
+- [Creating Skills](https://kasperjunge.github.io/agent-resources/creating/) — Write, test, and publish AI agent skills
+- [Python SDK](https://kasperjunge.github.io/agent-resources/sdk/) — Use agr as a library to load and inspect skills
 
 ### Reference
-- [CLI Reference](https://agentskills.io/reference/) — Every command, flag, and config option
-- [Troubleshooting](https://agentskills.io/troubleshooting/) — Common errors and how to fix them
-- [What's New](https://agentskills.io/changelog/) — Release notes and breaking changes
+- [CLI Reference](https://kasperjunge.github.io/agent-resources/reference/) — Every command, flag, and config option
+- [Troubleshooting](https://kasperjunge.github.io/agent-resources/troubleshooting/) — Common errors and how to fix them
+- [What's New](https://kasperjunge.github.io/agent-resources/changelog/) — Release notes and breaking changes
 
 ## Common Commands
 
