@@ -1,12 +1,17 @@
 ---
-title: Skill Directory
-description: Browse official and community AI agent skills available for agr — code review, testing, docs, and more.
+title: "Skill Directory — Browse and Install AI Agent Skills for Claude Code, Cursor, and Codex"
+description: Browse official and community AI agent skills available for agr — PDF, frontend design, API integration, Go, Drupal, and more. Install any skill with one command.
 keywords:
   - agr skill directory
   - AI agent skills list
-  - community skills
-  - code review skill
-  - testing skill
+  - browse AI agent skills
+  - Claude Code skills directory
+  - Cursor skills directory
+  - install AI coding skills
+  - PDF skill agr
+  - frontend design skill
+  - community AI skills
+  - SKILL.md
 ---
 
 # Skill Directory
