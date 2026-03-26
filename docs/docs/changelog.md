@@ -61,8 +61,8 @@ manual steps needed.
 
 - `agr config unset tools` no longer crashes when `default_tool` is set to a
   tool outside the default list. The default is now cleared automatically.
-- `agr cache info` now counts unique skills instead of counting each cached
-  revision separately.
+- The SDK's `cache.info()` now counts unique skills instead of counting each
+  cached revision separately.
 - Cache operations no longer reject valid skill names that happen to contain
   path-like characters (e.g., names with dots).
 
