@@ -9,6 +9,7 @@ from agr.console import get_console, print_error
 from agr.commands._tool_helpers import (
     delete_tool_skills,
     ensure_valid_default_tool,
+    normalize_and_validate_tool_names,
     normalize_tool_names,
     sync_dependencies_to_tools,
     validate_tool_names,
@@ -52,8 +53,7 @@ def run_tools_list() -> None:
 def run_tools_add(tool_names: list[str]) -> None:
     """Add tools and sync existing dependencies to newly added tools."""
     console = get_console()
-    names = list(dict.fromkeys(normalize_tool_names(tool_names)))
-    validate_tool_names(names)
+    names = normalize_and_validate_tool_names(tool_names)
 
     config = _load_required_config()
 
@@ -84,13 +84,11 @@ def run_tools_add(tool_names: list[str]) -> None:
 def run_tools_set(tool_names: list[str]) -> None:
     """Replace configured tools with the provided list."""
     console = get_console()
-    names = list(dict.fromkeys(normalize_tool_names(tool_names)))
+    names = normalize_and_validate_tool_names(tool_names)
     if not names:
         print_error("Cannot set empty tools list.")
         console.print("[dim]At least one tool must be configured.[/dim]")
         raise SystemExit(1)
-
-    validate_tool_names(names)
     config = _load_required_config()
 
     previous_tools = list(config.tools)
@@ -123,8 +121,7 @@ def run_tools_set(tool_names: list[str]) -> None:
 def run_tools_remove(tool_names: list[str]) -> None:
     """Remove tools from configuration and delete their installed skills."""
     console = get_console()
-    names = list(dict.fromkeys(normalize_tool_names(tool_names)))
-    validate_tool_names(names)
+    names = normalize_and_validate_tool_names(tool_names)
 
     config = _load_required_config()
     previous_default_tool = config.default_tool

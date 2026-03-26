@@ -29,6 +29,20 @@ def validate_tool_names(tool_names: list[str]) -> None:
         raise SystemExit(1)
 
 
+def normalize_and_validate_tool_names(tool_names: list[str]) -> list[str]:
+    """Normalize, deduplicate, and validate tool names in one step.
+
+    Combines the normalize → deduplicate → validate pipeline that is
+    repeated across tool-management commands.
+
+    Returns:
+        Deduplicated list of validated, normalized tool names.
+    """
+    names = list(dict.fromkeys(normalize_tool_names(tool_names)))
+    validate_tool_names(names)
+    return names
+
+
 def sync_dependencies_to_tools(config: AgrConfig, tool_names: list[str]) -> int:
     """Install existing dependencies into newly added tools.
 

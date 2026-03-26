@@ -15,6 +15,7 @@ from agr.config import (
 from agr.commands._tool_helpers import (
     delete_tool_skills,
     ensure_valid_default_tool,
+    normalize_and_validate_tool_names,
     normalize_tool_names,
     sync_dependencies_to_tools,
     validate_tool_names,
@@ -160,11 +161,10 @@ def run_config_set(key: str, values: list[str], global_scope: bool) -> None:
         if not values:
             print_error("At least one tool is required.")
             raise SystemExit(1)
-        names = list(dict.fromkeys(normalize_tool_names(values)))
+        names = normalize_and_validate_tool_names(values)
         if not names:
             print_error("At least one tool is required.")
             raise SystemExit(1)
-        validate_tool_names(names)
         previous_default = config.default_tool
         previous_tools = list(config.tools)
         config.tools = names
@@ -310,8 +310,7 @@ def run_config_add(
         if not values:
             print_error("At least one tool name is required.")
             raise SystemExit(1)
-        names = list(dict.fromkeys(normalize_tool_names(values)))
-        validate_tool_names(names)
+        names = normalize_and_validate_tool_names(values)
 
         added: list[str] = []
         skipped: list[str] = []
@@ -383,8 +382,7 @@ def run_config_remove(key: str, values: list[str], global_scope: bool) -> None:
         if not values:
             print_error("At least one tool name is required.")
             raise SystemExit(1)
-        names = list(dict.fromkeys(normalize_tool_names(values)))
-        validate_tool_names(names)
+        names = normalize_and_validate_tool_names(values)
 
         remaining = [t for t in config.tools if t not in names]
         if not remaining:
