@@ -10,6 +10,11 @@ keywords:
 
 # agrx — Run Skills Without Installing
 
+!!! tldr
+    `agrx` downloads a skill, runs it with your AI tool's CLI, and cleans up
+    afterwards. Nothing is added to `agr.toml`. Use it to try skills before
+    committing to an install.
+
 `agrx` is an ephemeral skill runner. It downloads a [skill](concepts.md#skills)
 from GitHub, runs it with your AI coding tool's CLI, and cleans up afterwards.
 Nothing is added to [`agr.toml`](configuration.md).
