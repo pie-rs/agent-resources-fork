@@ -1,12 +1,8 @@
 # Agent Resources (agr)
 
-> A package and project manager for AI agent skills.
+> A package manager for AI agent skills. Install, share, and run skills across Claude Code, Cursor, Codex, OpenCode, Copilot, and Antigravity with a single command.
 
-For the complete documentation in a single file, see [llms-full.txt](https://kasperjunge.github.io/agent-resources/llms-full.txt).
-
-## What This Is
-
-agr is a CLI tool that lets developers install, share, and manage AI agent skills from GitHub.
+For the complete documentation in a single file, see [llms-full.txt](https://agentskills.io/llms-full.txt).
 
 ## Quick Start
 
@@ -21,11 +17,26 @@ Run once without installing:
 agrx anthropics/skills/pdf -p "Extract tables from report.pdf"
 ```
 
-## Key Pages
+## Documentation Map
 
-- [Home](https://kasperjunge.github.io/agent-resources/) - Install and use skills
-- [Creating Skills](https://kasperjunge.github.io/agent-resources/creating/) - Author your own
-- [Reference](https://kasperjunge.github.io/agent-resources/reference/) - CLI commands and troubleshooting
+### Getting Started
+- [Home](https://agentskills.io/) — Install agr, add your first skill, and see what's available
+- [Tutorial](https://agentskills.io/tutorial/) — Step-by-step guide from install to sharing your own skill
+- [Core Concepts](https://agentskills.io/concepts/) — How skills, handles, sources, and scopes work
+
+### Guides
+- [Creating Skills](https://agentskills.io/creating/) — Write, test, and publish AI agent skills
+- [Teams](https://agentskills.io/teams/) — Set up agr for a team with shared skills and CI/CD
+- [Supported Tools](https://agentskills.io/tools/) — Claude Code, Cursor, Codex, OpenCode, Copilot, Antigravity
+- [Configuration](https://agentskills.io/configuration/) — Multi-tool setup, custom sources, instruction syncing
+- [agrx](https://agentskills.io/agrx/) — Run skills ephemerally without installing
+
+### Reference
+- [CLI Reference](https://agentskills.io/reference/) — Every command, flag, and config option
+- [Python SDK](https://agentskills.io/sdk/) — Use agr as a library to load and inspect skills
+- [Skill Directory](https://agentskills.io/skills/) — Browse official and community skills
+- [Troubleshooting](https://agentskills.io/troubleshooting/) — Common errors and how to fix them
+- [What's New](https://agentskills.io/changelog/) — Release notes and breaking changes
 
 ## Common Commands
 
@@ -34,32 +45,26 @@ agr add user/skill         # Install from GitHub
 agr add user/repo/skill    # From a specific repo
 agr add ./path/to/skill    # Local path
 agr remove user/skill      # Uninstall
-agr sync                   # Install all dependencies
+agr sync                   # Install all dependencies from agr.toml
 agr list                   # Show installed skills
-agr init                   # Create agr.toml (auto-discovery)
-agr init my-skill          # Create a skill scaffold
-agrx user/skill            # Run temporarily
+agr init                   # Create agr.toml (auto-detects tools)
+agr init my-skill          # Scaffold a new skill
+agrx user/skill            # Run a skill temporarily
 agrx user/skill -i         # Run, then continue chatting
 ```
 
-## agr.toml Dependencies
+## Handle Format
 
-Each dependency includes a `type`:
-
-```toml
-dependencies = [
-    {handle = "user/skill", type = "skill"},
-    {path = "./skills/my-skill", type = "skill"},
-]
+```
+user/skill              → github.com/user/skills repo, "skill" directory
+user/repo/skill         → github.com/user/repo repo, "skill" directory
+./path/to/skill         → local directory on disk
 ```
 
 ## Source Code
 
 - GitHub: https://github.com/kasperjunge/agent-resources
 - PyPI: https://pypi.org/project/agr/
-
-## Related
-
 - Skills Specification: https://agentskills.io/specification
 - Example Skills: https://github.com/anthropics/skills
 
