@@ -159,10 +159,19 @@ Install all dependencies from `agr.toml`.
 
 ```bash
 agr sync
-agr sync -g
 ```
 
-Installs any skills listed in `agr.toml` that aren't already installed.
+```text
+Up to date: anthropics/skills/frontend-design
+Up to date: anthropics/skills/pdf
+Installed: kasperjunge/commit
+
+Summary: 2 up to date, 1 installed
+```
+
+**Options:**
+
+- `--global`, `-g` — Sync global dependencies from `~/.agr/agr.toml`
 
 ### agr list
 
@@ -170,10 +179,22 @@ Show all skills and their installation status.
 
 ```bash
 agr list
-agr list -g
 ```
 
-Displays skills from `agr.toml` and whether they're installed.
+```text
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━┓
+┃ Skill                             ┃ Type   ┃ Status    ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━┩
+│ anthropics/skills/frontend-design │ remote │ installed │
+│ anthropics/skills/pdf             │ remote │ installed │
+│ kasperjunge/commit                │ remote │ installed │
+│ ./skills/local-skill              │ local  │ installed │
+└───────────────────────────────────┴────────┴───────────┘
+```
+
+**Options:**
+
+- `--global`, `-g` — List global skills from `~/.agr/agr.toml`
 
 ### agr init
 
@@ -228,6 +249,41 @@ agr onboard --no-migrate   # Skip migration prompts
 ### agr config
 
 Manage `agr.toml` configuration.
+
+```bash
+agr config show
+```
+
+```text
+Config: /Users/you/project/agr.toml
+
+  tools             = claude, codex, opencode
+  default_tool      = claude
+  default_source    = github
+  sync_instructions = true
+  canonical_instructions = CLAUDE.md
+
+Sources:
+  - github  https://github.com/{owner}/{repo}.git (default)
+```
+
+```bash
+agr config path
+```
+
+```text
+/Users/you/project/agr.toml
+```
+
+```bash
+agr config get tools
+```
+
+```text
+claude codex opencode
+```
+
+**All subcommands:**
 
 ```bash
 agr config show                              # View formatted config
