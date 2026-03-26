@@ -31,24 +31,34 @@ with at least one [supported AI tool](tools.md)
 agr init my-skill
 ```
 
-Creates `my-skill/SKILL.md` in your current directory:
+Creates `my-skill/SKILL.md` with a starter template:
 
-```
-my-skill/
-└── SKILL.md
+```markdown
+---
+name: my-skill
+description: TODO — describe what this skill does and when to use it
+---
+
+# my-skill
+
+## When to use
+
+Describe when this skill should be used.
+
+## Instructions
+
+Provide detailed instructions here.
 ```
 
 If you're adding the skill to this repo, place it under `./skills/`:
 
-```
-skills/
-└── my-skill/
-    └── SKILL.md
+```bash
+agr init skills/my-skill
 ```
 
 From there you can:
 
-1. Write the instructions in `SKILL.md`
+1. Edit the `description` and body in `SKILL.md`
 2. Add the skill to your tool with `agr add ./skills/my-skill`
 3. Add it to `agr.toml` for team sync (see below)
 
