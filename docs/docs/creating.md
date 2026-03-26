@@ -1,5 +1,6 @@
 ---
 title: Creating Skills
+description: How to create, test, and publish your own AI agent skills for agr.
 ---
 
 # Creating Skills

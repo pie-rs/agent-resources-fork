@@ -1,5 +1,6 @@
 ---
 title: Core Concepts
+description: Understand how agr works — skills, handles, sources, and the sync lifecycle that keeps your AI tools in sync.
 ---
 
 # Core Concepts

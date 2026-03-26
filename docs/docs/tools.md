@@ -1,5 +1,6 @@
 ---
 title: Supported Tools
+description: How agr installs skills into Claude Code, Cursor, Codex, GitHub Copilot, Open Code, and Antigravity.
 ---
 
 # Supported Tools

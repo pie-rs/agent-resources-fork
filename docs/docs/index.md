@@ -1,5 +1,6 @@
 ---
 title: Home
+description: A package manager for AI agent skills. Install, share, and run skills across Claude Code, Cursor, Codex, Copilot, and more.
 hide:
   - navigation
   - toc

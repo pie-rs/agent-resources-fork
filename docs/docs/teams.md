@@ -1,5 +1,6 @@
 ---
 title: Teams
+description: Set up agr for your team so everyone shares the same AI agent skills and stays in sync.
 ---
 
 # Teams

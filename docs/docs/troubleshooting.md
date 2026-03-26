@@ -1,5 +1,6 @@
 ---
 title: Troubleshooting
+description: Fix common agr problems — installation errors, GitHub auth, sync failures, and skill conflicts.
 ---
 
 # Troubleshooting

@@ -1,5 +1,6 @@
 ---
 title: What's New
+description: User-facing changes in each agr release — new features, fixes, and breaking changes.
 ---
 
 # What's New
