@@ -1,15 +1,20 @@
 ---
-title: Tutorial
-description: Step-by-step guide to installing agr, adding skills, syncing with a team, and creating your own AI agent skill.
+title: "Get Started with agr: Install, Add, and Share AI Agent Skills"
+description: Step-by-step quickstart for agr — install the CLI, add your first AI agent skill, sync skills across a team, and create your own skill in 10 minutes.
 keywords:
   - agr tutorial
   - install agr
-  - add AI agent skill
-  - getting started with agr
   - agr quickstart
+  - how to add AI agent skill
+  - getting started with agr
+  - agr getting started guide
+  - manage AI coding agent skills
+  - share skills across team
+  - create custom AI skill
+  - agr add skill example
 ---
 
-# Tutorial: From Zero to Sharing Skills
+# Get Started with agr
 
 This tutorial walks you through a complete workflow — installing agr, adding
 skills to a project, syncing with a team, and creating your own skill. By the
