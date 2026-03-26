@@ -233,6 +233,11 @@ To stop syncing to a tool:
 agr config remove tools cursor
 ```
 
+!!! warning "This deletes installed skills"
+    Removing a tool also deletes all skills from that tool's skills directory
+    (e.g., `.cursor/skills/`). The skills remain installed in your other
+    configured tools and can be reinstalled with `agr config add tools cursor`.
+
 ??? note "How agr auto-detects your tools"
     When you run `agr init` or `agr onboard`, agr detects which tools you use
     by looking for their config directories and instruction files in your repo
