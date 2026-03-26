@@ -12,6 +12,12 @@ keywords:
 
 # Core Concepts
 
+!!! tldr
+    agr has five building blocks: **skills** (folders with a `SKILL.md`),
+    **handles** (like `user/skill`) to reference them, **tools** (Claude Code,
+    Cursor, etc.) that consume them, **sources** (where to fetch from), and
+    **scopes** (local per-project vs global). `agr.toml` ties it all together.
+
 This page explains the building blocks of agr. Read it after the
 [Tutorial](tutorial.md) to understand *why* things work the way they do, or
 skim it before diving into [Configuration](configuration.md).
@@ -69,7 +75,10 @@ Local handles point to a skill directory on your filesystem. They're useful
 for testing skills before publishing or for project-specific skills that don't
 need a remote repo.
 
-### How resolution works
+### How handle resolution works
+
+agr clones the repo, searches for a matching `SKILL.md` directory, and copies
+it into your tool's skills folder.
 
 When you run `agr add user/repo/skill`:
 
@@ -264,23 +273,26 @@ See [agrx](agrx.md) for full details.
 
 ## What Happens When You Install
 
-Here's the full flow when you run `agr add anthropics/skills/pdf`:
+When you run `agr add anthropics/skills/pdf`, agr parses the handle, clones
+the repo (sparse checkout), finds the `pdf/SKILL.md` directory, copies it into
+each configured tool's skills folder, and updates `agr.toml`.
 
-1. **Parse the handle** — `anthropics` is the owner, `skills` is the repo,
-   `pdf` is the skill name
-2. **Load config** — Read `agr.toml` (or create it) to find configured tools
-   and sources
-3. **Clone the repo** — Sparse-checkout `github.com/anthropics/skills`
-4. **Find the skill** — Recursively search for a directory named `pdf`
-   containing `SKILL.md`
-5. **Install to each tool** — Copy the skill directory to each configured
-   tool's skills folder (e.g., `.claude/skills/pdf/`, `.cursor/skills/pdf/`)
-6. **Write metadata** — Save `.agr.json` in each installed copy with the
-   source handle, revision, and content hash
-7. **Update agr.toml** — Add the dependency to the manifest
+??? note "Full install flow (7 steps)"
+    1. **Parse the handle** — `anthropics` is the owner, `skills` is the repo,
+       `pdf` is the skill name
+    2. **Load config** — Read `agr.toml` (or create it) to find configured tools
+       and sources
+    3. **Clone the repo** — Sparse-checkout `github.com/anthropics/skills`
+    4. **Find the skill** — Recursively search for a directory named `pdf`
+       containing `SKILL.md`
+    5. **Install to each tool** — Copy the skill directory to each configured
+       tool's skills folder (e.g., `.claude/skills/pdf/`, `.cursor/skills/pdf/`)
+    6. **Write metadata** — Save `.agr.json` in each installed copy with the
+       source handle, revision, and content hash
+    7. **Update agr.toml** — Add the dependency to the manifest
 
-If any tool's install fails, already-installed copies are rolled back
-automatically.
+    If any tool's install fails, already-installed copies are rolled back
+    automatically.
 
 ---
 
