@@ -1,6 +1,6 @@
 ---
 title: "AGR — A Package Manager for AI Agent Skills"
-description: A package manager for AI agent skills. Install, share, and run skills across Claude Code, Cursor, Codex, Copilot, and more.
+description: A package manager for AI agent skills. Install, share, and run skills across Claude Code, Cursor, Codex, OpenCode, Copilot, and Antigravity.
 keywords:
   - agr
   - AI agent skills
@@ -9,6 +9,9 @@ keywords:
   - Claude Code skills
   - Cursor skills
   - Codex skills
+  - OpenCode skills
+  - GitHub Copilot skills
+  - Antigravity skills
   - skill manager
 hide:
   - navigation

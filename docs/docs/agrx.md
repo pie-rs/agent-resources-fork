@@ -1,6 +1,6 @@
 ---
 title: "agrx — Try AI Agent Skills Without Installing Them"
-description: Use agrx to download and run AI agent skills ephemerally in Claude Code, Cursor, or Codex — no agr.toml changes, no cleanup needed.
+description: Use agrx to download and run AI agent skills ephemerally in Claude Code, Cursor, Codex, OpenCode, Copilot, or Antigravity — no agr.toml changes, no cleanup needed.
 keywords:
   - agrx
   - try AI skills without installing
@@ -11,6 +11,8 @@ keywords:
   - agrx interactive mode
   - agrx vs agr add
   - run skill temporarily
+  - agrx OpenCode
+  - agrx Copilot
 ---
 
 # agrx — Run Skills Without Installing

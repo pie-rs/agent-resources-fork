@@ -1,6 +1,6 @@
 ---
 title: How to Share AI Agent Skills Across a Team
-description: Set up agr so your team shares the same AI coding agent skills across Claude Code, Cursor, and Codex — with agr.toml as a single source of truth.
+description: Set up agr so your team shares the same AI coding agent skills across Claude Code, Cursor, Codex, OpenCode, Copilot, and Antigravity — with agr.toml as a single source of truth.
 keywords:
   - share AI agent skills
   - team AI coding tools
@@ -8,6 +8,9 @@ keywords:
   - AI agent skill management
   - Claude Code team setup
   - Cursor team skills
+  - Codex team skills
+  - OpenCode team skills
+  - Copilot team skills
   - agr team sync
   - CI/CD AI agent skills
   - private AI skills GitHub
