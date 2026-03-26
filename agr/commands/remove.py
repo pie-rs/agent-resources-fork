@@ -14,7 +14,7 @@ from agr.console import get_console, print_error
 from agr.exceptions import INSTALL_ERROR_TYPES, format_install_error
 from agr.fetcher import uninstall_skill
 from agr.handle import ParsedHandle, parse_handle
-from agr.tool import build_global_skills_dirs
+from agr.tool import build_global_skills_dirs, lookup_skills_dir
 
 
 def _identifier_candidates(
@@ -107,15 +107,12 @@ def run_remove(refs: list[str], global_install: bool = False) -> None:
             # Remove from filesystem for all configured tools
             removed_fs = False
             for tool in tools:
-                target_skills_dir = (
-                    skills_dirs.get(tool.name) if skills_dirs is not None else None
-                )
                 if uninstall_skill(
                     handle,
                     repo_root,
                     tool,
                     source_name,
-                    skills_dir=target_skills_dir,
+                    skills_dir=lookup_skills_dir(skills_dirs, tool),
                 ):
                     removed_fs = True
 

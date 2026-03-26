@@ -9,7 +9,7 @@ from agr.console import get_console
 from agr.exceptions import AgrError, InvalidHandleError
 from agr.fetcher import is_skill_installed
 from agr.handle import ParsedHandle
-from agr.tool import ToolConfig, build_global_skills_dirs
+from agr.tool import ToolConfig, build_global_skills_dirs, lookup_skills_dir
 
 
 def _get_installation_status(
@@ -39,7 +39,7 @@ def _get_installation_status(
             repo_root,
             tool,
             source,
-            skills_dir=skills_dirs.get(tool.name) if skills_dirs is not None else None,
+            skills_dir=lookup_skills_dir(skills_dirs, tool),
         )
     ]
 

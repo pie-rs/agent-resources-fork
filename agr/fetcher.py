@@ -46,7 +46,7 @@ from agr.source import (
     SourceConfig,
     SourceResolver,
 )
-from agr.tool import DEFAULT_TOOL, ToolConfig
+from agr.tool import DEFAULT_TOOL, ToolConfig, lookup_skills_dir
 
 logger = logging.getLogger(__name__)
 
@@ -712,9 +712,6 @@ def fetch_and_install_to_tools(
         # Local: no download needed, just iterate with rollback
         with _rollback_on_failure() as installed:
             for tool in tools:
-                target_skills_dir = (
-                    skills_dirs.get(tool.name) if skills_dirs is not None else None
-                )
                 installed[tool.name] = fetch_and_install(
                     handle,
                     repo_root,
@@ -722,7 +719,7 @@ def fetch_and_install_to_tools(
                     overwrite,
                     resolver,
                     source,
-                    skills_dir=target_skills_dir,
+                    skills_dir=lookup_skills_dir(skills_dirs, tool),
                 )
         return installed
 
@@ -732,10 +729,9 @@ def fetch_and_install_to_tools(
     with _rollback_on_failure() as installed:
         with _locate_remote_skill(handle, resolver, source) as loc:
             for tool in tools:
-                explicit_dir = (
-                    skills_dirs.get(tool.name) if skills_dirs is not None else None
+                skills_dir = _resolve_skills_dir(
+                    lookup_skills_dir(skills_dirs, tool), repo_root, tool
                 )
-                skills_dir = _resolve_skills_dir(explicit_dir, repo_root, tool)
                 path = install_skill_from_repo(
                     loc.repo_dir,
                     handle.name,
@@ -949,6 +945,6 @@ def filter_tools_needing_install(
             repo_root,
             tool,
             source_name,
-            skills_dir=skills_dirs.get(tool.name) if skills_dirs else None,
+            skills_dir=lookup_skills_dir(skills_dirs, tool),
         )
     ]

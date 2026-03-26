@@ -179,6 +179,16 @@ DEFAULT_TOOL_NAMES: list[str] = ["claude"]
 DEFAULT_TOOL = CLAUDE
 
 
+def lookup_skills_dir(
+    skills_dirs: dict[str, Path] | None, tool: ToolConfig
+) -> Path | None:
+    """Look up a tool's explicit skills directory from an optional mapping.
+
+    Returns None when no override exists for the given tool.
+    """
+    return skills_dirs.get(tool.name) if skills_dirs is not None else None
+
+
 def build_global_skills_dirs(tools: list[ToolConfig]) -> dict[str, Path]:
     """Build a mapping of tool name to global skills directory.
 
