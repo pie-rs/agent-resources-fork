@@ -10,6 +10,7 @@ from tomlkit.exceptions import TOMLKitError
 
 from agr.exceptions import ConfigError
 from agr.handle import ParsedHandle, parse_handle
+from agr.instructions import INSTRUCTION_FILES
 from agr.source import (
     DEFAULT_SOURCE_NAME,
     SourceConfig,
@@ -24,13 +25,10 @@ from agr.tool import (
     get_tool,
 )
 
-VALID_CANONICAL_INSTRUCTIONS = {"AGENTS.md", "CLAUDE.md", "GEMINI.md"}
-
-
 def validate_canonical_instructions(value: str) -> None:
     """Raise ConfigError if *value* is not a valid canonical instructions file."""
-    if value not in VALID_CANONICAL_INSTRUCTIONS:
-        valid = ", ".join(f"'{v}'" for v in sorted(VALID_CANONICAL_INSTRUCTIONS))
+    if value not in INSTRUCTION_FILES:
+        valid = ", ".join(f"'{v}'" for v in sorted(INSTRUCTION_FILES))
         raise ConfigError(f"canonical_instructions must be one of: {valid}")
 
 
