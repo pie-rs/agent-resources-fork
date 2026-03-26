@@ -42,7 +42,7 @@ class TestToolConfig:
         # Each tool has its own force flag
         assert CLAUDE.cli_force_flag == "--dangerously-skip-permissions"
         assert CURSOR.cli_force_flag == "--force"
-        assert CODEX.cli_force_flag is None
+        assert CODEX.cli_force_flag == "--full-auto"
         assert OPENCODE.cli_force_flag is None
         assert COPILOT.cli_force_flag == "--allow-all-tools"
         assert ANTIGRAVITY.cli_force_flag is None
