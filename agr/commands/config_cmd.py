@@ -247,7 +247,9 @@ def run_config_unset(key: str, global_scope: bool) -> None:
         raise SystemExit(1)
 
     if key == "tools":
+        previous_default = config.default_tool
         config.tools = list(DEFAULT_TOOL_NAMES)
+        ensure_valid_default_tool(config, previous_default)
         config.save()
         console.print(f"[green]Reset:[/green] tools = {', '.join(DEFAULT_TOOL_NAMES)}")
         return
