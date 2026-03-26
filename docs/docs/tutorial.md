@@ -98,10 +98,16 @@ Next: agr add <handle> or agr onboard
     Run `agr onboard` instead. It walks you through tool selection, skill
     discovery, and configuration interactively.
 
-Your `agr.toml` starts mostly empty:
+Your `agr.toml` starts with the defaults and an empty dependency list:
 
 ```toml
+default_source = "github"
 dependencies = []
+
+[[source]]
+name = "github"
+type = "git"
+url = "https://github.com/{owner}/{repo}.git"
 ```
 
 ---
