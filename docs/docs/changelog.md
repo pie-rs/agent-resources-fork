@@ -30,6 +30,15 @@ follows them:
 automatically moves existing skills from the old directories to the new ones. No
 manual steps needed.
 
+### Bug fixes
+
+- `agr config unset tools` no longer crashes when `default_tool` is set to a
+  tool outside the default list. The default is now cleared automatically.
+- `agr cache info` now counts unique skills instead of counting each cached
+  revision separately.
+- Cache operations no longer reject valid skill names that happen to contain
+  path-like characters (e.g., names with dots).
+
 ---
 
 ## 0.7.9 — 2026-03-05
