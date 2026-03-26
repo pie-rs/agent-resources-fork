@@ -56,6 +56,20 @@ extra:
       link: https://github.com/kasperjunge/agent-resources
       name: Agent Resources on GitHub
   generator: false
+  analytics:
+    feedback:
+      title: Was this page helpful?
+      ratings:
+        - icon: material/thumb-up-outline
+          name: This page was helpful
+          data: 1
+          note: Thanks for the feedback!
+        - icon: material/thumb-down-outline
+          name: This page could be improved
+          data: 0
+          note: >-
+            Thanks for the feedback! Help us improve by
+            <a href="https://github.com/kasperjunge/agent-resources/issues/new?title=Docs+feedback:+{title}&labels=docs" target="_blank">opening an issue</a>.
 
 plugins:
   - search
