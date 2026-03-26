@@ -97,44 +97,66 @@ You are a code review expert. When reviewing code:
 Be specific and actionable in your feedback. Reference line numbers when possible.
 ```
 
-## Skills with Supporting Files
+## Supporting Files
 
-For complex skills, add supporting files:
+For complex skills, add supporting files alongside SKILL.md:
 
 ```
 my-skill/
 ├── SKILL.md
-├── references/       # Additional documentation
+├── references/       # Domain knowledge the agent reads at runtime
 │   └── style-guide.md
-├── scripts/          # Executable code
+├── scripts/          # Executable code for deterministic tasks
 │   └── validate.py
 └── assets/           # Templates, data files
     └── template.json
 ```
 
+| What | Where | Why |
+|------|-------|-----|
+| Reference docs the agent reads at runtime | `references/` | Keeps SKILL.md focused on workflow |
+| Scripts the agent should execute | `scripts/` | Reproducible results for mechanical tasks |
+| Templates or data files | `assets/` | Reusable artifacts the agent fills in |
+
 Reference them in your SKILL.md:
 
 ```markdown
-See [style guide](references/style-guide.md) for formatting rules.
+Before generating code, read [the style guide](references/style-guide.md).
 
-Run the validation script:
-scripts/validate.py
+After making changes, run the validation script:
+scripts/validate.sh
 ```
 
 Keep your main SKILL.md under 500 lines. Put detailed reference material in the `references/` folder.
 
 ## Test Your Skill
 
-Add your local skill and test it:
+The fastest way to iterate on a skill:
 
 ```bash
+# 1. Install it locally
 agr add ./skills/my-skill
+
+# 2. Test it in your AI tool — invoke the skill and see if it works
+
+# 3. Edit SKILL.md, then reinstall
+agr add ./skills/my-skill --overwrite
+
+# Repeat steps 2-3 until the skill works well
 ```
 
-(If your skill is elsewhere, point to that path instead.)
+Or use `agrx` to test without modifying your project:
 
-Your skill is now available in your configured tool. Test it by starting your
-agent and invoking the skill.
+```bash
+agrx ./my-skill -p "Review the changes in src/"
+```
+
+**What to test:**
+
+- **Happy path:** Does the skill do the right thing with a clear, simple request?
+- **Edge cases:** What happens with empty input, large files, or ambiguous requests?
+- **Boundaries:** Does the skill stay in scope, or does it try to do things you didn't intend?
+- **Different tools:** If targeting multiple tools, test in each one — behavior can vary
 
 ## Add to agr.toml (Team Sync)
 
@@ -275,50 +297,6 @@ Return a JSON array of findings:
 
 ---
 
-## Structuring Complex Skills
-
-### When to add supporting files
-
-Keep your SKILL.md under 500 lines. If the skill needs more detail, extract it
-into supporting files:
-
-| What | Where | Why |
-|------|-------|-----|
-| Reference docs the agent reads at runtime | `references/` | Keeps SKILL.md focused on workflow |
-| Scripts the agent should execute | `scripts/` | Executable logic separate from instructions |
-| Templates or data files | `assets/` | Reusable artifacts the agent fills in |
-
-### Reference files for domain knowledge
-
-If your skill needs domain-specific knowledge (a style guide, API docs, schema
-definitions), put it in `references/` and point to it from SKILL.md:
-
-```markdown
-Before generating code, read [the API schema](references/api-schema.json)
-and [the style guide](references/style-guide.md).
-```
-
-This keeps the main instructions short while giving the agent access to all the
-context it needs.
-
-### Scripts for deterministic work
-
-For tasks that have a deterministic correct answer (formatting, linting,
-validation), use a script rather than asking the agent to do it:
-
-```markdown
-After making changes, run the validation script:
-
-    scripts/validate.sh
-
-If it fails, fix the issues it reports before continuing.
-```
-
-This gives you reproducible results and keeps the agent focused on judgment
-calls, not mechanical tasks.
-
----
-
 ## Skill Patterns
 
 These full examples show how to structure different types of skills. Expand
@@ -420,47 +398,6 @@ each to see the complete SKILL.md.
 
     End with a summary: total dependencies, issues found, and recommended next steps.
     ```
-
----
-
-## Testing and Iterating
-
-### Local development loop
-
-The fastest way to iterate on a skill:
-
-```bash
-# 1. Create the skill
-agr init my-skill
-
-# 2. Edit SKILL.md with your instructions
-$EDITOR my-skill/SKILL.md
-
-# 3. Install it locally
-agr add ./my-skill
-
-# 4. Test it in your AI tool — invoke the skill and see if it works
-
-# 5. Edit SKILL.md again, then reinstall
-agr add ./my-skill --overwrite
-
-# Repeat steps 4-5 until the skill works well
-```
-
-### Try before installing
-
-Use `agrx` to test a remote skill without modifying your project:
-
-```bash
-agrx ./my-skill -p "Review the changes in src/"
-```
-
-### What to test
-
-- **Happy path:** Does the skill do the right thing with a clear, simple request?
-- **Edge cases:** What happens with empty input, large files, or ambiguous requests?
-- **Boundaries:** Does the skill stay in scope, or does it try to do things you didn't intend?
-- **Different tools:** If targeting multiple tools, test in each one — behavior can vary
 
 ---
 
