@@ -142,22 +142,14 @@ COPILOT = ToolConfig(
 # Skill paths based on Antigravity documentation:
 # - Workspace: .agent/skills/
 # - Global: ~/.gemini/antigravity/skills/
+# No CLI support — only fields that differ from ToolConfig defaults are set.
 ANTIGRAVITY = ToolConfig(
     name="antigravity",
     config_dir=".agent",
-    supports_nested=False,
     global_config_dir=".gemini/antigravity",
-    cli_command=None,
     cli_prompt_flag=None,
-    cli_force_flag=None,
     cli_continue_flag=None,
-    cli_exec_command=None,
-    cli_continue_command=None,
-    cli_interactive_prompt_positional=False,
-    cli_interactive_prompt_flag=None,
-    suppress_stderr_non_interactive=False,
     skill_prompt_prefix="",
-    install_hint=None,
     detection_signals=(".agent",),
     instruction_file="GEMINI.md",
 )
