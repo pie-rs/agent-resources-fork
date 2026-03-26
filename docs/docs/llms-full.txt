@@ -597,7 +597,7 @@ agr handles point to a specific skill, not a repo:
 ### Old Rules or Commands to Skills
 
 ```bash
-agrx kasperjunge/migrate-to-skills
+agrx kasperjunge/agent-resources/migrate-to-skills
 ```
 
 ## License

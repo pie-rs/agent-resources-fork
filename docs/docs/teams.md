@@ -211,7 +211,7 @@ If you have `.claude/commands/`, `.cursorrules`, or other files that should
 become skills:
 
 ```bash
-agrx kasperjunge/migrate-to-skills
+agrx kasperjunge/agent-resources/migrate-to-skills
 ```
 
 ---
