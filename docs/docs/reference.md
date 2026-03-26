@@ -79,8 +79,13 @@ agr config show                        # View current config
 agr config set tools claude cursor     # Target multiple tools
 agr config set default_tool claude     # Set default for agrx
 agr config add tools codex             # Add a tool without replacing
-agr config remove tools codex          # Stop syncing to a tool
+agr config remove tools codex          # Stop syncing to a tool (⚠ deletes its skills)
 ```
+
+!!! warning "Removing a tool deletes its skills"
+    `agr config remove tools <name>` also deletes all skills from that tool's
+    skills directory. Skills remain in your other configured tools and can be
+    reinstalled with `agr config add tools <name>`.
 
 ### Sources & Private Repos
 
@@ -322,7 +327,7 @@ agr config unset <key>                       # Clear to default
 agr config set tools claude codex opencode
 agr config set default_tool claude
 agr config add tools cursor
-agr config remove tools cursor
+agr config remove tools cursor            # ⚠ deletes skills from that tool
 agr config set sync_instructions true
 agr config set canonical_instructions CLAUDE.md
 agr config add sources my-source --type git --url "https://git.example.com/{owner}/{repo}.git"

@@ -62,6 +62,20 @@ agr config set default_tool claude
 
 If not set, the first tool in the `tools` list is used.
 
+### Adding and Removing Tools
+
+Add a tool after initial setup — existing skills are installed into it
+automatically:
+
+```bash
+agr config add tools cursor
+```
+
+!!! warning "Removing a tool deletes its skills"
+    `agr config remove tools <name>` deletes all skills from that tool's skills
+    directory. Skills remain in your other tools and can be reinstalled with
+    `agr config add tools <name>`.
+
 ### Tool Detection
 
 `agr init` and `agr onboard` auto-detect tools from repo signals — config
