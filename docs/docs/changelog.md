@@ -18,6 +18,29 @@ details, see [CHANGELOG.md on GitHub](https://github.com/kasperjunge/agent-resou
 
 ---
 
+## Unreleased
+
+### Stricter skill name validation
+
+Skill names now follow the [Agent Skills specification](https://agentskills.io/specification) exactly. Valid names must be:
+
+- 1–64 characters
+- Lowercase alphanumeric and hyphens only
+- Cannot start or end with a hyphen
+- Cannot contain consecutive hyphens (`--`)
+
+Previously accepted names with uppercase letters, underscores, or trailing hyphens are now rejected. If you have existing skills with these patterns, rename them before upgrading.
+
+### `description` field required in SKILL.md
+
+The `description` frontmatter field is now required when scaffolding a skill with `agr init <name>`. The generated template includes a placeholder you should fill in:
+
+```yaml
+description: TODO — describe what this skill does and when to use it
+```
+
+---
+
 ## 0.7.10 — 2026-03-10
 
 ### Updated tool directories
