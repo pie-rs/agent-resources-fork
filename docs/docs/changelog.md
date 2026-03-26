@@ -20,6 +20,10 @@ details, see [CHANGELOG.md on GitHub](https://github.com/kasperjunge/agent-resou
 
 ## Unreleased
 
+### `agrx` now uses `--full-auto` for Codex
+
+When running skills with `agrx --tool codex` in interactive mode, agr now passes `--full-auto` to the Codex CLI. This reduces permission prompts during execution, matching the behavior of other tools (Claude Code's `--dangerously-skip-permissions`, Cursor's `--force`, Copilot's `--allow-all-tools`).
+
 ### Stricter skill name validation
 
 Skill names now follow the [Agent Skills specification](https://agentskills.io/specification) exactly. Valid names must be:
