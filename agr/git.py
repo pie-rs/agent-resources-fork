@@ -43,6 +43,29 @@ def _run_git(cmd: list[str]) -> subprocess.CompletedProcess[str]:
         raise AgrError(f"Failed to run git: {type(e).__name__}") from None
 
 
+def _run_git_checked(cmd: list[str], error_message: str) -> subprocess.CompletedProcess[str]:
+    """Run a git command and raise AgrError on non-zero exit.
+
+    Convenience wrapper around ``_run_git`` for commands where any
+    non-zero return code is a fatal error with a fixed message.
+
+    Args:
+        cmd: Full command list starting with "git".
+        error_message: Message for the AgrError raised on failure.
+
+    Returns:
+        CompletedProcess with captured stdout/stderr.
+
+    Raises:
+        AgrError: If the command exits with a non-zero return code,
+            or if git cannot be executed.
+    """
+    result = _run_git(cmd)
+    if result.returncode != 0:
+        raise AgrError(error_message)
+    return result
+
+
 def get_github_token() -> str | None:
     """Get GitHub token from environment.
 
@@ -271,11 +294,10 @@ def downloaded_repo(
 
 def git_list_files(repo_dir: Path) -> list[str]:
     """List files in the repo without checking out blobs."""
-    result = _run_git(
-        ["git", "-C", str(repo_dir), "ls-tree", "-r", "--name-only", "HEAD"]
+    result = _run_git_checked(
+        ["git", "-C", str(repo_dir), "ls-tree", "-r", "--name-only", "HEAD"],
+        "Failed to list repository files.",
     )
-    if result.returncode != 0:
-        raise AgrError("Failed to list repository files.")
     return [line for line in result.stdout.splitlines() if line.strip()]
 
 
@@ -286,21 +308,21 @@ def checkout_full(repo_dir: Path) -> None:
     because it checks out whatever HEAD points to rather than
     hardcoding a branch name.
     """
-    checkout = _run_git(["git", "-C", str(repo_dir), "checkout", "-f", "HEAD"])
-    if checkout.returncode != 0:
-        raise AgrError("Failed to checkout repository.")
+    _run_git_checked(
+        ["git", "-C", str(repo_dir), "checkout", "-f", "HEAD"],
+        "Failed to checkout repository.",
+    )
 
 
 def checkout_sparse_paths(repo_dir: Path, rel_paths: list[Path]) -> None:
     """Checkout only the given paths using sparse checkout."""
     if not rel_paths:
         raise AgrError("No paths provided for sparse checkout.")
-    init = _run_git(["git", "-C", str(repo_dir), "sparse-checkout", "init", "--cone"])
-    if init.returncode != 0:
-        raise AgrError("Failed to initialize sparse checkout.")
+    _run_git_checked(
+        ["git", "-C", str(repo_dir), "sparse-checkout", "init", "--cone"],
+        "Failed to initialize sparse checkout.",
+    )
     cmd = ["git", "-C", str(repo_dir), "sparse-checkout", "set"]
     cmd.extend([rel_path.as_posix() for rel_path in rel_paths])
-    set_cmd = _run_git(cmd)
-    if set_cmd.returncode != 0:
-        raise AgrError("Failed to set sparse checkout path.")
+    _run_git_checked(cmd, "Failed to set sparse checkout path.")
     checkout_full(repo_dir)
