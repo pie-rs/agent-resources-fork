@@ -316,7 +316,7 @@ Instructions for the agent.
 ### SKILL.md Format
 
 Required fields:
-- `name` — max 64 chars, alphanumeric, hyphens, underscores, must start with a letter or number, must match directory name
+- `name` — 1–64 chars, lowercase alphanumeric and hyphens only, cannot start/end with a hyphen or contain consecutive hyphens (`--`), must match directory name
 - `description` — max 1024 chars, describes what the skill does and when to use it
 
 Optional fields:
