@@ -365,6 +365,57 @@ agr config set default_source github
 agr config remove sources my-server
 ```
 
+### How do I fix "Source entry missing name"?
+
+```text
+Error: Source entry missing name
+```
+
+A `[[source]]` block in your `agr.toml` is missing the `name` field. Every source needs a name:
+
+```toml
+# Wrong — missing name
+[[source]]
+type = "git"
+url = "https://git.example.com/{owner}/{repo}.git"
+
+# Right
+[[source]]
+name = "my-server"
+type = "git"
+url = "https://git.example.com/{owner}/{repo}.git"
+```
+
+### How do I fix "Source missing url"?
+
+```text
+Error: Source 'my-server' missing url
+```
+
+A `[[source]]` block has a name but no `url`. Add the URL template:
+
+```toml
+[[source]]
+name = "my-server"
+type = "git"
+url = "https://git.example.com/{owner}/{repo}.git"
+```
+
+### How do I fix "Unsupported source type"?
+
+```text
+Error: Unsupported source type 'svn' for 'my-server'
+```
+
+Only `git` sources are supported. Change the `type` to `git`:
+
+```toml
+[[source]]
+name = "my-server"
+type = "git"
+url = "https://git.example.com/{owner}/{repo}.git"
+```
+
 ### How do I fix "Local skills cannot specify a source"?
 
 ```text
@@ -412,6 +463,36 @@ Error: Directory 'myskill' already exists
 ```
 
 `agr init` won't overwrite an existing directory. Either remove it or choose a different name.
+
+### How do I fix "Local skill name is already installed"?
+
+```text
+Error: Local skill name 'my-skill' is already installed at /path/to/my-skill.
+agr allows only one local skill with a given name.
+Rename the skill or remove the existing one.
+```
+
+You have two local skills with the same name. agr enforces unique names to avoid conflicts. Either rename one of the skills or remove the existing one:
+
+```bash
+agr remove my-skill
+agr add ./new-location/my-skill
+```
+
+### How do I fix "not a valid skill (missing SKILL.md)"?
+
+```text
+Error: './my-skill' is not a valid skill (missing SKILL.md)
+```
+
+The path you specified doesn't contain a `SKILL.md` file. Every skill needs one:
+
+```bash
+# Create the required file
+touch my-skill/SKILL.md
+```
+
+Then add the required frontmatter (`name` and `description`) — see [Creating Skills](creating.md).
 
 ### Why is my skill not showing up in my tool?
 
