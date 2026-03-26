@@ -25,6 +25,9 @@ from agr.tool import (
     get_tool,
 )
 
+CONFIG_FILENAME = "agr.toml"
+
+
 def validate_canonical_instructions(value: str) -> None:
     """Raise ConfigError if *value* is not a valid canonical instructions file."""
     if value not in INSTRUCTION_FILES:
@@ -432,7 +435,7 @@ def find_config(start_path: Path | None = None) -> Path | None:
         Path to agr.toml if found, None otherwise
     """
     for directory in _walk_ancestors(start_path):
-        config_path = directory / "agr.toml"
+        config_path = directory / CONFIG_FILENAME
         if config_path.exists():
             return config_path
         if (directory / ".git").exists():
@@ -519,7 +522,7 @@ def get_or_create_config(start_path: Path | None = None) -> tuple[Path, AgrConfi
 
     # Create new config in cwd
     cwd = start_path or Path.cwd()
-    config_path = cwd / "agr.toml"
+    config_path = cwd / CONFIG_FILENAME
 
     config = AgrConfig()
     config.save(config_path)
@@ -534,7 +537,7 @@ def get_global_config_dir() -> Path:
 
 def get_global_config_path() -> Path:
     """Get global agr config path (~/.agr/agr.toml)."""
-    return get_global_config_dir() / "agr.toml"
+    return get_global_config_dir() / CONFIG_FILENAME
 
 
 def get_or_create_global_config() -> tuple[Path, AgrConfig]:

@@ -10,7 +10,7 @@ from pathlib import Path
 
 from rich.prompt import Confirm, Prompt
 
-from agr.config import AgrConfig, Dependency, find_config, find_repo_root
+from agr.config import CONFIG_FILENAME, AgrConfig, Dependency, find_config, find_repo_root
 from agr.console import get_console, print_error
 from agr.detect import detect_tools
 from agr.instructions import canonical_instruction_file, detect_instruction_files
@@ -141,7 +141,7 @@ def run_onboard(*, no_migrate: bool = False) -> None:
         console.print(f"[dim]Found existing config:[/dim] {config_path}")
     else:
         config = AgrConfig()
-        config_path = repo_root / "agr.toml"
+        config_path = repo_root / CONFIG_FILENAME
 
     # ── Step 1: Tools ──
     console.print()

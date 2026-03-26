@@ -6,6 +6,7 @@ from agr.commands import CommandResult
 from agr.commands._tool_helpers import save_and_summarize_results
 from agr.commands.migrations import run_tool_migrations
 from agr.config import (
+    CONFIG_FILENAME,
     AgrConfig,
     Dependency,
     find_config,
@@ -49,7 +50,7 @@ def run_add(
         # Find or create config
         config_path = find_config()
         if config_path is None:
-            config_path = repo_root / "agr.toml"
+            config_path = repo_root / CONFIG_FILENAME
             config = AgrConfig()
             detected = detect_tools(repo_root)
             if detected:

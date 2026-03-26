@@ -6,6 +6,7 @@ from pathlib import Path
 
 from agr.console import get_console, print_error
 from agr.config import (
+    CONFIG_FILENAME,
     AgrConfig,
     find_config,
     find_repo_root,
@@ -28,7 +29,7 @@ def init_config(path: Path | None = None) -> tuple[Path, bool]:
         Tuple of (config_path, created). created=False if already existed.
     """
     base = path or Path.cwd()
-    config_path = base / "agr.toml"
+    config_path = base / CONFIG_FILENAME
 
     # Check if config already exists anywhere up the tree
     existing = find_config(base)
