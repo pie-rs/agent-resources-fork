@@ -145,12 +145,6 @@ agr add ./skills/my-skill --overwrite
 # Repeat steps 2-3 until the skill works well
 ```
 
-Or use `agrx` to test without modifying your project:
-
-```bash
-agrx ./my-skill -p "Review the changes in src/"
-```
-
 **What to test:**
 
 - **Happy path:** Does the skill do the right thing with a clear, simple request?
