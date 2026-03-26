@@ -11,6 +11,12 @@ keywords:
 
 # Skill Directory
 
+!!! tldr
+    **Official skills** from Anthropic cover documents (PDF, DOCX, XLSX, PPTX),
+    design, frontend, API integration, and productivity. **Community skills** add
+    Go, Drupal, workflow automation, and more. Try any skill instantly with
+    `agrx user/skill` or install with `agr add user/skill`.
+
 Browse available skills and find ones that fit your workflow. Every skill below
 can be tried instantly without installing:
 
