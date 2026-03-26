@@ -11,6 +11,11 @@ keywords:
 
 # Python SDK
 
+!!! tldr
+    `pip install agr` and use `Skill.from_git("owner/repo/skill")` to load
+    skills programmatically. Discover skills with `list_skills()`, manage the
+    cache with `cache.clear()`, and handle errors via `AgrError` subclasses.
+
 Use `agr` as a Python library to load, inspect, and cache [skills](concepts.md#skills) programmatically.
 
 ## Install
