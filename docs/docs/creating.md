@@ -5,8 +5,16 @@ description: How to create, test, and publish your own AI agent skills for agr.
 
 # Creating Skills
 
+!!! tldr
+    Run `agr init my-skill`, edit `my-skill/SKILL.md` with your instructions,
+    test with `agr add ./my-skill`, then push to GitHub so others can
+    `agr add your-username/my-skill`.
+
 Skills are folders of instructions that give AI agents new capabilities. This
 guide helps you create, test, and share a skill with minimal ceremony.
+
+**Prerequisites:** [agr installed](tutorial.md#step-1-install-agr), a project
+with at least one [supported AI tool](tools.md)
 
 ## Quick Start
 
@@ -313,105 +321,105 @@ calls, not mechanical tasks.
 
 ## Skill Patterns
 
-### Code generation skill
+These full examples show how to structure different types of skills. Expand
+each to see the complete SKILL.md.
 
-```markdown
----
-name: react-component
-description: >
-  Generates React components following project conventions.
-  Use when asked to create a new component, page, or UI element.
----
+??? example "Code generation — React component generator"
+    ```markdown
+    ---
+    name: react-component
+    description: >
+      Generates React components following project conventions.
+      Use when asked to create a new component, page, or UI element.
+    ---
 
-# React Component Generator
+    # React Component Generator
 
-When creating a new React component:
+    When creating a new React component:
 
-1. Read the project's existing components to understand conventions
-2. Use TypeScript with explicit prop types
-3. Use functional components with hooks (no class components)
-4. Place the component in the appropriate directory based on its purpose
-5. Include a basic test file alongside the component
+    1. Read the project's existing components to understand conventions
+    2. Use TypeScript with explicit prop types
+    3. Use functional components with hooks (no class components)
+    4. Place the component in the appropriate directory based on its purpose
+    5. Include a basic test file alongside the component
 
-## File structure
+    ## File structure
 
-    ComponentName/
-    ├── ComponentName.tsx
-    ├── ComponentName.test.tsx
-    └── index.ts          # Re-export
+        ComponentName/
+        ├── ComponentName.tsx
+        ├── ComponentName.test.tsx
+        └── index.ts          # Re-export
 
-## Conventions
+    ## Conventions
 
-- Props interface named `{ComponentName}Props`
-- Default export from the component file
-- Named re-export from index.ts
-- Tests use React Testing Library, not Enzyme
-```
+    - Props interface named `{ComponentName}Props`
+    - Default export from the component file
+    - Named re-export from index.ts
+    - Tests use React Testing Library, not Enzyme
+    ```
 
-### Workflow automation skill
+??? example "Workflow automation — Release preparation"
+    ```markdown
+    ---
+    name: release-prep
+    description: >
+      Prepares a release by updating changelog, bumping version, and creating
+      a release branch. Use when asked to prepare, cut, or create a release.
+    ---
 
-```markdown
----
-name: release-prep
-description: >
-  Prepares a release by updating changelog, bumping version, and creating
-  a release branch. Use when asked to prepare, cut, or create a release.
----
+    # Release Preparation
 
-# Release Preparation
+    ## Steps
 
-## Steps
+    1. Determine the next version from conventional commits since the last tag
+    2. Update CHANGELOG.md with the new version's entries
+    3. Bump the version in package.json (or pyproject.toml)
+    4. Create a release branch: `release/v{version}`
+    5. Commit with message: `chore: prepare release v{version}`
+    6. Print a summary of what changed and what to do next
 
-1. Determine the next version from conventional commits since the last tag
-2. Update CHANGELOG.md with the new version's entries
-3. Bump the version in package.json (or pyproject.toml)
-4. Create a release branch: `release/v{version}`
-5. Commit with message: `chore: prepare release v{version}`
-6. Print a summary of what changed and what to do next
+    ## Rules
 
-## Rules
+    - Never push or create tags — only prepare the branch locally
+    - If there are uncommitted changes, stop and ask the user to commit first
+    - Group changelog entries by type: Added, Changed, Fixed, Removed
+    ```
 
-- Never push or create tags — only prepare the branch locally
-- If there are uncommitted changes, stop and ask the user to commit first
-- Group changelog entries by type: Added, Changed, Fixed, Removed
-```
+??? example "Analysis — Dependency audit"
+    ```markdown
+    ---
+    name: dependency-audit
+    description: >
+      Audits project dependencies for security issues, outdated packages, and
+      license compliance. Use when asked to check or audit dependencies.
+    ---
 
-### Analysis skill
+    # Dependency Audit
 
-```markdown
----
-name: dependency-audit
-description: >
-  Audits project dependencies for security issues, outdated packages, and
-  license compliance. Use when asked to check or audit dependencies.
----
+    Analyze the project's dependencies and produce a report covering:
 
-# Dependency Audit
+    ## Security
 
-Analyze the project's dependencies and produce a report covering:
+    - Run the package manager's audit command (npm audit, pip-audit, cargo audit)
+    - List any known vulnerabilities with severity and affected package
+    - For each vulnerability, suggest an upgrade path or workaround
 
-## Security
+    ## Freshness
 
-- Run the package manager's audit command (npm audit, pip-audit, cargo audit)
-- List any known vulnerabilities with severity and affected package
-- For each vulnerability, suggest an upgrade path or workaround
+    - Identify packages more than 2 major versions behind
+    - Flag packages that haven't been updated in over 2 years
+    - Note any deprecated packages
 
-## Freshness
+    ## Output
 
-- Identify packages more than 2 major versions behind
-- Flag packages that haven't been updated in over 2 years
-- Note any deprecated packages
+    Present findings as a markdown table:
 
-## Output
+    | Package | Issue | Severity | Action |
+    |---------|-------|----------|--------|
+    | lodash  | CVE-2021-23337 | High | Upgrade to 4.17.21+ |
 
-Present findings as a markdown table:
-
-| Package | Issue | Severity | Action |
-|---------|-------|----------|--------|
-| lodash  | CVE-2021-23337 | High | Upgrade to 4.17.21+ |
-
-End with a summary: total dependencies, issues found, and recommended next steps.
-```
+    End with a summary: total dependencies, issues found, and recommended next steps.
+    ```
 
 ---
 
@@ -456,22 +464,23 @@ agrx ./my-skill -p "Review the changes in src/"
 
 ---
 
-## Common Mistakes
+## Common Mistakes to Avoid
 
-**Skill too broad.** A skill that tries to do everything ("helps with all
-coding tasks") will be mediocre at all of them. Make focused skills that do one
-thing well.
+!!! warning "Pitfalls that lead to ineffective skills"
+    **Skill too broad.** A skill that tries to do everything ("helps with all
+    coding tasks") will be mediocre at all of them. Make focused skills that do
+    one thing well.
 
-**Instructions too short.** Agents need context. A three-line SKILL.md will
-produce generic output. Give the agent enough detail to produce specific,
-useful results.
+    **Instructions too short.** Agents need context. A three-line SKILL.md will
+    produce generic output. Give the agent enough detail to produce specific,
+    useful results.
 
-**No examples.** Without examples, agents guess at what you want. Include at
-least one input/output example so the agent understands the expected behavior.
+    **No examples.** Without examples, agents guess at what you want. Include at
+    least one input/output example so the agent understands the expected behavior.
 
-**Hardcoded paths or tools.** Skills should work in any project. Avoid
-hardcoding paths like `/Users/me/project/` or assuming specific tools are
-installed unless stated in the `compatibility` field.
+    **Hardcoded paths or tools.** Skills should work in any project. Avoid
+    hardcoding paths like `/Users/me/project/` or assuming specific tools are
+    installed unless stated in the `compatibility` field.
 
 ---
 
