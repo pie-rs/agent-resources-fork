@@ -1,20 +1,13 @@
 """agr remove command implementation."""
 
-from pathlib import Path
-
 from agr.commands import CommandResult
+from agr.commands._tool_helpers import load_existing_config
 from agr.commands.migrations import run_tool_migrations
-from agr.config import (
-    AgrConfig,
-    find_config,
-    get_global_config_path,
-    require_repo_root,
-)
 from agr.console import get_console, print_error
 from agr.exceptions import INSTALL_ERROR_TYPES, format_install_error
 from agr.fetcher import uninstall_skill
 from agr.handle import ParsedHandle, parse_handle
-from agr.tool import build_global_skills_dirs, lookup_skills_dir
+from agr.tool import lookup_skills_dir
 
 
 def _identifier_candidates(
@@ -54,29 +47,10 @@ def run_remove(refs: list[str], global_install: bool = False) -> None:
         refs: List of handles or paths to remove
     """
     console = get_console()
-    skills_dirs: dict[str, Path] | None = None
-    if global_install:
-        repo_root = None
-        config_path = get_global_config_path()
-        if not config_path.exists():
-            print_error("No global agr.toml found")
-            console.print("[dim]Run 'agr add -g <handle>' first.[/dim]")
-            raise SystemExit(1)
-    else:
-        repo_root = require_repo_root()
-
-        # Find config
-        config_path = find_config()
-        if config_path is None:
-            print_error("No agr.toml found")
-            raise SystemExit(1)
-
-    config = AgrConfig.load(config_path)
-
-    # Get configured tools
-    tools = config.get_tools()
-    if global_install:
-        skills_dirs = build_global_skills_dirs(tools)
+    loaded = load_existing_config(global_install)
+    assert loaded is not None  # load_existing_config raises SystemExit on missing
+    config, config_path = loaded.config, loaded.config_path
+    tools, repo_root, skills_dirs = loaded.tools, loaded.repo_root, loaded.skills_dirs
     run_tool_migrations(tools, repo_root, global_install=global_install)
 
     # Track results

@@ -4,12 +4,13 @@ from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 
+from agr.commands._tool_helpers import load_existing_config
 from agr.commands.migrations import (
     migrate_flat_installed_names,
     migrate_legacy_directories,
     run_tool_migrations,
 )
-from agr.config import AgrConfig, find_config, get_global_config_path, require_repo_root
+from agr.config import AgrConfig, find_config, require_repo_root
 from agr.console import get_console, print_error
 from agr.exceptions import INSTALL_ERROR_TYPES, format_install_error
 from agr.fetcher import (
@@ -26,7 +27,7 @@ from agr.instructions import (
     canonical_instruction_file,
     sync_instruction_files,
 )
-from agr.tool import ToolConfig, build_global_skills_dirs
+from agr.tool import ToolConfig
 
 
 class SyncStatus(Enum):
@@ -290,15 +291,13 @@ def _sync_one_dependency(
 def _run_global_sync() -> None:
     """Sync global dependencies from ~/.agr/agr.toml."""
     console = get_console()
-    config_path = get_global_config_path()
-    if not config_path.exists():
+    loaded = load_existing_config(global_install=True, missing_ok=True)
+    if loaded is None:
         console.print("[yellow]No global agr.toml found.[/yellow] Nothing to sync.")
         console.print("[dim]Run 'agr add -g <handle>' to create one.[/dim]")
         return
 
-    config = AgrConfig.load(config_path)
-    tools = config.get_tools()
-    skills_dirs = build_global_skills_dirs(tools)
+    config, tools, skills_dirs = loaded.config, loaded.tools, loaded.skills_dirs
 
     run_tool_migrations(tools, repo_root=None, global_install=True)
 

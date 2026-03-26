@@ -4,12 +4,12 @@ from pathlib import Path
 
 from rich.table import Table
 
-from agr.config import AgrConfig, find_config, get_global_config_path, require_repo_root
+from agr.commands._tool_helpers import load_existing_config
 from agr.console import get_console
 from agr.exceptions import AgrError, InvalidHandleError
 from agr.fetcher import is_skill_installed
 from agr.handle import ParsedHandle
-from agr.tool import ToolConfig, build_global_skills_dirs, lookup_skills_dir
+from agr.tool import ToolConfig, lookup_skills_dir
 
 
 def _get_installation_status(
@@ -57,28 +57,17 @@ def run_list(global_install: bool = False) -> None:
     Lists all dependencies from agr.toml with their sync status.
     """
     console = get_console()
-    skills_dirs: dict[str, Path] | None = None
-    if global_install:
-        repo_root = None
-        config_path = get_global_config_path()
-        if not config_path.exists():
+    loaded = load_existing_config(global_install, missing_ok=True)
+    if loaded is None:
+        if global_install:
             console.print("[yellow]No global agr.toml found.[/yellow]")
             console.print("[dim]Run 'agr add -g <handle>' to create one.[/dim]")
-            return
-    else:
-        repo_root = require_repo_root()
-
-        # Find config
-        config_path = find_config()
-        if config_path is None:
+        else:
             console.print("[yellow]No agr.toml found.[/yellow]")
             console.print("[dim]Run 'agr init' to create one.[/dim]")
-            return
-
-    config = AgrConfig.load(config_path)
-    tools = config.get_tools()
-    if global_install:
-        skills_dirs = build_global_skills_dirs(tools)
+        return
+    config, config_path = loaded.config, loaded.config_path
+    tools, repo_root, skills_dirs = loaded.tools, loaded.repo_root, loaded.skills_dirs
 
     if not config.dependencies:
         console.print("[yellow]No dependencies in agr.toml.[/yellow]")

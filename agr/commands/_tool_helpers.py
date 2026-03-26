@@ -5,13 +5,86 @@ and the deprecated tool commands (tools.py).
 """
 
 import shutil
+from dataclasses import dataclass
 from pathlib import Path
 
-from agr.config import AgrConfig, find_repo_root
+from agr.config import (
+    AgrConfig,
+    find_config,
+    find_repo_root,
+    get_global_config_path,
+    require_repo_root,
+)
 from agr.console import get_console, print_error
 from agr.exceptions import INSTALL_ERROR_TYPES, format_install_error
 from agr.fetcher import fetch_and_install_to_tools, filter_tools_needing_install
-from agr.tool import TOOLS, available_tools_string
+from agr.tool import TOOLS, ToolConfig, available_tools_string, build_global_skills_dirs
+
+
+@dataclass
+class LoadedConfig:
+    """Result of loading an agr config for a command."""
+
+    config: AgrConfig
+    config_path: Path
+    tools: list[ToolConfig]
+    repo_root: Path | None
+    skills_dirs: dict[str, Path] | None
+
+
+def load_existing_config(
+    global_install: bool,
+    *,
+    missing_ok: bool = False,
+) -> LoadedConfig | None:
+    """Load an existing agr.toml config with tools and skills dirs.
+
+    This is the shared config-loading pattern used by commands that operate
+    on an existing config (remove, list, sync). The ``add`` command has its
+    own logic because it may create the config.
+
+    Args:
+        global_install: Whether to use the global config.
+        missing_ok: If True, return None when the config is missing instead
+            of printing an error and raising SystemExit.
+
+    Returns:
+        A LoadedConfig, or None when missing_ok is True and no config exists.
+    """
+    console = get_console()
+    skills_dirs: dict[str, Path] | None = None
+
+    if global_install:
+        repo_root = None
+        config_path = get_global_config_path()
+        if not config_path.exists():
+            if missing_ok:
+                return None
+            console.print("[yellow]No global agr.toml found.[/yellow]")
+            console.print("[dim]Run 'agr add -g <handle>' to create one.[/dim]")
+            raise SystemExit(1)
+    else:
+        repo_root = require_repo_root()
+        config_path = find_config()
+        if config_path is None:
+            if missing_ok:
+                return None
+            console.print("[yellow]No agr.toml found.[/yellow]")
+            console.print("[dim]Run 'agr init' to create one.[/dim]")
+            raise SystemExit(1)
+
+    config = AgrConfig.load(config_path)
+    tools = config.get_tools()
+    if global_install:
+        skills_dirs = build_global_skills_dirs(tools)
+
+    return LoadedConfig(
+        config=config,
+        config_path=config_path,
+        tools=tools,
+        repo_root=repo_root,
+        skills_dirs=skills_dirs,
+    )
 
 
 def normalize_tool_names(tool_names: list[str]) -> list[str]:
