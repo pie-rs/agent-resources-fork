@@ -1,13 +1,17 @@
 ---
-title: Core Concepts
+title: "How agr Works — Skills, Handles, Sources, Scopes, and the Sync Lifecycle"
 description: Understand how agr works — skills, handles, sources, and the sync lifecycle that keeps your AI tools in sync.
 keywords:
-  - agr architecture
-  - skill handles
-  - agr sync lifecycle
+  - how agr works
+  - agr skills explained
+  - skill handles resolution
   - SKILL.md format
-  - agr.toml
+  - agr.toml manifest
+  - local vs global skills
+  - agr sync lifecycle
+  - agr instruction syncing
   - AI agent skill scopes
+  - agr sources configuration
 ---
 
 # Core Concepts
