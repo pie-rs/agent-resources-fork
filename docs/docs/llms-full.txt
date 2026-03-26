@@ -316,7 +316,7 @@ Instructions for the agent.
 ### SKILL.md Format
 
 Required fields:
-- `name` — max 64 chars, lowercase letters, numbers, hyphens, must match directory name
+- `name` — max 64 chars, alphanumeric, hyphens, underscores, must start with a letter or number, must match directory name
 - `description` — max 1024 chars, describes what the skill does and when to use it
 
 Optional fields:
@@ -462,10 +462,24 @@ from agr.exceptions import (
 |----------|------|-------------|
 | name | str | Skill name |
 | path | Path | Local path to skill directory |
+| handle | ParsedHandle or None | Parsed handle with owner, repo, and name components |
+| source | str or None | Source name the skill was fetched from (e.g., "github") |
+| revision | str or None | Git commit hash (first 12 chars) of the fetched revision |
 | prompt | str | Contents of SKILL.md (lazy-loaded) |
 | files | list[str] | Relative file paths (lazy-loaded) |
-| metadata | dict | Skill metadata (name, path, source, revision, handle) |
+| metadata | dict | Combined metadata dict (name, path, source, revision, handle, is_local) |
 | content_hash | str or None | SHA-256 hash from .agr.json |
+
+The `handle`, `source`, and `revision` attributes are set by `from_git()`. For locally loaded skills, `source` and `revision` are `None`.
+
+```python
+skill = Skill.from_git("anthropics/skills/code-review")
+print(skill.source)    # "github"
+print(skill.revision)  # "a1b2c3d4e5f6"
+print(skill.handle.username)  # "anthropics"
+print(skill.handle.repo)      # "skills"
+print(skill.handle.name)      # "code-review"
+```
 
 ### Reading Files
 
