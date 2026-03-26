@@ -24,7 +24,7 @@ from agr.handle import (
 from agr.metadata import compute_content_hash, read_skill_metadata
 from agr.sdk.cache import cache_skill, get_skill_cache_path, is_cached
 from agr.skill import SKILL_MARKER, is_valid_skill_dir
-from agr.source import SourceConfig, default_sources
+from agr.source import default_sources
 
 
 def _get_head_commit(repo_dir: Path) -> str:
@@ -110,14 +110,7 @@ class Skill:
         repo_candidates = iter_repo_candidates(parsed.repo)
 
         # Get default source
-        sources = default_sources()
-        source_config = (
-            sources[0]
-            if sources
-            else SourceConfig(
-                name="github", type="git", url="https://github.com/{owner}/{repo}.git"
-            )
-        )
+        source_config = default_sources()[0]
 
         # Try each repo candidate (e.g. "skills", then legacy "agent-resources").
         # Track errors separately: SkillNotFoundError means the repo exists but

@@ -3,6 +3,7 @@
 import json
 import urllib.request
 import warnings
+from dataclasses import dataclass
 from typing import Any
 from urllib.error import HTTPError, URLError
 
@@ -23,6 +24,52 @@ from agr.handle import (
 )
 from agr.sdk.types import SkillInfo
 from agr.skill import SKILL_MARKER
+
+
+GITHUB_API_BASE = "https://api.github.com"
+
+
+def _github_tree_url(owner: str, repo: str) -> str:
+    """Build a GitHub API URL for fetching a repository's full tree."""
+    return f"{GITHUB_API_BASE}/repos/{owner}/{repo}/git/trees/HEAD?recursive=1"
+
+
+def _github_contents_url(owner: str, repo: str, path: str) -> str:
+    """Build a GitHub API URL for fetching file contents."""
+    return f"{GITHUB_API_BASE}/repos/{owner}/{repo}/contents/{path}"
+
+
+@dataclass
+class _RepoTreeResult:
+    """Result of fetching a repo tree across candidate repo names."""
+
+    tree_data: dict[str, Any]
+    repo: str
+    used_legacy: bool
+
+
+def _fetch_repo_tree(
+    owner: str,
+    repo_candidates: list[tuple[str, bool]],
+) -> _RepoTreeResult:
+    """Try repo candidates in order and return the first successful tree fetch.
+
+    Raises:
+        RepoNotFoundError: If no candidate repo exists.
+    """
+    last_error: Exception | None = None
+    for repo_name, is_legacy in repo_candidates:
+        try:
+            tree_data = _github_api_request(_github_tree_url(owner, repo_name))
+            return _RepoTreeResult(
+                tree_data=tree_data, repo=repo_name, used_legacy=is_legacy
+            )
+        except RepoNotFoundError as e:
+            last_error = e
+            continue
+    if last_error:
+        raise last_error
+    raise RepoNotFoundError(f"Repository not found for owner: {owner}")
 
 
 def _github_api_request(url: str) -> dict[str, Any]:
@@ -141,26 +188,10 @@ def list_skills(repo_handle: str) -> list[SkillInfo]:
     else:
         raise ValueError(f"Invalid repo handle: {repo_handle}")
 
-    tree_data = None
-    repo = None
-    used_legacy = False
-    last_error: Exception | None = None
-    for repo_name, is_legacy in repo_candidates:
-        # Get repository tree
-        tree_url = f"https://api.github.com/repos/{owner}/{repo_name}/git/trees/HEAD?recursive=1"
-        try:
-            tree_data = _github_api_request(tree_url)
-            repo = repo_name
-            used_legacy = is_legacy
-            break
-        except RepoNotFoundError as e:
-            last_error = e
-            continue
-
-    if tree_data is None or repo is None:
-        if last_error:
-            raise last_error
-        raise RepoNotFoundError(f"Repository not found: {repo_handle}")
+    result = _fetch_repo_tree(owner, list(repo_candidates))
+    tree_data = result.tree_data
+    repo = result.repo
+    used_legacy = result.used_legacy
 
     # Find SKILL.md files
     skill_dirs: dict[str, str] = {}  # name -> path
@@ -238,27 +269,15 @@ def skill_info(handle: str) -> SkillInfo:
     owner, initial_repo = parsed.get_github_repo()
     repo_candidates = iter_repo_candidates(parsed.repo)
 
-    tree_data = None
-    repo = None
-    used_legacy = False
-    last_error: Exception | None = None
-    for repo_name, is_legacy in repo_candidates:
-        tree_url = f"https://api.github.com/repos/{owner}/{repo_name}/git/trees/HEAD?recursive=1"
-        try:
-            tree_data = _github_api_request(tree_url)
-            repo = repo_name
-            used_legacy = is_legacy
-            break
-        except RepoNotFoundError as e:
-            last_error = e
-            continue
-
-    if tree_data is None or repo is None:
-        if last_error:
-            raise SkillNotFoundError(
-                f"Repository '{owner}/{initial_repo}' not found"
-            ) from None
-        raise SkillNotFoundError(f"Repository '{owner}/{initial_repo}' not found")
+    try:
+        result = _fetch_repo_tree(owner, list(repo_candidates))
+    except RepoNotFoundError:
+        raise SkillNotFoundError(
+            f"Repository '{owner}/{initial_repo}' not found"
+        ) from None
+    tree_data = result.tree_data
+    repo = result.repo
+    used_legacy = result.used_legacy
 
     # Find SKILL.md for this skill
     skill_md_path = None
@@ -277,8 +296,9 @@ def skill_info(handle: str) -> SkillInfo:
         # Try legacy repo if skill not found in default repo
         if repo != LEGACY_DEFAULT_REPO_NAME:
             try:
-                legacy_tree_url = f"https://api.github.com/repos/{owner}/{LEGACY_DEFAULT_REPO_NAME}/git/trees/HEAD?recursive=1"
-                legacy_tree = _github_api_request(legacy_tree_url)
+                legacy_tree = _github_api_request(
+                    _github_tree_url(owner, LEGACY_DEFAULT_REPO_NAME)
+                )
                 for item in legacy_tree.get("tree", []):
                     if item.get("type") != "blob":
                         continue
@@ -301,9 +321,7 @@ def skill_info(handle: str) -> SkillInfo:
         )
 
     # Fetch SKILL.md content
-    content_url = (
-        f"https://api.github.com/repos/{owner}/{repo}/contents/{skill_md_path}"
-    )
+    content_url = _github_contents_url(owner, repo, skill_md_path)
     content_data = _github_api_request(content_url)
 
     description = None
