@@ -83,7 +83,7 @@ def _sanitize_path_component(component: str, name: str) -> str:
     if "\x00" in component:
         raise ValueError(f"{name} cannot contain null bytes")
 
-    if ".." in component:
+    if component == ".." or component.startswith("../") or component.endswith("/.."):
         raise ValueError(f"{name} cannot contain '..'")
 
     if "/" in component or "\\" in component:

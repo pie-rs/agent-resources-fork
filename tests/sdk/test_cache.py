@@ -57,8 +57,23 @@ class TestSanitizePathComponent:
             _sanitize_path_component("..", "owner")
         with pytest.raises(ValueError, match="cannot contain '..'"):
             _sanitize_path_component("../evil", "owner")
-        with pytest.raises(ValueError, match="cannot contain '..'"):
+        # "owner/../evil" is caught by the path separator check (/)
+        # rather than the '..' check, but it's still rejected
+        with pytest.raises(ValueError):
             _sanitize_path_component("owner/../evil", "owner")
+
+    def test_consecutive_dots_in_valid_name_accepted(self):
+        """Test that names containing '..' as a substring are accepted.
+
+        GitHub allows consecutive dots in repo names (e.g., 'v2..rc1').
+        The path traversal check should only reject the literal '..'
+        component, not any name that happens to contain consecutive dots.
+        Since path separators are already blocked, embedded '..' in a
+        name cannot cause traversal.
+        """
+        assert _sanitize_path_component("v2..rc1", "repo") == "v2..rc1"
+        assert _sanitize_path_component("a..b", "repo") == "a..b"
+        assert _sanitize_path_component("test..name", "repo") == "test..name"
 
     def test_path_separators_rejected(self):
         """Test that path separators are rejected."""
