@@ -221,7 +221,7 @@ Your `agr.toml` has a syntax error. Common causes:
 
 Validate with any TOML linter, or paste your file into [toml-lint.com](https://www.toml-lint.com/) to find the exact line.
 
-### "default_tool must be listed in tools"
+### How do I fix "default_tool must be listed in tools"?
 
 ```text
 Error: default_tool must be listed in tools in agr.toml
@@ -241,7 +241,7 @@ tools = ["claude", "cursor", "codex"]
 default_tool = "codex"
 ```
 
-### "default_source not found in [[source]] list"
+### How do I fix "default_source not found in [[source]] list"?
 
 ```text
 Error: default_source 'my-server' not found in [[source]] list
@@ -255,7 +255,7 @@ agr config add sources my-server --type git --url "https://git.example.com/{owne
 agr config set default_source github
 ```
 
-### "dependencies must be declared before [[source]] blocks"
+### How do I fix "dependencies must be declared before [[source]] blocks"?
 
 ```text
 Error: dependencies must be declared before [[source]] blocks
@@ -275,7 +275,7 @@ type = "git"
 url = "https://github.com/{owner}/{repo}.git"
 ```
 
-### "Unknown source in dependency"
+### How do I fix "Unknown source in dependency"?
 
 ```text
 Error: Unknown source 'gitlab' in dependency 'user/skill'
@@ -290,7 +290,7 @@ agr config add sources gitlab --type git --url "https://gitlab.com/{owner}/{repo
 # Or edit agr.toml and remove source = "gitlab" from the dependency
 ```
 
-### "canonical_instructions must be 'AGENTS.md', 'CLAUDE.md', or 'GEMINI.md'"
+### How do I fix "canonical_instructions must be 'AGENTS.md', 'CLAUDE.md', or 'GEMINI.md'"?
 
 Only these three instruction file names are supported for syncing. Other filenames like `README.md` or `INSTRUCTIONS.md` won't work.
 
@@ -298,7 +298,7 @@ Only these three instruction file names are supported for syncing. Other filenam
 
 ## Syncing
 
-### "No dependencies in agr.toml. Nothing to sync."
+### How do I fix "No dependencies in agr.toml. Nothing to sync."?
 
 Your `agr.toml` exists but has no `dependencies` entry. Add skills first:
 
@@ -308,7 +308,7 @@ agr add user/skill
 
 This both installs the skill and adds it to `agr.toml`.
 
-### "Instruction sync skipped: CLAUDE.md not found."
+### How do I fix "Instruction sync skipped: CLAUDE.md not found."?
 
 You have `sync_instructions = true` but the canonical instruction file doesn't exist yet. Create it:
 
@@ -318,7 +318,7 @@ touch CLAUDE.md
 
 Then run `agr sync` again.
 
-### Instruction sync enabled but nothing happens
+### Why does instruction sync not do anything?
 
 You have `sync_instructions = true` but `agr sync` doesn't copy any instruction
 files. Two common causes:
@@ -336,7 +336,7 @@ files. Two common causes:
    *different* instruction files (e.g., Claude uses `CLAUDE.md`, Codex uses
    `AGENTS.md`).
 
-### Sync shows "Up to date" but skill seems outdated
+### Why does sync show "Up to date" but my skill seems outdated?
 
 `agr sync` skips skills that are already installed. To force a fresh install from
 the latest version:
@@ -351,7 +351,7 @@ This re-downloads the skill from GitHub and replaces your local copy.
 
 ## Sources
 
-### "Cannot remove default source"
+### How do I fix "Cannot remove default source"?
 
 ```text
 Error: Cannot remove default source 'my-server'. Change the default source first.
@@ -365,7 +365,7 @@ agr config set default_source github
 agr config remove sources my-server
 ```
 
-### "Local skills cannot specify a source"
+### How do I fix "Local skills cannot specify a source"?
 
 ```text
 Error: Local skills cannot specify a source
@@ -386,7 +386,7 @@ agr add ./my-skill
 
 ## Creating Skills
 
-### "Invalid skill name"
+### How do I fix "Invalid skill name"?
 
 ```text
 Error: Invalid skill name 'my skill': must be alphanumeric with hyphens/underscores
@@ -405,7 +405,7 @@ agr init my_skill
 agr init MySkill
 ```
 
-### "Directory already exists"
+### How do I fix "Directory already exists"?
 
 ```text
 Error: Directory 'myskill' already exists
@@ -413,7 +413,7 @@ Error: Directory 'myskill' already exists
 
 `agr init` won't overwrite an existing directory. Either remove it or choose a different name.
 
-### Skill not showing up in my tool
+### Why is my skill not showing up in my tool?
 
 After `agr add ./skills/my-skill`, verify:
 
@@ -432,7 +432,7 @@ After `agr add ./skills/my-skill`, verify:
 
 ## Global Installs
 
-### "No global agr.toml found"
+### How do I fix "No global agr.toml found"?
 
 ```text
 Error: No global agr.toml found
