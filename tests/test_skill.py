@@ -52,13 +52,17 @@ class TestValidateSkillName:
         """Name with hyphens is valid."""
         assert validate_skill_name("my-skill")
 
-    def test_valid_with_underscore(self):
-        """Name with underscores is valid."""
-        assert validate_skill_name("my_skill")
+    def test_invalid_with_underscore(self):
+        """Name with underscores is invalid per Agent Skills spec."""
+        assert not validate_skill_name("my_skill")
 
     def test_valid_with_numbers(self):
         """Name with numbers is valid."""
         assert validate_skill_name("skill123")
+
+    def test_valid_starts_with_number(self):
+        """Name starting with number is valid."""
+        assert validate_skill_name("1skill")
 
     def test_invalid_empty(self):
         """Empty name is invalid."""
@@ -68,10 +72,26 @@ class TestValidateSkillName:
         """Name starting with hyphen is invalid."""
         assert not validate_skill_name("-skill")
 
-    def test_invalid_starts_with_number(self):
-        """Name starting with number is valid (alphanumeric)."""
-        # Actually this should be valid per the regex
-        assert validate_skill_name("1skill")
+    def test_invalid_ends_with_hyphen(self):
+        """Name ending with hyphen is invalid."""
+        assert not validate_skill_name("skill-")
+
+    def test_invalid_consecutive_hyphens(self):
+        """Name with consecutive hyphens is invalid."""
+        assert not validate_skill_name("my--skill")
+
+    def test_invalid_uppercase(self):
+        """Name with uppercase letters is invalid per Agent Skills spec."""
+        assert not validate_skill_name("MySkill")
+        assert not validate_skill_name("SKILL")
+
+    def test_invalid_too_long(self):
+        """Name exceeding 64 characters is invalid."""
+        assert not validate_skill_name("a" * 65)
+
+    def test_valid_max_length(self):
+        """Name at exactly 64 characters is valid."""
+        assert validate_skill_name("a" * 64)
 
     def test_invalid_special_chars(self):
         """Name with special characters is invalid."""

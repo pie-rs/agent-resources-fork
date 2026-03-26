@@ -279,9 +279,10 @@ def update_skill_md_name(skill_dir: Path, new_name: str) -> None:
 
 
 def validate_skill_name(name: str) -> bool:
-    """Validate a skill name.
+    """Validate a skill name per the Agent Skills specification.
 
-    Valid names: alphanumeric, hyphens, underscores.
+    Valid names: 1-64 lowercase alphanumeric characters and hyphens,
+    must not start/end with a hyphen or contain consecutive hyphens.
 
     Args:
         name: Skill name to validate
@@ -289,9 +290,9 @@ def validate_skill_name(name: str) -> bool:
     Returns:
         True if valid
     """
-    if not name:
+    if not name or len(name) > 64:
         return False
-    return bool(re.match(r"^[a-zA-Z0-9][a-zA-Z0-9_-]*$", name))
+    return bool(re.match(r"^[a-z0-9]+(-[a-z0-9]+)*$", name))
 
 
 def create_skill_scaffold(name: str, base_dir: Path | None = None) -> Path:
@@ -311,8 +312,8 @@ def create_skill_scaffold(name: str, base_dir: Path | None = None) -> Path:
     if not validate_skill_name(name):
         raise ValueError(
             f"Invalid skill name '{name}': "
-            "must be alphanumeric with "
-            "hyphens/underscores"
+            "must be 1-64 lowercase alphanumeric characters "
+            "and hyphens, cannot start/end with a hyphen"
         )
 
     base = base_dir or Path.cwd()
