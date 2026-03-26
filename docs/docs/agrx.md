@@ -39,8 +39,23 @@ agrx kasperjunge/commit -i                          # Interactive: skill + chat
 1. **Determine tool** — Uses `--tool` flag, or `default_tool` from `agr.toml`, or the first tool in `tools`, or `claude` (see [Supported Tools](tools.md))
 2. **Download skill** — Clones the repo and extracts the skill (same as `agr add`, using [handles](concepts.md#handles))
 3. **Install temporarily** — Places the skill in your tool's skills directory with a unique `_agrx_` prefix so it doesn't conflict with permanent installs
-4. **Run the tool's CLI** — Invokes the tool (e.g., `claude -p "/skill-name"`) to execute the skill
+4. **Run the tool's CLI** — Invokes the tool (e.g., `claude -p "/skill-name"`) with
+   permission-skipping flags so the skill can run without manual approval prompts
 5. **Clean up** — Removes the temporary skill directory, even on Ctrl+C
+
+??? note "What flags does agrx pass to each tool?"
+    To avoid interactive permission prompts, `agrx` passes a tool-specific flag:
+
+    | Tool | Flag |
+    |------|------|
+    | Claude Code | `--dangerously-skip-permissions` |
+    | Cursor | `--force` |
+    | OpenAI Codex | `--full-auto` |
+    | GitHub Copilot | `--allow-all-tools` |
+
+    OpenCode and Antigravity don't use a force flag. If you need to review
+    permissions before execution, use `agr add` to install the skill permanently
+    and invoke it manually through your tool's CLI.
 
 ## Options
 
