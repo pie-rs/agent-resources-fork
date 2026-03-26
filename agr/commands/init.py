@@ -11,11 +11,11 @@ from agr.config import (
     find_repo_root,
     validate_canonical_instructions,
 )
+from agr.commands._tool_helpers import normalize_and_validate_tool_names
 from agr.exceptions import ConfigError
 from agr.detect import detect_tools
 from agr.instructions import canonical_instruction_file
 from agr.skill import create_skill_scaffold
-from agr.tool import TOOLS, available_tools_string
 
 
 def init_config(path: Path | None = None) -> tuple[Path, bool]:
@@ -66,14 +66,6 @@ def _parse_tools_flag(value: str | None) -> list[str] | None:
     return raw or None
 
 
-def _validate_tools(tools: list[str]) -> None:
-    for name in tools:
-        if name not in TOOLS:
-            raise ValueError(
-                f"Unknown tool '{name}'. Available: {available_tools_string()}"
-            )
-
-
 def run_init(
     skill_name: str | None = None,
     *,
@@ -121,11 +113,7 @@ def run_init(
     tools_display: list[str] | None = None
     tools_override = _parse_tools_flag(tools)
     if tools_override:
-        try:
-            _validate_tools(tools_override)
-        except ValueError as exc:
-            print_error(str(exc))
-            raise SystemExit(1)
+        tools_override = normalize_and_validate_tool_names(tools_override)
         config.tools = tools_override
         tools_display = tools_override
         if config.tools != original_tools:
@@ -142,12 +130,8 @@ def run_init(
 
     # Default tool
     if default_tool:
-        if default_tool not in TOOLS:
-            print_error(
-                f"Unknown tool '{default_tool}'. Available: {available_tools_string()}"
-            )
-            raise SystemExit(1)
-        config.default_tool = default_tool
+        names = normalize_and_validate_tool_names([default_tool])
+        config.default_tool = names[0]
         if config.default_tool != original_default_tool:
             changed = True
 
