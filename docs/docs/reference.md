@@ -16,6 +16,11 @@ keywords:
 
 # Reference
 
+!!! tldr
+    `agr add` installs skills, `agr sync` installs everything from `agr.toml`,
+    `agr config` manages settings. `agrx` runs skills ephemerally. Handles:
+    `user/skill`, `user/repo/skill`, or `./local`. Add `-g` for global scope.
+
 Complete reference for all `agr` and [`agrx`](agrx.md) commands. For guided
 setup, start with the [Tutorial](tutorial.md).
 
