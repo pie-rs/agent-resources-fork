@@ -335,6 +335,32 @@ class TestCacheManager:
             assert info["skills_count"] == 1
             assert info["size_bytes"] > 0
 
+    def test_info_counts_skills_not_revisions(self, tmp_path: Path):
+        """Test that info() counts unique skills, not individual revisions.
+
+        When one skill has multiple cached revisions, info() should report
+        it as 1 cached skill (consistent with clear_cache which deletes
+        at the skill level).
+        """
+        # Create one skill cached at two different revisions
+        base = tmp_path / "skills" / "github" / "owner" / "repo" / "skill"
+        rev1 = base / "abc123"
+        rev1.mkdir(parents=True)
+        (rev1 / "SKILL.md").write_text("# Skill rev 1")
+
+        rev2 = base / "def456"
+        rev2.mkdir(parents=True)
+        (rev2 / "SKILL.md").write_text("# Skill rev 2")
+
+        with patch("agr.sdk.cache.get_cache_dir", return_value=tmp_path):
+            info = cache.info()
+            # Should count 1 skill, not 2 revisions
+            assert info["skills_count"] == 1
+
+            # clear() also reports 1 — they should be consistent
+            count = cache.clear()
+            assert count == 1
+
     def test_clear_method(self, tmp_path: Path):
         """Test clear method delegates to clear_cache."""
         skill_path = tmp_path / "skills" / "github" / "owner" / "repo" / "skill" / "abc"
