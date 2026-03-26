@@ -71,6 +71,17 @@ def _validate_key(key: str) -> None:
         raise SystemExit(1)
 
 
+def _require_single_source_name(values: list[str]) -> str:
+    """Validate that exactly one source name was provided and return it."""
+    if not values:
+        print_error("Source name is required.")
+        raise SystemExit(1)
+    if len(values) > 1:
+        print_error("Only one source name allowed at a time.")
+        raise SystemExit(1)
+    return values[0]
+
+
 def run_config_show(global_scope: bool) -> None:
     """Print formatted view of effective config."""
     console = get_console()
@@ -338,13 +349,7 @@ def run_config_add(
             console.print(f"[dim]Already configured:[/dim] {name}")
 
     elif key == "sources":
-        if not values:
-            print_error("Source name is required.")
-            raise SystemExit(1)
-        if len(values) > 1:
-            print_error("Only one source name allowed at a time.")
-            raise SystemExit(1)
-        name = values[0]
+        name = _require_single_source_name(values)
 
         if source_type is None:
             source_type = "git"
@@ -413,13 +418,7 @@ def run_config_remove(key: str, values: list[str], global_scope: bool) -> None:
             console.print(f"[dim]Not configured:[/dim] {name}")
 
     elif key == "sources":
-        if not values:
-            print_error("Source name is required.")
-            raise SystemExit(1)
-        if len(values) > 1:
-            print_error("Only one source name allowed at a time.")
-            raise SystemExit(1)
-        name = values[0]
+        name = _require_single_source_name(values)
 
         if name == config.default_source:
             print_error(
