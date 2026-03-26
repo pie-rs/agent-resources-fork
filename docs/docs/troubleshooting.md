@@ -330,12 +330,14 @@ files. Two common causes:
 
 ### Sync shows "Up to date" but skill seems outdated
 
-agr caches cloned repos. To force a fresh install:
+`agr sync` skips skills that are already installed. To force a fresh install from
+the latest version:
 
 ```bash
-agr remove user/skill
-agr add user/skill
+agr add user/skill --overwrite
 ```
+
+This re-downloads the skill from GitHub and replaces your local copy.
 
 ---
 
