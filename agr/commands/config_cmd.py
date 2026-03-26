@@ -13,9 +13,12 @@ from agr.config import (
     validate_canonical_instructions,
 )
 from agr.commands._tool_helpers import (
-    delete_tool_skills,
+    add_tools_to_config,
     ensure_valid_default_tool,
     normalize_and_validate_tool_names,
+    print_tool_add_result,
+    print_tool_remove_result,
+    remove_tools_from_config,
     sync_dependencies_to_tools,
 )
 from agr.console import get_console, print_error
@@ -311,30 +314,19 @@ def run_config_add(
 
     if key == "tools":
         names = normalize_and_validate_tool_names(values)
-
-        added: list[str] = []
-        skipped: list[str] = []
-        for name in names:
-            if name in config.tools:
-                skipped.append(name)
-            else:
-                config.tools.append(name)
-                added.append(name)
+        result = add_tools_to_config(config, names)
 
         if not global_scope:
-            sync_errors = sync_dependencies_to_tools(config, added)
+            sync_errors = sync_dependencies_to_tools(config, result.added)
             if sync_errors:
                 console.print(
                     f"[yellow]Warning:[/yellow] {sync_errors} dependency sync(s) failed"
                 )
                 raise SystemExit(1)
-        if added:
+        if result.added:
             config.save()
 
-        for name in added:
-            console.print(f"[green]Added:[/green] {name}")
-        for name in skipped:
-            console.print(f"[dim]Already configured:[/dim] {name}")
+        print_tool_add_result(result)
 
     elif key == "sources":
         name = _require_single_source_name(values)
@@ -374,33 +366,11 @@ def run_config_remove(key: str, values: list[str], global_scope: bool) -> None:
 
     if key == "tools":
         names = normalize_and_validate_tool_names(values)
-
-        remaining = [t for t in config.tools if t not in names]
-        if not remaining:
-            print_error("Cannot remove all tools. At least one must remain.")
-            raise SystemExit(1)
-
-        previous_default = config.default_tool
         repo_root = None if global_scope else find_repo_root()
 
-        removed: list[str] = []
-        not_configured: list[str] = []
-        for name in names:
-            if name not in config.tools:
-                not_configured.append(name)
-                continue
-            if not global_scope:
-                delete_tool_skills(name, repo_root)
-            config.tools.remove(name)
-            removed.append(name)
-
-        ensure_valid_default_tool(config, previous_default)
+        result = remove_tools_from_config(config, names, repo_root)
         config.save()
-
-        for name in removed:
-            console.print(f"[green]Removed:[/green] {name}")
-        for name in not_configured:
-            console.print(f"[dim]Not configured:[/dim] {name}")
+        print_tool_remove_result(result)
 
     elif key == "sources":
         name = _require_single_source_name(values)

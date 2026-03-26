@@ -7,9 +7,12 @@ Shared helpers live in ``agr.commands._tool_helpers``.
 from agr.config import AgrConfig, find_config, find_repo_root, require_config
 from agr.console import get_console, print_error
 from agr.commands._tool_helpers import (
-    delete_tool_skills,
+    add_tools_to_config,
     ensure_valid_default_tool,
     normalize_and_validate_tool_names,
+    print_tool_add_result,
+    print_tool_remove_result,
+    remove_tools_from_config,
     sync_dependencies_to_tools,
 )
 
@@ -52,24 +55,12 @@ def run_tools_add(tool_names: list[str]) -> None:
     """Add tools and sync existing dependencies to newly added tools."""
     console = get_console()
     names = normalize_and_validate_tool_names(tool_names)
-
     config = _load_required_config()
 
-    added: list[str] = []
-    skipped: list[str] = []
-    for name in names:
-        if name in config.tools:
-            skipped.append(name)
-        else:
-            config.tools.append(name)
-            added.append(name)
+    result = add_tools_to_config(config, names)
+    print_tool_add_result(result)
 
-    for name in added:
-        console.print(f"[green]Added:[/green] {name}")
-    for name in skipped:
-        console.print(f"[dim]Already configured:[/dim] {name}")
-
-    sync_errors = sync_dependencies_to_tools(config, added)
+    sync_errors = sync_dependencies_to_tools(config, result.added)
     config.save()
 
     if sync_errors:
@@ -114,41 +105,13 @@ def run_tools_set(tool_names: list[str]) -> None:
 
 def run_tools_remove(tool_names: list[str]) -> None:
     """Remove tools from configuration and delete their installed skills."""
-    console = get_console()
     names = normalize_and_validate_tool_names(tool_names)
-
     config = _load_required_config()
-    previous_default_tool = config.default_tool
-
-    remaining = [tool for tool in config.tools if tool not in names]
-    if not remaining:
-        print_error("Cannot remove all tools.")
-        console.print("[dim]At least one tool must be configured.[/dim]")
-        raise SystemExit(1)
-
     repo_root = find_repo_root()
-    removed: list[str] = []
-    not_configured: list[str] = []
 
-    for name in names:
-        if name not in config.tools:
-            not_configured.append(name)
-            continue
-
-        console.print(f"[yellow]Removing:[/yellow] {name}")
-        if not delete_tool_skills(name, repo_root):
-            continue
-
-        config.tools.remove(name)
-        removed.append(name)
-
-    ensure_valid_default_tool(config, previous_default_tool)
+    result = remove_tools_from_config(config, names, repo_root)
     config.save()
-
-    for name in removed:
-        console.print(f"[green]Removed:[/green] {name}")
-    for name in not_configured:
-        console.print(f"[dim]Not configured:[/dim] {name}")
+    print_tool_remove_result(result)
 
 
 def run_default_tool_set(tool_name: str) -> None:

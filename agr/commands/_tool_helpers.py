@@ -136,6 +136,88 @@ def normalize_and_validate_tool_names(
     return names
 
 
+@dataclass
+class ToolAddResult:
+    """Result of adding tools to config."""
+
+    added: list[str]
+    skipped: list[str]
+
+
+@dataclass
+class ToolRemoveResult:
+    """Result of removing tools from config."""
+
+    removed: list[str]
+    not_configured: list[str]
+
+
+def add_tools_to_config(config: AgrConfig, names: list[str]) -> ToolAddResult:
+    """Add tools to the config's tool list, skipping already-configured ones.
+
+    Does not save the config — the caller is responsible for that.
+    """
+    added: list[str] = []
+    skipped: list[str] = []
+    for name in names:
+        if name in config.tools:
+            skipped.append(name)
+        else:
+            config.tools.append(name)
+            added.append(name)
+    return ToolAddResult(added=added, skipped=skipped)
+
+
+def remove_tools_from_config(
+    config: AgrConfig,
+    names: list[str],
+    repo_root: Path | None,
+) -> ToolRemoveResult:
+    """Remove tools from the config's tool list, deleting their installed skills.
+
+    Exits with an error if removing all tools. Does not save the config —
+    the caller is responsible for that.
+    """
+    remaining = [t for t in config.tools if t not in names]
+    if not remaining:
+        print_error("Cannot remove all tools. At least one must remain.")
+        raise SystemExit(1)
+
+    previous_default = config.default_tool
+    removed: list[str] = []
+    not_configured: list[str] = []
+
+    for name in names:
+        if name not in config.tools:
+            not_configured.append(name)
+            continue
+        if not delete_tool_skills(name, repo_root):
+            continue
+        config.tools.remove(name)
+        removed.append(name)
+
+    ensure_valid_default_tool(config, previous_default)
+    return ToolRemoveResult(removed=removed, not_configured=not_configured)
+
+
+def print_tool_add_result(result: ToolAddResult) -> None:
+    """Print the result of a tool add operation."""
+    console = get_console()
+    for name in result.added:
+        console.print(f"[green]Added:[/green] {name}")
+    for name in result.skipped:
+        console.print(f"[dim]Already configured:[/dim] {name}")
+
+
+def print_tool_remove_result(result: ToolRemoveResult) -> None:
+    """Print the result of a tool remove operation."""
+    console = get_console()
+    for name in result.removed:
+        console.print(f"[green]Removed:[/green] {name}")
+    for name in result.not_configured:
+        console.print(f"[dim]Not configured:[/dim] {name}")
+
+
 def sync_dependencies_to_tools(config: AgrConfig, tool_names: list[str]) -> int:
     """Install existing dependencies into newly added tools.
 
