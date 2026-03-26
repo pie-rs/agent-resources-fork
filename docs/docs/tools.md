@@ -5,10 +5,12 @@ description: How agr installs skills into Claude Code, Cursor, Codex, GitHub Cop
 
 # Supported Tools
 
-agr installs skills into 6 AI coding tools. You can target one tool or
-multiple tools simultaneously — one `agr add` installs everywhere.
+!!! tldr
+    agr installs skills into Claude Code, Cursor, Codex, OpenCode, GitHub
+    Copilot, and Antigravity. Target one or all — one `agr add` installs
+    everywhere. Default: Claude Code only.
 
-## At a Glance
+## All Tools at a Glance
 
 | Tool | Config name | Project skills dir | Global skills dir | agrx CLI |
 |------|-------------|-------------------|-------------------|----------|
@@ -19,7 +21,7 @@ multiple tools simultaneously — one `agr add` installs everywhere.
 | [GitHub Copilot](#github-copilot) | `copilot` | `.github/skills/` | `~/.copilot/skills/` | `copilot` |
 | [Antigravity](#antigravity) | `antigravity` | `.agent/skills/` | `~/.gemini/antigravity/skills/` | — |
 
-## Configuring Your Tools
+## Target Multiple Tools at Once
 
 By default, agr targets Claude Code only. To install skills into multiple
 tools at once:
@@ -185,7 +187,7 @@ Gemini).
 
 ---
 
-## Instruction File Syncing
+## Keep Instruction Files in Sync Across Tools
 
 Each tool uses a different instruction file:
 
@@ -206,24 +208,9 @@ agr config set canonical_instructions CLAUDE.md
 See [Configuration — Instruction Syncing](configuration.md#instruction-syncing)
 for details.
 
-## Auto-Detection
+## Add or Remove a Tool After Setup
 
-When you run `agr init` or `agr onboard`, agr detects which tools you use by
-looking for their config directories and instruction files in your repo:
-
-```bash
-agr init   # Detects tools from .claude/, CLAUDE.md, .cursor/, .cursorrules, etc.
-```
-
-You can override the detected tools with `--tools`:
-
-```bash
-agr init --tools claude,codex,opencode
-```
-
-## Adding a New Tool Later
-
-To start syncing skills to an additional tool after initial setup:
+To start syncing skills to an additional tool:
 
 ```bash
 agr config add tools cursor
@@ -238,13 +225,28 @@ To stop syncing to a tool:
 agr config remove tools cursor
 ```
 
-## Skill Format Compatibility
+??? note "How agr auto-detects your tools"
+    When you run `agr init` or `agr onboard`, agr detects which tools you use
+    by looking for their config directories and instruction files in your repo
+    (`.claude/`, `CLAUDE.md`, `.cursor/`, `.cursorrules`, etc.). Override with
+    `--tools`:
 
-All tools use the same skill format — a directory containing a `SKILL.md` file
-with YAML frontmatter. See the
-[Agent Skills Specification](https://agentskills.io/specification) for the
-full format details.
+    ```bash
+    agr init --tools claude,codex,opencode
+    ```
 
-This means a skill written for one tool works in all the others. When you
-`agr add` a skill, the same `SKILL.md` and supporting files are copied into
-each configured tool's skills directory.
+??? note "One skill format works in every tool"
+    All tools use the same skill format — a directory containing a `SKILL.md`
+    file with YAML frontmatter. A skill written for one tool works in all the
+    others. When you `agr add` a skill, the same files are copied into each
+    configured tool's skills directory. See the
+    [Agent Skills Specification](https://agentskills.io/specification) for full
+    format details.
+
+---
+
+## Next Steps
+
+- [Configuration](configuration.md) — Multi-tool setup, custom sources, instruction syncing
+- [Creating Skills](creating.md) — Write skills that work across all tools
+- [Teams](teams.md) — Set up multi-tool teams with shared skills
