@@ -5,7 +5,7 @@ description: Use agr as a Python library to load, inspect, and cache AI agent sk
 
 # Python SDK
 
-Use `agr` as a Python library to load, inspect, and cache skills programmatically.
+Use `agr` as a Python library to load, inspect, and cache [skills](concepts.md#skills) programmatically.
 
 ## Install
 
@@ -14,7 +14,7 @@ pip install agr   # As a library dependency in your project
 ```
 
 !!! tip
-    If you want the `agr` and `agrx` CLI tools (not just the SDK), install with `uv tool install agr` or `pipx install agr` instead.
+    If you want the `agr` and [`agrx`](agrx.md) CLI tools (not just the SDK), install with `uv tool install agr` or `pipx install agr` instead. See the [Tutorial](tutorial.md) for a full walkthrough.
 
 ## Quick Start
 
@@ -35,9 +35,10 @@ print(skill.prompt)
 
 ### From GitHub
 
-`Skill.from_git()` downloads a skill from GitHub and caches it locally. On
-subsequent calls, agr checks the remote HEAD commit — if the cached revision
-matches, it returns the cached copy without re-downloading.
+`Skill.from_git()` downloads a skill from GitHub and caches it locally using a
+[handle](concepts.md#handles) to identify the skill. On subsequent calls, agr
+checks the remote HEAD commit — if the cached revision matches, it returns the
+cached copy without re-downloading.
 
 ```python
 from agr import Skill
@@ -54,7 +55,7 @@ skill = Skill.from_git("kasperjunge/commit", force_download=True)
 
 ### From a Local Directory
 
-`Skill.from_local()` loads a skill from a local path. The directory must contain a `SKILL.md` file.
+`Skill.from_local()` loads a skill from a local path. The directory must contain a `SKILL.md` file (see [Creating Skills](creating.md) for the expected structure).
 
 ```python
 skill = Skill.from_local("./my-skill")
@@ -162,11 +163,11 @@ print(info.owner)        # "anthropics"
 print(info.repo)         # "skills"
 ```
 
-Both functions use the GitHub API and respect `GITHUB_TOKEN` / `GH_TOKEN` environment variables for authentication.
+Both functions use the GitHub API and respect `GITHUB_TOKEN` / `GH_TOKEN` environment variables for authentication. See [Troubleshooting](troubleshooting.md) if you hit rate limits or auth errors.
 
 ## Cache Management
 
-Downloaded skills are cached in `~/.cache/agr/skills/`. The `cache` object provides inspection and cleanup.
+Downloaded skills are cached in `~/.cache/agr/skills/` (also used by the [CLI](reference.md)). The `cache` object provides inspection and cleanup.
 
 ```python
 from agr import cache
@@ -235,3 +236,11 @@ class SkillInfo:
     repo: str              # Repository name
     owner: str             # GitHub owner/username
 ```
+
+---
+
+## Next Steps
+
+- [**Creating Skills**](creating.md) — build your own skills to load with the SDK
+- [**Core Concepts**](concepts.md) — understand handles, sources, and the sync lifecycle
+- [**CLI Reference**](reference.md) — manage skills from the command line instead of Python
