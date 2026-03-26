@@ -63,6 +63,34 @@ user/repo/skill         → github.com/user/repo repo, "skill" directory
 ./path/to/skill         → local directory on disk
 ```
 
+## Supported Tools
+
+agr installs skills into 6 AI coding tools. Configure with `agr config set tools claude cursor codex`.
+
+| Tool | Config name | Project skills dir | Instruction file |
+|------|-------------|-------------------|-----------------|
+| Claude Code | claude | .claude/skills/ | CLAUDE.md |
+| Cursor | cursor | .cursor/skills/ | AGENTS.md |
+| OpenAI Codex | codex | .agents/skills/ | AGENTS.md |
+| OpenCode | opencode | .opencode/skills/ | AGENTS.md |
+| GitHub Copilot | copilot | .github/skills/ | AGENTS.md |
+| Antigravity | antigravity | .agent/skills/ | GEMINI.md |
+
+## SKILL.md Format
+
+Every skill is a directory with a `SKILL.md` file containing YAML frontmatter:
+
+```markdown
+---
+name: my-skill
+description: What this skill does and when to use it.
+---
+
+Instructions for the AI agent go here.
+```
+
+Required fields: `name` (1–64 chars, lowercase alphanumeric and hyphens) and `description` (max 1024 chars).
+
 ## Source Code
 
 - GitHub: https://github.com/kasperjunge/agent-resources
