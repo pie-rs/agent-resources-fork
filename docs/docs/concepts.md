@@ -17,7 +17,7 @@ A **skill** is a folder containing a `SKILL.md` file. The file has YAML
 frontmatter (`name`, `description`) and a markdown body with instructions for
 an AI coding agent.
 
-```
+```text
 my-skill/
 ├── SKILL.md          # Required — agent instructions
 ├── scripts/          # Optional — helper scripts
@@ -44,7 +44,7 @@ A **handle** is how you refer to a skill. It tells agr where to find it.
 
 ### Remote handles
 
-```
+```text
 user/skill            →  github.com/user/skills  repo, "skill" directory
 user/repo/skill       →  github.com/user/repo    repo, "skill" directory
 ```
@@ -54,7 +54,7 @@ The two-part form (`user/skill`) assumes the skill lives in a repo named
 
 ### Local handles
 
-```
+```text
 ./path/to/skill       →  Local directory on disk
 ```
 

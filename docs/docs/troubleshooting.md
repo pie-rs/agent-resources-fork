@@ -11,7 +11,7 @@ Common problems and how to fix them.
 
 ### "git CLI not found"
 
-```
+```text
 Error: git CLI not found. Install git to fetch remote skills.
 ```
 
@@ -35,7 +35,7 @@ agr uses `git` under the hood for all remote operations. Install it:
 
 ### "Repository not found"
 
-```
+```text
 Error: Repository 'user/skills' not found in source 'github'.
 ```
 
@@ -53,7 +53,7 @@ The repository doesn't exist or is private. Check:
 
 ### "Authentication failed"
 
-```
+```text
 Error: Authentication failed for source 'github'.
 ```
 
@@ -70,7 +70,7 @@ Your GitHub token is missing, expired, or lacks permissions.
 
 ### "Skill not found in repository"
 
-```
+```text
 Error: Skill 'myskill' not found in repository.
 No directory named 'myskill' containing SKILL.md was found.
 ```
@@ -79,7 +79,7 @@ The repo exists but doesn't contain a skill with that name. agr searches recursi
 
 **Fix:** Check the repo on GitHub to see what skills are available. If you used a two-part handle, agr may suggest corrections:
 
-```
+```text
 Skill 'myskill' not found. However, 'user/myskill' exists as a repository with 3 skill(s):
   agr add user/myskill/skill1
   agr add user/myskill/skill2
@@ -88,7 +88,7 @@ Skill 'myskill' not found. However, 'user/myskill' exists as a repository with 3
 
 ### "Skill already exists"
 
-```
+```text
 Error: Skill already exists at /path/to/skill. Use --overwrite to replace.
 ```
 
@@ -107,7 +107,7 @@ agr add user/skill
 
 ### "Network error: could not resolve host"
 
-```
+```text
 Error: Network error: could not resolve host for source 'github'.
 ```
 
@@ -119,7 +119,7 @@ DNS resolution failed. Check your internet connection, VPN, or proxy settings.
 
 ### "Invalid handle: remote handles require username/name format"
 
-```
+```text
 Error: Invalid handle 'commit': remote handles require username/name format
 ```
 
@@ -135,7 +135,7 @@ agr add kasperjunge/commit
 
 ### "Too many path segments"
 
-```
+```text
 Error: Invalid handle 'a/b/c/d': too many path segments (expected user/name or user/repo/name)
 ```
 
@@ -143,7 +143,7 @@ Handles support at most three parts: `user/repo/skill`. Check for extra slashes.
 
 ### "Contains reserved sequence '--'"
 
-```
+```text
 Error: Invalid handle 'user/my--skill': skill name 'my--skill' contains reserved sequence '--'
 ```
 
@@ -155,7 +155,7 @@ Skill names cannot contain `--`. Rename the skill to use single hyphens.
 
 ### "No agr.toml found"
 
-```
+```text
 Error: No agr.toml found.
 Run 'agr init' first to create one.
 ```
@@ -174,7 +174,7 @@ agr onboard
 
 ### "Not in a git repository"
 
-```
+```text
 Error: Not in a git repository
 ```
 
@@ -186,7 +186,7 @@ git init
 
 ### "Unknown tool"
 
-```
+```text
 Error: Unknown tool 'photoshop' in agr.toml. Available: claude, cursor, codex, opencode, copilot, antigravity
 ```
 
@@ -203,7 +203,7 @@ Check your `agr.toml` for typos in the `tools` list. The supported tools are:
 
 ### "dependencies must be declared before [[source]] blocks"
 
-```
+```text
 Error: dependencies must be declared before [[source]] blocks
 ```
 
@@ -282,7 +282,7 @@ agr add user/skill
 
 ### "Cannot remove default source"
 
-```
+```text
 Error: Cannot remove default source 'my-server'. Change the default source first.
 ```
 
@@ -296,7 +296,7 @@ agr config remove sources my-server
 
 ### "Local skills cannot specify a source"
 
-```
+```text
 Error: Local skills cannot specify a source
 ```
 
@@ -317,7 +317,7 @@ agr add ./my-skill
 
 ### "Invalid skill name"
 
-```
+```text
 Error: Invalid skill name 'my skill': must be alphanumeric with hyphens/underscores
 ```
 
@@ -336,7 +336,7 @@ agr init MySkill
 
 ### "Directory already exists"
 
-```
+```text
 Error: Directory 'myskill' already exists
 ```
 
@@ -363,7 +363,7 @@ After `agr add ./skills/my-skill`, verify:
 
 ### "No global agr.toml found"
 
-```
+```text
 Error: No global agr.toml found
 Run 'agr add -g <handle>' first.
 ```
