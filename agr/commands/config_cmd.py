@@ -7,10 +7,10 @@ from pathlib import Path
 
 from agr.config import (
     AgrConfig,
-    VALID_CANONICAL_INSTRUCTIONS,
     find_repo_root,
     get_global_config_path,
     require_config,
+    validate_canonical_instructions,
 )
 from agr.commands._tool_helpers import (
     delete_tool_skills,
@@ -19,6 +19,7 @@ from agr.commands._tool_helpers import (
     sync_dependencies_to_tools,
 )
 from agr.console import get_console, print_error
+from agr.exceptions import ConfigError
 from agr.source import DEFAULT_SOURCE_NAME, SourceConfig
 from agr.tool import DEFAULT_TOOL_NAMES
 
@@ -221,10 +222,11 @@ def run_config_set(key: str, values: list[str], global_scope: bool) -> None:
         console.print(f"[green]Set:[/green] sync_instructions = {value.lower()}")
 
     elif key == "canonical_instructions":
-        if value not in VALID_CANONICAL_INSTRUCTIONS:
-            valid = ", ".join(f"'{v}'" for v in sorted(VALID_CANONICAL_INSTRUCTIONS))
-            print_error(f"canonical_instructions must be {valid}.")
-            raise SystemExit(1)
+        try:
+            validate_canonical_instructions(value)
+        except ConfigError as exc:
+            print_error(str(exc))
+            raise SystemExit(1) from exc
         config.canonical_instructions = value
         config.save()
         console.print(f"[green]Set:[/green] canonical_instructions = {value}")

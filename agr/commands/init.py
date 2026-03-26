@@ -6,11 +6,12 @@ from pathlib import Path
 
 from agr.console import get_console, print_error
 from agr.config import (
-    VALID_CANONICAL_INSTRUCTIONS,
     AgrConfig,
     find_config,
     find_repo_root,
+    validate_canonical_instructions,
 )
+from agr.exceptions import ConfigError
 from agr.detect import detect_tools
 from agr.instructions import canonical_instruction_file
 from agr.skill import create_skill_scaffold
@@ -161,10 +162,11 @@ def run_init(
             changed = True
 
     if canonical_instructions:
-        if canonical_instructions not in VALID_CANONICAL_INSTRUCTIONS:
-            valid = ", ".join(sorted(VALID_CANONICAL_INSTRUCTIONS))
-            print_error(f"canonical_instructions must be one of: {valid}")
-            raise SystemExit(1)
+        try:
+            validate_canonical_instructions(canonical_instructions)
+        except ConfigError as exc:
+            print_error(str(exc))
+            raise SystemExit(1) from exc
         config.canonical_instructions = canonical_instructions
         if config.canonical_instructions != original_canonical_instructions:
             changed = True

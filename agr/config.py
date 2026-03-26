@@ -27,6 +27,13 @@ from agr.tool import (
 VALID_CANONICAL_INSTRUCTIONS = {"AGENTS.md", "CLAUDE.md", "GEMINI.md"}
 
 
+def validate_canonical_instructions(value: str) -> None:
+    """Raise ConfigError if *value* is not a valid canonical instructions file."""
+    if value not in VALID_CANONICAL_INSTRUCTIONS:
+        valid = ", ".join(f"'{v}'" for v in sorted(VALID_CANONICAL_INSTRUCTIONS))
+        raise ConfigError(f"canonical_instructions must be one of: {valid}")
+
+
 def _parse_tools_from_doc(doc: TOMLDocument) -> list[str]:
     """Parse and validate tools list from TOML document."""
     tools_list = doc.get("tools", list(DEFAULT_TOOL_NAMES))
@@ -291,12 +298,7 @@ class AgrConfig:
         canonical_instructions = doc.get("canonical_instructions")
         if canonical_instructions is not None:
             canonical_instructions = str(canonical_instructions)
-            if canonical_instructions not in VALID_CANONICAL_INSTRUCTIONS:
-                raise ConfigError(
-                    "canonical_instructions must be "
-                    "'AGENTS.md', 'CLAUDE.md', "
-                    "or 'GEMINI.md'"
-                )
+            validate_canonical_instructions(canonical_instructions)
             config.canonical_instructions = canonical_instructions
 
         config.sources, config.default_source = _parse_sources_from_doc(doc)
