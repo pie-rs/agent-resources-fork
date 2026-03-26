@@ -422,7 +422,11 @@ each to see the complete SKILL.md.
 
 ---
 
-## Learn More
+## Next Steps
 
+- [**Skill Directory**](skills.md) — Browse official and community skills for inspiration
+- [**Python SDK**](sdk.md) — Load and inspect skills programmatically
+- [**Core Concepts**](concepts.md) — Understand handles, sources, and the sync lifecycle
+- [**CLI Reference**](reference.md) — Every command, flag, and option for managing skills
 - [Agent Skills Specification](https://agentskills.io/specification) — Full format details
 - [Example Skills](https://github.com/anthropics/skills) — Reference implementations
