@@ -41,7 +41,9 @@ theme:
     - navigation.top
     - navigation.indexes
     - navigation.footer
+    - navigation.path
     - content.code.copy
+    - content.code.annotate
     - content.tabs.link
     - search.suggest
     - search.highlight
