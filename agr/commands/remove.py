@@ -1,7 +1,7 @@
 """agr remove command implementation."""
 
 from agr.commands import CommandResult
-from agr.commands._tool_helpers import load_existing_config
+from agr.commands._tool_helpers import load_existing_config, save_and_summarize_results
 from agr.commands.migrations import run_tool_migrations
 from agr.console import get_console, print_error
 from agr.exceptions import INSTALL_ERROR_TYPES, format_install_error
@@ -105,13 +105,7 @@ def run_remove(refs: list[str], global_install: bool = False) -> None:
         except INSTALL_ERROR_TYPES as e:
             results.append(CommandResult(ref, False, format_install_error(e)))
 
-    # Save config if any changes
-    successes = [r for r in results if r.success]
-    if successes:
-        config.save(config_path)
-
-    # Print results
-    for result in results:
+    def _print_remove_result(result: CommandResult) -> None:
         if result.success:
             console.print(f"[green]Removed:[/green] {result.ref}")
         elif result.message == "Not found":
@@ -120,9 +114,10 @@ def run_remove(refs: list[str], global_install: bool = False) -> None:
             print_error(result.ref)
             console.print(f"  [dim]{result.message}[/dim]")
 
-    # Summary
-    if len(refs) > 1:
-        console.print()
-        console.print(
-            f"[bold]Summary:[/bold] {len(successes)}/{len(refs)} skills removed"
-        )
+    save_and_summarize_results(
+        results, config, config_path,
+        action="removed",
+        total=len(refs),
+        print_result=_print_remove_result,
+        exit_on_failure=False,
+    )

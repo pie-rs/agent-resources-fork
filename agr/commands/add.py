@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from agr.commands import CommandResult
+from agr.commands._tool_helpers import save_and_summarize_results
 from agr.commands.migrations import run_tool_migrations
 from agr.config import (
     AgrConfig,
@@ -120,13 +121,7 @@ def run_add(
         except INSTALL_ERROR_TYPES as e:
             results.append(CommandResult(ref, False, format_install_error(e)))
 
-    # Save config if any successes
-    successes = [r for r in results if r.success]
-    if successes:
-        config.save(config_path)
-
-    # Print results
-    for result in results:
+    def _print_add_result(result: CommandResult) -> None:
         if result.success:
             console.print(f"[green]Added:[/green] {result.ref}")
             console.print(f"  [dim]Installed to {result.message}[/dim]")
@@ -134,17 +129,12 @@ def run_add(
             console.print(f"[red]Failed:[/red] {result.ref}")
             console.print(f"  [dim]{result.message}[/dim]")
 
-    # Summary
-    if len(refs) > 1:
-        console.print()
-        console.print(
-            f"[bold]Summary:[/bold] {len(successes)}/{len(refs)} skills added"
-        )
-
-    # Exit with error if any failures
-    failures = [r for r in results if not r.success]
-    if failures:
-        raise SystemExit(1)
+    save_and_summarize_results(
+        results, config, config_path,
+        action="added",
+        total=len(refs),
+        print_result=_print_add_result,
+    )
 
 
 def _maybe_suggest_repo_skills(

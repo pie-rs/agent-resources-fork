@@ -7,7 +7,9 @@ and the deprecated tool commands (tools.py).
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Callable
 
+from agr.commands import CommandResult
 from agr.config import (
     AgrConfig,
     find_config,
@@ -93,6 +95,49 @@ def load_existing_config(
         repo_root=repo_root,
         skills_dirs=skills_dirs,
     )
+
+
+def save_and_summarize_results(
+    results: list[CommandResult],
+    config: AgrConfig,
+    config_path: Path,
+    *,
+    action: str,
+    total: int,
+    print_result: Callable[[CommandResult], None],
+    exit_on_failure: bool = True,
+) -> None:
+    """Save config and print a summary after a batch command (add, remove, etc.).
+
+    Handles the shared pattern of: save config if any successes → print
+    per-result output → print summary when multiple refs → optionally
+    exit with error code on failures.
+
+    Args:
+        results: The list of CommandResult objects from the operation.
+        config: The AgrConfig to save.
+        config_path: Where to write the config.
+        action: Verb for the summary line (e.g. "added", "removed").
+        total: Total number of refs attempted (for summary denominator).
+        print_result: Callback to print each individual result.
+        exit_on_failure: If True, raise SystemExit(1) when any result failed.
+    """
+    console = get_console()
+    successes = [r for r in results if r.success]
+    if successes:
+        config.save(config_path)
+
+    for result in results:
+        print_result(result)
+
+    if total > 1:
+        console.print()
+        console.print(
+            f"[bold]Summary:[/bold] {len(successes)}/{total} skills {action}"
+        )
+
+    if exit_on_failure and any(not r.success for r in results):
+        raise SystemExit(1)
 
 
 def normalize_tool_names(tool_names: list[str]) -> list[str]:
