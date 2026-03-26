@@ -572,7 +572,7 @@ Run `agr init` first.
 Run inside a git repo, or use `--global` for agrx.
 
 ### Sync shows "Up to date" but skill seems outdated
-Remove and re-add: `agr remove user/skill && agr add user/skill`
+Use `--overwrite` to force a fresh install: `agr add user/skill --overwrite`
 
 ## Migrating
 
