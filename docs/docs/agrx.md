@@ -1,6 +1,11 @@
 ---
 title: agrx — Run Skills Without Installing
 description: Use agrx to download and run AI agent skills ephemerally — no agr.toml changes, no cleanup needed.
+keywords:
+  - agrx
+  - ephemeral skill runner
+  - try skills without installing
+  - one-off skill execution
 ---
 
 # agrx — Run Skills Without Installing

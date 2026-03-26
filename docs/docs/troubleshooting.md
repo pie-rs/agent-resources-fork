@@ -1,6 +1,12 @@
 ---
 title: Troubleshooting
 description: Fix common agr problems — installation errors, GitHub auth, sync failures, and skill conflicts.
+keywords:
+  - agr troubleshooting
+  - agr errors
+  - GitHub authentication
+  - skill sync failures
+  - agr not working
 ---
 
 # Troubleshooting
@@ -9,7 +15,7 @@ Common problems and how to fix them.
 
 ## Installation
 
-### "git CLI not found"
+### How do I fix "git CLI not found"?
 
 ```text
 Error: git CLI not found. Install git to fetch remote skills.
@@ -33,7 +39,7 @@ agr uses `git` under the hood for all remote operations. Install it:
 
     Download from [git-scm.com](https://git-scm.com/downloads).
 
-### "Repository not found"
+### How do I fix "Repository not found"?
 
 ```text
 Error: Repository 'user/skills' not found in source 'github'.
@@ -51,7 +57,7 @@ The repository doesn't exist or is private. Check:
    agr add user/my-custom-repo/skill-name
    ```
 
-### "Authentication failed"
+### How do I fix "Authentication failed"?
 
 ```text
 Error: Authentication failed for source 'github'.
@@ -68,7 +74,7 @@ Your GitHub token is missing, expired, or lacks permissions.
 - **Token expired?** Generate a new one at [github.com/settings/tokens](https://github.com/settings/tokens).
 - **Wrong permissions?** The token needs **Contents: Read-only** access on the target repository. Fine-grained tokens are recommended.
 
-### "Skill not found in repository"
+### How do I fix "Skill not found in repository"?
 
 ```text
 Error: Skill 'myskill' not found in repository.
@@ -86,7 +92,7 @@ Skill 'myskill' not found. However, 'user/myskill' exists as a repository with 3
   agr add user/myskill/skill3
 ```
 
-### "Skill already exists"
+### How do I fix "Skill already exists"?
 
 ```text
 Error: Skill already exists at /path/to/skill. Use --overwrite to replace.
@@ -105,7 +111,7 @@ agr remove user/skill
 agr add user/skill
 ```
 
-### "Network error: could not resolve host"
+### How do I fix "Network error: could not resolve host"?
 
 ```text
 Error: Network error: could not resolve host for source 'github'.
@@ -117,7 +123,7 @@ DNS resolution failed. Check your internet connection, VPN, or proxy settings.
 
 ## Handle Format
 
-### "Invalid handle: remote handles require username/name format"
+### How do I fix "Invalid handle: remote handles require username/name format"?
 
 ```text
 Error: Invalid handle 'commit': remote handles require username/name format
@@ -133,7 +139,7 @@ agr add commit
 agr add kasperjunge/commit
 ```
 
-### "Too many path segments"
+### How do I fix "Too many path segments"?
 
 ```text
 Error: Invalid handle 'a/b/c/d': too many path segments (expected user/name or user/repo/name)
@@ -141,7 +147,7 @@ Error: Invalid handle 'a/b/c/d': too many path segments (expected user/name or u
 
 Handles support at most three parts: `user/repo/skill`. Check for extra slashes.
 
-### "Contains reserved sequence '--'"
+### How do I fix "Contains reserved sequence '--'"?
 
 ```text
 Error: Invalid handle 'user/my--skill': skill name 'my--skill' contains reserved sequence '--'
@@ -153,7 +159,7 @@ Skill names cannot contain `--`. Rename the skill to use single hyphens.
 
 ## Configuration
 
-### "No agr.toml found"
+### How do I fix "No agr.toml found"?
 
 ```text
 Error: No agr.toml found.
@@ -172,7 +178,7 @@ Or use interactive setup:
 agr onboard
 ```
 
-### "Not in a git repository"
+### How do I fix "Not in a git repository"?
 
 ```text
 Error: Not in a git repository
@@ -184,7 +190,7 @@ Project-level commands need to run inside a git repo. Either `cd` into one or in
 git init
 ```
 
-### "Unknown tool"
+### How do I fix "Unknown tool"?
 
 ```text
 Error: Unknown tool 'photoshop' in agr.toml. Available: claude, cursor, codex, opencode, copilot, antigravity
@@ -201,7 +207,7 @@ Check your `agr.toml` for typos in the `tools` list. See [Supported Tools](tools
 | `copilot` | GitHub Copilot |
 | `antigravity` | Antigravity |
 
-### "Invalid TOML in agr.toml"
+### How do I fix "Invalid TOML in agr.toml"?
 
 ```text
 Error: Invalid TOML in agr.toml: ...
@@ -227,7 +233,9 @@ Your `default_tool` value isn't in your `tools` list. Either add it to `tools` o
 # Wrong — codex isn't in tools
 tools = ["claude", "cursor"]
 default_tool = "codex"
+```
 
+```toml
 # Right
 tools = ["claude", "cursor", "codex"]
 default_tool = "codex"

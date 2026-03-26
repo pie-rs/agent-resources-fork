@@ -1,6 +1,12 @@
 ---
 title: Skill Directory
 description: Browse official and community AI agent skills available for agr — code review, testing, docs, and more.
+keywords:
+  - agr skill directory
+  - AI agent skills list
+  - community skills
+  - code review skill
+  - testing skill
 ---
 
 # Skill Directory

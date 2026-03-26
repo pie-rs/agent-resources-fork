@@ -1,6 +1,10 @@
 ---
 title: What's New
 description: User-facing changes in each agr release — new features, fixes, and breaking changes.
+keywords:
+  - agr changelog
+  - agr release notes
+  - agr updates
 ---
 
 # What's New

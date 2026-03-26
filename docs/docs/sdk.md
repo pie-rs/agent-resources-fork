@@ -1,6 +1,12 @@
 ---
 title: Python SDK
 description: Use agr as a Python library to load, inspect, and cache AI agent skills programmatically.
+keywords:
+  - agr Python SDK
+  - skill discovery API
+  - cache management
+  - programmatic skill loading
+  - agr library
 ---
 
 # Python SDK

@@ -1,6 +1,13 @@
 ---
 title: Core Concepts
 description: Understand how agr works — skills, handles, sources, and the sync lifecycle that keeps your AI tools in sync.
+keywords:
+  - agr architecture
+  - skill handles
+  - agr sync lifecycle
+  - SKILL.md format
+  - agr.toml
+  - AI agent skill scopes
 ---
 
 # Core Concepts

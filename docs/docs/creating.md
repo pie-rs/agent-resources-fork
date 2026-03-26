@@ -1,6 +1,13 @@
 ---
 title: Creating Skills
 description: How to create, test, and publish your own AI agent skills for agr.
+keywords:
+  - create AI agent skill
+  - SKILL.md format
+  - agr init
+  - publish skill to GitHub
+  - skill frontmatter
+  - skill testing
 ---
 
 # Creating Skills

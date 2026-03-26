@@ -1,6 +1,12 @@
 ---
 title: Tutorial
 description: Step-by-step guide to installing agr, adding skills, syncing with a team, and creating your own AI agent skill.
+keywords:
+  - agr tutorial
+  - install agr
+  - add AI agent skill
+  - getting started with agr
+  - agr quickstart
 ---
 
 # Tutorial: From Zero to Sharing Skills

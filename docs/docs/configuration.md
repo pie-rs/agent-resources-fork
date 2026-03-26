@@ -1,6 +1,13 @@
 ---
 title: Configuration
 description: Configure agr.toml for multi-tool setup, custom Git sources, instruction syncing, and global installs.
+keywords:
+  - agr.toml configuration
+  - custom git sources
+  - private repository skills
+  - global skill install
+  - instruction syncing
+  - agr config
 ---
 
 # Configuration
