@@ -1,18 +1,24 @@
 {% extends "base.html" %}
 
 {% block extrahead %}
+  {% if page and page.meta and page.meta.description %}
+    {% set page_description = page.meta.description %}
+  {% else %}
+    {% set page_description = config.site_description %}
+  {% endif %}
+
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="{{ page.canonical_url }}" />
   <meta property="og:title" content="{{ page.title }} - Agent Resources" />
-  <meta property="og:description" content="{{ config.site_description }}" />
+  <meta property="og:description" content="{{ page_description }}" />
   <meta property="og:site_name" content="Agent Resources" />
   <meta property="og:image" content="{{ config.site_url }}images/og-image.png" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="{{ page.title }} - Agent Resources" />
-  <meta name="twitter:description" content="{{ config.site_description }}" />
+  <meta name="twitter:description" content="{{ page_description }}" />
   <meta name="twitter:image" content="{{ config.site_url }}images/og-image.png" />
 
   <!-- Additional SEO -->
