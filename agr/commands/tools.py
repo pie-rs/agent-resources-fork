@@ -10,9 +10,7 @@ from agr.commands._tool_helpers import (
     delete_tool_skills,
     ensure_valid_default_tool,
     normalize_and_validate_tool_names,
-    normalize_tool_names,
     sync_dependencies_to_tools,
-    validate_tool_names,
 )
 
 from agr.tool import DEFAULT_TOOL_NAMES, TOOLS
@@ -160,13 +158,11 @@ def run_tools_remove(tool_names: list[str]) -> None:
 def run_default_tool_set(tool_name: str) -> None:
     """Set default_tool in agr.toml."""
     console = get_console()
-    normalized = normalize_tool_names([tool_name])
-    if not normalized:
+    names = normalize_and_validate_tool_names([tool_name])
+    if not names:
         print_error("Tool name is required.")
         raise SystemExit(1)
-
-    name = normalized[0]
-    validate_tool_names([name])
+    name = names[0]
     config = _load_required_config()
 
     if name not in config.tools:

@@ -16,9 +16,7 @@ from agr.commands._tool_helpers import (
     delete_tool_skills,
     ensure_valid_default_tool,
     normalize_and_validate_tool_names,
-    normalize_tool_names,
     sync_dependencies_to_tools,
-    validate_tool_names,
 )
 from agr.console import get_console, print_error
 from agr.source import DEFAULT_SOURCE_NAME, SourceConfig
@@ -189,12 +187,11 @@ def run_config_set(key: str, values: list[str], global_scope: bool) -> None:
     value = values[0]
 
     if key == "default_tool":
-        normalized = normalize_tool_names([value])
-        if not normalized:
+        names = normalize_and_validate_tool_names([value])
+        if not names:
             print_error("Tool name is required.")
             raise SystemExit(1)
-        name = normalized[0]
-        validate_tool_names([name])
+        name = names[0]
         if name not in config.tools:
             print_error(
                 f"Tool '{name}' is not in configured tools. "
