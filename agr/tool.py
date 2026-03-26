@@ -18,7 +18,7 @@ class ToolConfig:
 
     name: str
     config_dir: str  # e.g., ".claude"
-    skills_subdir: str  # e.g., "skills"
+    skills_subdir: str = "skills"  # e.g., "skills"
     supports_nested: bool = False  # True for nested dir structure (Cursor)
     global_config_dir: str | None = (
         None  # For tools where personal path differs (e.g., Copilot)
@@ -55,7 +55,6 @@ class ToolConfig:
 CLAUDE = ToolConfig(
     name="claude",
     config_dir=".claude",
-    skills_subdir="skills",
     supports_nested=False,
     cli_command="claude",
     cli_prompt_flag="-p",
@@ -71,7 +70,6 @@ CLAUDE = ToolConfig(
 CURSOR = ToolConfig(
     name="cursor",
     config_dir=".cursor",
-    skills_subdir="skills",
     supports_nested=True,
     cli_command="agent",
     cli_prompt_flag="-p",
@@ -89,7 +87,6 @@ CURSOR = ToolConfig(
 CODEX = ToolConfig(
     name="codex",
     config_dir=".agents",
-    skills_subdir="skills",
     supports_nested=False,
     cli_command="codex",
     cli_prompt_flag=None,  # Codex accepts prompt as positional arg
@@ -110,7 +107,6 @@ CODEX = ToolConfig(
 OPENCODE = ToolConfig(
     name="opencode",
     config_dir=".opencode",
-    skills_subdir="skills",
     supports_nested=False,
     global_config_dir=".config/opencode",
     cli_command="opencode",
@@ -131,7 +127,6 @@ OPENCODE = ToolConfig(
 COPILOT = ToolConfig(
     name="copilot",
     config_dir=".github",
-    skills_subdir="skills",
     supports_nested=False,  # Flat naming like Claude
     global_config_dir=".copilot",  # Personal path differs from project path
     cli_command="copilot",
@@ -150,7 +145,6 @@ COPILOT = ToolConfig(
 ANTIGRAVITY = ToolConfig(
     name="antigravity",
     config_dir=".agent",
-    skills_subdir="skills",
     supports_nested=False,
     global_config_dir=".gemini/antigravity",
     cli_command=None,
