@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 
-from agr.commands._tool_helpers import load_existing_config
+from agr.commands._tool_helpers import load_existing_config, print_missing_config_hint
 from agr.commands.migrations import (
     migrate_flat_installed_names,
     migrate_legacy_directories,
@@ -293,8 +293,7 @@ def _run_global_sync() -> None:
     console = get_console()
     loaded = load_existing_config(global_install=True, missing_ok=True)
     if loaded is None:
-        console.print("[yellow]No global agr.toml found.[/yellow] Nothing to sync.")
-        console.print("[dim]Run 'agr add -g <handle>' to create one.[/dim]")
+        print_missing_config_hint(global_install=True)
         return
 
     config, tools, skills_dirs = loaded.config, loaded.tools, loaded.skills_dirs

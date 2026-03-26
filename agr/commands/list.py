@@ -4,7 +4,7 @@ from pathlib import Path
 
 from rich.table import Table
 
-from agr.commands._tool_helpers import load_existing_config
+from agr.commands._tool_helpers import load_existing_config, print_missing_config_hint
 from agr.console import get_console
 from agr.exceptions import AgrError, InvalidHandleError
 from agr.fetcher import is_skill_installed
@@ -59,12 +59,7 @@ def run_list(global_install: bool = False) -> None:
     console = get_console()
     loaded = load_existing_config(global_install, missing_ok=True)
     if loaded is None:
-        if global_install:
-            console.print("[yellow]No global agr.toml found.[/yellow]")
-            console.print("[dim]Run 'agr add -g <handle>' to create one.[/dim]")
-        else:
-            console.print("[yellow]No agr.toml found.[/yellow]")
-            console.print("[dim]Run 'agr init' to create one.[/dim]")
+        print_missing_config_hint(global_install)
         return
     config, config_path = loaded.config, loaded.config_path
     tools, repo_root, skills_dirs = loaded.tools, loaded.repo_root, loaded.skills_dirs

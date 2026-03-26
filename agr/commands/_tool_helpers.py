@@ -32,6 +32,17 @@ class LoadedConfig:
     skills_dirs: dict[str, Path] | None
 
 
+def print_missing_config_hint(global_install: bool) -> None:
+    """Print the standard 'no agr.toml found' message with a hint to create one."""
+    console = get_console()
+    if global_install:
+        console.print("[yellow]No global agr.toml found.[/yellow]")
+        console.print("[dim]Run 'agr add -g <handle>' to create one.[/dim]")
+    else:
+        console.print("[yellow]No agr.toml found.[/yellow]")
+        console.print("[dim]Run 'agr init' to create one.[/dim]")
+
+
 def load_existing_config(
     global_install: bool,
     *,
@@ -51,7 +62,6 @@ def load_existing_config(
     Returns:
         A LoadedConfig, or None when missing_ok is True and no config exists.
     """
-    console = get_console()
     skills_dirs: dict[str, Path] | None = None
 
     if global_install:
@@ -60,8 +70,7 @@ def load_existing_config(
         if not config_path.exists():
             if missing_ok:
                 return None
-            console.print("[yellow]No global agr.toml found.[/yellow]")
-            console.print("[dim]Run 'agr add -g <handle>' to create one.[/dim]")
+            print_missing_config_hint(global_install=True)
             raise SystemExit(1)
     else:
         repo_root = require_repo_root()
@@ -69,8 +78,7 @@ def load_existing_config(
         if config_path is None:
             if missing_ok:
                 return None
-            console.print("[yellow]No agr.toml found.[/yellow]")
-            console.print("[dim]Run 'agr init' to create one.[/dim]")
+            print_missing_config_hint(global_install=False)
             raise SystemExit(1)
 
     config = AgrConfig.load(config_path)
