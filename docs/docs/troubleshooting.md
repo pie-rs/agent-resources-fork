@@ -201,6 +201,52 @@ Check your `agr.toml` for typos in the `tools` list. See [Supported Tools](tools
 | `copilot` | GitHub Copilot |
 | `antigravity` | Antigravity |
 
+### "Invalid TOML in agr.toml"
+
+```text
+Error: Invalid TOML in agr.toml: ...
+```
+
+Your `agr.toml` has a syntax error. Common causes:
+
+- **Missing quotes** around string values
+- **Unclosed brackets** in `dependencies` or `[[source]]`
+- **Trailing commas** after the last item in a list (TOML doesn't allow them)
+
+Validate with any TOML linter, or paste your file into [toml-lint.com](https://www.toml-lint.com/) to find the exact line.
+
+### "default_tool must be listed in tools"
+
+```text
+Error: default_tool must be listed in tools in agr.toml
+```
+
+Your `default_tool` value isn't in your `tools` list. Either add it to `tools` or change `default_tool`:
+
+```toml
+# Wrong — codex isn't in tools
+tools = ["claude", "cursor"]
+default_tool = "codex"
+
+# Right
+tools = ["claude", "cursor", "codex"]
+default_tool = "codex"
+```
+
+### "default_source not found in [[source]] list"
+
+```text
+Error: default_source 'my-server' not found in [[source]] list
+```
+
+Your `default_source` refers to a source that doesn't exist. Either add the source or fix the name:
+
+```bash
+agr config add sources my-server --type git --url "https://git.example.com/{owner}/{repo}.git"
+# or fix the default
+agr config set default_source github
+```
+
 ### "dependencies must be declared before [[source]] blocks"
 
 ```text
@@ -219,6 +265,21 @@ dependencies = [
 name = "github"
 type = "git"
 url = "https://github.com/{owner}/{repo}.git"
+```
+
+### "Unknown source in dependency"
+
+```text
+Error: Unknown source 'gitlab' in dependency 'user/skill'
+```
+
+A dependency in `agr.toml` specifies a `source` that isn't defined in your `[[source]]` list. Either add the source or remove the `source` field from the dependency:
+
+```bash
+# Add the missing source
+agr config add sources gitlab --type git --url "https://gitlab.com/{owner}/{repo}.git"
+
+# Or edit agr.toml and remove source = "gitlab" from the dependency
 ```
 
 ### "canonical_instructions must be 'AGENTS.md', 'CLAUDE.md', or 'GEMINI.md'"
