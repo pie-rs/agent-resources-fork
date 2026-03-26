@@ -1,13 +1,17 @@
 ---
-title: Reference
+title: "CLI Reference — All agr and agrx Commands, Flags, and Options"
 description: Complete CLI reference for agr — all commands, flags, and handle formats in one place.
 keywords:
   - agr CLI reference
   - agr commands
-  - agr add
-  - agr remove
-  - agr sync
-  - handle format
+  - agr add command
+  - agr remove command
+  - agr sync command
+  - agr config command
+  - agrx command
+  - agr handle format
+  - agr.toml format
+  - agr flags and options
 ---
 
 # Reference
