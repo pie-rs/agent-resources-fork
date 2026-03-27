@@ -7,6 +7,7 @@ from rich.table import Table
 from agr.commands._tool_helpers import load_existing_config, print_missing_config_hint
 from agr.console import get_console
 from agr.exceptions import AgrError, InvalidHandleError
+from agr.metadata import METADATA_TYPE_LOCAL, METADATA_TYPE_REMOTE
 from agr.fetcher import is_skill_installed
 from agr.handle import ParsedHandle
 from agr.tool import ToolConfig, lookup_skills_dir
@@ -79,10 +80,10 @@ def run_list(global_install: bool = False) -> None:
         # Determine display name and status
         if dep.is_local:
             display_name = dep.path or ""
-            kind = "local"
+            kind = METADATA_TYPE_LOCAL
         else:
             display_name = dep.handle or ""
-            kind = "remote"
+            kind = METADATA_TYPE_REMOTE
 
         # Check installation status
         try:

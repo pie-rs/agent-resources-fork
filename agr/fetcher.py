@@ -27,6 +27,7 @@ from agr.handle import (
     warn_legacy_repo,
 )
 from agr.metadata import (
+    METADATA_TYPE_LOCAL,
     build_handle_id,
     build_handle_ids,
     read_skill_metadata,
@@ -88,7 +89,7 @@ def _find_local_name_conflicts(
         meta = read_skill_metadata(path)
         if meta:
             # Remote skills at this path are not local conflicts.
-            if meta.get("type") != "local":
+            if meta.get("type") != METADATA_TYPE_LOCAL:
                 continue
             # Same local handle — this is us, not a conflict.
             if meta.get("id") == handle_id:

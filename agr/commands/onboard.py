@@ -14,7 +14,7 @@ from agr.config import CONFIG_FILENAME, AgrConfig, Dependency, find_config, find
 from agr.console import error_exit, get_console
 from agr.detect import detect_tools
 from agr.instructions import canonical_instruction_file, detect_instruction_files
-from agr.metadata import read_skill_metadata
+from agr.metadata import METADATA_TYPE_REMOTE, read_skill_metadata
 from agr.skill import (
     discover_all_skill_dirs,
     get_skill_frontmatter_name,
@@ -233,7 +233,7 @@ def run_onboard(*, no_migrate: bool = False) -> None:
             if not skill.tool:
                 return False
             meta = read_skill_metadata(skill.path)
-            return meta is None or meta.get("type") != "remote"
+            return meta is None or meta.get("type") != METADATA_TYPE_REMOTE
 
         tool_folder_skills = [s for s in selected_skills if _is_migratable(s)]
         if tool_folder_skills and not no_migrate:

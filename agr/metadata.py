@@ -12,6 +12,10 @@ from agr.source import DEFAULT_SOURCE_NAME
 
 METADATA_FILENAME = ".agr.json"
 
+# Metadata type discriminators written to and read from .agr.json
+METADATA_TYPE_LOCAL = "local"
+METADATA_TYPE_REMOTE = "remote"
+
 
 def build_handle_id(
     handle: ParsedHandle, repo_root: Path | None, source: str | None = None
@@ -108,10 +112,10 @@ def write_skill_metadata(
         "installed_name": installed_name,
     }
     if handle.is_local:
-        data["type"] = "local"
+        data["type"] = METADATA_TYPE_LOCAL
         data["local_path"] = str(resolved_local) if resolved_local else None
     else:
-        data["type"] = "remote"
+        data["type"] = METADATA_TYPE_REMOTE
         data["handle"] = handle.to_toml_handle()
         data["source"] = source or DEFAULT_SOURCE_NAME
 
