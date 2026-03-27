@@ -18,6 +18,7 @@ from agr.git import get_github_token
 from agr.handle import (
     DEFAULT_REPO_NAME,
     LEGACY_DEFAULT_REPO_NAME,
+    is_local_path_ref,
     iter_repo_candidates,
     parse_handle,
     warn_legacy_repo,
@@ -279,7 +280,7 @@ def skill_info(handle: str) -> SkillInfo:
         >>> print(info.description)
     """
     # Reject obvious local paths
-    if handle.startswith(("./", "../", "/")):
+    if is_local_path_ref(handle):
         raise InvalidHandleError(f"'{handle}' is a local path, not a remote handle")
 
     parsed = parse_handle(handle, prefer_local=False)

@@ -29,6 +29,8 @@ INSTALLED_NAME_SEPARATOR = "--"
 LOCAL_PREFIX = "local"
 # Legacy separator (colon) for backward compatibility during migration
 LEGACY_SEPARATOR = ":"
+# Prefixes that indicate a raw string is a local filesystem path
+LOCAL_PATH_PREFIXES = ("./", "../", "/")
 DEFAULT_REPO_NAME = "skills"
 LEGACY_DEFAULT_REPO_NAME = "agent-resources"
 LEGACY_REPO_DEPRECATION_WARNING = (
@@ -47,6 +49,14 @@ def warn_legacy_repo() -> None:
     (the public API entry point).
     """
     warnings.warn(LEGACY_REPO_DEPRECATION_WARNING, UserWarning, stacklevel=3)
+
+
+def is_local_path_ref(ref: str) -> bool:
+    """Check whether a raw string looks like a local filesystem path.
+
+    Returns True for strings starting with ``./``, ``../``, or ``/``.
+    """
+    return ref.startswith(LOCAL_PATH_PREFIXES)
 
 
 def iter_repo_candidates(repo: str | None) -> list[tuple[str, bool]]:
@@ -206,7 +216,7 @@ def parse_handle(ref: str, *, prefer_local: bool = True) -> ParsedHandle:
 
     if prefer_local:
         # Local path detection: starts with . or /
-        if ref.startswith(("./", "../", "/")):
+        if is_local_path_ref(ref):
             path = Path(ref)
             _validate_no_separator(ref, "name", path.name)
             return ParsedHandle(

@@ -16,6 +16,7 @@ from agr.fetcher import prepare_repo_for_skill
 from agr.git import downloaded_repo
 from agr.handle import (
     ParsedHandle,
+    is_local_path_ref,
     iter_repo_candidates,
     parse_handle,
     warn_legacy_repo,
@@ -93,7 +94,7 @@ class Skill:
             >>> skill = Skill.from_git("anthropics/skills/code-review")
         """
         # Reject obvious local paths early
-        if handle.startswith(("./", "../", "/")):
+        if is_local_path_ref(handle):
             raise InvalidHandleError(
                 f"'{handle}' is a local path. Use Skill.from_local() instead."
             )
