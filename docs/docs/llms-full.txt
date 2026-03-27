@@ -86,6 +86,15 @@ agr list
 agr list -g
 ```
 
+Status values:
+- `installed` — installed in all configured tools
+- `partial (tool1, tool2)` — installed in some tools but not all; lists which tools have it
+- `not synced` — listed in agr.toml but not installed in any tool; run `agr sync` to install
+- `invalid` — handle in agr.toml cannot be parsed; check the handle format
+
+Options:
+- `--global`, `-g` — list global skills from ~/.agr/agr.toml
+
 ### agr init
 
 Create agr.toml or scaffold a new skill.
