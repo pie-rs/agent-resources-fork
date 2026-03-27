@@ -128,14 +128,15 @@ agr add your-username/my-skill
 Use `agr` as a library to load, discover, and cache skills programmatically:
 
 ```python
-from agr import Skill, list_skills
+from agr import Skill, list_skills, skill_info
 
 skill = Skill.from_git("anthropics/skills/code-review")
 print(skill.prompt)   # SKILL.md contents
 print(skill.files)    # Files in the skill directory
 
 for info in list_skills("anthropics/skills"):
-    print(f"{info.handle}: {info.description}")
+    details = skill_info(info.handle)
+    print(f"{details.handle}: {details.description}")
 ```
 
 See the [SDK documentation](https://kasperjunge.github.io/agent-resources/sdk/) for
