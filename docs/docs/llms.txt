@@ -120,6 +120,39 @@ Instructions for the AI agent go here.
 
 Required fields: `name` (1–64 chars, lowercase alphanumeric and hyphens) and `description` (max 1024 chars).
 
+## Python SDK
+
+Use agr as a Python library to load skills programmatically:
+
+```python
+from agr import Skill, list_skills, skill_info, cache
+
+# Load a skill from GitHub (cached locally)
+skill = Skill.from_git("anthropics/skills/code-review")
+print(skill.prompt)   # SKILL.md contents
+print(skill.files)    # Files in the skill directory
+
+# Load from local path
+skill = Skill.from_local("./my-skill")
+
+# Discover skills in a repo
+for info in list_skills("anthropics/skills"):
+    print(f"{info.handle}: {info.name}")
+
+# Get description for a specific skill
+info = skill_info("anthropics/skills/code-review")
+print(info.description)
+
+# Manage the download cache
+cache.info()                        # {"skills_count": N, "size_bytes": N}
+cache.clear()                       # Clear all cached skills
+cache.clear("anthropics/skills/*")  # Clear by pattern
+```
+
+All errors inherit from `agr.exceptions.AgrError`. Key subclasses: `SkillNotFoundError`, `RepoNotFoundError`, `AuthenticationError`, `RateLimitError`, `InvalidHandleError`, `InvalidLocalPathError`, `CacheError`.
+
+Full SDK docs: [Python SDK](https://kasperjunge.github.io/agent-resources/sdk/)
+
 ## Source Code
 
 - GitHub: https://github.com/kasperjunge/agent-resources
