@@ -653,4 +653,59 @@
   }
   </script>
   {% endif %}
+
+  {% if page and page.file and page.file.src_path == "sdk.md" %}
+  <!-- HowTo Schema for Python SDK rich results -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "Use agr as a Python Library to Load and Discover AI Agent Skills",
+    "description": "Install agr as a Python dependency and use Skill.from_git() to load skills from GitHub, list_skills() to discover skills in repositories, and cache.clear() to manage the download cache.",
+    "totalTime": "PT5M",
+    "tool": [
+      {
+        "@type": "HowToTool",
+        "name": "Python 3.10+"
+      },
+      {
+        "@type": "HowToTool",
+        "name": "pip, uv, or pipx"
+      }
+    ],
+    "step": [
+      {
+        "@type": "HowToStep",
+        "name": "Install agr as a library",
+        "text": "Install agr with pip install agr. For the CLI tools as well, use uv tool install agr or pipx install agr instead.",
+        "url": "https://kasperjunge.github.io/agent-resources/sdk/#install"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Load a skill from GitHub",
+        "text": "Use Skill.from_git('owner/repo/skill') to download and cache a skill. Access skill.prompt for the SKILL.md contents and skill.files for the list of files.",
+        "url": "https://kasperjunge.github.io/agent-resources/sdk/#from-github"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Load a local skill",
+        "text": "Use Skill.from_local('./my-skill') to load a skill from a local directory. The directory must contain a SKILL.md file.",
+        "url": "https://kasperjunge.github.io/agent-resources/sdk/#from-a-local-directory"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Discover skills in a repository",
+        "text": "Use list_skills('owner/repo') to list all skills in a GitHub repository, or skill_info('owner/repo/skill') to get details about a specific skill.",
+        "url": "https://kasperjunge.github.io/agent-resources/sdk/#discovering-skills"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Manage the download cache",
+        "text": "Use cache.info() to see cache statistics, cache.clear() to clear all cached skills, or cache.clear('pattern') to clear specific skills by glob pattern.",
+        "url": "https://kasperjunge.github.io/agent-resources/sdk/#cache-management"
+      }
+    ]
+  }
+  </script>
+  {% endif %}
 {% endblock %}
