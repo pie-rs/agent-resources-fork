@@ -303,7 +303,7 @@ each configured tool's skills folder, and updates `agr.toml`.
     5. **Install to each tool** — Copy the skill directory to each configured
        tool's skills folder (e.g., `.claude/skills/pdf/`, `.cursor/skills/pdf/`)
     6. **Write metadata** — Save `.agr.json` in each installed copy with the
-       source handle, revision, and content hash
+       source handle, install details, and content hash
     7. **Update agr.toml** — Add the dependency to the manifest
 
     If any tool's install fails, already-installed copies are rolled back
