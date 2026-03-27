@@ -145,6 +145,18 @@ Teammates install everything with:
 agr sync
 ```
 
+## Create your own
+
+```bash
+agr init my-skill                # Scaffold a new skill
+# Edit my-skill/SKILL.md with your instructions
+agr add ./my-skill               # Test locally
+# Push to GitHub, then others can:
+agr add your-username/my-skill
+```
+
+See [Creating Skills](creating.md) for the full guide.
+
 ## Commands
 
 | Command | What it does |
