@@ -19,6 +19,22 @@ from agr.exceptions import (
 from agr.source import SourceConfig
 
 
+def _git_cmd(repo_dir: Path, *args: str) -> list[str]:
+    """Build a git command targeting a specific repository.
+
+    Constructs ``["git", "-C", <repo_dir>, *args]`` to run git
+    in the given directory without changing the working directory.
+
+    Args:
+        repo_dir: Path to the repository.
+        *args: Git subcommand and its arguments.
+
+    Returns:
+        Command list ready for ``_run_git`` or ``_run_git_checked``.
+    """
+    return ["git", "-C", str(repo_dir), *args]
+
+
 def _run_git(cmd: list[str]) -> subprocess.CompletedProcess[str]:
     """Run a git command with consistent error handling.
 
@@ -92,7 +108,7 @@ def get_head_commit(repo_dir: Path) -> str:
     fallback hash based on current time and repo path to ensure proper
     cache busting.
     """
-    result = _run_git(["git", "-C", str(repo_dir), "rev-parse", "HEAD"])
+    result = _run_git(_git_cmd(repo_dir, "rev-parse", "HEAD"))
     if result.returncode != 0:
         fallback_data = f"{time.time_ns()}:{repo_dir}"
         return hashlib.sha256(fallback_data.encode()).hexdigest()[:12]
@@ -313,7 +329,7 @@ def downloaded_repo(
 def git_list_files(repo_dir: Path) -> list[str]:
     """List files in the repo without checking out blobs."""
     result = _run_git_checked(
-        ["git", "-C", str(repo_dir), "ls-tree", "-r", "--name-only", "HEAD"],
+        _git_cmd(repo_dir, "ls-tree", "-r", "--name-only", "HEAD"),
         "Failed to list repository files.",
     )
     return [line for line in result.stdout.splitlines() if line.strip()]
@@ -327,7 +343,7 @@ def checkout_full(repo_dir: Path) -> None:
     hardcoding a branch name.
     """
     _run_git_checked(
-        ["git", "-C", str(repo_dir), "checkout", "-f", "HEAD"],
+        _git_cmd(repo_dir, "checkout", "-f", "HEAD"),
         "Failed to checkout repository.",
     )
 
@@ -337,10 +353,10 @@ def checkout_sparse_paths(repo_dir: Path, rel_paths: list[Path]) -> None:
     if not rel_paths:
         raise AgrError("No paths provided for sparse checkout.")
     _run_git_checked(
-        ["git", "-C", str(repo_dir), "sparse-checkout", "init", "--cone"],
+        _git_cmd(repo_dir, "sparse-checkout", "init", "--cone"),
         "Failed to initialize sparse checkout.",
     )
-    cmd = ["git", "-C", str(repo_dir), "sparse-checkout", "set"]
+    cmd = _git_cmd(repo_dir, "sparse-checkout", "set")
     cmd.extend([rel_path.as_posix() for rel_path in rel_paths])
     _run_git_checked(cmd, "Failed to set sparse checkout path.")
     checkout_full(repo_dir)
