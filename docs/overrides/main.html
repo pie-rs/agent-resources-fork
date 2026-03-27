@@ -926,6 +926,60 @@
     ]
   }
   </script>
+
+  <!-- TechArticle Schema for tools reference rich results -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Install AI Skills in Claude Code, Cursor, Codex, Copilot, OpenCode, and Antigravity",
+    "description": "How agr installs skills into Claude Code, Cursor, Codex, GitHub Copilot, OpenCode, and Antigravity — directories, detection signals, and multi-tool setup.",
+    "url": "https://kasperjunge.github.io/agent-resources/tools/",
+    "author": {
+      "@type": "Person",
+      "name": "Kasper Junge",
+      "url": "https://github.com/kasperjunge"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Agent Resources",
+      "url": "https://github.com/kasperjunge/agent-resources"
+    },
+    "about": [
+      {
+        "@type": "DefinedTerm",
+        "name": "Claude Code",
+        "description": "Anthropic's AI coding agent — skills in .claude/skills/, invoked with /skill-name, detected by .claude/ and CLAUDE.md"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "Cursor",
+        "description": "AI-first code editor — skills in .cursor/skills/, invoked with /skill-name, detected by .cursor/ and .cursorrules"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "OpenAI Codex",
+        "description": "OpenAI's coding agent — skills in .agents/skills/, invoked with $skill-name, detected by .agents/ and .codex"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "OpenCode",
+        "description": "Open-source AI coding agent — skills in .opencode/skills/, invoked by name without prefix, detected by .opencode/, opencode.json, opencode.jsonc"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "GitHub Copilot",
+        "description": "GitHub's AI assistant — skills in .github/skills/, invoked with /skill-name, detected by .github/copilot, .github/skills, .github/copilot-instructions.md, .github/instructions"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "Antigravity",
+        "description": "Google's AI coding agent — skills in .gemini/skills/, no CLI available, detected by .gemini/ and .agents/"
+      }
+    ],
+    "keywords": ["agr supported tools", "Claude Code skills", "Cursor skills", "Codex skills", "OpenCode skills", "GitHub Copilot skills", "Antigravity skills", "multi-tool AI setup"]
+  }
+  </script>
   {% endif %}
 
   {% if page and page.file and page.file.src_path == "sdk.md" %}
