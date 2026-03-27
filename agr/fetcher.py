@@ -37,7 +37,7 @@ from agr.skill import (
     SKILL_MARKER,
     discover_skills_in_repo_listing,
     find_skill_in_repo,
-    find_skill_in_repo_listing,
+    find_skills_in_repo_listing,
     is_valid_skill_dir,
     update_skill_md_name,
 )
@@ -198,12 +198,10 @@ def prepare_repo_for_skills(repo_dir: Path, skill_names: list[str]) -> dict[str,
         # checking out the full repo, then sparse-checkout only the
         # directories we need.
         paths = git_list_files(repo_dir)
-        rel_paths: dict[str, Path] = {}
-        for name in unique_names:
-            skill_rel = find_skill_in_repo_listing(paths, name)
-            if skill_rel is None:
-                continue
-            rel_paths[name] = Path(skill_rel)
+        rel_paths = {
+            name: Path(d)
+            for name, d in find_skills_in_repo_listing(paths, unique_names).items()
+        }
 
         if rel_paths:
             checkout_sparse_paths(repo_dir, list(rel_paths.values()))

@@ -148,6 +148,33 @@ def find_skill_in_repo_listing(
     return min(matches, key=lambda p: len(p.parts))
 
 
+def find_skills_in_repo_listing(
+    paths: list[str], skill_names: list[str]
+) -> dict[str, PurePosixPath]:
+    """Find multiple skill directories from a git file listing in a single pass.
+
+    More efficient than calling ``find_skill_in_repo_listing`` in a loop,
+    because the file listing is scanned only once.
+
+    Args:
+        paths: List of file paths from git (posix-style).
+        skill_names: Names of the skills to find.
+
+    Returns:
+        Mapping of skill name to directory path for each found skill.
+        Missing skills are omitted from the result.
+    """
+    name_set = set(skill_names)
+    result: dict[str, PurePosixPath] = {}
+    for d in _find_skill_dirs_in_listing(paths):
+        if d.name not in name_set:
+            continue
+        # Keep the shallowest match for each skill name.
+        if d.name not in result or len(d.parts) < len(result[d.name].parts):
+            result[d.name] = d
+    return result
+
+
 def discover_skills_in_repo_listing(paths: list[str]) -> list[str]:
     """Discover all skill names from a git file listing.
 

@@ -8,6 +8,7 @@ from agr.skill import (
     discover_skills_in_repo,
     discover_skills_in_repo_listing,
     find_skill_in_repo,
+    find_skills_in_repo_listing,
     is_valid_skill_dir,
     update_skill_md_name,
     validate_skill_name,
@@ -367,6 +368,64 @@ class TestDiscoverSkillsInRepoListing:
         """Discovers skills in nested directories."""
         paths = ["resources/custom/skills/deep-skill/SKILL.md"]
         assert discover_skills_in_repo_listing(paths) == ["deep-skill"]
+
+
+class TestFindSkillsInRepoListing:
+    """Tests for find_skills_in_repo_listing (batch lookup)."""
+
+    def test_finds_single_skill(self):
+        """Finds a single requested skill."""
+        paths = ["skills/commit/SKILL.md", "skills/review/SKILL.md"]
+        result = find_skills_in_repo_listing(paths, ["commit"])
+        assert len(result) == 1
+        assert result["commit"].as_posix() == "skills/commit"
+
+    def test_finds_multiple_skills(self):
+        """Finds multiple requested skills in one pass."""
+        paths = [
+            "skills/alpha/SKILL.md",
+            "skills/beta/SKILL.md",
+            "skills/gamma/SKILL.md",
+        ]
+        result = find_skills_in_repo_listing(paths, ["alpha", "gamma"])
+        assert set(result.keys()) == {"alpha", "gamma"}
+        assert result["alpha"].as_posix() == "skills/alpha"
+        assert result["gamma"].as_posix() == "skills/gamma"
+
+    def test_omits_missing_skills(self):
+        """Missing skills are not in the result dict."""
+        paths = ["skills/commit/SKILL.md"]
+        result = find_skills_in_repo_listing(paths, ["commit", "nonexistent"])
+        assert "commit" in result
+        assert "nonexistent" not in result
+
+    def test_returns_shallowest_match(self):
+        """When a skill exists at multiple depths, returns the shallowest."""
+        paths = [
+            "nested/deep/commit/SKILL.md",
+            "skills/commit/SKILL.md",
+        ]
+        result = find_skills_in_repo_listing(paths, ["commit"])
+        assert result["commit"].as_posix() == "skills/commit"
+
+    def test_empty_skill_names(self):
+        """Returns empty dict when no skill names requested."""
+        paths = ["skills/commit/SKILL.md"]
+        assert find_skills_in_repo_listing(paths, []) == {}
+
+    def test_empty_paths(self):
+        """Returns empty dict when file listing is empty."""
+        assert find_skills_in_repo_listing([], ["commit"]) == {}
+
+    def test_excludes_root_and_excluded_dirs(self):
+        """Respects the same exclusion rules as the single-skill version."""
+        paths = [
+            "SKILL.md",  # root-level, excluded
+            "node_modules/commit/SKILL.md",  # excluded dir
+            "skills/commit/SKILL.md",  # valid
+        ]
+        result = find_skills_in_repo_listing(paths, ["commit"])
+        assert result["commit"].as_posix() == "skills/commit"
 
 
 class TestDiscoverSkillsInRepo:
