@@ -68,9 +68,10 @@ class TestDownloadedRepoE2E:
             type="git",
             url="https://github.com/{owner}/{repo}.git",
         )
-        with pytest.raises(AgrError, match="git CLI not found"):
-            with downloaded_repo(source, "user", "repo"):
-                pass
+        with pytest.raises(AgrError, match="git CLI not found"), downloaded_repo(
+            source, "user", "repo"
+        ):
+            pass
 
     def test_git_clone_success(self, monkeypatch, tmp_path):
         """Successful clone yields repo dir."""
@@ -175,9 +176,10 @@ class TestDownloadedRepoE2E:
             type="git",
             url="https://github.com/{owner}/{repo}.git",
         )
-        with pytest.raises(RepoNotFoundError):
-            with downloaded_repo(source, "user", "repo"):
-                pass
+        with pytest.raises(RepoNotFoundError), downloaded_repo(
+            source, "user", "repo"
+        ):
+            pass
 
     def test_git_clone_auth_failure(self, monkeypatch):
         """Authentication failures are classified."""
@@ -195,9 +197,10 @@ class TestDownloadedRepoE2E:
             type="git",
             url="https://github.com/{owner}/{repo}.git",
         )
-        with pytest.raises(AuthenticationError):
-            with downloaded_repo(source, "user", "repo"):
-                pass
+        with pytest.raises(AuthenticationError), downloaded_repo(
+            source, "user", "repo"
+        ):
+            pass
 
 
 class TestListRemoteRepoSkills:
@@ -539,11 +542,10 @@ class TestDownloadedRepo:
             type="git",
             url="https://github.com/{owner}/{repo}.git",
         )
-        with pytest.raises(RepoNotFoundError):
-            with downloaded_repo(
-                source, "nonexistent-user-12345", "nonexistent-repo-67890"
-            ):
-                pass
+        with pytest.raises(RepoNotFoundError), downloaded_repo(
+            source, "nonexistent-user-12345", "nonexistent-repo-67890"
+        ):
+            pass
 
 
 class TestCleanupEmptyParents:

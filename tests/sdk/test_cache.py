@@ -202,9 +202,11 @@ class TestCacheSkill:
         blocking_file = cache_base / "skills"
         blocking_file.write_text("blocking")  # File instead of directory
 
-        with patch("agr.sdk.cache.get_cache_dir", return_value=cache_base):
-            with pytest.raises(CacheError):
-                cache_skill(mock_skill_dir, "owner", "repo", "skill", "abc123")
+        with (
+            patch("agr.sdk.cache.get_cache_dir", return_value=cache_base),
+            pytest.raises(CacheError),
+        ):
+            cache_skill(mock_skill_dir, "owner", "repo", "skill", "abc123")
 
 
 class TestFileLocking:

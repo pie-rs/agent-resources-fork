@@ -43,7 +43,7 @@ class SourceResolver:
     default_source: str = DEFAULT_SOURCE_NAME
 
     @classmethod
-    def default(cls) -> "SourceResolver":
+    def default(cls) -> SourceResolver:
         """Create a resolver with the default GitHub source."""
         return cls(default_sources(), DEFAULT_SOURCE_NAME)
 

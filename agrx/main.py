@@ -5,6 +5,7 @@ import signal
 import subprocess
 import sys
 import uuid
+import contextlib
 from contextlib import contextmanager
 from pathlib import Path
 from collections.abc import Generator
@@ -70,10 +71,8 @@ def _check_tool_cli(tool_config: ToolConfig) -> None:
 def _cleanup_skill(skill_path: Path) -> None:
     """Clean up a temporary skill."""
     if skill_path.exists():
-        try:
+        with contextlib.suppress(OSError):
             shutil.rmtree(skill_path)
-        except OSError:
-            pass  # Best effort cleanup
 
 
 @contextmanager
