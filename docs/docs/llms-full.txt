@@ -767,6 +767,20 @@ Remove the old source first, then re-add it: `agr config remove sources github` 
 `Error: Tool 'codex' is not in configured tools. Add it first with 'agr config add tools codex'.`
 You tried to set `default_tool` to a tool not in your `tools` list. Add it first: `agr config add tools codex`.
 
+#### "Unknown tool(s)"
+`Error: Unknown tool(s): photoshop`
+You passed an unrecognized tool name to `agr config set tools`, `agr config add tools`, or `agr config remove tools`. Valid names: claude, cursor, codex, opencode, copilot, antigravity.
+
+#### "Unknown default_tool in agr.toml"
+`Error: Unknown default_tool 'vscode' in agr.toml. Available: claude, cursor, codex, opencode, copilot, antigravity`
+Your `default_tool` is set to a tool name agr doesn't recognize (not just absent from `tools`). Fix with `agr config set default_tool claude`.
+
+#### "Source name is required" / "Only one source name allowed"
+When adding or removing sources, provide exactly one source name: `agr config add sources gitlab --url "..."` or `agr config remove sources gitlab`.
+
+#### "--type and --url are only valid for 'sources'"
+The `--type` and `--url` flags only work with `agr config add sources`. Don't pass them to other keys like `tools`.
+
 ### Syncing Errors
 
 #### "No dependencies in agr.toml. Nothing to sync."

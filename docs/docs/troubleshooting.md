@@ -622,6 +622,70 @@ You used a key name that `agr config` doesn't recognize. Common mistakes:
     agr config set default_tool codex
     ```
 
+??? note "How do I fix \"Unknown tool(s)\" from `agr config`?"
+    ```text
+    Error: Unknown tool(s): photoshop
+    Hint: Available tools: claude, cursor, codex, opencode, copilot, antigravity
+    ```
+
+    You passed an unrecognized tool name to `agr config set tools`,
+    `agr config add tools`, or `agr config remove tools`. Check for typos —
+    valid names are listed in the hint. See [Supported Tools](tools.md) for
+    details on each.
+
+??? note "How do I fix \"Unknown default_tool in agr.toml\"?"
+    ```text
+    Error: Unknown default_tool 'vscode' in agr.toml. Available: claude, cursor, codex, opencode, copilot, antigravity
+    ```
+
+    Your `default_tool` is set to a tool name that agr doesn't recognize. This
+    is different from `default_tool must be listed in tools` — that error means
+    the tool is valid but not in your `tools` list. This one means the name
+    itself is wrong:
+
+    ```bash
+    agr config set default_tool claude
+    ```
+
+??? note "How do I fix \"Source name is required\" or \"Only one source name allowed\"?"
+    ```text
+    Error: Source name is required.
+    ```
+
+    ```text
+    Error: Only one source name allowed at a time.
+    ```
+
+    When adding or removing sources, provide exactly one source name:
+
+    ```bash
+    # Wrong — missing name
+    agr config add sources --url "https://..."
+
+    # Wrong — multiple names
+    agr config remove sources gitlab my-server
+
+    # Right
+    agr config add sources gitlab --url "https://gitlab.com/{owner}/{repo}.git"
+    agr config remove sources gitlab
+    ```
+
+??? note "How do I fix \"--type and --url are only valid for 'sources'\"?"
+    ```text
+    Error: --type and --url are only valid for 'sources'.
+    ```
+
+    The `--type` and `--url` flags only work with `agr config add sources`.
+    You passed them to a different key:
+
+    ```bash
+    # Wrong — --url doesn't apply to tools
+    agr config add tools claude --url "https://..."
+
+    # Right
+    agr config add sources my-server --url "https://git.example.com/{owner}/{repo}.git"
+    ```
+
 ---
 
 ## Syncing
