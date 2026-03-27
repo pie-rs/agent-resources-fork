@@ -67,8 +67,8 @@ See [SKILL.md Format](creating.md#skillmd-format) for all frontmatter fields.
 
 ### Bug fixes
 
-- **[Python SDK](sdk.md):** Network failures in `list_skills()` and `skill_info()` now raise `AgrError` instead of Python's built-in `ConnectionError`. If your code catches `AgrError` (or its subclasses), network errors are now included automatically. If you were catching `ConnectionError` separately, you can remove that handler. See [Error Handling](sdk.md#error-handling).
-- **[Python SDK](sdk.md):** `list_skills()` now raises `InvalidHandleError` instead of `ValueError` for invalid repo handles, matching the behavior of `skill_info()` and `Skill.from_git()`. If your code catches `ValueError` from `list_skills()`, update it to catch `InvalidHandleError` (from `agr.exceptions`). See [Error Handling](sdk.md#error-handling).
+- **[Python SDK](sdk.md):** Network failures in `list_skills()` and `skill_info()` now raise `AgrError` instead of Python's built-in `ConnectionError`. If your code catches `AgrError` (or its subclasses), network errors are now included automatically. If you were catching `ConnectionError` separately, you can remove that handler. See [Error Handling](sdk.md#handle-errors-with-agrerror-subclasses).
+- **[Python SDK](sdk.md):** `list_skills()` now raises `InvalidHandleError` instead of `ValueError` for invalid repo handles, matching the behavior of `skill_info()` and `Skill.from_git()`. If your code catches `ValueError` from `list_skills()`, update it to catch `InvalidHandleError` (from `agr.exceptions`). See [Error Handling](sdk.md#handle-errors-with-agrerror-subclasses).
 - [Antigravity](tools.md#antigravity) detection signal corrected from `.agent` to `.agents`. Previously, `agr init` and `agr onboard` would not auto-detect Antigravity in repos that had an `.agents/` directory (used by Codex) — only `.gemini/` was matched.
 - [`agrx --tool cursor`](agrx.md) no longer passes an invalid `--force` flag to the Cursor CLI. The Cursor CLI (`agent`) does not support this flag, so `agrx` now runs without a permission-bypass flag for Cursor.
 - [`agrx --tool opencode`](agrx.md) now correctly uses two different modes: non-interactive runs use `opencode run "prompt"` (one-shot execution), while interactive runs (`-i`) use `opencode --prompt "prompt"` to inject the prompt into the TUI. Previously, `agrx` passed an invalid `--prompt` flag on the base command for non-interactive mode and routed both modes through `opencode run`.
@@ -95,7 +95,7 @@ manual steps needed.
 
 - [`agr config unset tools`](reference.md#agr-config) no longer crashes when `default_tool` is set to a
   tool outside the default list. The default is now cleared automatically.
-- The SDK's [`cache.info()`](sdk.md#cache-management) now counts unique skills instead of counting each
+- The SDK's [`cache.info()`](sdk.md#manage-the-download-cache) now counts unique skills instead of counting each
   cached revision separately.
 - Cache operations no longer reject valid skill names that happen to contain
   path-like characters (e.g., names with dots).

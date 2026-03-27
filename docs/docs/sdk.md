@@ -28,7 +28,7 @@ work across Claude Code, Cursor, Codex, OpenCode, GitHub Copilot, and
 Antigravity. A **handle** like `"anthropics/skills/code-review"` points to a
 skill directory inside a GitHub repo.
 
-## Install
+## Install the agr package
 
 ```bash
 pip install agr   # As a library dependency in your project
@@ -37,7 +37,7 @@ pip install agr   # As a library dependency in your project
 !!! tip
     If you want the `agr` and [`agrx`](agrx.md) CLI tools (not just the SDK), install with `uv tool install agr` or `pipx install agr` instead. See the [Tutorial](tutorial.md) for a full walkthrough.
 
-## Quick Start
+## Load a skill in 3 lines
 
 ```python
 from agr import Skill
@@ -52,7 +52,7 @@ skill = Skill.from_local("./my-skill")
 print(skill.prompt)
 ```
 
-## Loading Skills
+## Load skills from GitHub or local paths
 
 ### From GitHub
 
@@ -83,7 +83,7 @@ skill = Skill.from_local("./my-skill")
 skill = Skill.from_local("/absolute/path/to/skill")
 ```
 
-## Skill Properties
+## Skill properties and metadata
 
 | Property | Type | Description |
 |----------|------|-------------|
@@ -155,9 +155,9 @@ if stored != current:
     print("Skill files have changed")
 ```
 
-## Discovering Skills
+## Discover skills in a repository
 
-### List Skills in a Repository
+### List all skills in a repo
 
 ```python
 from agr import list_skills
@@ -171,7 +171,7 @@ for info in skills:
 skills = list_skills("kasperjunge")
 ```
 
-### Get Skill Details
+### Get details for a single skill
 
 ```python
 from agr import skill_info
@@ -186,7 +186,7 @@ print(info.repo)         # "skills"
 
 Both functions use the GitHub API and respect `GITHUB_TOKEN` / `GH_TOKEN` environment variables for authentication. See [Troubleshooting](troubleshooting.md) if you hit rate limits or auth errors.
 
-## Cache Management
+## Manage the download cache
 
 Downloaded skills are cached in `~/.cache/agr/skills/` (also used by the [CLI](reference.md)). The `cache` object provides inspection and cleanup.
 
@@ -209,7 +209,7 @@ deleted = cache.clear("anthropics/skills/*")
 deleted = cache.clear("kasperjunge/*/*")
 ```
 
-## Error Handling
+## Handle errors with AgrError subclasses
 
 All SDK errors inherit from `AgrError`, including network failures. Catch
 specific subclasses for targeted handling, or catch `AgrError` as a fallback
@@ -263,7 +263,7 @@ except SkillNotFoundError:
     — not Python's built-in `ConnectionError`. If your code catches `AgrError`
     (or its subclasses), network errors are included automatically.
 
-## Types
+## Type definitions
 
 ### `ParsedHandle`
 

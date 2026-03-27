@@ -422,7 +422,7 @@ Use agr as a library:
 pip install agr
 ```
 
-### Loading Skills
+### Load skills from GitHub or local paths
 
 ```python
 from agr import Skill
@@ -440,7 +440,7 @@ skill = Skill.from_git("kasperjunge/commit", force_download=True)
 skill = Skill.from_local("./my-skill")
 ```
 
-### Discovering Skills
+### Discover skills in a repository
 
 ```python
 from agr import list_skills, skill_info
@@ -481,7 +481,7 @@ Returned by `list_skills()` and `skill_info()`:
 | repo | str | Repository name |
 | owner | str | GitHub owner/username |
 
-### Cache Management
+### Manage the download cache
 
 ```python
 from agr import cache
@@ -492,7 +492,7 @@ cache.clear()                       # clear all
 cache.clear("anthropics/skills/*")  # clear by pattern
 ```
 
-### Error Handling
+### Handle errors with AgrError subclasses
 
 All SDK errors inherit from `AgrError`, including network failures. Catch specific subclasses for targeted handling, or catch `AgrError` as a fallback for any SDK error:
 
@@ -511,7 +511,7 @@ from agr.exceptions import (
 
 Network failures (DNS resolution, timeouts, connection refused) in `list_skills()`, `skill_info()`, and `Skill.from_git()` raise `AgrError` — not Python's built-in `ConnectionError`.
 
-### Skill Properties
+### Skill properties and metadata
 
 | Property | Type | Description |
 |----------|------|-------------|
