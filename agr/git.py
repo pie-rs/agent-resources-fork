@@ -45,7 +45,9 @@ def _run_git(cmd: list[str]) -> subprocess.CompletedProcess[str]:
         raise AgrError(f"Failed to run git: {type(e).__name__}") from None
 
 
-def _run_git_checked(cmd: list[str], error_message: str) -> subprocess.CompletedProcess[str]:
+def _run_git_checked(
+    cmd: list[str], error_message: str
+) -> subprocess.CompletedProcess[str]:
     """Run a git command and raise AgrError on non-zero exit.
 
     Convenience wrapper around ``_run_git`` for commands where any

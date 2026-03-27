@@ -18,7 +18,11 @@ from agr.handle import (
     parse_handle,
     warn_legacy_repo,
 )
-from agr.metadata import METADATA_KEY_CONTENT_HASH, compute_content_hash, read_skill_metadata
+from agr.metadata import (
+    METADATA_KEY_CONTENT_HASH,
+    compute_content_hash,
+    read_skill_metadata,
+)
 from agr.sdk.cache import cache_skill, get_skill_cache_path, is_cached
 from agr.skill import SKILL_MARKER, is_valid_skill_dir
 from agr.source import default_sources

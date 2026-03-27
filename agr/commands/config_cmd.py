@@ -93,13 +93,18 @@ def run_config_show(global_scope: bool) -> None:
 
     console.print(f"[bold]Config:[/bold] {config_path}")
     console.print()
-    console.print(f"  tools             = {', '.join(config.tools)}")
-    console.print(f"  default_tool      = {_format_nullable_value(config.default_tool)}")
-    console.print(f"  default_source    = {config.default_source}")
-    console.print(f"  sync_instructions = {_format_nullable_value(config.sync_instructions)}")
-    console.print(
-        f"  canonical_instructions = {_format_nullable_value(config.canonical_instructions)}"
-    )
+
+    fmt = _format_nullable_value
+    fields = {
+        "tools": ", ".join(config.tools),
+        "default_tool": fmt(config.default_tool),
+        "default_source": config.default_source,
+        "sync_instructions": fmt(config.sync_instructions),
+        "canonical_instructions": fmt(config.canonical_instructions),
+    }
+    width = max(len(k) for k in fields)
+    for key, value in fields.items():
+        console.print(f"  {key:<{width}} = {value}")
 
     console.print()
     console.print("[bold]Sources:[/bold]")
@@ -287,7 +292,8 @@ def run_config_add(
             source_type = SOURCE_TYPE_GIT
         if source_type != SOURCE_TYPE_GIT:
             error_exit(
-                f"Unsupported source type '{source_type}'. Only '{SOURCE_TYPE_GIT}' is supported."
+                f"Unsupported source type '{source_type}'. "
+                f"Only '{SOURCE_TYPE_GIT}' is supported."
             )
         if source_url is None:
             error_exit("--url is required when adding a source.")

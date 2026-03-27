@@ -134,7 +134,8 @@ def get_skill_cache_path(owner: str, repo: str, skill: str, revision: str) -> Pa
     skill = _sanitize_path_component(skill, "skill")
     revision = _sanitize_path_component(revision, "revision")
 
-    return get_cache_dir() / CACHE_SKILLS_SUBDIR / DEFAULT_SOURCE_NAME / owner / repo / skill / revision
+    base = get_cache_dir() / CACHE_SKILLS_SUBDIR / DEFAULT_SOURCE_NAME
+    return base / owner / repo / skill / revision
 
 
 def is_cached(owner: str, repo: str, skill: str, revision: str) -> bool:

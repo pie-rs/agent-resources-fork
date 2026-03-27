@@ -14,7 +14,8 @@ _FRONTMATTER_NAME_LINE_RE = re.compile(r"^\s*name\s*:")
 _FRONTMATTER_NAME_VALUE_RE = re.compile(r"^\s*name\s*:\s*(.+)\s*$")
 
 # Regex for validating a skill name per the Agent Skills spec:
-# 1-64 lowercase alphanumeric chars and hyphens, no leading/trailing/consecutive hyphens.
+# 1-64 lowercase alphanumeric chars and hyphens,
+# no leading/trailing/consecutive hyphens.
 _VALID_SKILL_NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 
 # Directories to exclude from skill discovery
