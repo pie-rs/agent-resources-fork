@@ -454,6 +454,20 @@ info = skill_info("anthropics/skills/code-review")
 print(info.name, info.owner, info.repo, info.description)
 ```
 
+Both functions use the GitHub API and respect `GITHUB_TOKEN` / `GH_TOKEN` for authentication.
+
+### SkillInfo Type
+
+Returned by `list_skills()` and `skill_info()`:
+
+| Property | Type | Description |
+|----------|------|-------------|
+| name | str | Skill name |
+| handle | str | Full handle (e.g., "owner/repo/skill") |
+| description | str or None | First paragraph from SKILL.md |
+| repo | str | Repository name |
+| owner | str | GitHub owner/username |
+
 ### Cache Management
 
 ```python
