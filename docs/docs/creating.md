@@ -461,23 +461,16 @@ each to see the complete SKILL.md.
 
 ---
 
-## Pitfalls That Make Skills Ineffective
+## Common Pitfalls
 
-!!! warning "Pitfalls that lead to ineffective skills"
-    **Skill too broad.** A skill that tries to do everything ("helps with all
-    coding tasks") will be mediocre at all of them. Make focused skills that do
-    one thing well.
+Avoid these mistakes that make skills produce poor or inconsistent results:
 
-    **Instructions too short.** Agents need context. A three-line SKILL.md will
-    produce generic output. Give the agent enough detail to produce specific,
-    useful results.
-
-    **No examples.** Without examples, agents guess at what you want. Include at
-    least one input/output example so the agent understands the expected behavior.
-
-    **Hardcoded paths or tools.** Skills should work in any project. Avoid
-    hardcoding paths like `/Users/me/project/` or assuming specific tools are
-    installed unless stated in the `compatibility` field.
+| Pitfall | Why it fails | Fix |
+|---------|-------------|-----|
+| **Too broad** | A skill that tries to do everything ("helps with all coding tasks") is mediocre at all of them | Make focused skills that do one thing well |
+| **Too short** | A three-line SKILL.md gives the agent no context — output will be generic | Include specific steps, constraints, and expected behavior |
+| **No examples** | Without input/output examples, agents guess at what you want | Show at least one concrete example of expected input and output |
+| **Hardcoded paths** | Skills should work in any project, not just yours | Avoid paths like `/Users/me/project/` or assuming specific tools unless stated in `compatibility` |
 
 ---
 
