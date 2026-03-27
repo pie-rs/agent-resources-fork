@@ -210,15 +210,29 @@ agr list
 ```
 
 ```text
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━┓
-┃ Skill                             ┃ Type   ┃ Status    ┃
-┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━┩
-│ anthropics/skills/frontend-design │ remote │ installed │
-│ anthropics/skills/pdf             │ remote │ installed │
-│ kasperjunge/commit                │ remote │ installed │
-│ ./skills/local-skill              │ local  │ installed │
-└───────────────────────────────────┴────────┴───────────┘
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Skill                             ┃ Type   ┃ Status               ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━┩
+│ anthropics/skills/frontend-design │ remote │ installed            │
+│ anthropics/skills/pdf             │ remote │ partial (claude)     │
+│ kasperjunge/commit                │ remote │ not synced           │
+│ ./skills/local-skill              │ local  │ installed            │
+└───────────────────────────────────┴────────┴──────────────────────┘
 ```
+
+**Status values:**
+
+| Status | Meaning |
+|--------|---------|
+| `installed` | Installed in all configured tools |
+| `partial (tool1, tool2)` | Installed in some tools but not all — lists which tools have it |
+| `not synced` | Listed in `agr.toml` but not installed in any tool. Run `agr sync` to install. |
+| `invalid` | Handle in `agr.toml` cannot be parsed. Check the handle format. |
+
+!!! tip "Partial installs"
+    You'll see `partial` status when using [multiple tools](tools.md#target-multiple-tools-at-once)
+    and a skill is only installed in some of them. Run `agr sync` to install the
+    missing copies, or `agr add <handle> --overwrite` to reinstall everywhere.
 
 **Options:**
 
