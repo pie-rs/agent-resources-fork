@@ -182,14 +182,6 @@ class ParsedHandle:
         root = base or Path.cwd()
         return (root / self.local_path).resolve()
 
-    def get_skill_name_for_tool(self, tool: "ToolConfig") -> str:
-        """Get the skill name to use in SKILL.md frontmatter.
-
-        Currently returns the skill name for all tools. The ``tool``
-        parameter is accepted for future extensibility.
-        """
-        return self.name
-
 
 def parse_handle(ref: str, *, prefer_local: bool = True) -> ParsedHandle:
     """Parse a handle string into components.

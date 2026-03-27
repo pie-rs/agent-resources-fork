@@ -226,29 +226,6 @@ def discover_skills_in_repo_listing(paths: list[str]) -> list[str]:
     return sorted({d.name for d in _find_skill_dirs_in_listing(paths)})
 
 
-def discover_skills_in_repo(repo_dir: Path) -> list[tuple[str, Path]]:
-    """Discover all skills in a repository.
-
-    Finds all directories containing SKILL.md anywhere in the repo,
-    excluding common non-skill directories (.git, node_modules, etc.).
-
-    When duplicate skill names exist, the shallowest path is returned.
-    Results are sorted alphabetically by skill name.
-
-    Args:
-        repo_dir: Path to extracted repository
-
-    Returns:
-        List of (skill_name, skill_path) tuples, deduplicated by name
-    """
-    matches: dict[str, list[Path]] = {}
-    for skill_dir in _find_skill_dirs(repo_dir):
-        matches.setdefault(skill_dir.name, []).append(skill_dir)
-
-    skills_by_name = {name: _shallowest(dirs) for name, dirs in matches.items()}
-    return sorted(skills_by_name.items(), key=lambda x: x[0])
-
-
 def discover_all_skill_dirs(repo_dir: Path) -> list[Path]:
     """Discover all skill directories in a repository (no dedupe).
 

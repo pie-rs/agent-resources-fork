@@ -84,29 +84,6 @@ class TestFlatPaths:
         assert h.to_skill_path(CURSOR) == Path("my-skill")
 
 
-class TestSkillNameForTool:
-    """Tests for SKILL.md name field based on tool."""
-
-    def test_skill_name_flat(self):
-        """Flat tools default to the skill name."""
-        h = ParsedHandle(username="maragudk", repo="skills", name="collab")
-        assert h.get_skill_name_for_tool(CLAUDE) == "collab"
-
-    def test_skill_name_cursor(self):
-        """Cursor (flat) gets just the skill name."""
-        h = ParsedHandle(username="maragudk", repo="skills", name="collab")
-        assert h.get_skill_name_for_tool(CURSOR) == "collab"
-
-    def test_local_skill_name_flat(self):
-        """Local skills default to the skill name for flat tools."""
-        h = ParsedHandle(is_local=True, name="my-skill")
-        assert h.get_skill_name_for_tool(CLAUDE) == "my-skill"
-
-    def test_local_skill_name_cursor(self):
-        """Local skills get just the name for Cursor."""
-        h = ParsedHandle(is_local=True, name="my-skill")
-        assert h.get_skill_name_for_tool(CURSOR) == "my-skill"
-
 
 class TestCursorInstallation:
     """Tests for installing skills to Cursor (flat naming)."""
