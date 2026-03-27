@@ -8,9 +8,9 @@ from agr.commands._tool_helpers import load_existing_config, print_missing_confi
 from agr.console import get_console
 from agr.exceptions import AgrError, InvalidHandleError
 from agr.metadata import METADATA_TYPE_LOCAL, METADATA_TYPE_REMOTE
-from agr.fetcher import is_skill_installed
+from agr.fetcher import filter_tools_needing_install
 from agr.handle import ParsedHandle
-from agr.tool import ToolConfig, lookup_skills_dir
+from agr.tool import ToolConfig
 
 
 def _get_installation_status(
@@ -32,22 +32,17 @@ def _get_installation_status(
     Returns:
         Rich-formatted status string
     """
-    installed_tools = [
-        tool.name
-        for tool in tools
-        if is_skill_installed(
-            handle,
-            repo_root,
-            tool,
-            source,
-            skills_dir=lookup_skills_dir(skills_dirs, tool),
-        )
-    ]
+    tools_needing_install = filter_tools_needing_install(
+        handle, repo_root, tools, source, skills_dirs
+    )
 
-    if len(installed_tools) == len(tools):
+    if not tools_needing_install:
         return "[green]installed[/green]"
-    elif installed_tools:
-        return f"[yellow]partial ({', '.join(installed_tools)})[/yellow]"
+    elif len(tools_needing_install) < len(tools):
+        installed_names = [
+            t.name for t in tools if t not in tools_needing_install
+        ]
+        return f"[yellow]partial ({', '.join(installed_names)})[/yellow]"
     else:
         return "[yellow]not synced[/yellow]"
 
