@@ -18,9 +18,8 @@ from agr.handle import (
 from agr.metadata import (
     build_handle_id,
     build_handle_ids,
-    compute_content_hash,
     read_skill_metadata,
-    write_skill_metadata,
+    stamp_skill_metadata,
 )
 from agr.skill import SKILL_MARKER, is_valid_skill_dir, update_skill_md_name
 from agr.tool import ToolConfig
@@ -213,16 +212,12 @@ def _flatten_nested_skills(skills_dir: Path) -> None:
             flat_name = INSTALLED_NAME_SEPARATOR.join(rel.parts)
             target = skills_dir / flat_name
             if target.exists():
-                console.print(
-                    f"[yellow]Cannot flatten:[/yellow] {rel.as_posix()}"
-                )
+                console.print(f"[yellow]Cannot flatten:[/yellow] {rel.as_posix()}")
                 continue
 
         try:
             shutil.move(str(skill_dir), target)
-            console.print(
-                f"[blue]Flattened:[/blue] {rel.as_posix()} -> {target.name}"
-            )
+            console.print(f"[blue]Flattened:[/blue] {rel.as_posix()} -> {target.name}")
         except OSError as e:
             console.print(f"[red]Failed to flatten:[/red] {rel.as_posix()}")
             console.print(f"  [dim]{e}[/dim]")
@@ -290,14 +285,8 @@ def _update_dir_metadata(
 ) -> None:
     """Update SKILL.md name and write metadata for a skill directory."""
     update_skill_md_name(skill_dir, skill_dir.name)
-    write_skill_metadata(
-        skill_dir,
-        handle,
-        repo_root,
-        tool_name,
-        skill_dir.name,
-        source_name,
-        compute_content_hash(skill_dir),
+    stamp_skill_metadata(
+        skill_dir, handle, repo_root, tool_name, skill_dir.name, source_name
     )
 
 
@@ -352,9 +341,7 @@ def migrate_flat_installed_names(
 
         # Read metadata once — reused by both the matched-handle check and
         # the Case 1 / Case 2 branches below.
-        name_dir_meta = (
-            read_skill_metadata(name_dir) if name_dir_is_skill else None
-        )
+        name_dir_meta = read_skill_metadata(name_dir) if name_dir_is_skill else None
 
         # Check if the plain-name dir already belongs to one of the known
         # handles (by comparing .agr.json metadata IDs). This tells us

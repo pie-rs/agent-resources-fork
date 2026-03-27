@@ -127,3 +127,29 @@ def write_skill_metadata(
 
     metadata_path = skill_dir / METADATA_FILENAME
     metadata_path.write_text(json.dumps(data, indent=2, ensure_ascii=True) + "\n")
+
+
+def stamp_skill_metadata(
+    skill_dir: Path,
+    handle: ParsedHandle,
+    repo_root: Path | None,
+    tool_name: str,
+    installed_name: str,
+    source: str | None = None,
+) -> None:
+    """Compute content hash and write metadata for a skill in one step.
+
+    This is a convenience wrapper around compute_content_hash +
+    write_skill_metadata, used whenever a skill directory needs its
+    metadata stamped (initial install, self-install, migration).
+    """
+    content_hash = compute_content_hash(skill_dir)
+    write_skill_metadata(
+        skill_dir,
+        handle,
+        repo_root,
+        tool_name,
+        installed_name,
+        source,
+        content_hash,
+    )
