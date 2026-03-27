@@ -107,4 +107,80 @@
     ]
   }
   </script>
+
+  {% if page and page.file and page.file.src_path == "troubleshooting.md" %}
+  <!-- FAQPage Schema for troubleshooting rich results -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Repository not found\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The repository doesn't exist or is private. Check for typos in the handle, set GITHUB_TOKEN for private repos, or use the three-part handle format (user/repo/skill) for non-default repo names."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Authentication failed\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Your GitHub token is missing, expired, or lacks permissions. Export a token with: export GITHUB_TOKEN=\"ghp_your_token_here\" or export GH_TOKEN=\"$(gh auth token)\". The token needs Contents: Read-only access."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Skill not found in repository\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The repo exists but doesn't contain a skill with that name. agr searches recursively for a directory matching the skill name that contains a SKILL.md file. Check the repo on GitHub to see available skills. If you used a two-part handle, agr may suggest the correct three-part handles."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Skill already exists\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The skill is already installed. To update it to the latest version, use: agr add user/skill --overwrite"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Invalid handle\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A single word is treated as a local path. For remote skills, include the username: agr add kasperjunge/commit (not agr add commit). Handles support at most three parts: user/repo/skill."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"No agr.toml found\"?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You're running a command that requires agr.toml but the file doesn't exist yet. Run 'agr init' to create one, or use 'agr onboard' for interactive setup."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"GitHub API rate limit exceeded\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "This mainly affects the Python SDK (list_skills, skill_info), not agr add or agr sync. Set GITHUB_TOKEN to raise your limit from 60/hour (unauthenticated) to 5,000/hour. Rate limits reset hourly."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Invalid skill name\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Skill names must be 1-64 characters, lowercase alphanumeric and hyphens only. Names cannot start or end with a hyphen, and consecutive hyphens (--) are not allowed. Use names like my-skill or code-reviewer."
+        }
+      }
+    ]
+  }
+  </script>
+  {% endif %}
 {% endblock %}
