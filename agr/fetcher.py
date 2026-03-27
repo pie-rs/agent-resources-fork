@@ -835,8 +835,9 @@ def is_skill_installed(
         True if installed
     """
     resolved_dir = _resolve_skills_dir(skills_dir, repo_root, tool)
-    skill_path = _find_existing_skill_dir(handle, resolved_dir, tool, repo_root, source)
-    return bool(skill_path and is_valid_skill_dir(skill_path))
+    # _find_existing_skill_dir already validates via is_valid_skill_dir
+    # on every code path, so a non-None result is always valid.
+    return _find_existing_skill_dir(handle, resolved_dir, tool, repo_root, source) is not None
 
 
 def filter_tools_needing_install(
