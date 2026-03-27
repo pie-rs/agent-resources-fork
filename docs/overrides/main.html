@@ -487,6 +487,30 @@
           "@type": "Answer",
           "text": "There's no global config yet. Install a skill globally to create one: agr add -g user/skill. The global config lives at ~/.agr/agr.toml."
         }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Cannot remove all tools. At least one must remain.\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "agr requires at least one tool in the tools list — there'd be nowhere to install skills. If you want to switch tools entirely, add the new one before removing the old: agr config add tools codex, then agr config remove tools claude."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Dependency cannot have both handle and path\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A dependency in agr.toml has both a handle and a path field. Each dependency must use one or the other: use handle for remote skills (e.g., handle = \"user/skill\") or path for local skills (e.g., path = \"./skills/my-skill\")."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Dependency must have either handle or path\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A dependency in agr.toml is missing both handle and path. Every dependency needs one: use handle for remote GitHub skills or path for local directory skills."
+        }
       }
     ]
   }
