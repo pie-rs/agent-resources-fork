@@ -75,7 +75,7 @@ agr sync
 agr sync -g
 ```
 
-Performs four stages: instruction file sync, directory migrations, dependency installation, and status report.
+Performs three stages: instruction file sync, directory migrations, and dependency installation.
 
 ### agr list
 
