@@ -108,6 +108,71 @@
   }
   </script>
 
+  <!-- BreadcrumbList Schema for rich breadcrumb trails in search results -->
+  {% if page and page.file %}
+  {% set src = page.file.src_path %}
+  {% set base = "https://kasperjunge.github.io/agent-resources/" %}
+  {% if src == "index.md" %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ base }}"}
+    ]
+  }
+  </script>
+  {% elif src in ("tutorial.md", "concepts.md") %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ base }}"},
+      {"@type": "ListItem", "position": 2, "name": "Getting Started", "item": "{{ base }}tutorial/"},
+      {"@type": "ListItem", "position": 3, "name": "{{ page.title }}"}
+    ]
+  }
+  </script>
+  {% elif src in ("tools.md", "skills.md", "teams.md", "configuration.md", "agrx.md") %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ base }}"},
+      {"@type": "ListItem", "position": 2, "name": "Guides", "item": "{{ base }}tools/"},
+      {"@type": "ListItem", "position": 3, "name": "{{ page.title }}"}
+    ]
+  }
+  </script>
+  {% elif src in ("creating.md", "sdk.md") %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ base }}"},
+      {"@type": "ListItem", "position": 2, "name": "Building Skills", "item": "{{ base }}creating/"},
+      {"@type": "ListItem", "position": 3, "name": "{{ page.title }}"}
+    ]
+  }
+  </script>
+  {% elif src in ("reference.md", "troubleshooting.md", "changelog.md") %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "Home", "item": "{{ base }}"},
+      {"@type": "ListItem", "position": 2, "name": "Reference", "item": "{{ base }}reference/"},
+      {"@type": "ListItem", "position": 3, "name": "{{ page.title }}"}
+    ]
+  }
+  </script>
+  {% endif %}
+  {% endif %}
+
   {% if page and page.file and page.file.src_path == "troubleshooting.md" %}
   <!-- FAQPage Schema for troubleshooting rich results -->
   <script type="application/ld+json">
