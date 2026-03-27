@@ -50,7 +50,7 @@ Describe when this skill should be used.
 Provide detailed instructions here.
 ```
 
-If you're adding the skill to this repo, place it under `./skills/`:
+If you want to keep the skill in your project, place it under `./skills/`:
 
 ```bash
 agr init skills/my-skill
