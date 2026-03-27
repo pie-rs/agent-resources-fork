@@ -35,7 +35,7 @@ guide helps you create, test, and share a skill with minimal ceremony.
 **Prerequisites:** [agr installed](tutorial.md#step-1-install-agr), a project
 with at least one [supported AI tool](tools.md)
 
-## Quick Start
+## Scaffold a New Skill with `agr init`
 
 ```bash
 agr init my-skill
@@ -126,7 +126,7 @@ You are a code review expert. When reviewing code:
 Be specific and actionable in your feedback. Reference line numbers when possible.
 ```
 
-## Supporting Files
+## Add Scripts, References, and Templates Alongside SKILL.md
 
 For complex skills, add supporting files alongside SKILL.md:
 
@@ -198,7 +198,7 @@ Teammates run:
 agr sync
 ```
 
-## Share with Others
+## Publish Your Skill to GitHub
 
 Push your skill to GitHub. The recommended structure is a repo named `skills`
 under your GitHub username — this lets people install with the short two-part
@@ -294,7 +294,7 @@ one-line summary at the top.
 **Output:** Findings formatted as file:line, severity, description, and fix.
 ```
 
-### Set boundaries
+### Define what the skill should not do
 
 Tell the agent what *not* to do. This prevents the skill from drifting into
 unrelated territory.
@@ -308,7 +308,7 @@ unrelated territory.
 - Never modify files directly — output your review as text
 ```
 
-### Use structured output formats
+### Define the output format for consistent results
 
 When the skill produces structured output, define the exact format so results
 are consistent and machine-parseable.
@@ -331,7 +331,7 @@ Return a JSON array of findings:
 
 ---
 
-## Skill Patterns
+## Full Skill Examples by Type
 
 These full examples show how to structure different types of skills. Expand
 each to see the complete SKILL.md.
@@ -435,7 +435,7 @@ each to see the complete SKILL.md.
 
 ---
 
-## Common Mistakes to Avoid
+## Pitfalls That Make Skills Ineffective
 
 !!! warning "Pitfalls that lead to ineffective skills"
     **Skill too broad.** A skill that tries to do everything ("helps with all
