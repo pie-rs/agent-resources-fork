@@ -22,22 +22,14 @@ def _identifier_candidates(
     helper produces the candidates in priority order so callers can stop
     at the first match.
     """
-    seen: set[str] = set()
-    candidates: list[str] = []
-
-    def _add(value: str) -> None:
-        if value not in seen:
-            seen.add(value)
-            candidates.append(value)
-
-    _add(ref)
+    candidates = [ref]
     if handle.is_local and handle.local_path is not None:
-        _add(str(handle.local_path))
+        candidates.append(str(handle.local_path))
     if abs_path_str is not None:
-        _add(abs_path_str)
+        candidates.append(abs_path_str)
     if not handle.is_local:
-        _add(handle.to_toml_handle())
-    return candidates
+        candidates.append(handle.to_toml_handle())
+    return list(dict.fromkeys(candidates))
 
 
 def run_remove(refs: list[str], global_install: bool = False) -> None:
@@ -114,7 +106,9 @@ def run_remove(refs: list[str], global_install: bool = False) -> None:
             console.print(f"  [dim]{result.message}[/dim]")
 
     save_and_summarize_results(
-        results, config, config_path,
+        results,
+        config,
+        config_path,
         action="removed",
         total=len(refs),
         print_result=_print_remove_result,
