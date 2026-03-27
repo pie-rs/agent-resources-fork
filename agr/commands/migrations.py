@@ -25,6 +25,25 @@ from agr.skill import SKILL_MARKER, is_valid_skill_dir, update_skill_md_name
 from agr.tool import ToolConfig
 
 
+def _print_migrated(label: str, old_name: str, new_name: str) -> None:
+    """Print a successful migration message."""
+    get_console().print(f"[blue]{label}:[/blue] {old_name} -> {new_name}")
+
+
+def _print_migrate_failed(label: str, name: str, error: Exception) -> None:
+    """Print a failed migration message with the error detail."""
+    console = get_console()
+    console.print(f"[red]Failed to {label.lower()}:[/red] {name}")
+    console.print(f"  [dim]{error}[/dim]")
+
+
+def _print_migrate_skipped(label: str, name: str, reason: str) -> None:
+    """Print a skipped migration message with the reason."""
+    console = get_console()
+    console.print(f"[yellow]Cannot {label.lower()}:[/yellow] {name}")
+    console.print(f"  [dim]{reason}[/dim]")
+
+
 def _migrate_skills_directory(
     old_skills_dir: Path,
     new_skills_dir: Path,
@@ -63,24 +82,22 @@ def _migrate_skills_directory(
 
         target = new_skills_dir / skill_dir.name
         if target.exists():
-            console.print(
-                f"[yellow]Cannot migrate:[/yellow] {old_rel}/{skill_dir.name}"
-            )
-            console.print(
-                f"  [dim]Target {new_rel}/{skill_dir.name} already exists[/dim]"
+            _print_migrate_skipped(
+                "Migrate",
+                f"{old_rel}/{skill_dir.name}",
+                f"Target {new_rel}/{skill_dir.name} already exists",
             )
             continue
 
         try:
             shutil.move(str(skill_dir), target)
-            console.print(
-                f"[blue]Migrated:[/blue] "
-                f"{old_rel}/{skill_dir.name} -> "
-                f"{new_rel}/{skill_dir.name}"
+            _print_migrated(
+                "Migrated",
+                f"{old_rel}/{skill_dir.name}",
+                f"{new_rel}/{skill_dir.name}",
             )
         except OSError as e:
-            console.print(f"[red]Failed to migrate:[/red] {old_rel}/{skill_dir.name}")
-            console.print(f"  [dim]{e}[/dim]")
+            _print_migrate_failed("Migrate", f"{old_rel}/{skill_dir.name}", e)
 
     # Warn about non-directory files left behind
     if old_skills_dir.exists():
@@ -187,8 +204,6 @@ def _flatten_nested_skills(skills_dir: Path) -> None:
     Args:
         skills_dir: Root skills directory to scan (e.g. ``.cursor/skills/``).
     """
-    console = get_console()
-
     if not skills_dir.exists():
         return
 
@@ -212,15 +227,16 @@ def _flatten_nested_skills(skills_dir: Path) -> None:
             flat_name = INSTALLED_NAME_SEPARATOR.join(rel.parts)
             target = skills_dir / flat_name
             if target.exists():
-                console.print(f"[yellow]Cannot flatten:[/yellow] {rel.as_posix()}")
+                _print_migrate_skipped(
+                    "Flatten", rel.as_posix(), "Target already exists"
+                )
                 continue
 
         try:
             shutil.move(str(skill_dir), target)
-            console.print(f"[blue]Flattened:[/blue] {rel.as_posix()} -> {target.name}")
+            _print_migrated("Flattened", rel.as_posix(), target.name)
         except OSError as e:
-            console.print(f"[red]Failed to flatten:[/red] {rel.as_posix()}")
-            console.print(f"  [dim]{e}[/dim]")
+            _print_migrate_failed("Flatten", rel.as_posix(), e)
 
     # Clean up empty intermediate directories left behind.
     if not skills_dir.exists():
@@ -242,7 +258,6 @@ def migrate_legacy_directories(skills_dir: Path, tool: ToolConfig) -> None:
         skills_dir: The skills directory to scan for legacy directories.
         tool: Tool configuration (migration only for non-nested tools).
     """
-    console = get_console()
     # Only migrate for flat tools
     if tool.supports_nested:
         return
@@ -264,16 +279,16 @@ def migrate_legacy_directories(skills_dir: Path, tool: ToolConfig) -> None:
         new_path = skills_dir / new_name
 
         if new_path.exists():
-            console.print(f"[yellow]Cannot migrate:[/yellow] {skill_dir.name}")
-            console.print(f"  [dim]Target {new_name} already exists[/dim]")
+            _print_migrate_skipped(
+                "Migrate", skill_dir.name, f"Target {new_name} already exists"
+            )
             continue
 
         try:
             skill_dir.rename(new_path)
-            console.print(f"[blue]Migrated:[/blue] {skill_dir.name} -> {new_name}")
+            _print_migrated("Migrated", skill_dir.name, new_name)
         except OSError as e:
-            console.print(f"[red]Failed to migrate:[/red] {skill_dir.name}")
-            console.print(f"  [dim]{e}[/dim]")
+            _print_migrate_failed("Migrate", skill_dir.name, e)
 
 
 def _update_dir_metadata(
@@ -316,7 +331,6 @@ def migrate_flat_installed_names(
     Only applies to flat tools (e.g. Claude). Nested tools (e.g. Cursor)
     already use ``user/repo/skill/`` paths and don't need this.
     """
-    console = get_console()
     if tool.supports_nested:
         return
 
@@ -377,12 +391,9 @@ def migrate_flat_installed_names(
                         _update_dir_metadata(
                             name_dir, handle, repo_root, tool.name, source_name
                         )
-                        console.print(
-                            f"[blue]Migrated:[/blue] {full_dir.name} -> {name_dir.name}"
-                        )
+                        _print_migrated("Migrated", full_dir.name, name_dir.name)
                     except OSError as e:
-                        console.print(f"[red]Failed to migrate:[/red] {full_dir.name}")
-                        console.print(f"  [dim]{e}[/dim]")
+                        _print_migrate_failed("Migrate", full_dir.name, e)
                 # else: something non-skill occupies the name; skip.
             continue
 
