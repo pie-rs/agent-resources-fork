@@ -28,7 +28,11 @@
 
   <!-- Additional SEO -->
   <meta name="author" content="Kasper Junge" />
+  {% if page and page.meta and page.meta.robots %}
+  <meta name="robots" content="{{ page.meta.robots }}" />
+  {% else %}
   <meta name="robots" content="index, follow" />
+  {% endif %}
   <link rel="canonical" href="{{ page.canonical_url }}" />
 
   <!-- LLM-readable documentation (llms.txt) -->
