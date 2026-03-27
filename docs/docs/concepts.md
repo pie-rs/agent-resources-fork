@@ -1,6 +1,6 @@
 ---
 title: "How agr Works — Skills, Handles, Sources, Scopes, and the Sync Lifecycle"
-description: Understand how agr works — skills, handles, sources, and the sync lifecycle that keeps your AI tools in sync.
+description: How agr manages AI agent skills — SKILL.md format, handle resolution, multi-tool sync across Claude Code, Cursor, Codex, and more. Understand skills, handles, sources, scopes, and agr.toml.
 keywords:
   - how agr works
   - agr skills explained
@@ -12,6 +12,16 @@ keywords:
   - agr instruction syncing
   - AI agent skill scopes
   - agr sources configuration
+  - how AI agent skills work
+  - manage AI coding agent prompts across tools
+  - sync prompts between Claude Code and Cursor
+  - package manager for AI agent instructions
+  - share AI coding skills across team
+  - SKILL.md vs CLAUDE.md vs AGENTS.md
+  - install AI skills from GitHub
+  - AI agent skill directory structure
+  - multi-tool AI skill management
+  - keep AI agent instructions in sync
 ---
 
 # Core Concepts
