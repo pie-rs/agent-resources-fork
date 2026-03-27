@@ -324,14 +324,24 @@ url = "https://git.example.com/{owner}/{repo}.git"
 
 ## Managing Config
 
-All examples on this page use `agr config` subcommands (`show`, `get`, `set`,
-`add`, `remove`, `unset`). Add `-g` to any command to operate on the global
-config (`~/.agr/agr.toml`). See the [CLI Reference](reference.md#agr-config)
-for the full list of subcommands and flags.
+All `agr config` subcommands at a glance:
+
+| Command | What it does |
+|---------|-------------|
+| `agr config show` | View formatted config with all settings |
+| `agr config path` | Print the path to `agr.toml` |
+| `agr config edit` | Open `agr.toml` in `$VISUAL` or `$EDITOR` |
+| `agr config get <key>` | Read a single config value |
+| `agr config set <key> <values>` | Write a scalar or replace a list |
+| `agr config add <key> <values>` | Append to a list (`tools`, `sources`) |
+| `agr config remove <key> <values>` | Remove from a list (`tools`, `sources`) |
+| `agr config unset <key>` | Clear a setting back to its default |
+
+Add `-g` to any command to operate on the global config (`~/.agr/agr.toml`).
+See the [CLI Reference](reference.md#agr-config) for full details and examples.
 
 !!! note "`agr config edit` requires an editor"
-    `agr config edit` opens `agr.toml` in your `$VISUAL` (or `$EDITOR`).
-    If neither environment variable is set, you'll get an error. Set one:
+    If neither `$VISUAL` nor `$EDITOR` is set, you'll get an error. Set one:
     ```bash
     export EDITOR="vim"              # or nano, code --wait, etc.
     ```
