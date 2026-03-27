@@ -7,23 +7,7 @@ from pathlib import Path
 import pytest
 
 from tests.cli.runner import run_cli
-
-
-def _init_git_repo(path: Path) -> None:
-    """Initialize a directory as a git repo with dummy user config."""
-    subprocess.run(["git", "init"], cwd=path, capture_output=True, check=True)
-    subprocess.run(
-        ["git", "config", "user.email", "test@test.com"],
-        cwd=path,
-        capture_output=True,
-        check=True,
-    )
-    subprocess.run(
-        ["git", "config", "user.name", "Test"],
-        cwd=path,
-        capture_output=True,
-        check=True,
-    )
+from tests.conftest import init_git_repo
 
 
 def pytest_configure(config):
@@ -52,7 +36,7 @@ def cli_project(tmp_path: Path) -> Path:
     project = tmp_path / "project"
     project.mkdir()
 
-    _init_git_repo(project)
+    init_git_repo(project)
 
     return project
 
@@ -101,7 +85,7 @@ def git_source_repo(tmp_path: Path):
         root = base or base_dir
         repo_dir = root / owner / repo
         repo_dir.mkdir(parents=True, exist_ok=True)
-        _init_git_repo(repo_dir)
+        init_git_repo(repo_dir)
         subprocess.run(
             ["git", "checkout", "-b", "main"],
             cwd=repo_dir,
