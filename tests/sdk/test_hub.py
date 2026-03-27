@@ -304,8 +304,8 @@ class TestListSkills:
             skill_info("owner/repo/my-skill")
 
     def test_invalid_handle_raises(self):
-        """Test invalid repo handle raises ValueError."""
-        with pytest.raises(ValueError, match="Invalid repo handle"):
+        """Test invalid repo handle raises InvalidHandleError."""
+        with pytest.raises(InvalidHandleError, match="Invalid repo handle"):
             list_skills("too/many/parts/here")
 
 

@@ -208,6 +208,7 @@ def list_skills(repo_handle: str) -> list[SkillInfo]:
         List of SkillInfo objects for each skill found
 
     Raises:
+        InvalidHandleError: If repo handle format is invalid
         RepoNotFoundError: If repository not found
         AuthenticationError: If authentication fails
 
@@ -225,7 +226,7 @@ def list_skills(repo_handle: str) -> list[SkillInfo]:
         owner, repo = parts
         repo_candidates = [(repo, False)]
     else:
-        raise ValueError(f"Invalid repo handle: {repo_handle}")
+        raise InvalidHandleError(f"Invalid repo handle: {repo_handle}")
 
     result = _fetch_repo_tree(owner, list(repo_candidates))
     tree_data = result.tree_data
