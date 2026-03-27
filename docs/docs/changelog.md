@@ -212,7 +212,7 @@ Global config lives at `~/.agr/agr.toml`.
 
 ### Antigravity support
 
-agr now supports [Antigravity](https://docs.google.com/document/d/1KWjbSVr7YLJ8HSvNdJfUt7pNMa3Z0hMH8TE-DhRxO2E) as a tool target:
+agr now supports [Antigravity](https://antigravity.dev) as a tool target:
 
 ```bash
 agr config add tools antigravity
