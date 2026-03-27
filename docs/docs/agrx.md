@@ -31,6 +31,12 @@ skills. It downloads a [skill](concepts.md#skills) from GitHub, runs it with
 your AI coding tool's CLI, and cleans up afterwards. Nothing is added to
 [`agr.toml`](configuration.md) — no permanent install, no project changes.
 
+**Key terms:** A **skill** is a directory containing a `SKILL.md` file with
+instructions for an AI coding agent. A **handle** like `anthropics/skills/pdf`
+identifies a skill on GitHub (`user/repo/skill`). The short form `user/skill`
+assumes a repo named `skills`. A **tool** is one of the supported AI coding
+agents: Claude Code, Cursor, Codex, OpenCode, GitHub Copilot, or Antigravity.
+
 ## Quick Start
 
 ```bash

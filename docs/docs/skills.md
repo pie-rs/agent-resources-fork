@@ -27,8 +27,15 @@ keywords:
     `agrx user/skill` or install with `agr add user/skill`.
 
 Browse available skills and find ones that fit your workflow. Every skill below
-works with all [supported tools](tools.md) and can be tried instantly without
+works with all [supported tools](tools.md) — Claude Code, Cursor, Codex,
+OpenCode, GitHub Copilot, and Antigravity — and can be tried instantly without
 installing using [`agrx`](agrx.md):
+
+**Key terms:** A **skill** is a directory containing a `SKILL.md` file with
+YAML frontmatter (`name`, `description`) and markdown instructions for an AI
+coding agent. A **[handle](concepts.md#handles)** like `anthropics/skills/pdf`
+identifies a skill on GitHub. Install permanently with
+[`agr add`](reference.md#agr-add) or run once with [`agrx`](agrx.md).
 
 ```bash
 agrx anthropics/skills/pdf -p "Extract tables from report.pdf"
