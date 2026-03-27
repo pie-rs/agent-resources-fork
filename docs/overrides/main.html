@@ -308,6 +308,106 @@
   </script>
   {% endif %}
 
+  {% if page and page.file and page.file.src_path == "skills.md" %}
+  <!-- ItemList Schema for skill directory rich results -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "AI Agent Skills Directory",
+    "description": "Browse and install AI agent skills for Claude Code, Cursor, Codex, OpenCode, GitHub Copilot, and Antigravity.",
+    "url": "https://kasperjunge.github.io/agent-resources/skills/",
+    "numberOfItems": 18,
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "PDF",
+        "description": "Read, extract, create, and modify PDF files",
+        "url": "https://github.com/anthropics/skills/tree/main/pdf"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "DOCX",
+        "description": "Create, read, edit, and manipulate Word documents",
+        "url": "https://github.com/anthropics/skills/tree/main/docx"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "XLSX",
+        "description": "Create and manipulate spreadsheet files",
+        "url": "https://github.com/anthropics/skills/tree/main/xlsx"
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "name": "Frontend Design",
+        "description": "Build distinctive, production-grade frontend interfaces",
+        "url": "https://github.com/anthropics/skills/tree/main/frontend-design"
+      },
+      {
+        "@type": "ListItem",
+        "position": 5,
+        "name": "Canvas Design",
+        "description": "Create visual art in PNG and PDF using design principles",
+        "url": "https://github.com/anthropics/skills/tree/main/canvas-design"
+      },
+      {
+        "@type": "ListItem",
+        "position": 6,
+        "name": "Claude API",
+        "description": "Build apps with the Claude API and Anthropic SDKs",
+        "url": "https://github.com/anthropics/skills/tree/main/claude-api"
+      },
+      {
+        "@type": "ListItem",
+        "position": 7,
+        "name": "MCP Builder",
+        "description": "Create MCP servers for LLM-to-service interaction",
+        "url": "https://github.com/anthropics/skills/tree/main/mcp-builder"
+      },
+      {
+        "@type": "ListItem",
+        "position": 8,
+        "name": "Webapp Testing",
+        "description": "Test local web applications using Playwright",
+        "url": "https://github.com/anthropics/skills/tree/main/webapp-testing"
+      },
+      {
+        "@type": "ListItem",
+        "position": 9,
+        "name": "Skill Creator",
+        "description": "Create, modify, and improve AI agent skills",
+        "url": "https://github.com/anthropics/skills/tree/main/skill-creator"
+      },
+      {
+        "@type": "ListItem",
+        "position": 10,
+        "name": "PPTX",
+        "description": "Create and work with PowerPoint slide decks",
+        "url": "https://github.com/anthropics/skills/tree/main/pptx"
+      },
+      {
+        "@type": "ListItem",
+        "position": 11,
+        "name": "Algorithmic Art",
+        "description": "Create algorithmic art with p5.js and seeded randomness",
+        "url": "https://github.com/anthropics/skills/tree/main/algorithmic-art"
+      },
+      {
+        "@type": "ListItem",
+        "position": 12,
+        "name": "Doc Co-authoring",
+        "description": "Structured workflow for co-authoring documentation",
+        "url": "https://github.com/anthropics/skills/tree/main/doc-coauthoring"
+      }
+    ]
+  }
+  </script>
+  {% endif %}
+
   {% if page and page.file and page.file.src_path == "tutorial.md" %}
   <!-- HowTo Schema for tutorial rich results -->
   <script type="application/ld+json">
