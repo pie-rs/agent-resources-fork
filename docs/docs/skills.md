@@ -27,7 +27,8 @@ keywords:
     `agrx user/skill` or install with `agr add user/skill`.
 
 Browse available skills and find ones that fit your workflow. Every skill below
-can be tried instantly without installing using [`agrx`](agrx.md):
+works with all [supported tools](tools.md) and can be tried instantly without
+installing using [`agrx`](agrx.md):
 
 ```bash
 agrx anthropics/skills/pdf -p "Extract tables from report.pdf"
@@ -114,7 +115,7 @@ Skills built and shared by the community.
 
 ### Search GitHub
 
-Any GitHub repository with a `SKILL.md` file can be installed with agr:
+Any GitHub repository with a [`SKILL.md`](creating.md#skillmd-format) file can be installed as a [handle](concepts.md#handles):
 
 - [Search for SKILL.md files on GitHub](https://github.com/search?q=filename%3ASKILL.md&type=code)
 
@@ -151,7 +152,7 @@ agrx anthropics/skills/pdf -i   # Interactive: continue chatting after the skill
 agr init my-skill
 ```
 
-Edit the generated `my-skill/SKILL.md` with your instructions.
+Edit the generated `my-skill/SKILL.md` with your instructions. See [`agr init`](reference.md#agr-init) for all options.
 
 ### 2. Push to GitHub
 
@@ -173,7 +174,7 @@ agr add your-username/my-skill
 
 ### 3. List it here
 
-Open an issue at [github.com/kasperjunge/agent-resources](https://github.com/kasperjunge/agent-resources/issues) to get your skill added to this directory.
+Open an issue at [github.com/kasperjunge/agent-resources](https://github.com/kasperjunge/agent-resources/issues) to get your skill added to this directory. For [team-wide sharing](teams.md), you can also use a private repository with [`agr.toml`](configuration.md).
 
 See [Creating Skills](creating.md) for a full guide on writing effective skills.
 
@@ -181,7 +182,9 @@ See [Creating Skills](creating.md) for a full guide on writing effective skills.
 
 ## Next Steps
 
+- [Tutorial](tutorial.md) — Get started with agr from scratch
 - [Creating Skills](creating.md) — Write and publish your own skills
 - [Try Skills with agrx](agrx.md) — Run any skill instantly without installing
 - [Python SDK](sdk.md) — Discover and manage skills programmatically
+- [Troubleshooting](troubleshooting.md) — Fix install errors and common issues
 - [What's New](changelog.md) — Latest skill support and feature updates
