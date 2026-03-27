@@ -40,7 +40,7 @@ agrx anthropics/skills/pdf -p "Extract tables from report.pdf"
 - [Troubleshooting](https://kasperjunge.github.io/agent-resources/troubleshooting/) — Common errors and how to fix them
 - [What's New](https://kasperjunge.github.io/agent-resources/changelog/) — Release notes and breaking changes
 
-## Common Commands
+## All Commands
 
 ```bash
 agr add user/skill         # Install from GitHub
@@ -52,9 +52,15 @@ agr sync                   # Install all dependencies from agr.toml
 agr list                   # Show installed skills
 agr init                   # Create agr.toml (auto-detects tools)
 agr init my-skill          # Scaffold a new skill
+agr onboard               # Interactive guided setup
+agr config show            # View current config
+agr config set tools claude cursor  # Configure tools
+agr config get <key>       # Read a config value
 agrx user/skill            # Run a skill temporarily
 agrx user/skill -i         # Run, then continue chatting
 ```
+
+Add `-g` to `add`, `remove`, `sync`, or `list` for global skills (available in all projects).
 
 ## Handle Format
 
