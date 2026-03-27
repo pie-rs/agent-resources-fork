@@ -189,7 +189,7 @@ New unified [config management](configuration.md#managing-config):
 agr config show                # View config
 agr config set tools claude codex opencode
 agr config set default_tool claude
-agr config add sources gitlab --type git --url "https://gitlab.com/{owner}/{repo}.git"
+agr config add sources gitlab --url "https://gitlab.com/{owner}/{repo}.git"
 agr config unset default_tool
 ```
 

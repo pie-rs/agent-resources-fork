@@ -174,7 +174,7 @@ You can add custom sources for GitLab, self-hosted Git servers, or any host
 that supports Git over HTTPS:
 
 ```bash
-agr config add sources gitlab --type git --url "https://gitlab.com/{owner}/{repo}.git"
+agr config add sources gitlab --url "https://gitlab.com/{owner}/{repo}.git"
 agr add team/skill --source gitlab
 ```
 

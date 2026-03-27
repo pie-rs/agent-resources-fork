@@ -122,16 +122,16 @@ url = "https://github.com/{owner}/{repo}.git"
 To fetch skills from a self-hosted Git server:
 
 ```bash
-agr config add sources my-server --type git --url "https://git.example.com/{owner}/{repo}.git"
+agr config add sources my-server --url "https://git.example.com/{owner}/{repo}.git"
 ```
 
 The URL template uses `{owner}` and `{repo}` placeholders, which are filled from
 the handle. For example, `agr add user/repo/skill --source my-server` clones
 `https://git.example.com/user/repo.git`.
 
-!!! note "Only `git` type is supported"
-    The `--type` flag currently only accepts `git`. Other source types may be
-    added in the future.
+!!! note "`--type` defaults to `git`"
+    The `--type` flag defaults to `git` (the only supported type) and can be
+    omitted. Other source types may be added in the future.
 
 ### Default Source
 

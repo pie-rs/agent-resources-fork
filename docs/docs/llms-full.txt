@@ -146,7 +146,7 @@ agr config add tools cursor
 agr config remove tools cursor
 agr config set sync_instructions true
 agr config set canonical_instructions CLAUDE.md
-agr config add sources gitlab --type git --url "https://gitlab.com/{owner}/{repo}.git"
+agr config add sources gitlab --url "https://gitlab.com/{owner}/{repo}.git"
 ```
 
 ### agrx
@@ -269,7 +269,7 @@ Note: `dependencies` must appear before any `[[source]]` blocks.
 ### Custom Sources
 
 ```bash
-agr config add sources gitlab --type git --url "https://gitlab.com/{owner}/{repo}.git"
+agr config add sources gitlab --url "https://gitlab.com/{owner}/{repo}.git"
 agr config set default_source gitlab
 agr add user/skill --source gitlab
 ```

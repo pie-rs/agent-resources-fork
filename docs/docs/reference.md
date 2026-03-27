@@ -122,7 +122,7 @@ for the full lookup rules.
 ```bash
 export GITHUB_TOKEN="ghp_aBcDeFgHiJkL01234567890mNoPqRsTuVwXy"  # Authenticate for private repos
 agr config add sources gitlab \
-  --type git --url "https://gitlab.com/{owner}/{repo}.git"   # Custom source
+  --url "https://gitlab.com/{owner}/{repo}.git"              # Custom source
 agr add user/skill --source gitlab               # Use a specific source
 agr config set default_source gitlab             # Change default source
 ```
@@ -378,7 +378,7 @@ agr config unset <key>                       # Clear to default
 
 **Options (on `add` only):**
 
-- `--type` — Source type (when key is `sources`)
+- `--type` — Source type (when key is `sources`). Defaults to `git`.
 - `--url` — Source URL (when key is `sources`)
 
 **Examples:**
@@ -390,7 +390,7 @@ agr config add tools cursor
 agr config remove tools cursor            # ⚠ deletes skills from that tool
 agr config set sync_instructions true
 agr config set canonical_instructions CLAUDE.md
-agr config add sources my-source --type git --url "https://git.example.com/{owner}/{repo}.git"
+agr config add sources my-source --url "https://git.example.com/{owner}/{repo}.git"
 agr config unset default_tool
 ```
 

@@ -314,7 +314,7 @@ Error: default_source 'my-server' not found in [[source]] list
 Your `default_source` refers to a source that doesn't exist. Either add the source or fix the name:
 
 ```bash
-agr config add sources my-server --type git --url "https://git.example.com/{owner}/{repo}.git"
+agr config add sources my-server --url "https://git.example.com/{owner}/{repo}.git"
 # or fix the default
 agr config set default_source github
 ```
@@ -349,7 +349,7 @@ A dependency in `agr.toml` specifies a `source` that isn't defined in your `[[so
 
 ```bash
 # Add the missing source
-agr config add sources gitlab --type git --url "https://gitlab.com/{owner}/{repo}.git"
+agr config add sources gitlab --url "https://gitlab.com/{owner}/{repo}.git"
 
 # Or edit agr.toml and remove source = "gitlab" from the dependency
 ```
