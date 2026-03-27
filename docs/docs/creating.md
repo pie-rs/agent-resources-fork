@@ -1,18 +1,28 @@
 ---
-title: "Create, Test, and Publish AI Agent Skills with agr"
-description: Step-by-step guide to creating your own AI agent skills — scaffold with agr init, write SKILL.md instructions, test locally, and publish to GitHub.
+title: "How to Create Custom AI Agent Skills — Write, Test, and Share SKILL.md Files"
+description: Step-by-step guide to creating reusable AI agent skills — scaffold with agr init, write SKILL.md instructions with YAML frontmatter, test locally, and publish to GitHub for Claude Code, Cursor, Codex, and more.
 keywords:
   - create AI agent skill
   - SKILL.md format
   - SKILL.md frontmatter
+  - SKILL.md YAML
   - agr init scaffold
   - publish skill to GitHub
   - write AI agent instructions
   - skill testing
   - skill best practices
+  - custom AI coding agent prompts
+  - write custom rules for Cursor
+  - Claude Code custom skills
+  - Codex custom agents instructions
+  - reusable AI agent prompts
+  - how to write SKILL.md
+  - share AI coding prompts GitHub
+  - agent skill template
+  - AI pair programming instructions
 ---
 
-# Creating Skills
+# How to Create Custom AI Agent Skills
 
 !!! tldr
     Run `agr init my-skill`, edit `my-skill/SKILL.md` with your instructions,
