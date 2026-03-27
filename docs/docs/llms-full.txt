@@ -322,6 +322,20 @@ Two-part handles (`user/skill`) assume a repo named `skills`. Use three parts (`
 
 agr recursively searches the repo for any directory named `<skill>` containing `SKILL.md`. Common locations include `skills/{skill}/SKILL.md`, `{skill}/SKILL.md`, or any nesting depth. The shallowest match wins.
 
+### How `agr add` Works Internally
+
+When you run `agr add anthropics/skills/pdf`:
+
+1. **Parse handle** — extract owner (`anthropics`), repo (`skills`), skill name (`pdf`)
+2. **Load config** — read `agr.toml` (or create it) to find configured tools and sources
+3. **Sparse checkout** — clone only the needed files from `github.com/anthropics/skills` (fast, even for large repos)
+4. **Find skill** — recursively search for a directory named `pdf` containing `SKILL.md`; shallowest match wins
+5. **Copy to each tool** — install the entire skill directory into each configured tool's skills folder (e.g., `.claude/skills/pdf/`, `.cursor/skills/pdf/`)
+6. **Write metadata** — save `.agr.json` in each installed copy with the source handle, install timestamp, and SHA-256 content hash
+7. **Update agr.toml** — add the dependency entry to the manifest
+
+If a tool's install fails partway, already-installed copies are rolled back automatically. Skill naming defaults to the plain name (`pdf/`); on collision between different handles sharing the same name, agr falls back to a fully-qualified name (`owner--repo--skill/`).
+
 ## Creating Skills
 
 ### Quick Start
