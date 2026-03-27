@@ -55,7 +55,7 @@ Or during initial setup:
 agr init --tools claude,cursor,codex
 ```
 
-After this, every `agr add` and `agr sync` installs skills into all configured
+After this, every [`agr add`](reference.md#agr-add) and [`agr sync`](reference.md#agr-sync) installs skills into all configured
 tools simultaneously.
 
 ---
@@ -76,7 +76,7 @@ runs in your terminal.
 | **Detection signals** | `.claude/`, `CLAUDE.md` |
 
 Claude Code is the default tool. If you only use Claude Code, no extra
-configuration is needed — `agr add` and `agrx` work out of the box.
+configuration is needed — `agr add` and [`agrx`](agrx.md) work out of the box.
 
 **Official docs:** [Skills](https://code.claude.com/docs/en/skills) ·
 [Slash commands](https://code.claude.com/docs/en/slash-commands) ·
@@ -120,7 +120,7 @@ coding agent that runs in your terminal.
 | **Skill invocation** | `$skill-name` |
 | **Detection signals** | `.agents/`, `.codex` |
 
-Install the Codex CLI:
+Install the Codex CLI (required for [`agrx`](agrx.md) to run skills with Codex):
 
 ```bash
 npm i -g @openai/codex
@@ -195,9 +195,9 @@ Gemini).
 | **Detection signals** | `.gemini/`, `.agents/` |
 
 !!! warning "No CLI support"
-    Antigravity does not have a standalone CLI, so `agrx` cannot run skills
+    Antigravity does not have a standalone CLI, so [`agrx`](agrx.md) cannot run skills
     with this tool. Use `agr add` to install skills, then use them through the
-    Antigravity interface.
+    Antigravity interface. See [Troubleshooting](troubleshooting.md#why-cant-i-use-agrx-with-antigravity) for details.
 
 ---
 
@@ -274,7 +274,7 @@ If you see skills in the "Old directory" column, running `agr sync` will move
 them automatically.
 
 ??? note "One skill format works in every tool"
-    All tools use the same skill format — a directory containing a `SKILL.md`
+    All tools use the same [skill format](creating.md#skillmd-format) — a directory containing a `SKILL.md`
     file with YAML frontmatter. A skill written for one tool works in all the
     others. When you `agr add` a skill, the same files are copied into each
     configured tool's skills directory. See the
@@ -285,6 +285,8 @@ them automatically.
 
 ## Next Steps
 
-- [Configuration](configuration.md) — Multi-tool setup, custom sources, instruction syncing
-- [Creating Skills](creating.md) — Write skills that work across all tools
-- [Teams](teams.md) — Set up multi-tool teams with shared skills
+- [**Configuration**](configuration.md) — Multi-tool setup, custom sources, instruction syncing
+- [**Creating Skills**](creating.md) — Write skills that work across all tools
+- [**Teams**](teams.md) — Set up multi-tool teams with shared skills
+- [**Skill Directory**](skills.md) — Browse available skills to install
+- [**Troubleshooting**](troubleshooting.md) — Fix detection, CLI, and install issues per tool
