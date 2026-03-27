@@ -96,9 +96,14 @@ agr config add tools cursor
 
 ### Tool Detection
 
-`agr init` and `agr onboard` auto-detect tools from repo signals — config
-directories (`.claude/`, `.cursor/`, `.agents/`, `.gemini/`) and instruction files
-(`CLAUDE.md`, `.cursorrules`).
+`agr init` and `agr onboard` auto-detect which tools you use by looking for
+tool-specific files and directories in your repo. Each tool has its own set of
+detection signals — see the [Supported Tools](tools.md) page for the full list
+per tool. Override detection with `--tools`:
+
+```bash
+agr init --tools claude,codex,opencode
+```
 
 ## Sources
 
