@@ -49,6 +49,7 @@ theme:
     - content.code.copy
     - content.code.annotate
     - content.tabs.link
+    - content.tooltips
     - search.suggest
     - search.highlight
     - toc.follow
@@ -88,8 +89,12 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.tabbed:
       alternate_style: true
+  - pymdownx.snippets:
+      auto_append:
+        - docs/includes/abbreviations.md
   - admonition
   - pymdownx.details
+  - abbr
   - tables
   - attr_list
   - meta
