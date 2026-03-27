@@ -90,11 +90,6 @@ configuration is needed — `agr add` and `agrx` work out of the box.
 | **Skill invocation** | `/skill-name` |
 | **Detection signals** | `.cursor/`, `.cursorrules` |
 
-!!! note "Nested directory structure"
-    Cursor uses nested directories for skills (e.g.,
-    `.cursor/skills/owner/repo/skill-name/`). agr handles this automatically —
-    you use the same `agr add user/skill` command regardless of tool.
-
 **Official docs:** [Skills](https://cursor.com/docs/context/skills) ·
 [Commands](https://cursor.com/docs/context/commands) ·
 [Sub-agents](https://cursor.com/docs/context/subagents) ·

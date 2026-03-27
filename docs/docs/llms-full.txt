@@ -224,9 +224,7 @@ agr sync   # copies CLAUDE.md content to AGENTS.md, GEMINI.md as needed
 
 ### Skill Naming
 
-Flat tools (Claude, Codex, OpenCode, Copilot, Antigravity) install as `<skills-dir>/<skill-name>/`. On name collision, falls back to `<skills-dir>/<user>--<repo>--<skill>/`.
-
-Cursor uses nested directories: `<skills-dir>/<user>/<repo>/<skill>/`.
+All tools install as `<skills-dir>/<skill-name>/`. On name collision, falls back to `<skills-dir>/<user>--<repo>--<skill>/`.
 
 ## Configuration (agr.toml)
 

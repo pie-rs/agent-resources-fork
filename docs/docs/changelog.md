@@ -20,6 +20,10 @@ details, see [CHANGELOG.md on GitHub](https://github.com/kasperjunge/agent-resou
 
 ## Unreleased
 
+### Cursor now uses flat naming
+
+Cursor skills are now installed with flat directory names (e.g., `.cursor/skills/skill-name/`) instead of the previous nested structure (`.cursor/skills/owner/repo/skill-name/`). This aligns Cursor with all other supported tools. Existing nested installs will continue to work but `agr sync` will install into the new flat layout.
+
 ### `agrx` now uses `--full-auto` for Codex
 
 When running skills with `agrx --tool codex` in interactive mode, agr now passes `--full-auto` to the Codex CLI. This reduces permission prompts during execution, matching the behavior of other tools (Claude Code's `--dangerously-skip-permissions`, Cursor's `--force`, Copilot's `--allow-all-tools`).

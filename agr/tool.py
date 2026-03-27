@@ -1,9 +1,8 @@
 """Tool configuration for AI coding tools.
 
 All tool-specific paths and configuration are isolated in this module.
-Supports Claude Code (flat naming), OpenAI Codex (flat naming),
-Cursor (nested directories), OpenCode (flat naming),
-GitHub Copilot (flat naming), and Antigravity (flat naming).
+Supports Claude Code, Cursor, OpenAI Codex, OpenCode,
+GitHub Copilot, and Antigravity. All tools use flat naming.
 """
 
 from dataclasses import dataclass
@@ -66,11 +65,14 @@ CLAUDE = ToolConfig(
     instruction_file="CLAUDE.md",
 )
 
-# Cursor tool configuration (nested dirs: maragudk/skills/bluesky/)
+# Cursor tool configuration (flat naming: <skill-name>)
+# Cursor docs: skill identifiers are "lowercase letters, numbers, and
+# hyphens only" and must match the parent folder name.  Primary skill
+# directories (.agents/skills/, .cursor/skills/) use flat naming.
 CURSOR = ToolConfig(
     name="cursor",
     config_dir=".cursor",
-    supports_nested=True,
+    supports_nested=False,
     cli_command="agent",
     cli_prompt_flag="-p",
     cli_force_flag="--force",
