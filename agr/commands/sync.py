@@ -1,5 +1,7 @@
 """agr sync command implementation."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
@@ -45,6 +47,22 @@ class SyncResult:
 
     status: SyncStatus
     error: str | None = None
+
+    @classmethod
+    def installed(cls) -> SyncResult:
+        return cls(SyncStatus.INSTALLED)
+
+    @classmethod
+    def up_to_date(cls) -> SyncResult:
+        return cls(SyncStatus.UP_TO_DATE)
+
+    @classmethod
+    def pending(cls) -> SyncResult:
+        return cls(SyncStatus.PENDING)
+
+    @classmethod
+    def from_error(cls, exc: Exception) -> SyncResult:
+        return cls(SyncStatus.ERROR, format_install_error(exc))
 
 
 @dataclass
@@ -164,7 +182,7 @@ def _sync_individual_entries(
                 entry.handle, entry.source_name, repo_root, tools, resolver
             )
         except INSTALL_ERROR_TYPES as e:
-            results[entry.index] = SyncResult(SyncStatus.ERROR, format_install_error(e))
+            results[entry.index] = SyncResult.from_error(e)
 
 
 def _sync_batched_repo_entries(
@@ -211,9 +229,7 @@ def _sync_batched_repo_entries(
             # If the repo-level operation fails (clone, checkout), mark
             # every skill in the group as failed.
             for entry in group:
-                results[entry.index] = SyncResult(
-                    SyncStatus.ERROR, format_install_error(e)
-                )
+                results[entry.index] = SyncResult.from_error(e)
 
 
 def _install_one_from_repo(
@@ -231,13 +247,12 @@ def _install_one_from_repo(
         handle, repo_root, tools, entry.source_name
     )
     if not tools_needing_install:
-        results[entry.index] = SyncResult(SyncStatus.UP_TO_DATE)
+        results[entry.index] = SyncResult.up_to_date()
         return
     skill_source = skill_sources.get(handle.name)
     if skill_source is None:
         results[entry.index] = SyncResult(
-            SyncStatus.ERROR,
-            skill_not_found_message(handle.name),
+            SyncStatus.ERROR, skill_not_found_message(handle.name)
         )
         return
     try:
@@ -251,9 +266,9 @@ def _install_one_from_repo(
             install_source=source_name,
             skill_source=skill_source,
         )
-        results[entry.index] = SyncResult(SyncStatus.INSTALLED)
+        results[entry.index] = SyncResult.installed()
     except INSTALL_ERROR_TYPES as e:
-        results[entry.index] = SyncResult(SyncStatus.ERROR, format_install_error(e))
+        results[entry.index] = SyncResult.from_error(e)
 
 
 def _sync_one_dependency(
@@ -274,7 +289,7 @@ def _sync_one_dependency(
         handle, repo_root, tools, source_name, skills_dirs
     )
     if not tools_needing_install:
-        return SyncResult(SyncStatus.UP_TO_DATE)
+        return SyncResult.up_to_date()
 
     fetch_and_install_to_tools(
         handle,
@@ -285,7 +300,7 @@ def _sync_one_dependency(
         source=source_name,
         skills_dirs=skills_dirs,
     )
-    return SyncResult(SyncStatus.INSTALLED)
+    return SyncResult.installed()
 
 
 def _run_global_sync() -> None:
@@ -317,7 +332,7 @@ def _run_global_sync() -> None:
                 handle, source_name, None, tools, resolver, skills_dirs
             )
         except INSTALL_ERROR_TYPES as e:
-            result = SyncResult(SyncStatus.ERROR, format_install_error(e))
+            result = SyncResult.from_error(e)
         results.append((dep.identifier, result))
 
     _print_results_and_summary(results)
@@ -373,7 +388,7 @@ def run_sync(global_install: bool = False) -> None:
     # Pre-allocate a result slot per dependency so parallel paths can fill
     # them by index without coordination.
     results: list[SyncResult] = [
-        SyncResult(SyncStatus.PENDING) for _ in config.dependencies
+        SyncResult.pending() for _ in config.dependencies
     ]
     pending_local: list[SyncEntry] = []
     pending_remote: list[SyncEntry] = []
@@ -388,7 +403,7 @@ def run_sync(global_install: bool = False) -> None:
             )
 
             if not tools_needing_install:
-                results[index] = SyncResult(SyncStatus.UP_TO_DATE)
+                results[index] = SyncResult.up_to_date()
                 continue
 
             entry = SyncEntry(
@@ -401,7 +416,7 @@ def run_sync(global_install: bool = False) -> None:
             else:
                 pending_remote.append(entry)
         except INSTALL_ERROR_TYPES as e:
-            results[index] = SyncResult(SyncStatus.ERROR, format_install_error(e))
+            results[index] = SyncResult.from_error(e)
 
     # --- Phase 2: Install pending dependencies ---
     # Three categories are processed separately for efficiency:
