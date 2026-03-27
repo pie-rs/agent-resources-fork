@@ -969,4 +969,55 @@
   }
   </script>
   {% endif %}
+
+  {% if page and page.file and page.file.src_path == "changelog.md" %}
+  <!-- TechArticle Schema for changelog rich results -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "agr Changelog — New Features, Fixes, and Breaking Changes by Release",
+    "description": "User-facing changes in each agr release — new features, bug fixes, and breaking changes for the AI agent skill manager.",
+    "url": "https://kasperjunge.github.io/agent-resources/changelog/",
+    "author": {
+      "@type": "Person",
+      "name": "Kasper Junge",
+      "url": "https://github.com/kasperjunge"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Agent Resources",
+      "url": "https://github.com/kasperjunge/agent-resources"
+    },
+    "about": [
+      {
+        "@type": "DefinedTerm",
+        "name": "Antigravity .gemini/ migration",
+        "description": "Skills now install to .gemini/skills/ with automatic migration from .agent/skills/"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "Cursor flat naming",
+        "description": "Cursor skills now use flat directory names instead of nested owner/repo/skill structure"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "Content hashes",
+        "description": "Installed skills include SHA-256 content hashes to detect on-disk modifications"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "Multi-tool support",
+        "description": "Skills install to Claude Code, Cursor, Codex, OpenCode, Copilot, and Antigravity simultaneously"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "Python SDK",
+        "description": "Programmatic API for loading, discovering, and caching AI agent skills"
+      }
+    ],
+    "keywords": ["agr changelog", "agr release notes", "agr new features", "agr breaking changes", "agr version history"]
+  }
+  </script>
+  {% endif %}
 {% endblock %}
