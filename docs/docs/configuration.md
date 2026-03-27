@@ -30,6 +30,18 @@ agr uses `agr.toml` for project-level configuration and `~/.agr/agr.toml` for
 global configuration. For an overview of how config fits into agr's architecture,
 see [Core Concepts](concepts.md).
 
+## Settings at a Glance
+
+| Key | Type | Default | What it does |
+|-----|------|---------|-------------|
+| `tools` | list | `["claude"]` | [AI tools](#multi-tool-setup) to install skills into |
+| `default_tool` | string | first in `tools` | Tool used by [`agrx`](agrx.md) and for [instruction sync](#instruction-syncing) |
+| `default_source` | string | `"github"` | [Source](#sources) used when `--source` is not specified |
+| `sync_instructions` | bool | `false` | Copy the canonical instruction file to other tools on [`agr sync`](reference.md#agr-sync) |
+| `canonical_instructions` | string | auto from `default_tool` | Which [instruction file](#instruction-syncing) is the source of truth (`CLAUDE.md`, `AGENTS.md`, or `GEMINI.md`) |
+
+Dependencies and sources are configured separately — see [Full Example](#full-agrtoml-example) below.
+
 ## Multi-Tool Setup
 
 By default, agr targets Claude Code only. To install skills into multiple tools
