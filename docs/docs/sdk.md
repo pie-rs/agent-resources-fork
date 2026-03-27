@@ -20,6 +20,8 @@ keywords:
     skills programmatically. Discover skills with `list_skills()`, manage the
     cache with `cache.clear()`, and handle errors via `AgrError` subclasses.
 
+**Prerequisites:** Python 3.10+
+
 Use `agr` as a Python library to load, inspect, and cache [skills](concepts.md#skills) programmatically.
 
 **What is a skill?** A folder containing a `SKILL.md` file with YAML frontmatter

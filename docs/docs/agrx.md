@@ -26,6 +26,10 @@ keywords:
     afterwards. Nothing is added to `agr.toml`. Use it to try skills before
     committing to an install.
 
+**Prerequisites:** [agr installed](tutorial.md#step-1-install-agr) and the
+[tool CLI](tools.md) for your chosen AI tool (e.g., `claude`, `codex`,
+`agent`)
+
 `agrx` is like [npx](https://docs.npmjs.com/cli/commands/npx) for AI agent
 skills. It downloads a [skill](concepts.md#skills) from GitHub, runs it with
 your AI coding tool's CLI, and cleans up afterwards. Nothing is added to

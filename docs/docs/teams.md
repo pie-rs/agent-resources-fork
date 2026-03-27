@@ -25,6 +25,10 @@ keywords:
     `agr add` installs everywhere. Use `GITHUB_TOKEN` for private repos and
     CI/CD.
 
+**Prerequisites:** [agr installed](tutorial.md#step-1-install-agr), a git
+repository, and at least one [supported AI tool](tools.md) (Claude Code,
+Cursor, Codex, OpenCode, Copilot, or Antigravity)
+
 Set up agr so everyone shares the same AI coding skills, stays in sync
 across Claude Code, Cursor, Codex, and other tools — and gets productive on
 day one.

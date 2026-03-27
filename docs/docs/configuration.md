@@ -26,6 +26,10 @@ keywords:
     (keep `CLAUDE.md`/`AGENTS.md`/`GEMINI.md` aligned). Use `agr config` to
     manage everything from the CLI. Add `-g` for global config at `~/.agr/agr.toml`.
 
+**Prerequisites:** [agr installed](tutorial.md#step-1-install-agr) and an
+`agr.toml` file (created by [`agr init`](reference.md#agr-init),
+[`agr add`](reference.md#agr-add), or [`agr onboard`](reference.md#agr-onboard))
+
 agr uses `agr.toml` for project-level configuration and `~/.agr/agr.toml` for
 global configuration. For an overview of how config fits into agr's architecture,
 see [Core Concepts](concepts.md).
