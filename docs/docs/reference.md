@@ -175,19 +175,27 @@ agr remove ./my-skill
 
 ### agr sync
 
-Install all dependencies from `agr.toml`.
+Install all dependencies from `agr.toml`, sync instruction files, and run any
+pending directory migrations.
 
 ```bash
 agr sync
 ```
 
 ```text
+Synced instructions: CLAUDE.md -> AGENTS.md
 Up to date: anthropics/skills/frontend-design
 Up to date: anthropics/skills/pdf
 Installed: kasperjunge/commit
 
 Summary: 2 up to date, 1 installed
 ```
+
+Each `agr sync` run performs up to three stages before reporting results:
+
+1. **Instruction sync** — copies the [canonical instruction file](configuration.md#instruction-syncing) to other tools' instruction files (only when `sync_instructions = true` and 2+ tools are configured)
+2. **Migrations** — renames skill directories to match current naming conventions (e.g., Cursor nested → flat, legacy Codex/OpenCode paths). This happens automatically — no manual steps needed.
+3. **Dependency install** — installs any skills from `agr.toml` that are not yet present. Skills from the same repository are batched into a single download.
 
 **Options:**
 
