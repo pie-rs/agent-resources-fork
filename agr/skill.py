@@ -49,6 +49,29 @@ def _shallowest(paths: list[_P]) -> _P:
     return min(paths, key=lambda p: len(p.parts))
 
 
+def _is_excluded_skill_path(parts: tuple[str, ...]) -> bool:
+    """Check if a relative SKILL.md path should be excluded from discovery.
+
+    Centralizes the two exclusion rules shared by both filesystem and
+    git-listing discovery:
+
+    1. Root-level SKILL.md (single component, e.g. just ``SKILL.md``)
+       is a repo marker, not a skill directory.
+    2. Any path component matching ``EXCLUDED_DIRS`` (.git, node_modules,
+       __pycache__, etc.) disqualifies the entry.
+
+    Args:
+        parts: Components of the path *relative to the repo root*
+            (e.g. ``("skills", "my-skill", "SKILL.md")``).
+
+    Returns:
+        True if the path should be excluded from skill discovery.
+    """
+    if len(parts) == 1:
+        return True
+    return any(part in EXCLUDED_DIRS for part in parts)
+
+
 def _is_excluded_path(path: Path, repo_dir: Path) -> bool:
     """Check if a path should be excluded from skill discovery.
 
@@ -59,15 +82,11 @@ def _is_excluded_path(path: Path, repo_dir: Path) -> bool:
     Returns:
         True if the path should be excluded
     """
-    # Exclude root-level SKILL.md (parent is the repo itself)
-    if path.parent == repo_dir:
-        return True
-
     # Only check path components relative to repo_dir, so that
     # parent directories outside the repo (e.g. /home/user/build/project)
     # don't trigger false exclusions.
     rel = path.relative_to(repo_dir)
-    return any(part in EXCLUDED_DIRS for part in rel.parts)
+    return _is_excluded_skill_path(rel.parts)
 
 
 def is_valid_skill_dir(path: Path) -> bool:
@@ -145,10 +164,7 @@ def _find_skill_dirs_in_listing(paths: list[str]) -> list[PurePosixPath]:
         rel_path = PurePosixPath(rel)
         if rel_path.name != SKILL_MARKER:
             continue
-        if len(rel_path.parts) == 1:
-            # Root-level SKILL.md is not a skill directory
-            continue
-        if any(part in EXCLUDED_DIRS for part in rel_path.parts):
+        if _is_excluded_skill_path(rel_path.parts):
             continue
         results.append(rel_path.parent)
     return results

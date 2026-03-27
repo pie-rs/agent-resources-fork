@@ -4,6 +4,7 @@ import pytest
 
 from agr.skill import (
     SKILL_MARKER,
+    _is_excluded_skill_path,
     create_skill_scaffold,
     discover_skills_in_repo,
     discover_skills_in_repo_listing,
@@ -548,3 +549,43 @@ class TestDiscoverSkillsInRepo:
         result = discover_skills_in_repo(repo_dir)
         assert len(result) == 1
         assert result[0][0] == "my-skill"
+
+
+class TestIsExcludedSkillPath:
+    """Tests for _is_excluded_skill_path — the shared exclusion predicate."""
+
+    def test_root_level_skill_md_excluded(self):
+        """A single-component path (root SKILL.md) is excluded."""
+        assert _is_excluded_skill_path(("SKILL.md",)) is True
+
+    def test_nested_skill_md_not_excluded(self):
+        """A normal skill path like skills/my-skill/SKILL.md is included."""
+        assert _is_excluded_skill_path(("skills", "my-skill", "SKILL.md")) is False
+
+    def test_git_dir_excluded(self):
+        """Paths under .git are excluded."""
+        assert _is_excluded_skill_path((".git", "hooks", "SKILL.md")) is True
+
+    def test_node_modules_excluded(self):
+        """Paths under node_modules are excluded."""
+        assert _is_excluded_skill_path(("node_modules", "pkg", "SKILL.md")) is True
+
+    def test_pycache_excluded(self):
+        """Paths under __pycache__ are excluded."""
+        assert _is_excluded_skill_path(("src", "__pycache__", "SKILL.md")) is True
+
+    def test_venv_excluded(self):
+        """Paths under .venv are excluded."""
+        assert _is_excluded_skill_path((".venv", "lib", "SKILL.md")) is True
+
+    def test_build_dir_excluded(self):
+        """Paths under build/ are excluded."""
+        assert _is_excluded_skill_path(("build", "output", "SKILL.md")) is True
+
+    def test_excluded_dir_deep_in_path(self):
+        """An excluded dir anywhere in the path triggers exclusion."""
+        assert _is_excluded_skill_path(("a", "b", "node_modules", "c", "SKILL.md")) is True
+
+    def test_empty_tuple_not_excluded(self):
+        """Edge case: empty parts tuple is not excluded (no excluded dir check)."""
+        assert _is_excluded_skill_path(()) is False
