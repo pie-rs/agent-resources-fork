@@ -299,6 +299,53 @@ agr config add sources gitlab --type git --url "https://gitlab.com/{owner}/{repo
 # Or edit agr.toml and remove source = "gitlab" from the dependency
 ```
 
+### How do I fix "Dependency cannot have both handle and path"?
+
+```text
+Error: Dependency cannot have both handle and path
+```
+
+A dependency in `agr.toml` has both a `handle` and a `path` field. Each
+dependency must use one or the other:
+
+```toml
+# Wrong — both handle and path
+dependencies = [
+    {handle = "user/skill", path = "./skills/skill", type = "skill"},
+]
+
+# Right — remote
+dependencies = [
+    {handle = "user/skill", type = "skill"},
+]
+
+# Right — local
+dependencies = [
+    {path = "./skills/skill", type = "skill"},
+]
+```
+
+### How do I fix "Dependency must have either handle or path"?
+
+```text
+Error: Dependency must have either handle or path
+```
+
+A dependency in `agr.toml` is missing both `handle` and `path`. Every dependency
+needs one:
+
+```toml
+# Wrong — no handle or path
+dependencies = [
+    {type = "skill"},
+]
+
+# Right
+dependencies = [
+    {handle = "user/skill", type = "skill"},
+]
+```
+
 ### How do I fix "canonical_instructions must be 'AGENTS.md', 'CLAUDE.md', or 'GEMINI.md'"?
 
 Only these three instruction file names are supported for syncing. Other filenames like `README.md` or `INSTRUCTIONS.md` won't work.
@@ -581,6 +628,27 @@ If you have the tool installed but `agrx` can't find it, check that the CLI is o
 
 ```bash
 which claude   # or codex, agent, opencode, copilot
+```
+
+### How do I fix "agrx only works with remote handles"?
+
+```text
+Error: agrx only works with remote handles
+Hint: Use 'agr add' for local skills
+```
+
+`agrx` downloads skills from GitHub and cleans up after running — it doesn't
+work with local paths. For local skills, install them permanently instead:
+
+```bash
+# Wrong
+agrx ./skills/my-skill
+
+# Right — install locally
+agr add ./skills/my-skill
+
+# Right — run a remote skill
+agrx user/my-skill
 ```
 
 ### Why can't I use agrx with Antigravity?
