@@ -7,6 +7,16 @@ from pathlib import Path, PurePosixPath
 # Marker file for skills
 SKILL_MARKER = "SKILL.md"
 
+# Regex for detecting a frontmatter ``name:`` line (with or without a value).
+_FRONTMATTER_NAME_LINE_RE = re.compile(r"^\s*name\s*:")
+
+# Regex for extracting the value from a frontmatter ``name: <value>`` line.
+_FRONTMATTER_NAME_VALUE_RE = re.compile(r"^\s*name\s*:\s*(.+)\s*$")
+
+# Regex for validating a skill name per the Agent Skills spec:
+# 1-64 lowercase alphanumeric chars and hyphens, no leading/trailing/consecutive hyphens.
+_VALID_SKILL_NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
+
 # Directories to exclude from skill discovery
 EXCLUDED_DIRS = {
     ".git",
@@ -259,7 +269,7 @@ def get_skill_frontmatter_name(skill_dir: Path) -> str | None:
 
     frontmatter, _ = parsed
     for line in frontmatter.splitlines():
-        match = re.match(r"^\s*name\s*:\s*(.+)\s*$", line)
+        match = _FRONTMATTER_NAME_VALUE_RE.match(line)
         if match:
             return match.group(1).strip()
     return None
@@ -292,7 +302,7 @@ def update_skill_md_name(skill_dir: Path, new_name: str) -> None:
     name_found = False
 
     for line in lines:
-        if re.match(r"^\s*name\s*:", line):
+        if _FRONTMATTER_NAME_LINE_RE.match(line):
             new_lines.append(f"name: {new_name}")
             name_found = True
         else:
@@ -319,7 +329,7 @@ def validate_skill_name(name: str) -> bool:
     """
     if not name or len(name) > 64:
         return False
-    return bool(re.match(r"^[a-z0-9]+(-[a-z0-9]+)*$", name))
+    return bool(_VALID_SKILL_NAME_RE.match(name))
 
 
 def create_skill_scaffold(name: str, base_dir: Path | None = None) -> Path:
