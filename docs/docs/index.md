@@ -173,16 +173,16 @@ See [Creating Skills](creating.md) for the full guide.
 
 | Command | What it does |
 |---------|-------------|
-| `agr add <handle>` | Install a skill |
-| `agr add <handle> -o` | Update a skill to the latest version |
-| `agr remove <handle>` | Uninstall a skill |
-| `agr sync` | Install all dependencies from `agr.toml` |
-| `agr list` | Show skills and installation status |
-| `agr init` | Create `agr.toml` (auto-detects tools) |
-| `agr init <name>` | Create a skill scaffold |
-| `agr onboard` | Interactive guided setup |
-| `agr config <cmd>` | Manage tools, sources, and settings |
-| `agrx <handle>` | Run a skill temporarily |
+| [`agr add <handle>`](reference.md#agr-add) | Install a skill |
+| [`agr add <handle> -o`](reference.md#agr-add) | Update a skill to the latest version |
+| [`agr remove <handle>`](reference.md#agr-remove) | Uninstall a skill |
+| [`agr sync`](reference.md#agr-sync) | Install all dependencies from `agr.toml` |
+| [`agr list`](reference.md#agr-list) | Show skills and installation status |
+| [`agr init`](reference.md#agr-init) | Create `agr.toml` (auto-detects tools) |
+| [`agr init <name>`](reference.md#agr-init) | Create a skill scaffold |
+| [`agr onboard`](reference.md#agr-onboard) | Interactive guided setup |
+| [`agr config <cmd>`](reference.md#agr-config) | Manage tools, sources, and settings |
+| [`agrx <handle>`](reference.md#agrx) | Run a skill temporarily |
 
 ## Example skills
 
