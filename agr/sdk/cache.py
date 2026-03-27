@@ -22,6 +22,9 @@ from pathlib import Path
 
 from agr.exceptions import CacheError
 from agr.skill import SKILL_MARKER
+from agr.source import DEFAULT_SOURCE_NAME
+
+CACHE_SKILLS_SUBDIR = "skills"
 
 _LOCKS_USE_MSVCRT = os.name == "nt"
 _msvcrt = None
@@ -131,7 +134,7 @@ def get_skill_cache_path(owner: str, repo: str, skill: str, revision: str) -> Pa
     skill = _sanitize_path_component(skill, "skill")
     revision = _sanitize_path_component(revision, "revision")
 
-    return get_cache_dir() / "skills" / "github" / owner / repo / skill / revision
+    return get_cache_dir() / CACHE_SKILLS_SUBDIR / DEFAULT_SOURCE_NAME / owner / repo / skill / revision
 
 
 def is_cached(owner: str, repo: str, skill: str, revision: str) -> bool:
@@ -258,7 +261,7 @@ def clear_cache(pattern: str | None = None) -> int:
     Returns:
         Number of skill directories deleted
     """
-    skills_cache = get_cache_dir() / "skills"
+    skills_cache = get_cache_dir() / CACHE_SKILLS_SUBDIR
     if not skills_cache.exists():
         return 0
 
@@ -289,7 +292,7 @@ class _CacheManager:
             - size_bytes: Total cache size in bytes
         """
         cache_dir = self.path
-        skills_cache = cache_dir / "skills"
+        skills_cache = cache_dir / CACHE_SKILLS_SUBDIR
         skills_count = 0
         size_bytes = 0
 
