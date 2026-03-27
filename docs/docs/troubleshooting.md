@@ -14,6 +14,7 @@ keywords:
   - agr permission error private repo
   - agr config error fix
   - agrx tool CLI not found
+  - agr skill not found in sources
   - agr skill already exists
   - agr invalid handle format
   - agr git not found
@@ -111,6 +112,26 @@ Skill 'myskill' not found. However, 'user/myskill' exists as a repository with 3
   agr add user/myskill/skill2
   agr add user/myskill/skill3
 ```
+
+### How do I fix "Skill not found in sources"?
+
+```text
+Error: Skill 'myskill' not found in sources: github
+```
+
+agr searched all configured sources and couldn't find a matching skill anywhere. This differs from "Skill not found in repository" — that one means the repo was found but the skill directory wasn't in it. This error means no source had a repo containing the skill.
+
+**Fix:**
+
+1. **Check the handle.** Verify the username and skill name are correct.
+2. **Try the three-part format** if the skill lives in a non-default repo:
+   ```bash
+   agr add user/custom-repo/myskill
+   ```
+3. **Check your sources.** If using custom sources, verify they're configured:
+   ```bash
+   agr config get sources
+   ```
 
 ### How do I fix "Skill already exists"?
 

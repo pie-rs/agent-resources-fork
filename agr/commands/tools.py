@@ -116,7 +116,7 @@ def run_default_tool_set(tool_name: str) -> None:
     if name not in config.tools:
         error_exit(
             f"Tool '{name}' is not configured. "
-            f"Add it first with 'agr config tools add {name}'."
+            f"Add it first with 'agr config add tools {name}'."
         )
 
     if config.default_tool == name:

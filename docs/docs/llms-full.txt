@@ -633,6 +633,10 @@ Token missing, expired, or wrong permissions. Export `GITHUB_TOKEN` or `GH_TOKEN
 `Error: Skill 'myskill' not found in repository. No directory named 'myskill' containing SKILL.md was found.`
 The repo exists but has no matching skill directory with SKILL.md. Check the repo on GitHub. agr suggests correct handles when it can — e.g., if you used a two-part handle for a repo with a different name.
 
+#### "Skill not found in sources"
+`Error: Skill 'myskill' not found in sources: github`
+All configured sources were searched and no matching skill was found. Check the handle, try the three-part format (`user/repo/skill`), or verify your sources with `agr config get sources`.
+
 #### "Skill already exists"
 `Error: Skill already exists at /path/to/skill. Use --overwrite to replace.`
 Use `--overwrite`: `agr add user/skill --overwrite`
