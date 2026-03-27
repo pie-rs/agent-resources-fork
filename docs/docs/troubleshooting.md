@@ -244,8 +244,8 @@ Skill names cannot contain consecutive hyphens. Rename the skill to use single h
 ### How do I fix "No agr.toml found"?
 
 ```text
-Error: No agr.toml found.
-Run 'agr init' first to create one.
+No agr.toml found.
+Run 'agr init' to create one.
 ```
 
 You're running a command that requires `agr.toml` but the file doesn't exist yet. Create one:
@@ -378,13 +378,33 @@ default_tool = "codex"
 Error: default_source 'my-server' not found in [[source]] list
 ```
 
-Your `default_source` refers to a source that doesn't exist. Either add the source or fix the name:
+Your `agr.toml` file has a `default_source` that refers to a source name that isn't defined in any `[[source]]` block. Either add the source or fix the name:
 
 ```bash
 agr config add sources my-server --url "https://git.example.com/{owner}/{repo}.git"
 # or fix the default
 agr config set default_source github
 ```
+
+??? note "How do I fix \"Source not found in sources list\" from `agr config set`?"
+    ```text
+    Error: Source 'my-server' not found in sources list.
+    Hint: Available sources: github
+    ```
+
+    This is similar to the error above, but happens when you run
+    `agr config set default_source my-server` and the source doesn't exist yet.
+    The hint shows which sources are available. Either add the source first or
+    pick an existing one:
+
+    ```bash
+    # Add the source first, then set it as default
+    agr config add sources my-server --url "https://git.example.com/{owner}/{repo}.git"
+    agr config set default_source my-server
+
+    # Or use an existing source
+    agr config set default_source github
+    ```
 
 ??? note "How do I fix \"dependencies must be declared before [[source]] blocks\"?"
     ```text
@@ -539,6 +559,7 @@ Add the `export` to your shell profile (`~/.zshrc`, `~/.bashrc`) to make it perm
 
 ```text
 Error: No global config found at ~/.agr/agr.toml
+Hint: Run 'agr init' or create it manually.
 ```
 
 You ran a global config command (`agr config -g ...`) but no global config exists yet. Create one by installing a skill globally:
@@ -946,8 +967,8 @@ After `agr add ./skills/my-skill`, verify:
 ### How do I fix "No global agr.toml found"?
 
 ```text
-Error: No global agr.toml found
-Run 'agr add -g <handle>' first.
+No global agr.toml found.
+Run 'agr add -g <handle>' to create one.
 ```
 
 There's no global config yet. Install a skill globally to create one:
@@ -965,7 +986,7 @@ The global config lives at `~/.agr/agr.toml`.
 ### How do I fix "Tool CLI not found"?
 
 ```text
-Error: Tool CLI 'codex' not found. Install it to use agrx.
+Error: codex CLI not found.
 ```
 
 `agrx` needs the selected tool's CLI installed on your system. See which CLI each tool requires:
