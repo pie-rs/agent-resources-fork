@@ -607,6 +607,9 @@ This installs the skill into the tool's global skills directory, runs it, and cl
 
 ## Related Pages
 
-- [**Configuration**](configuration.md) — Full `agr.toml` reference and setup options
-- [**CLI Reference**](reference.md) — Every command, flag, and option
-- [**Creating Skills**](creating.md) — Fix skill authoring issues
+- [**Configuration**](configuration.md) — Fix `agr.toml` settings, sources, and instruction sync issues
+- [**Supported Tools**](tools.md) — Check detection signals, skill directories, and CLI requirements per tool
+- [**agrx**](agrx.md) — Fix issues with ephemeral skill runs, tool selection, and interactive mode
+- [**CLI Reference**](reference.md) — Verify command syntax, flags, and handle formats
+- [**Creating Skills**](creating.md) — Fix SKILL.md format, name validation, and testing issues
+- [**Teams**](teams.md) — Fix CI/CD sync failures, private repo auth, and multi-tool team setup
