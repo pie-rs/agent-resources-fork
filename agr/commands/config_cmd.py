@@ -27,15 +27,6 @@ from agr.exceptions import ConfigError
 from agr.source import DEFAULT_SOURCE_NAME, SOURCE_TYPE_GIT, SourceConfig
 from agr.tool import DEFAULT_TOOL_NAMES
 
-VALID_KEYS = {
-    "tools",
-    "default_tool",
-    "default_source",
-    "sync_instructions",
-    "canonical_instructions",
-    "sources",
-}
-
 SCALAR_KEYS = {
     "default_tool",
     "default_source",
@@ -43,6 +34,7 @@ SCALAR_KEYS = {
     "canonical_instructions",
 }
 LIST_KEYS = {"tools", "sources"}
+VALID_KEYS = SCALAR_KEYS | LIST_KEYS
 
 
 def _require_config_path(global_scope: bool) -> Path:
@@ -251,9 +243,8 @@ def run_config_unset(key: str, global_scope: bool) -> None:
         return
 
     # Nullable scalar keys: default_tool, sync_instructions, canonical_instructions
-    assert key in ("default_tool", "sync_instructions", "canonical_instructions"), (
-        f"Unhandled key: {key}"
-    )
+    if key not in ("default_tool", "sync_instructions", "canonical_instructions"):
+        raise AssertionError(f"Unhandled key: {key}")
     current = getattr(config, key)
     if current is None:
         console.print(f"[dim]{key} is already unset.[/dim]")

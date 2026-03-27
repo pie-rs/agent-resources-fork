@@ -341,12 +341,16 @@ dependency must use one or the other:
 dependencies = [
     {handle = "user/skill", path = "./skills/skill", type = "skill"},
 ]
+```
 
+```toml
 # Right — remote
 dependencies = [
     {handle = "user/skill", type = "skill"},
 ]
+```
 
+```toml
 # Right — local
 dependencies = [
     {path = "./skills/skill", type = "skill"},
@@ -367,7 +371,9 @@ needs one:
 dependencies = [
     {type = "skill"},
 ]
+```
 
+```toml
 # Right
 dependencies = [
     {handle = "user/skill", type = "skill"},
