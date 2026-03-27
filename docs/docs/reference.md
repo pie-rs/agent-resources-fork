@@ -93,6 +93,17 @@ agr config remove tools codex          # Stop syncing to a tool (⚠ deletes its
     skills directory. Skills remain in your other configured tools and can be
     reinstalled with `agr config add tools <name>`.
 
+### Handle Format
+
+```bash
+agr add user/skill                 # github.com/user/skills repo, "skill" directory
+agr add user/repo/skill            # github.com/user/repo repo, "skill" directory
+agr add ./path/to/skill            # Local directory on disk
+```
+
+Two-part handles (`user/skill`) assume a repo named `skills`. Use three parts
+when the repo has a different name.
+
 ### Sources & Private Repos
 
 ```bash
