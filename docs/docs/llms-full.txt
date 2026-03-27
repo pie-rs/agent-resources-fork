@@ -153,9 +153,9 @@ Downloads the skill, runs it with the selected tool's CLI, and cleans up. To avo
 | Tool | Flag |
 |------|------|
 | Claude Code | --dangerously-skip-permissions |
-| Cursor | --force |
 | OpenAI Codex | --full-auto |
 | GitHub Copilot | --allow-all-tools |
+| Cursor | (none) |
 | OpenCode | (none) |
 | Antigravity | (none — no CLI) |
 

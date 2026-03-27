@@ -49,13 +49,12 @@ agrx kasperjunge/commit -i                          # Interactive: skill + chat
     | Tool | Flag |
     |------|------|
     | Claude Code | `--dangerously-skip-permissions` |
-    | Cursor | `--force` |
     | OpenAI Codex | `--full-auto` |
     | GitHub Copilot | `--allow-all-tools` |
 
-    OpenCode and Antigravity don't use a force flag. If you need to review
-    permissions before execution, use `agr add` to install the skill permanently
-    and invoke it manually through your tool's CLI.
+    Cursor, OpenCode, and Antigravity don't use a permission-bypass flag.
+    If you need to review permissions before execution, use `agr add` to
+    install the skill permanently and invoke it manually through your tool's CLI.
 
 ## Options
 
