@@ -128,6 +128,17 @@ into all of them simultaneously. Configure your tools with:
 agr config set tools claude cursor codex
 ```
 
+### How skills are named on disk
+
+Skills are installed using their plain name — `agr add anthropics/skills/pdf`
+creates a `pdf/` directory inside each tool's skills folder.
+
+If two different handles share the same skill name (e.g., `alice/skills/lint`
+and `bob/tools/lint`), agr falls back to a fully-qualified directory name
+(`alice--skills--lint/`, `bob--tools--lint/`) to avoid collisions. You'll
+still invoke the skill by its plain name in your tool — agr handles the
+mapping.
+
 See [Supported Tools](tools.md) for details on each tool.
 
 ---
