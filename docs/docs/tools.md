@@ -246,6 +246,25 @@ agr config remove tools cursor
     agr init --tools claude,codex,opencode
     ```
 
+## Automatic Directory Migrations
+
+When tool directories change upstream, agr updates its install paths to match.
+If you have skills in an old location, `agr sync`, `agr add`, or `agr remove`
+automatically moves them — no manual steps needed.
+
+| Tool | Old directory | New directory | When changed |
+|------|-------------|---------------|-------------|
+| Antigravity | `.agent/skills/` | `.gemini/skills/` | Unreleased |
+| OpenAI Codex | `.codex/skills/` | `.agents/skills/` | 0.7.10 |
+| OpenCode | `.opencode/skill/` | `.opencode/skills/` | 0.7.10 |
+| Cursor | `.cursor/skills/owner/repo/skill/` (nested) | `.cursor/skills/skill/` (flat) | Unreleased |
+
+Global directories are migrated the same way (e.g., `~/.agent/skills/` →
+`~/.gemini/skills/`).
+
+If you see skills in the "Old directory" column, running `agr sync` will move
+them automatically.
+
 ??? note "One skill format works in every tool"
     All tools use the same skill format — a directory containing a `SKILL.md`
     file with YAML frontmatter. A skill written for one tool works in all the
