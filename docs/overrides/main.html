@@ -887,6 +887,61 @@
     ]
   }
   </script>
+
+
+  <!-- TechArticle Schema for configuration reference rich results -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Configure agr.toml — Multi-Tool Setup, Sources, and Instruction Syncing",
+    "description": "Configure agr.toml for multi-tool setup across Claude Code, Cursor, Codex, OpenCode, Copilot, and Antigravity — custom Git sources, instruction syncing, and global installs.",
+    "url": "https://kasperjunge.github.io/agent-resources/configuration/",
+    "author": {
+      "@type": "Person",
+      "name": "Kasper Junge",
+      "url": "https://github.com/kasperjunge"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Agent Resources",
+      "url": "https://github.com/kasperjunge/agent-resources"
+    },
+    "about": [
+      {
+        "@type": "DefinedTerm",
+        "name": "tools",
+        "description": "List of AI coding tools to install skills into — claude, cursor, codex, opencode, copilot, antigravity"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "default_tool",
+        "description": "Tool used by agrx and for instruction sync — defaults to the first tool in the tools list"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "sources",
+        "description": "Git host configurations with URL templates using {owner} and {repo} placeholders for fetching remote skills"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "sync_instructions",
+        "description": "When true, agr sync copies the canonical instruction file (CLAUDE.md, AGENTS.md, or GEMINI.md) to other tools' instruction files"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "dependencies",
+        "description": "Array of skill dependencies with handle (remote) or path (local), type, and optional source fields"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "agr config",
+        "description": "CLI command for managing agr.toml — subcommands: show, path, edit, get, set, add, remove, unset"
+      }
+    ],
+    "keywords": ["agr.toml", "agr config", "multi-tool setup", "custom Git sources", "instruction syncing", "private repositories", "global installs"]
+  }
+  </script>
   {% endif %}
 
   {% if page and page.file and page.file.src_path == "tools.md" %}
