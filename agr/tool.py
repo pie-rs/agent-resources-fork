@@ -167,7 +167,7 @@ TOOLS: dict[str, ToolConfig] = {
 }
 
 # Default tool names for new configurations
-DEFAULT_TOOL_NAMES: list[str] = ["claude"]
+DEFAULT_TOOL_NAMES: tuple[str, ...] = ("claude",)
 
 # Default tool for all operations
 DEFAULT_TOOL = CLAUDE

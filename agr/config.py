@@ -343,7 +343,7 @@ class AgrConfig:
         doc["default_source"] = default_source
 
         # Save tools array if not default
-        if self.tools != DEFAULT_TOOL_NAMES:
+        if self.tools != list(DEFAULT_TOOL_NAMES):
             tools_array = tomlkit.array()
             for tool in self.tools:
                 tools_array.append(tool)
