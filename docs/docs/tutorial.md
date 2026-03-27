@@ -344,47 +344,39 @@ agr add your-username/my-repo/my-skill
 
 ---
 
-## Step 9: Remove a skill
+## Going further
 
-```bash
-agr remove anthropics/skills/frontend-design
-```
+??? note "Remove a skill"
+    ```bash
+    agr remove anthropics/skills/frontend-design
+    ```
 
-```text
-Removed: anthropics/skills/frontend-design
-```
+    ```text
+    Removed: anthropics/skills/frontend-design
+    ```
 
-This deletes the skill from your tool's skills folder and removes the entry from
-`agr.toml`.
+    This deletes the skill from your tool's skills folder and removes the entry
+    from `agr.toml`.
 
----
+??? note "Install skills globally (available in every project)"
+    Some skills are useful across every project — not just one. Add `-g` to
+    install globally:
 
-## Step 10: Global skills
+    ```bash
+    agr add -g anthropics/skills/skill-creator
+    ```
 
-Some skills are useful across every project — not just one. Install them
-globally:
+    ```text
+    Added: anthropics/skills/skill-creator
+      Installed to claude: ~/.claude/skills/skill-creator
+    ```
 
-```bash
-agr add -g anthropics/skills/skill-creator
-```
+    Global skills are tracked in `~/.agr/agr.toml`. Sync and list them with:
 
-```text
-Added: anthropics/skills/skill-creator
-  Installed to claude: ~/.claude/skills/skill-creator
-```
-
-Global skills are tracked in `~/.agr/agr.toml` and installed into your tool's
-global skills directory. Sync them with:
-
-```bash
-agr sync -g
-```
-
-List global skills:
-
-```bash
-agr list -g
-```
+    ```bash
+    agr sync -g
+    agr list -g
+    ```
 
 ---
 
