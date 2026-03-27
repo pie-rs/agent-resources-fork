@@ -291,6 +291,70 @@
           "@type": "Answer",
           "text": "By default agrx requires a git repo to find agr.toml for configuration. Use --global to skip this: agrx anthropics/skills/pdf --global. This installs to the tool's global skills directory, runs, and cleans up."
         }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Invalid TOML in agr.toml\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Your agr.toml has a syntax error. Common causes: missing quotes around string values, unclosed brackets in dependencies or [[source]], and trailing commas after the last item in a list (TOML doesn't allow them). Validate with a TOML linter or paste your file into toml-lint.com."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Network error: could not resolve host\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "DNS resolution failed. Check your internet connection, VPN, or proxy settings. If you're behind a corporate firewall, ensure github.com is reachable."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why does agr sync show \"Up to date\" but my skill seems outdated?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "agr sync skips skills that are already installed. To force a fresh install from the latest version, use: agr add user/skill --overwrite. This re-downloads the skill from GitHub and replaces your local copy."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why does instruction sync not do anything in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Two common causes: (1) Only one tool configured — instruction syncing requires two or more tools. Add another tool with agr config set tools claude cursor. (2) All tools use the same instruction file — syncing only helps when tools need different files (e.g., Claude uses CLAUDE.md, Codex uses AGENTS.md)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"not a valid skill (missing SKILL.md)\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The path you specified doesn't contain a SKILL.md file. Every skill needs one. Create it with: touch my-skill/SKILL.md — then add the required frontmatter (name and description fields). See the Creating Skills guide for the format."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"default_tool must be listed in tools\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Your default_tool value isn't in your tools list. Either add the tool to your tools list (agr config add tools <name>) or change the default_tool to one that's already listed (agr config set default_tool <name>)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why can't I use agrx with Antigravity?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Antigravity does not have a standalone CLI, so agrx cannot run skills with it. Use agr add to install skills permanently, then invoke them through the Antigravity IDE interface."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Cannot remove default source\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You can't remove a source that is currently set as default_source. Change the default first: agr config set default_source github, then agr config remove sources my-server."
+        }
       }
     ]
   }
