@@ -67,6 +67,7 @@ See [SKILL.md Format](creating.md#skillmd-format) for all frontmatter fields.
 
 ### Bug fixes
 
+- **[Python SDK](sdk.md):** Network failures in `list_skills()` and `skill_info()` now raise `AgrError` instead of Python's built-in `ConnectionError`. If your code catches `AgrError` (or its subclasses), network errors are now included automatically. If you were catching `ConnectionError` separately, you can remove that handler. See [Error Handling](sdk.md#error-handling).
 - **[Python SDK](sdk.md):** `list_skills()` now raises `InvalidHandleError` instead of `ValueError` for invalid repo handles, matching the behavior of `skill_info()` and `Skill.from_git()`. If your code catches `ValueError` from `list_skills()`, update it to catch `InvalidHandleError` (from `agr.exceptions`). See [Error Handling](sdk.md#error-handling).
 - [Antigravity](tools.md#antigravity) detection signal corrected from `.agent` to `.agents`. Previously, `agr init` and `agr onboard` would not auto-detect Antigravity in repos that had an `.agents/` directory (used by Codex) — only `.gemini/` was matched.
 - [`agrx --tool cursor`](agrx.md) no longer passes an invalid `--force` flag to the Cursor CLI. The Cursor CLI (`agent`) does not support this flag, so `agrx` now runs without a permission-bypass flag for Cursor.
