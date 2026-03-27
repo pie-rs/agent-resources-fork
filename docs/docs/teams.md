@@ -85,6 +85,40 @@ git commit -m "Add agr skill dependencies"
 `agr.toml` is your skill lockfile. Commit it so every clone starts with the
 same skills.
 
+### What to commit
+
+`agr.toml` is like `package.json` — commit it. The tool skills directories
+are like `node_modules` — gitignore them, since `agr sync` recreates them.
+
+| Commit | Gitignore |
+|--------|-----------|
+| `agr.toml` | `.claude/skills/` |
+| `./skills/` (local skills) | `.cursor/skills/` |
+| | `.agents/skills/` |
+| | `.opencode/skills/` |
+| | `.github/skills/` |
+| | `.gemini/skills/` |
+
+Add the tool directories to `.gitignore`:
+
+```gitignore
+# agr-managed skill directories (recreated by agr sync)
+.claude/skills/
+.cursor/skills/
+.agents/skills/
+.opencode/skills/
+.github/skills/
+.gemini/skills/
+```
+
+You only need to gitignore the tools you've configured — but listing all of
+them is harmless and avoids surprises if someone adds a tool later.
+
+??? tip "What about local skills in `./skills/`?"
+    Local skills referenced by path in `agr.toml` (e.g., `{path = "./skills/my-skill"}`)
+    live in your repo and **should be committed**. They're your team's custom
+    skills — `agr sync` installs them from the local path, not from GitHub.
+
 ### 4. Teammates install
 
 After cloning the repo, a new teammate runs two commands:
