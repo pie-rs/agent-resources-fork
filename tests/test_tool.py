@@ -35,7 +35,7 @@ class TestToolConfig:
         assert CLAUDE.cli_prompt_flag == "-p"
         assert CURSOR.cli_prompt_flag == "-p"
         assert CODEX.cli_prompt_flag is None
-        assert OPENCODE.cli_prompt_flag is None
+        assert OPENCODE.cli_prompt_flag == "--command"
         assert COPILOT.cli_prompt_flag == "-p"
         assert ANTIGRAVITY.cli_prompt_flag is None
 
