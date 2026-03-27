@@ -350,25 +350,29 @@ def migrate_flat_installed_names(
         name_dir = skills_dir / skill_name
         name_dir_is_skill = is_valid_skill_dir(name_dir)
 
+        # Read metadata once — reused by both the matched-handle check and
+        # the Case 1 / Case 2 branches below.
+        name_dir_meta = (
+            read_skill_metadata(name_dir) if name_dir_is_skill else None
+        )
+
         # Check if the plain-name dir already belongs to one of the known
         # handles (by comparing .agr.json metadata IDs). This tells us
         # whether the directory is "claimed" and by whom.
         matched_handle: tuple[ParsedHandle, str | None] | None = None
-        if name_dir_is_skill:
-            meta = read_skill_metadata(name_dir)
-            if meta:
-                for handle, source_name in handles:
-                    handle_id = build_handle_id(handle, repo_root, source_name)
-                    # Also check the legacy ID format (without explicit source)
-                    # for backward compatibility with pre-source metadata.
-                    legacy_id = (
-                        build_handle_id(handle, repo_root)
-                        if source_name == DEFAULT_SOURCE_NAME
-                        else None
-                    )
-                    if meta.get("id") in {handle_id, legacy_id}:
-                        matched_handle = (handle, source_name)
-                        break
+        if name_dir_meta:
+            for handle, source_name in handles:
+                handle_id = build_handle_id(handle, repo_root, source_name)
+                # Also check the legacy ID format (without explicit source)
+                # for backward compatibility with pre-source metadata.
+                legacy_id = (
+                    build_handle_id(handle, repo_root)
+                    if source_name == DEFAULT_SOURCE_NAME
+                    else None
+                )
+                if name_dir_meta.get("id") in {handle_id, legacy_id}:
+                    matched_handle = (handle, source_name)
+                    break
 
         # --- Case 1: Unique name (single handle) ---
         # Safe to use the short plain directory name.
@@ -377,8 +381,7 @@ def migrate_flat_installed_names(
             handle_id = build_handle_id(handle, repo_root, source_name)
             if name_dir_is_skill:
                 # Plain-name dir exists — just ensure metadata is current.
-                meta = read_skill_metadata(name_dir)
-                if not meta or meta.get("id") != handle_id:
+                if not name_dir_meta or name_dir_meta.get("id") != handle_id:
                     _update_dir_metadata(
                         name_dir, handle, repo_root, tool.name, source_name
                     )
