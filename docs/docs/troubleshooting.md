@@ -664,6 +664,33 @@ You've hit GitHub's API rate limit. This mainly affects the Python SDK (`list_sk
   ```
 - **In CI, cache results.** If your pipeline calls `list_skills()` or `skill_info()` repeatedly, cache the output instead of calling the API on every run.
 
+### How do I fix "GitHub API authentication failed"?
+
+```text
+Error: GitHub API authentication failed (HTTP 403)
+```
+
+This SDK-specific error means your `GITHUB_TOKEN` was rejected by the GitHub API.
+Unlike the git-level "Authentication failed" error (which fires during `agr add`),
+this one fires from SDK functions like `list_skills()` and `skill_info()`.
+
+- **Token revoked or expired?** Generate a new one at [github.com/settings/tokens](https://github.com/settings/tokens).
+- **Wrong token type?** Fine-grained tokens need **Contents: Read-only** permission on the target repo.
+- **HTTP 401 vs 403:** Both surface as this error. 401 means the token is invalid; 403 means it lacks permissions.
+
+### How do I fix "Failed to connect to GitHub API"?
+
+```text
+Error: Failed to connect to GitHub API: <urlopen error ...>
+```
+
+The SDK couldn't reach `api.github.com`. This affects `list_skills()`, `skill_info()`,
+and other SDK functions that call the GitHub REST API.
+
+- **No internet?** Check your connection.
+- **Corporate proxy or firewall?** The GitHub API may be blocked. Try: `curl -s https://api.github.com`
+- **DNS issues?** Same as the git-level ["Network error: could not resolve host"](#how-do-i-fix-network-error-could-not-resolve-host) — check VPN and DNS settings.
+
 ??? note "How do I fix \"Local skills cannot specify a source\"?"
     ```text
     Error: Local skills cannot specify a source
