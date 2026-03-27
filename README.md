@@ -149,6 +149,14 @@ agr add anthropics/skills/mcp-builder       # Create MCP servers
 agr add anthropics/skills/webapp-testing    # Test web apps with Playwright
 ```
 
+**Productivity:**
+
+```bash
+agr add anthropics/skills/skill-creator     # Create, modify, and improve skills
+agr add anthropics/skills/internal-comms    # Write internal communications
+agr add anthropics/skills/slack-gif-creator # Create animated GIFs for Slack
+```
+
 Browse the full list in the [Skill Directory](https://kasperjunge.github.io/agent-resources/skills/).
 
 ---

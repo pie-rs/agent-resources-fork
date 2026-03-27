@@ -198,6 +198,14 @@ agr add anthropics/skills/mcp-builder       # Create MCP servers
 agr add anthropics/skills/webapp-testing    # Test web apps with Playwright
 ```
 
+**Productivity** — create skills and content:
+
+```bash
+agr add anthropics/skills/skill-creator     # Create, modify, and improve skills
+agr add anthropics/skills/internal-comms    # Write internal communications
+agr add anthropics/skills/slack-gif-creator # Create animated GIFs for Slack
+```
+
 **Community skills** — built and shared by the community:
 
 ```bash
