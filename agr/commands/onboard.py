@@ -193,10 +193,10 @@ def run_onboard(*, no_migrate: bool = False) -> None:
     elif default_indices:
         selected_tools = [all_tool_names[i - 1] for i in default_indices]
     else:
-        selected_tools = ["claude"]
+        selected_tools = list(DEFAULT_TOOL_NAMES)
 
     if not selected_tools:
-        selected_tools = ["claude"]
+        selected_tools = list(DEFAULT_TOOL_NAMES)
 
     config.tools = selected_tools
     console.print(f"[green]Tools:[/green] {', '.join(selected_tools)}")

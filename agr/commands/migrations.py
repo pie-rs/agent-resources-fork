@@ -22,7 +22,7 @@ from agr.metadata import (
     stamp_skill_metadata,
 )
 from agr.skill import SKILL_MARKER, is_valid_skill_dir, update_skill_md_name
-from agr.tool import ToolConfig
+from agr.tool import ANTIGRAVITY, CODEX, CURSOR, OPENCODE, ToolConfig
 
 
 def _print_migrated(label: str, old_name: str, new_name: str) -> None:
@@ -142,7 +142,7 @@ def run_tool_migrations(
     tool_by_name = {tool.name: tool for tool in tools}
 
     # Codex migration: .codex/skills/ -> .agents/skills/
-    if "codex" in tool_by_name:
+    if CODEX.name in tool_by_name:
         _migrate_skills_directory(
             base / ".codex" / "skills",
             base / ".agents" / "skills",
@@ -150,8 +150,8 @@ def run_tool_migrations(
         )
 
     # OpenCode migration: .opencode/skill/ -> .opencode/skills/
-    if "opencode" in tool_by_name:
-        tool = tool_by_name["opencode"]
+    if OPENCODE.name in tool_by_name:
+        tool = tool_by_name[OPENCODE.name]
         # Use global_config_dir for global installs (e.g., .config/opencode)
         opencode_dir = (
             tool.global_config_dir
@@ -166,7 +166,7 @@ def run_tool_migrations(
 
     # Antigravity migration: .agent/skills/ -> .gemini/skills/
     # Gemini CLI moved from .agent/ to .gemini/ as the primary skills path.
-    if "antigravity" in tool_by_name:
+    if ANTIGRAVITY.name in tool_by_name:
         _migrate_skills_directory(
             base / ".agent" / "skills",
             base / ".gemini" / "skills",
@@ -175,7 +175,7 @@ def run_tool_migrations(
 
     # Antigravity global migration: .gemini/antigravity/skills/ -> .gemini/skills/
     # Older versions used a nested .gemini/antigravity/ subdir for global skills.
-    if "antigravity" in tool_by_name and global_install:
+    if ANTIGRAVITY.name in tool_by_name and global_install:
         _migrate_skills_directory(
             base / ".gemini" / "antigravity" / "skills",
             base / ".gemini" / "skills",
@@ -186,7 +186,7 @@ def run_tool_migrations(
     # Old layout stored skills as user/repo/skill/ or local/skill/ inside
     # .cursor/skills/. Cursor expects flat naming where each skill is a
     # direct child of the skills directory.
-    if "cursor" in tool_by_name:
+    if CURSOR.name in tool_by_name:
         cursor_skills = base / ".cursor" / "skills"
         _flatten_nested_skills(cursor_skills)
 
