@@ -1,8 +1,5 @@
 """Skill class for loading and accessing skills programmatically."""
 
-import hashlib
-import subprocess
-import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -13,7 +10,7 @@ from agr.exceptions import (
     SkillNotFoundError,
 )
 from agr.fetcher import prepare_repo_for_skill
-from agr.git import downloaded_repo
+from agr.git import downloaded_repo, get_head_commit
 from agr.handle import (
     ParsedHandle,
     is_local_path_ref,
@@ -25,25 +22,6 @@ from agr.metadata import METADATA_KEY_CONTENT_HASH, compute_content_hash, read_s
 from agr.sdk.cache import cache_skill, get_skill_cache_path, is_cached
 from agr.skill import SKILL_MARKER, is_valid_skill_dir
 from agr.source import default_sources
-
-
-def _get_head_commit(repo_dir: Path) -> str:
-    """Get the HEAD commit hash of a repository.
-
-    If git command fails, generates a unique fallback hash based on
-    current time and repo path to ensure proper cache busting.
-    """
-    result = subprocess.run(
-        ["git", "-C", str(repo_dir), "rev-parse", "HEAD"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    if result.returncode != 0:
-        # Generate unique fallback to prevent cache collisions
-        fallback_data = f"{time.time_ns()}:{repo_dir}"
-        return hashlib.sha256(fallback_data.encode()).hexdigest()[:12]
-    return result.stdout.strip()[:12]
 
 
 @dataclass
@@ -122,7 +100,7 @@ class Skill:
             try:
                 with downloaded_repo(source_config, owner, repo_name) as repo_dir:
                     # Get commit hash for cache key
-                    commit = _get_head_commit(repo_dir)
+                    commit = get_head_commit(repo_dir)
 
                     # Check cache first, otherwise download and cache
                     if not force_download and is_cached(

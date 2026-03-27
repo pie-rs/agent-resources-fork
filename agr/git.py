@@ -1,9 +1,11 @@
 """Git operations for downloading and preparing repositories."""
 
+import hashlib
 import os
 import shutil
 import subprocess
 import tempfile
+import time
 from contextlib import contextmanager
 from pathlib import Path
 from collections.abc import Generator
@@ -81,6 +83,20 @@ def get_github_token() -> str | None:
     return None
 
 
+def get_head_commit(repo_dir: Path) -> str:
+    """Get the HEAD commit hash of a repository (truncated to 12 chars).
+
+    If the git command fails (e.g. not a git repo), generates a unique
+    fallback hash based on current time and repo path to ensure proper
+    cache busting.
+    """
+    result = _run_git(["git", "-C", str(repo_dir), "rev-parse", "HEAD"])
+    if result.returncode != 0:
+        fallback_data = f"{time.time_ns()}:{repo_dir}"
+        return hashlib.sha256(fallback_data.encode()).hexdigest()[:12]
+    return result.stdout.strip()[:12]
+
+
 def _is_github_source(source: SourceConfig) -> bool:
     """Return True if the source URL points to GitHub."""
     return "github.com" in source.url.lower()
@@ -134,7 +150,7 @@ def _apply_github_token(repo_url: str) -> str:
 
 def _clone_repo(
     repo_url: str, repo_dir: Path, partial: bool, branch: str | None
-) -> subprocess.CompletedProcess:
+) -> subprocess.CompletedProcess[str]:
     """Clone a repository using git, optionally with partial clone flags."""
     cmd = [
         "git",
