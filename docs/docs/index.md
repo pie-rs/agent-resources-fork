@@ -33,14 +33,14 @@ hide:
 # agr — Skills for AI Agents
 
 A package manager for AI agent skills. Install, share, and run skills across
-Claude Code, Cursor, Codex, OpenCode, Copilot, and Antigravity — with a single
+[Claude Code, Cursor, Codex, OpenCode, Copilot, and Antigravity](tools.md) — with a single
 command.
 
 ## What are skills?
 
 Skills are reusable instructions that teach AI coding agents how to perform
 specific tasks — reviewing code, generating components, preparing releases, or
-anything else you'd normally explain in a prompt. Each skill is a `SKILL.md`
+anything else you'd normally explain in a prompt. Each skill is a [`SKILL.md`](creating.md)
 file in a directory, published on GitHub.
 
 Here's what one looks like:
@@ -116,7 +116,7 @@ agr config set tools claude cursor     # Multi-tool — skills install everywher
 agr add anthropics/skills/frontend-design
 ```
 
-That's it. The skill is now installed in your tool's skills folder. Invoke it:
+That's it. The skill is now installed in your tool's skills folder ([handle format](concepts.md#handles)). Invoke it:
 
 | Tool | Invoke with |
 |------|-------------|
@@ -128,8 +128,8 @@ That's it. The skill is now installed in your tool's skills folder. Invoke it:
 | Antigravity | *(via IDE)* |
 
 !!! tip "No setup required"
-    `agr add` auto-creates `agr.toml` if it doesn't exist and detects which
-    tools you use. You don't need to run `agr init` first.
+    `agr add` auto-creates `agr.toml` if it doesn't exist and [detects which
+    tools](tools.md#detection-signals) you use. You don't need to run `agr init` first.
 
 ## Run a skill without installing
 
@@ -137,12 +137,12 @@ That's it. The skill is now installed in your tool's skills folder. Invoke it:
 agrx anthropics/skills/pdf -p "Extract tables from report.pdf"
 ```
 
-`agrx` downloads the skill, runs it with your tool, and cleans up. Nothing is
+[`agrx`](agrx.md) downloads the skill, runs it with your tool, and cleans up. Nothing is
 saved to your project.
 
 ## Sync skills across a team
 
-Dependencies are tracked in `agr.toml`:
+Dependencies are tracked in [`agr.toml`](configuration.md):
 
 ```toml
 dependencies = [
@@ -151,7 +151,7 @@ dependencies = [
 ]
 ```
 
-Teammates install everything with:
+Teammates install everything with one command — see [Teams](teams.md) for CI/CD setup:
 
 ```bash
 agr sync
