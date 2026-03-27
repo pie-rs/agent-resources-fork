@@ -28,8 +28,8 @@ keywords:
     teammates run `agr sync`. Create your own: `agr init my-skill`.
 
 This tutorial walks you through a complete workflow — installing agr, adding
-skills to a project, syncing with a team, and creating your own skill. By the
-end you'll understand how all the pieces fit together.
+[skills](concepts.md#skills) to a project, syncing with a team, and creating
+your own skill. By the end you'll understand how all the pieces fit together.
 
 **Time:** ~10 minutes
 **Prerequisites:** Python 3.10+, git, a Python package installer ([uv](https://docs.astral.sh/uv/), [pipx](https://pipx.pypa.io/), or pip), and at least one supported AI coding tool (Claude Code, Cursor, Codex, OpenCode, Copilot, or Antigravity)
@@ -87,8 +87,9 @@ You can optionally run `agr init` to create `agr.toml` up front:
 agr init
 ```
 
-This creates an `agr.toml` file and auto-detects which tools you use based on
-repo signals (`.claude/`, `CLAUDE.md`, `.cursor/`, `.cursorrules`, etc.):
+This creates an [`agr.toml`](configuration.md) file and auto-detects which
+[tools](tools.md) you use based on repo signals (`.claude/`, `CLAUDE.md`,
+`.cursor/`, `.cursorrules`, etc.):
 
 ```text
 Created: agr.toml
@@ -182,13 +183,14 @@ details on each tool's behavior.
 
 ## Step 4: Add more skills
 
-You can install multiple skills at once:
+Browse the [Skill Directory](skills.md) for more options, or install multiple
+skills at once:
 
 ```bash
 agr add anthropics/skills/pdf anthropics/skills/skill-creator
 ```
 
-Or install from a specific user's repo using the three-part handle format:
+Or install from a specific user's repo using the three-part [handle](concepts.md#handles) format:
 
 ```bash
 agr add madsnorgaard/drupal-agent-resources/drupal-expert
@@ -230,8 +232,8 @@ For a full walkthrough on multi-tool teams, CI/CD, and private repos, see [Teams
 
 ## Step 6: Try a skill without installing
 
-Sometimes you want to test a skill before committing to it. That's what `agrx`
-is for:
+Sometimes you want to test a skill before committing to it. That's what
+[`agrx`](agrx.md) is for:
 
 ```bash
 agrx anthropics/skills/pdf -p "Summarize the key findings in report.pdf"
@@ -280,9 +282,10 @@ Describe when this skill should be used.
 Provide detailed instructions here.
 ```
 
-Edit the file to describe what you want the agent to do. The frontmatter
-(`name`, `description`) is required. The body after the frontmatter is the
-actual instruction content that gets loaded by your AI tool.
+Edit the file to describe what you want the agent to do. The
+[frontmatter](creating.md#skillmd-format) (`name`, `description`) is required.
+The body after the frontmatter is the actual instruction content that gets
+loaded by your AI tool.
 
 ### Skill structure
 
