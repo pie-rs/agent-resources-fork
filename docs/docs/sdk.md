@@ -182,7 +182,15 @@ for info in skills:
 skills = list_skills("kasperjunge")
 ```
 
+!!! note "`list_skills()` does not fetch descriptions"
+    `list_skills()` discovers skills from the repository tree without downloading
+    each `SKILL.md`. The `description` field on returned `SkillInfo` objects is
+    `None`. To get the description for a specific skill, use `skill_info()`.
+
 ### Get details for a single skill
+
+`skill_info()` fetches the skill's `SKILL.md` to extract its description (first
+body paragraph after frontmatter, up to 200 chars):
 
 ```python
 from agr import skill_info
@@ -190,7 +198,7 @@ from agr import skill_info
 info = skill_info("anthropics/skills/code-review")
 print(info.name)         # "code-review"
 print(info.handle)       # "anthropics/skills/code-review"
-print(info.description)  # First paragraph from SKILL.md
+print(info.description)  # First body paragraph from SKILL.md
 print(info.owner)        # "anthropics"
 print(info.repo)         # "skills"
 ```
@@ -301,7 +309,7 @@ Returned by `list_skills()` and `skill_info()`:
 class SkillInfo:
     name: str              # Skill name
     handle: str            # Full handle (e.g., "owner/repo/skill")
-    description: str | None  # First paragraph from SKILL.md
+    description: str | None  # First body paragraph from SKILL.md (None from list_skills, populated from skill_info)
     repo: str              # Repository name
     owner: str             # GitHub owner/username
 ```

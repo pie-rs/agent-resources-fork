@@ -460,16 +460,16 @@ skill = Skill.from_local("./my-skill")
 ```python
 from agr import list_skills, skill_info
 
-# List all skills in a repo
+# List all skills in a repo (description is None — use skill_info() for descriptions)
 for info in list_skills("anthropics/skills"):
-    print(f"{info.handle}: {info.description}")
+    print(f"{info.handle}: {info.name}")
 
-# Get details about one skill
+# Get details about one skill (fetches SKILL.md to extract description)
 info = skill_info("anthropics/skills/code-review")
 print(info.name, info.owner, info.repo, info.description)
 ```
 
-Both functions use the GitHub API and respect `GITHUB_TOKEN` / `GH_TOKEN` for authentication.
+Both functions use the GitHub API and respect `GITHUB_TOKEN` / `GH_TOKEN` for authentication. `list_skills()` discovers skills from the repo tree without downloading each SKILL.md, so `description` is always `None`. Use `skill_info()` to get the description for a specific skill.
 
 ### ParsedHandle Type
 
@@ -492,7 +492,7 @@ Returned by `list_skills()` and `skill_info()`:
 |----------|------|-------------|
 | name | str | Skill name |
 | handle | str | Full handle (e.g., "owner/repo/skill") |
-| description | str or None | First paragraph from SKILL.md |
+| description | str or None | First body paragraph from SKILL.md (None from list_skills, populated from skill_info) |
 | repo | str | Repository name |
 | owner | str | GitHub owner/username |
 
