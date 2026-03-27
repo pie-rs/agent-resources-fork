@@ -224,6 +224,13 @@ def cache_skill(
     return cache_path
 
 
+def _subdirs(path: Path) -> Generator[Path, None, None]:
+    """Yield immediate subdirectories of *path*."""
+    for entry in path.iterdir():
+        if entry.is_dir():
+            yield entry
+
+
 def _iter_skill_cache_dirs(
     skills_cache: Path,
 ) -> Generator[tuple[Path, str], None, None]:
@@ -232,18 +239,10 @@ def _iter_skill_cache_dirs(
     Walks the cache tree: ``<skills_cache>/<source>/<owner>/<repo>/<skill>``.
     ``skill_id`` is formatted as ``owner/repo/skill``.
     """
-    for source_dir in skills_cache.iterdir():
-        if not source_dir.is_dir():
-            continue
-        for owner_dir in source_dir.iterdir():
-            if not owner_dir.is_dir():
-                continue
-            for repo_dir in owner_dir.iterdir():
-                if not repo_dir.is_dir():
-                    continue
-                for skill_dir in repo_dir.iterdir():
-                    if not skill_dir.is_dir():
-                        continue
+    for source_dir in _subdirs(skills_cache):
+        for owner_dir in _subdirs(source_dir):
+            for repo_dir in _subdirs(owner_dir):
+                for skill_dir in _subdirs(repo_dir):
                     skill_id = f"{owner_dir.name}/{repo_dir.name}/{skill_dir.name}"
                     yield skill_dir, skill_id
 
@@ -288,7 +287,8 @@ class _CacheManager:
             - skills_count: Number of cached skills
             - size_bytes: Total cache size in bytes
         """
-        skills_cache = get_cache_dir() / "skills"
+        cache_dir = self.path
+        skills_cache = cache_dir / "skills"
         skills_count = 0
         size_bytes = 0
 
@@ -299,11 +299,10 @@ class _CacheManager:
 
             # Count at the skill level (source/owner/repo/skill),
             # consistent with clear_cache() and _iter_skill_cache_dirs().
-            for _ in _iter_skill_cache_dirs(skills_cache):
-                skills_count += 1
+            skills_count = sum(1 for _ in _iter_skill_cache_dirs(skills_cache))
 
         return {
-            "path": str(get_cache_dir()),
+            "path": str(cache_dir),
             "skills_count": skills_count,
             "size_bytes": size_bytes,
         }
