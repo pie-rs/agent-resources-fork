@@ -208,7 +208,7 @@ def parse_handle(ref: str, *, prefer_local: bool = True) -> ParsedHandle:
         # Local path detection: starts with . or /
         if ref.startswith(("./", "../", "/")):
             path = Path(ref)
-            _validate_no_separator_in_name(ref, path.name)
+            _validate_no_separator(ref, "name", path.name)
             return ParsedHandle(
                 is_local=True,
                 name=path.name,
@@ -218,7 +218,7 @@ def parse_handle(ref: str, *, prefer_local: bool = True) -> ParsedHandle:
         # Prefer local if the path exists (even with one slash)
         test_path = Path(ref)
         if test_path.exists():
-            _validate_no_separator_in_name(ref, test_path.name)
+            _validate_no_separator(ref, "name", test_path.name)
             return ParsedHandle(
                 is_local=True,
                 name=test_path.name,
@@ -237,9 +237,8 @@ def parse_handle(ref: str, *, prefer_local: bool = True) -> ParsedHandle:
     if len(parts) == 2:
         # user/name format
         username, skill_name = parts[0], parts[1]
-        _validate_no_separator_in_components(
-            ref, username=username, skill_name=skill_name
-        )
+        _validate_no_separator(ref, "username", username)
+        _validate_no_separator(ref, "skill name", skill_name)
         return ParsedHandle(
             username=username,
             name=skill_name,
@@ -248,9 +247,9 @@ def parse_handle(ref: str, *, prefer_local: bool = True) -> ParsedHandle:
     if len(parts) == 3:
         # user/repo/name format
         username, repo, skill_name = parts[0], parts[1], parts[2]
-        _validate_no_separator_in_components(
-            ref, username=username, repo=repo, skill_name=skill_name
-        )
+        _validate_no_separator(ref, "username", username)
+        _validate_no_separator(ref, "repo", repo)
+        _validate_no_separator(ref, "skill name", skill_name)
         return ParsedHandle(
             username=username,
             repo=repo,
@@ -263,52 +262,20 @@ def parse_handle(ref: str, *, prefer_local: bool = True) -> ParsedHandle:
     )
 
 
-def _validate_no_separator_in_name(ref: str, name: str) -> None:
-    """Validate that a name doesn't contain the reserved separator sequence.
+def _validate_no_separator(ref: str, label: str, value: str) -> None:
+    """Validate that a handle component doesn't contain the reserved separator.
 
     Args:
         ref: Original handle string for error messages.
-        name: The name to validate.
+        label: Human-readable label for the component (e.g. "name", "username").
+        value: The component value to validate.
 
     Raises:
-        InvalidHandleError: If the name contains the separator.
+        InvalidHandleError: If the value contains the separator.
     """
-    if INSTALLED_NAME_SEPARATOR in name:
+    if INSTALLED_NAME_SEPARATOR in value:
         raise InvalidHandleError(
-            f"Invalid handle '{ref}': name '{name}' "
+            f"Invalid handle '{ref}': {label} '{value}' "
             f"contains reserved sequence "
             f"'{INSTALLED_NAME_SEPARATOR}'"
         )
-
-
-def _validate_no_separator_in_components(
-    ref: str,
-    *,
-    username: str | None = None,
-    repo: str | None = None,
-    skill_name: str | None = None,
-) -> None:
-    """Validate that no component contains the reserved separator sequence.
-
-    Args:
-        ref: Original handle string for error messages.
-        username: GitHub username to validate.
-        repo: Repository name to validate.
-        skill_name: Skill name to validate.
-
-    Raises:
-        InvalidHandleError: If any component contains the separator.
-    """
-    sep = INSTALLED_NAME_SEPARATOR
-    for component, name in [
-        ("username", username),
-        ("repo", repo),
-        ("skill name", skill_name),
-    ]:
-        if name and sep in name:
-            raise InvalidHandleError(
-                f"Invalid handle '{ref}': "
-                f"{component} '{name}' "
-                f"contains reserved sequence "
-                f"'{sep}'"
-            )
