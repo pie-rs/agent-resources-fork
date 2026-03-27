@@ -197,8 +197,18 @@ agr add anthropics/skills/mcp-builder       # Create MCP servers
 agr add anthropics/skills/webapp-testing    # Test web apps with Playwright
 ```
 
+**Community skills** — built and shared by the community:
+
+```bash
+agr add dsjacobsen/agent-resources/golang-pro             # Go — @dsjacobsen
+agr add madsnorgaard/drupal-agent-resources/drupal-expert  # Drupal — @madsnorgaard
+agr add maragudk/skills/collaboration                      # Workflow — @maragudk
+agr add kasperjunge/commit-work                            # Commits — @kasperjunge
+```
+
 Browse the full list at the [Skill Directory](skills.md) or on
 [GitHub](https://github.com/anthropics/skills).
+**Built something?** [Share it here.](https://github.com/kasperjunge/agent-resources/issues)
 
 ## Next steps
 
