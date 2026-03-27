@@ -185,6 +185,18 @@ agrx kasperjunge/commit -i
 agrx kasperjunge/commit --tool codex
 ```
 
+#### When to use `agr add` vs `agrx`
+
+| | `agr add` | `agrx` |
+|---|-----------|--------|
+| Persists skill | Yes (permanent install) | No (cleaned up after run) |
+| Updates agr.toml | Yes (adds dependency) | No |
+| Runs the skill | No | Yes (invokes tool CLI) |
+| Local paths | Supported | Not supported (remote only) |
+| Multi-tool | Installs to all configured tools | Uses one tool |
+
+Use `agr add` when you want a skill to persist. Use `agrx` to try a skill or run a one-off task.
+
 ### Global Options (agr only, not agrx)
 
 - `--quiet`, `-q` — suppress non-error output
