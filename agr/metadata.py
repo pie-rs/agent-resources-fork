@@ -13,20 +13,15 @@ from agr.source import DEFAULT_SOURCE_NAME
 METADATA_FILENAME = ".agr.json"
 
 
-def _resolve_local_path(handle: ParsedHandle, repo_root: Path | None) -> Path | None:
-    """Resolve a local handle path to an absolute path."""
-    if handle.local_path is None:
-        return None
-    return handle.resolve_local_path(repo_root)
-
-
 def build_handle_id(
     handle: ParsedHandle, repo_root: Path | None, source: str | None = None
 ) -> str:
     """Build a stable identifier for a handle."""
     if handle.is_local:
-        resolved = _resolve_local_path(handle, repo_root)
-        return f"local:{resolved}" if resolved else "local:"
+        if handle.local_path is not None:
+            resolved = handle.resolve_local_path(repo_root)
+            return f"local:{resolved}"
+        return "local:"
     if source:
         return f"remote:{source}:{handle.to_toml_handle()}"
     return f"remote:{handle.to_toml_handle()}"
@@ -104,7 +99,9 @@ def write_skill_metadata(
     content_hash: str | None = None,
 ) -> None:
     """Write metadata for an installed skill."""
-    resolved_local = _resolve_local_path(handle, repo_root)
+    resolved_local = (
+        handle.resolve_local_path(repo_root) if handle.local_path is not None else None
+    )
     data: dict[str, Any] = {
         "id": build_handle_id(handle, repo_root, source),
         "tool": tool_name,
