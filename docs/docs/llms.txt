@@ -68,14 +68,14 @@ user/repo/skill         → github.com/user/repo repo, "skill" directory
 
 agr installs skills into 6 AI coding tools. Configure with `agr config set tools claude cursor codex`.
 
-| Tool | Config name | Project skills dir | Instruction file |
-|------|-------------|-------------------|-----------------|
-| Claude Code | claude | .claude/skills/ | CLAUDE.md |
-| Cursor | cursor | .cursor/skills/ | AGENTS.md |
-| OpenAI Codex | codex | .agents/skills/ | AGENTS.md |
-| OpenCode | opencode | .opencode/skills/ | AGENTS.md |
-| GitHub Copilot | copilot | .github/skills/ | AGENTS.md |
-| Antigravity | antigravity | .agent/skills/ | GEMINI.md |
+| Tool | Config name | Invoke skill | Project skills dir | Instruction file |
+|------|-------------|-------------|-------------------|-----------------|
+| Claude Code | claude | /skill-name | .claude/skills/ | CLAUDE.md |
+| Cursor | cursor | /skill-name | .cursor/skills/ | AGENTS.md |
+| OpenAI Codex | codex | $skill-name | .agents/skills/ | AGENTS.md |
+| OpenCode | opencode | skill-name | .opencode/skills/ | AGENTS.md |
+| GitHub Copilot | copilot | /skill-name | .github/skills/ | AGENTS.md |
+| Antigravity | antigravity | (via IDE) | .agent/skills/ | GEMINI.md |
 
 ## SKILL.md Format
 
