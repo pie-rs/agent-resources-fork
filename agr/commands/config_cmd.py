@@ -64,6 +64,19 @@ def _validate_key(key: str) -> None:
         error_exit(f"Unknown config key '{key}'", hint=f"Valid keys: {valid}")
 
 
+def _format_nullable_value(value: object) -> str:
+    """Format a nullable config value for display.
+
+    Returns "(not set)" for None, lowercased string for bools,
+    or the string representation otherwise.
+    """
+    if value is None:
+        return "(not set)"
+    if isinstance(value, bool):
+        return str(value).lower()
+    return str(value)
+
+
 def _require_single_source_name(values: list[str]) -> str:
     """Validate that exactly one source name was provided and return it."""
     if not values:
@@ -81,16 +94,11 @@ def run_config_show(global_scope: bool) -> None:
     console.print(f"[bold]Config:[/bold] {config_path}")
     console.print()
     console.print(f"  tools             = {', '.join(config.tools)}")
-    console.print(f"  default_tool      = {config.default_tool or '(not set)'}")
+    console.print(f"  default_tool      = {_format_nullable_value(config.default_tool)}")
     console.print(f"  default_source    = {config.default_source}")
-
-    if config.sync_instructions is not None:
-        console.print(f"  sync_instructions = {str(config.sync_instructions).lower()}")
-    else:
-        console.print("  sync_instructions = (not set)")
-
+    console.print(f"  sync_instructions = {_format_nullable_value(config.sync_instructions)}")
     console.print(
-        f"  canonical_instructions = {config.canonical_instructions or '(not set)'}"
+        f"  canonical_instructions = {_format_nullable_value(config.canonical_instructions)}"
     )
 
     console.print()
@@ -129,16 +137,13 @@ def run_config_get(key: str, global_scope: bool) -> None:
         for src in config.sources:
             print(f"{src.name} {src.type} {src.url}")
     elif key == "default_tool":
-        print(config.default_tool or "(not set)")
+        print(_format_nullable_value(config.default_tool))
     elif key == "default_source":
         print(config.default_source)
     elif key == "sync_instructions":
-        if config.sync_instructions is not None:
-            print(str(config.sync_instructions).lower())
-        else:
-            print("(not set)")
+        print(_format_nullable_value(config.sync_instructions))
     elif key == "canonical_instructions":
-        print(config.canonical_instructions or "(not set)")
+        print(_format_nullable_value(config.canonical_instructions))
     else:
         raise AssertionError(f"Unhandled key: {key}")
 
