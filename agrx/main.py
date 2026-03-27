@@ -5,8 +5,9 @@ import signal
 import subprocess
 import sys
 import uuid
+from contextlib import contextmanager
 from pathlib import Path
-from typing import Annotated, Optional
+from typing import Annotated, Generator, Optional
 
 import typer
 
@@ -76,6 +77,36 @@ def _cleanup_skill(skill_path: Path) -> None:
             pass  # Best effort cleanup
 
 
+@contextmanager
+def _temporary_skill(skill_path: Path) -> Generator[None, None, None]:
+    """Ensure a temporary skill is cleaned up on normal exit or signal.
+
+    Installs SIGINT/SIGTERM handlers that remove the skill directory,
+    restores the original handlers on exit, and performs cleanup in the
+    ``finally`` block for the non-signal path.
+    """
+    cleanup_done = False
+
+    def _on_signal(signum: int, frame: object) -> None:
+        nonlocal cleanup_done
+        if not cleanup_done:
+            cleanup_done = True
+            _cleanup_skill(skill_path)
+        sys.exit(1)
+
+    original_sigint = signal.signal(signal.SIGINT, _on_signal)
+    original_sigterm = signal.signal(signal.SIGTERM, _on_signal)
+
+    try:
+        yield
+    finally:
+        signal.signal(signal.SIGINT, original_sigint)
+        signal.signal(signal.SIGTERM, original_sigterm)
+        if not cleanup_done:
+            cleanup_done = True
+            _cleanup_skill(skill_path)
+
+
 def _build_skill_command(
     tool_config: ToolConfig,
     skill_prompt: str,
@@ -108,6 +139,38 @@ def _build_skill_command(
     else:
         cmd.append(skill_prompt)
     return cmd
+
+
+def _run_skill_command(
+    tool_config: ToolConfig,
+    skill_prompt: str,
+    *,
+    interactive: bool,
+) -> None:
+    """Build and execute the skill command with the selected tool.
+
+    Handles interactive vs non-interactive modes, force flags, and
+    stderr suppression based on tool configuration.
+    """
+    cmd = _build_skill_command(
+        tool_config,
+        skill_prompt,
+        non_interactive=not interactive,
+    )
+    if interactive and tool_config.cli_force_flag:
+        cmd.append(tool_config.cli_force_flag)
+
+    if not interactive and tool_config.suppress_stderr_non_interactive:
+        result = subprocess.run(
+            cmd,
+            check=False,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        if result.returncode != 0 and result.stderr:
+            sys.stderr.write(result.stderr)
+    else:
+        subprocess.run(cmd, check=False)
 
 
 @app.command()
@@ -238,20 +301,7 @@ def main(
             install_name=prefixed_name,
         )
 
-        # Set up cleanup handlers
-        cleanup_done = False
-
-        def cleanup_handler(signum, frame):
-            nonlocal cleanup_done
-            if not cleanup_done:
-                cleanup_done = True
-                _cleanup_skill(temp_skill_path)
-            sys.exit(1)
-
-        original_sigint = signal.signal(signal.SIGINT, cleanup_handler)
-        original_sigterm = signal.signal(signal.SIGTERM, cleanup_handler)
-
-        try:
+        with _temporary_skill(temp_skill_path):
             console.print(
                 f"[dim]Running skill '{parsed.name}' with {tool_name}...[/dim]"
             )
@@ -269,45 +319,7 @@ def main(
             if prompt:
                 skill_prompt += f" {prompt}"
 
-            # Run the appropriate CLI
-            if interactive:
-                # Run the skill in interactive mode
-                cmd = _build_skill_command(
-                    tool_config,
-                    skill_prompt,
-                    non_interactive=False,
-                )
-                if tool_config.cli_force_flag:
-                    cmd.append(tool_config.cli_force_flag)
-                subprocess.run(cmd, check=False)
-            else:
-                # Just run the skill
-                cmd = _build_skill_command(
-                    tool_config,
-                    skill_prompt,
-                    non_interactive=True,
-                )
-                if tool_config.suppress_stderr_non_interactive:
-                    result = subprocess.run(
-                        cmd,
-                        check=False,
-                        stderr=subprocess.PIPE,
-                        text=True,
-                    )
-                    if result.returncode != 0 and result.stderr:
-                        sys.stderr.write(result.stderr)
-                else:
-                    subprocess.run(cmd, check=False)
-
-        finally:
-            # Restore signal handlers
-            signal.signal(signal.SIGINT, original_sigint)
-            signal.signal(signal.SIGTERM, original_sigterm)
-
-            # Clean up
-            if not cleanup_done:
-                cleanup_done = True
-                _cleanup_skill(temp_skill_path)
+            _run_skill_command(tool_config, skill_prompt, interactive=interactive)
 
     except AgrError as e:
         print_error(str(e))
