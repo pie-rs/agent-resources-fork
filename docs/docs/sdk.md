@@ -72,7 +72,16 @@ skill = Skill.from_git("anthropics/skills/code-review")
 
 # Force re-download even if cached (useful after upstream changes)
 skill = Skill.from_git("kasperjunge/commit", force_download=True)
+
+# Private repos — set GITHUB_TOKEN or GH_TOKEN in your environment
+# export GITHUB_TOKEN="ghp_..."
+skill = Skill.from_git("my-org/private-repo/internal-skill")
 ```
+
+!!! note "Private repositories"
+    `from_git()` uses the same `GITHUB_TOKEN` / `GH_TOKEN` environment
+    variables as the CLI. See [Private Repositories](configuration.md#private-repositories)
+    for token setup.
 
 ### From a Local Directory
 

@@ -436,6 +436,9 @@ print(skill.path)     # local path
 # Force re-download
 skill = Skill.from_git("kasperjunge/commit", force_download=True)
 
+# Private repos — uses GITHUB_TOKEN / GH_TOKEN from environment
+skill = Skill.from_git("my-org/private-repo/internal-skill")
+
 # From local directory
 skill = Skill.from_local("./my-skill")
 ```

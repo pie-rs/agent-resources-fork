@@ -890,4 +890,5 @@ This installs the skill into the tool's global skills directory, runs it, and cl
 - [**agrx**](agrx.md) — Fix issues with ephemeral skill runs, tool selection, and interactive mode
 - [**CLI Reference**](reference.md) — Verify command syntax, flags, and handle formats
 - [**Creating Skills**](creating.md) — Fix SKILL.md format, name validation, and testing issues
+- [**Python SDK**](sdk.md) — Fix SDK-specific errors (rate limits, API auth, network failures)
 - [**Teams**](teams.md) — Fix CI/CD sync failures, private repo auth, and multi-tool team setup
