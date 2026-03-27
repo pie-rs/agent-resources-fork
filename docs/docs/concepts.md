@@ -61,7 +61,8 @@ Skills are tool-agnostic. The same `SKILL.md` works in Claude Code, Cursor,
 Codex, OpenCode, Copilot, and Antigravity — agr installs it into the right
 place for each tool.
 
-See [Creating Skills](creating.md) for how to write one.
+See [Creating Skills](creating.md) for how to write one, or browse the
+[Skill Directory](skills.md) for published skills you can install.
 
 ---
 
@@ -215,8 +216,9 @@ agr add anthropics/skills/pdf              # Local: this project only
 agr add -g anthropics/skills/skill-creator  # Global: every project
 ```
 
-Use local for project-specific skills that teammates should share. Use global
-for personal utilities you want everywhere.
+Use local for project-specific skills that teammates should share (see
+[Teams](teams.md) for the full team setup). Use global for personal utilities
+you want everywhere.
 
 The two scopes are independent — a skill can be installed both locally and
 globally without conflict.
@@ -303,7 +305,8 @@ agrx anthropics/skills/pdf            # Temporary: run once and clean up
 Use `agr` when you want a skill to stick around. Use `agrx` when you want to
 try something quickly or run a one-off task.
 
-See [agrx](agrx.md) for full details.
+See [agrx](agrx.md) for full details. You can also load skills
+programmatically with the [Python SDK](sdk.md).
 
 ---
 
@@ -339,3 +342,4 @@ each configured tool's skills folder, and updates `agr.toml`.
 - [Supported Tools](tools.md) — Detailed info on each tool's behavior
 - [Creating Skills](creating.md) — Write and share your own skills
 - [Reference](reference.md) — Every command, flag, and config option
+- [Troubleshooting](troubleshooting.md) — Fix common errors and edge cases
