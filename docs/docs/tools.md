@@ -29,6 +29,13 @@ keywords:
     Copilot, and Antigravity. Target one or all — one `agr add` installs
     everywhere. Default: Claude Code only.
 
+A **skill** is a directory containing a `SKILL.md` file with YAML frontmatter
+(`name`, `description`) and markdown instructions for an AI coding agent. When
+you run `agr add`, agr copies the skill into each configured tool's skills
+directory so the tool can discover and invoke it. A **handle** like
+`anthropics/skills/pdf` identifies a skill on GitHub. See
+[Core Concepts](concepts.md) for the full picture.
+
 ## All Tools at a Glance
 
 | Tool | Config name | Invoke skill | Project skills dir | Global skills dir | agrx CLI |

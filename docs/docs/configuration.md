@@ -30,6 +30,13 @@ agr uses `agr.toml` for project-level configuration and `~/.agr/agr.toml` for
 global configuration. For an overview of how config fits into agr's architecture,
 see [Core Concepts](concepts.md).
 
+**Key terms used on this page:**
+
+- A **skill** is a directory containing a `SKILL.md` file with YAML frontmatter (`name`, `description`) and markdown instructions for an AI coding agent.
+- A **handle** identifies a skill: `user/skill` (from user's `skills` repo), `user/repo/skill` (from a specific repo), or `./path/to/skill` (local).
+- A **source** is a Git server URL template (e.g., GitHub, GitLab, self-hosted) where agr fetches remote skills from.
+- A **tool** is one of the supported AI coding agents: Claude Code, Cursor, Codex, OpenCode, GitHub Copilot, or Antigravity.
+
 ## Settings at a Glance
 
 | Key | Type | Default | What it does |

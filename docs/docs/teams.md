@@ -29,6 +29,12 @@ Set up agr so everyone shares the same AI coding skills, stays in sync
 across Claude Code, Cursor, Codex, and other tools — and gets productive on
 day one.
 
+**Key terms:** A **skill** is a directory containing a `SKILL.md` file with
+instructions for an AI coding agent. A **handle** like `anthropics/skills/pdf`
+identifies a skill on GitHub. `agr.toml` tracks your project's skill
+dependencies — similar to `package.json` or `Cargo.toml`. See
+[Core Concepts](concepts.md) for details.
+
 ---
 
 ## Set up your project
