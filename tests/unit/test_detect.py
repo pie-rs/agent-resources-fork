@@ -80,6 +80,22 @@ class TestDetectTools:
 
         assert "opencode" in result
 
+    def test_opencode_detected_from_opencode_json(self, tmp_path):
+        """detect_tools finds opencode from opencode.json config file."""
+        (tmp_path / "opencode.json").write_text("{}")
+
+        result = detect_tools(tmp_path)
+
+        assert "opencode" in result
+
+    def test_opencode_detected_from_opencode_jsonc(self, tmp_path):
+        """detect_tools finds opencode from opencode.jsonc config file."""
+        (tmp_path / "opencode.jsonc").write_text("{}")
+
+        result = detect_tools(tmp_path)
+
+        assert "opencode" in result
+
     def test_antigravity_detected_from_gemini_dir(self, tmp_path):
         """detect_tools finds antigravity from .gemini/ directory."""
         (tmp_path / ".gemini").mkdir()

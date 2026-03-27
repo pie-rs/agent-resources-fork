@@ -118,7 +118,7 @@ OPENCODE = ToolConfig(
     cli_exec_command=["opencode", "run"],
     skill_prompt_prefix="",
     install_hint="Install OpenCode CLI (https://opencode.ai/docs/cli/)",
-    detection_signals=(".opencode",),
+    detection_signals=(".opencode", "opencode.json", "opencode.jsonc"),
 )
 
 # GitHub Copilot tool configuration

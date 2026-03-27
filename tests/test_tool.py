@@ -237,7 +237,7 @@ class TestDetectionSignals:
         assert CODEX.detection_signals == (".agents", ".codex")
 
     def test_opencode_detection_signals(self):
-        assert OPENCODE.detection_signals == (".opencode",)
+        assert OPENCODE.detection_signals == (".opencode", "opencode.json", "opencode.jsonc")
 
     def test_copilot_detection_signals(self):
         assert COPILOT.detection_signals == (".github/copilot", ".github/skills")
