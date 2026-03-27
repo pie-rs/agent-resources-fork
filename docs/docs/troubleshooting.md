@@ -252,6 +252,21 @@ agr config remove tools antigravity
 
 See [Supported Tools — Detection signals](tools.md) for the full list per tool.
 
+### How do I fix "Cannot remove all tools. At least one must remain."?
+
+```text
+Error: Cannot remove all tools. At least one must remain.
+```
+
+agr requires at least one tool in the `tools` list. You can't remove every tool — there'd be nowhere to install skills.
+
+If you want to switch tools entirely, add the new one before removing the old:
+
+```bash
+agr config add tools codex
+agr config remove tools claude
+```
+
 ### How do I fix "Invalid TOML in agr.toml"?
 
 ```text

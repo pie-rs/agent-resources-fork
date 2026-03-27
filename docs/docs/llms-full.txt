@@ -641,6 +641,9 @@ Check your `agr.toml` for typos in the `tools` list.
 #### Why does `agr init` detect a tool I don't use?
 Some detection signals are shared between tools (e.g., `.agents/` triggers both Codex and Antigravity). Override with: `agr init --tools claude,codex` or remove unwanted tools: `agr config remove tools antigravity`.
 
+#### "Cannot remove all tools. At least one must remain."
+agr requires at least one tool in the `tools` list. Add the new tool before removing the old one: `agr config add tools codex` then `agr config remove tools claude`.
+
 #### "Invalid TOML in agr.toml"
 `Error: Invalid TOML in agr.toml: ...`
 Syntax error in agr.toml. Common causes: missing quotes, unclosed brackets, trailing commas (TOML doesn't allow them).
