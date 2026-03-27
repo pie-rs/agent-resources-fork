@@ -550,6 +550,61 @@
   </script>
   {% endif %}
 
+  {% if page and page.file and page.file.src_path == "teams.md" %}
+  <!-- HowTo Schema for teams setup rich results -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "Share AI Agent Skills Across a Team with agr",
+    "description": "Set up agr so your team shares the same AI coding agent skills across Claude Code, Cursor, Codex, OpenCode, Copilot, and Antigravity — with agr.toml as a single source of truth.",
+    "totalTime": "PT10M",
+    "tool": [
+      {
+        "@type": "HowToTool",
+        "name": "agr CLI"
+      },
+      {
+        "@type": "HowToTool",
+        "name": "git"
+      }
+    ],
+    "step": [
+      {
+        "@type": "HowToStep",
+        "name": "Initialize agr in your project",
+        "text": "Run agr init in your repo root to create agr.toml. agr auto-detects which tools your team uses. Use --tools to target specific tools like claude, cursor, and codex.",
+        "url": "https://kasperjunge.github.io/agent-resources/teams/#1-initialize-agr"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Add skills for the team",
+        "text": "Install the skills your team needs with agr add. Each command updates agr.toml with the dependency. Local skills with ./path work too.",
+        "url": "https://kasperjunge.github.io/agent-resources/teams/#2-add-skills"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Commit agr.toml to version control",
+        "text": "Commit agr.toml so every clone starts with the same skills. It acts as a skill lockfile, similar to package.json or pyproject.toml.",
+        "url": "https://kasperjunge.github.io/agent-resources/teams/#3-commit-agrtoml"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Teammates install with agr sync",
+        "text": "After cloning the repo, teammates run uv tool install agr (one-time) then agr sync to install all skills from agr.toml. Everyone gets the same skills.",
+        "url": "https://kasperjunge.github.io/agent-resources/teams/#4-teammates-install"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Configure multi-tool and private repos",
+        "text": "Set tools list with agr config set tools for multi-tool teams. Export GITHUB_TOKEN for private skill repositories. Add agr sync to CI/CD pipelines.",
+        "url": "https://kasperjunge.github.io/agent-resources/teams/#multi-tool-teams"
+      }
+    ]
+  }
+  </script>
+  {% endif %}
+
   {% if page and page.file and page.file.src_path == "agrx.md" %}
   <!-- HowTo Schema for agrx rich results -->
   <script type="application/ld+json">
