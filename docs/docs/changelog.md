@@ -203,7 +203,7 @@ agr now supports [Antigravity](https://docs.google.com/document/d/1KWjbSVr7YLJ8H
 agr config add tools antigravity
 ```
 
-Skills install to `.agent/skills/` (project) and `~/.gemini/antigravity/skills/` (global).
+Skills install to `.gemini/skills/` (project) and `~/.gemini/skills/` (global).
 
 ---
 

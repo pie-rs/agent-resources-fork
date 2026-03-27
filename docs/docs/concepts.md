@@ -119,7 +119,7 @@ Each tool has its own skills directory where agr installs skills:
 | OpenAI Codex | `.agents/skills/` | `~/.agents/skills/` |
 | OpenCode | `.opencode/skills/` | `~/.config/opencode/skills/` |
 | GitHub Copilot | `.github/skills/` | `~/.copilot/skills/` |
-| Antigravity | `.agent/skills/` | `~/.gemini/antigravity/skills/` |
+| Antigravity | `.gemini/skills/` | `~/.gemini/skills/` |
 
 When you configure multiple tools, `agr add` and `agr sync` install skills
 into all of them simultaneously. Configure your tools with:

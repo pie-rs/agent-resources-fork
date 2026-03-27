@@ -199,7 +199,7 @@ agr installs skills into 6 AI coding tools simultaneously.
 | OpenAI Codex | codex | $skill-name | .agents/skills/ | ~/.agents/skills/ | codex | AGENTS.md |
 | OpenCode | opencode | skill-name | .opencode/skills/ | ~/.config/opencode/skills/ | opencode | AGENTS.md |
 | GitHub Copilot | copilot | /skill-name | .github/skills/ | ~/.copilot/skills/ | copilot | AGENTS.md |
-| Antigravity | antigravity | (via IDE) | .agent/skills/ | ~/.gemini/antigravity/skills/ | (none) | GEMINI.md |
+| Antigravity | antigravity | (via IDE) | .gemini/skills/ | ~/.gemini/skills/ | (none) | GEMINI.md |
 
 Configure tools:
 ```bash
@@ -219,7 +219,7 @@ Claude Code is the default. When multiple tools are configured, `agr add` and `a
 | OpenAI Codex | .agents/, .codex |
 | OpenCode | .opencode/ |
 | GitHub Copilot | .github/copilot, .github/skills |
-| Antigravity | .agent/ |
+| Antigravity | .gemini/, .agent/ |
 
 ### Instruction File Syncing
 

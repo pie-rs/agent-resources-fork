@@ -67,7 +67,7 @@ tool's skills directory:
 | OpenAI Codex | `.agents/skills/` | `~/.agents/skills/` |
 | OpenCode | `.opencode/skills/` | `~/.config/opencode/skills/` |
 | GitHub Copilot | `.github/skills/` | `~/.copilot/skills/` |
-| Antigravity | `.agent/skills/` | `~/.gemini/antigravity/skills/` |
+| Antigravity | `.gemini/skills/` | `~/.gemini/skills/` |
 
 ### Default Tool
 
@@ -97,7 +97,7 @@ agr config add tools cursor
 ### Tool Detection
 
 `agr init` and `agr onboard` auto-detect tools from repo signals — config
-directories (`.claude/`, `.cursor/`, `.agents/`) and instruction files
+directories (`.claude/`, `.cursor/`, `.agents/`, `.gemini/`) and instruction files
 (`CLAUDE.md`, `.cursorrules`).
 
 ## Sources

@@ -75,7 +75,7 @@ agr installs skills into 6 AI coding tools. Configure with `agr config set tools
 | OpenAI Codex | codex | $skill-name | .agents/skills/ | AGENTS.md |
 | OpenCode | opencode | skill-name | .opencode/skills/ | AGENTS.md |
 | GitHub Copilot | copilot | /skill-name | .github/skills/ | AGENTS.md |
-| Antigravity | antigravity | (via IDE) | .agent/skills/ | GEMINI.md |
+| Antigravity | antigravity | (via IDE) | .gemini/skills/ | GEMINI.md |
 
 ## SKILL.md Format
 

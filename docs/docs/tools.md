@@ -30,7 +30,7 @@ keywords:
 | [OpenAI Codex](#openai-codex) | `codex` | `$skill-name` | `.agents/skills/` | `~/.agents/skills/` | `codex` |
 | [OpenCode](#opencode) | `opencode` | `skill-name` | `.opencode/skills/` | `~/.config/opencode/skills/` | `opencode` |
 | [GitHub Copilot](#github-copilot) | `copilot` | `/skill-name` | `.github/skills/` | `~/.copilot/skills/` | `copilot` |
-| [Antigravity](#antigravity) | `antigravity` | via IDE | `.agent/skills/` | `~/.gemini/antigravity/skills/` | — |
+| [Antigravity](#antigravity) | `antigravity` | via IDE | `.gemini/skills/` | `~/.gemini/skills/` | — |
 
 ## Target Multiple Tools at Once
 
@@ -179,12 +179,12 @@ Gemini).
 | | |
 |---|---|
 | **Config name** | `antigravity` |
-| **Project skills** | `.agent/skills/` |
-| **Global skills** | `~/.gemini/antigravity/skills/` |
+| **Project skills** | `.gemini/skills/` |
+| **Global skills** | `~/.gemini/skills/` |
 | **Instruction file** | `GEMINI.md` |
 | **CLI command** | — (no CLI available) |
 | **Skill invocation** | — |
-| **Detection signals** | `.agent/` |
+| **Detection signals** | `.gemini/`, `.agent/` |
 
 !!! warning "No CLI support"
     Antigravity does not have a standalone CLI, so `agrx` cannot run skills
