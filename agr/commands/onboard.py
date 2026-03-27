@@ -70,12 +70,8 @@ def select_skills(
         grouped.setdefault(skill.name, []).append(skill)
 
     selected: list[DiscoveredSkill] = []
-    for name, skills in grouped.items():
-        if len(skills) == 1:
-            selected.append(skills[0])
-        else:
-            picked = min(skills, key=lambda s: len(s.path.parts))
-            selected.append(picked)
+    for skills in grouped.values():
+        selected.append(min(skills, key=lambda s: len(s.path.parts)))
     selected.sort(key=lambda s: s.name)
     return selected
 
@@ -143,9 +139,7 @@ def _run_skill_migration(
         "are in tool folders "
         "(e.g. .claude/skills/)."
     )
-    should_migrate = Confirm.ask(
-        "Move them to ./skills/ (recommended)?", default=True
-    )
+    should_migrate = Confirm.ask("Move them to ./skills/ (recommended)?", default=True)
 
     if not should_migrate:
         return selected_skills
@@ -182,14 +176,11 @@ def _run_skill_migration(
                     shutil.rmtree(old_path)
                 except OSError:
                     console.print(
-                        "  [yellow]Warning:[/yellow] "
-                        f"Failed to remove {old_path}"
+                        f"  [yellow]Warning:[/yellow] Failed to remove {old_path}"
                     )
         else:
             migrated_skills.append(skill)
-    console.print(
-        f"[green]Migrated:[/green] {migrate_count} skill(s) to ./skills/"
-    )
+    console.print(f"[green]Migrated:[/green] {migrate_count} skill(s) to ./skills/")
     return migrated_skills
 
 

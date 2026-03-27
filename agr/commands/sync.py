@@ -180,7 +180,11 @@ def _sync_individual_entries(
     for entry in entries:
         try:
             results[entry.index] = _sync_one_dependency(
-                entry.handle, entry.source_name, repo_root, tools, resolver,
+                entry.handle,
+                entry.source_name,
+                repo_root,
+                tools,
+                resolver,
                 tools_needing_install=entry.tools_needing_install,
             )
         except INSTALL_ERROR_TYPES as e:
@@ -391,9 +395,7 @@ def run_sync(global_install: bool = False) -> None:
     # --- Phase 1: Classify dependencies ---
     # Pre-allocate a result slot per dependency so parallel paths can fill
     # them by index without coordination.
-    results: list[SyncResult] = [
-        SyncResult.pending() for _ in config.dependencies
-    ]
+    results: list[SyncResult] = [SyncResult.pending() for _ in config.dependencies]
     pending_local: list[SyncEntry] = []
     pending_remote: list[SyncEntry] = []
 

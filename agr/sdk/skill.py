@@ -114,9 +114,7 @@ class Skill:
                             owner, repo_name, parsed.name, commit
                         )
                     else:
-                        skill_path = prepare_repo_for_skill(
-                            repo_dir, parsed.name
-                        )
+                        skill_path = prepare_repo_for_skill(repo_dir, parsed.name)
                         if skill_path is None:
                             last_error = SkillNotFoundError(
                                 f"Skill '{parsed.name}' not found "

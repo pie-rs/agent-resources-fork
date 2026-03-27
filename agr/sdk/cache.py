@@ -11,6 +11,7 @@ Cache structure:
                         └── ...
 """
 
+import contextlib
 import fnmatch
 import os
 import re
@@ -218,10 +219,8 @@ def cache_skill(
                 _release_file_lock(lock_fd)
                 lock_fd.close()
                 # Clean up lock file (best effort)
-                try:
+                with contextlib.suppress(OSError):
                     lock_file.unlink()
-                except OSError:
-                    pass  # Another process may have deleted or be using it
 
     except OSError as e:
         raise CacheError(f"Failed to cache skill: {e}") from e

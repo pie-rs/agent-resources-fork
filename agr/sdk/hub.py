@@ -304,19 +304,22 @@ def skill_info(handle: str) -> SkillInfo:
     # Find SKILL.md for this skill
     skill_md_path = _find_skill_md_in_tree(tree_data, parsed.name)
 
-    if skill_md_path is None and parsed.repo is None:
+    if (
+        skill_md_path is None
+        and parsed.repo is None
+        and repo != LEGACY_DEFAULT_REPO_NAME
+    ):
         # Try legacy repo if skill not found in default repo
-        if repo != LEGACY_DEFAULT_REPO_NAME:
-            try:
-                legacy_tree = _github_api_request(
-                    _github_tree_url(owner, LEGACY_DEFAULT_REPO_NAME)
-                )
-                skill_md_path = _find_skill_md_in_tree(legacy_tree, parsed.name)
-                if skill_md_path is not None:
-                    repo = LEGACY_DEFAULT_REPO_NAME
-                    used_legacy = True
-            except RepoNotFoundError:
-                pass
+        try:
+            legacy_tree = _github_api_request(
+                _github_tree_url(owner, LEGACY_DEFAULT_REPO_NAME)
+            )
+            skill_md_path = _find_skill_md_in_tree(legacy_tree, parsed.name)
+            if skill_md_path is not None:
+                repo = LEGACY_DEFAULT_REPO_NAME
+                used_legacy = True
+        except RepoNotFoundError:
+            pass
 
     if not skill_md_path:
         raise SkillNotFoundError(

@@ -385,17 +385,16 @@ def migrate_flat_installed_names(
             # Plain-name dir doesn't exist — try renaming from the full
             # flat name (e.g. ``user--repo--skill`` → ``skill``).
             full_dir = skills_dir / handle.to_installed_name()
-            if is_valid_skill_dir(full_dir):
-                if not name_dir.exists():
-                    try:
-                        full_dir.rename(name_dir)
-                        _update_dir_metadata(
-                            name_dir, handle, repo_root, tool.name, source_name
-                        )
-                        _print_migrated("Migrated", full_dir.name, name_dir.name)
-                    except OSError as e:
-                        _print_migrate_failed("Migrate", full_dir.name, e)
-                # else: something non-skill occupies the name; skip.
+            if is_valid_skill_dir(full_dir) and not name_dir.exists():
+                try:
+                    full_dir.rename(name_dir)
+                    _update_dir_metadata(
+                        name_dir, handle, repo_root, tool.name, source_name
+                    )
+                    _print_migrated("Migrated", full_dir.name, name_dir.name)
+                except OSError as e:
+                    _print_migrate_failed("Migrate", full_dir.name, e)
+            # else: something non-skill occupies the name; skip.
             continue
 
         # --- Case 2: Ambiguous name (multiple handles) ---

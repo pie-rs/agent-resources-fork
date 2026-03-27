@@ -682,28 +682,30 @@ def fetch_and_install_to_tools(
     # Remote: download once via _locate_remote_skill, then install the same
     # checked-out skill to every tool. The context manager keeps the temp
     # repo directory alive until all tools are done.
-    with _rollback_on_failure() as installed:
-        with _locate_remote_skill(handle, resolver, source) as loc:
-            for tool in tools:
-                skills_dir = _resolve_skills_dir(
-                    lookup_skills_dir(skills_dirs, tool), repo_root, tool
-                )
-                path = install_skill_from_repo(
-                    loc.repo_dir,
-                    handle.name,
-                    handle,
-                    skills_dir,
-                    tool,
-                    repo_root,
-                    overwrite,
-                    install_source=loc.source_config.name,
-                    skill_source=loc.skill_source,
-                )
-                installed[tool.name] = path
-            # Warn after successful install so the user sees it once,
-            # not on partial failure.
-            if loc.is_legacy:
-                warn_legacy_repo()
+    with (
+        _rollback_on_failure() as installed,
+        _locate_remote_skill(handle, resolver, source) as loc,
+    ):
+        for tool in tools:
+            skills_dir = _resolve_skills_dir(
+                lookup_skills_dir(skills_dirs, tool), repo_root, tool
+            )
+            path = install_skill_from_repo(
+                loc.repo_dir,
+                handle.name,
+                handle,
+                skills_dir,
+                tool,
+                repo_root,
+                overwrite,
+                install_source=loc.source_config.name,
+                skill_source=loc.skill_source,
+            )
+            installed[tool.name] = path
+        # Warn after successful install so the user sees it once,
+        # not on partial failure.
+        if loc.is_legacy:
+            warn_legacy_repo()
     return installed
 
 
@@ -837,7 +839,10 @@ def is_skill_installed(
     resolved_dir = _resolve_skills_dir(skills_dir, repo_root, tool)
     # _find_existing_skill_dir already validates via is_valid_skill_dir
     # on every code path, so a non-None result is always valid.
-    return _find_existing_skill_dir(handle, resolved_dir, tool, repo_root, source) is not None
+    return (
+        _find_existing_skill_dir(handle, resolved_dir, tool, repo_root, source)
+        is not None
+    )
 
 
 def filter_tools_needing_install(

@@ -38,7 +38,7 @@ def run_tools_list() -> None:
         console.print("[dim]No agr.toml found, showing defaults[/dim]")
         console.print()
 
-    available = [name for name in TOOLS.keys() if name not in configured]
+    available = [name for name in TOOLS if name not in configured]
 
     console.print("[bold]Configured tools:[/bold]")
     if configured:

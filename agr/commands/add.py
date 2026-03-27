@@ -102,7 +102,9 @@ def run_add(
             console.print(f"  [dim]{result.message}[/dim]")
 
     save_and_summarize_results(
-        results, config, config_path,
+        results,
+        config,
+        config_path,
         action="added",
         total=len(refs),
         print_result=_print_add_result,

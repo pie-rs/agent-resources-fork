@@ -300,7 +300,7 @@ class AgrConfig:
             content = path.read_text()
             doc = tomlkit.parse(content)
         except TOMLKitError as e:
-            raise ConfigError(f"Invalid TOML in {path}: {e}")
+            raise ConfigError(f"Invalid TOML in {path}: {e}") from e
 
         config = cls()
         config._path = path
