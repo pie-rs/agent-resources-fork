@@ -220,7 +220,7 @@ Claude Code is the default. When multiple tools are configured, `agr add` and `a
 | Cursor | .cursor/, .cursorrules |
 | OpenAI Codex | .agents/, .codex |
 | OpenCode | .opencode/, opencode.json, opencode.jsonc |
-| GitHub Copilot | .github/copilot, .github/skills, .github/copilot-instructions.md, .github/instructions |
+| GitHub Copilot | .github/copilot/, .github/skills/, .github/copilot-instructions.md, .github/instructions/ |
 | Antigravity | .gemini/, .agents/ |
 
 ### Instruction File Syncing
