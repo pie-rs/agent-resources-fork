@@ -1,5 +1,6 @@
 """Hub functions for discovering skills on GitHub."""
 
+import base64
 import json
 import urllib.request
 import warnings
@@ -120,6 +121,23 @@ def _github_api_request(url: str) -> dict[str, Any]:
         raise
     except URLError as e:
         raise ConnectionError(f"Failed to connect to GitHub API: {e}") from e
+
+
+def _find_skill_md_in_tree(tree_data: dict[str, Any], skill_name: str) -> str | None:
+    """Find the path to a skill's SKILL.md in a GitHub tree response.
+
+    Returns the path string if found, None otherwise.
+    """
+    for item in tree_data.get("tree", []):
+        if item.get("type") != "blob":
+            continue
+        path = item.get("path", "")
+        if (
+            path.endswith(f"/{skill_name}/{SKILL_MARKER}")
+            or path == f"{skill_name}/{SKILL_MARKER}"
+        ):
+            return path
+    return None
 
 
 def _extract_description(skill_md_content: str) -> str | None:
@@ -280,17 +298,7 @@ def skill_info(handle: str) -> SkillInfo:
     used_legacy = result.used_legacy
 
     # Find SKILL.md for this skill
-    skill_md_path = None
-    for item in tree_data.get("tree", []):
-        if item.get("type") != "blob":
-            continue
-        path = item.get("path", "")
-        if (
-            path.endswith(f"/{parsed.name}/{SKILL_MARKER}")
-            or path == f"{parsed.name}/{SKILL_MARKER}"
-        ):
-            skill_md_path = path
-            break
+    skill_md_path = _find_skill_md_in_tree(tree_data, parsed.name)
 
     if skill_md_path is None and parsed.repo is None:
         # Try legacy repo if skill not found in default repo
@@ -299,19 +307,10 @@ def skill_info(handle: str) -> SkillInfo:
                 legacy_tree = _github_api_request(
                     _github_tree_url(owner, LEGACY_DEFAULT_REPO_NAME)
                 )
-                for item in legacy_tree.get("tree", []):
-                    if item.get("type") != "blob":
-                        continue
-                    path = item.get("path", "")
-                    if (
-                        path.endswith(f"/{parsed.name}/{SKILL_MARKER}")
-                        or path == f"{parsed.name}/{SKILL_MARKER}"
-                    ):
-                        skill_md_path = path
-                        repo = LEGACY_DEFAULT_REPO_NAME
-                        used_legacy = True
-                        tree_data = legacy_tree
-                        break
+                skill_md_path = _find_skill_md_in_tree(legacy_tree, parsed.name)
+                if skill_md_path is not None:
+                    repo = LEGACY_DEFAULT_REPO_NAME
+                    used_legacy = True
             except RepoNotFoundError:
                 pass
 
@@ -326,8 +325,6 @@ def skill_info(handle: str) -> SkillInfo:
 
     description = None
     if content_data.get("encoding") == "base64":
-        import base64
-
         content = base64.b64decode(content_data.get("content", "")).decode()
         description = _extract_description(content)
 
