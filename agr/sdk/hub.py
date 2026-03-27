@@ -8,6 +8,7 @@ from typing import Any
 from urllib.error import HTTPError, URLError
 
 from agr.exceptions import (
+    AgrError,
     AuthenticationError,
     InvalidHandleError,
     RateLimitError,
@@ -137,7 +138,7 @@ def _github_api_request(url: str) -> dict[str, Any]:
             raise RepoNotFoundError(f"Repository not found: {url}") from e
         raise
     except URLError as e:
-        raise ConnectionError(f"Failed to connect to GitHub API: {e}") from e
+        raise AgrError(f"Failed to connect to GitHub API: {e}") from e
 
 
 def _extract_paths_from_tree(tree_data: dict[str, Any]) -> list[str]:

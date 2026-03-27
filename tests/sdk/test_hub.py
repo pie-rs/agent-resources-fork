@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from agr.exceptions import (
+    AgrError,
     AuthenticationError,
     InvalidHandleError,
     RateLimitError,
@@ -155,6 +156,33 @@ class TestGitHubApiRequest:
         call_args = mock_urlopen.call_args
         request = call_args[0][0]
         assert request.get_header("Authorization") == "Bearer test-token"
+
+
+class TestNetworkErrorHandling:
+    """Tests for network error handling in _github_api_request()."""
+
+    @patch("agr.sdk.hub.urllib.request.urlopen")
+    def test_url_error_raises_agr_error(self, mock_urlopen: MagicMock):
+        """Test that URLError raises AgrError, not built-in ConnectionError."""
+        from urllib.error import URLError
+
+        mock_urlopen.side_effect = URLError("Connection refused")
+
+        with pytest.raises(AgrError, match="Failed to connect to GitHub API"):
+            _github_api_request("https://api.github.com/test")
+
+    @patch("agr.sdk.hub.urllib.request.urlopen")
+    def test_url_error_preserves_cause(self, mock_urlopen: MagicMock):
+        """Test that URLError is chained as the cause of AgrError."""
+        from urllib.error import URLError
+
+        original = URLError("DNS lookup failed")
+        mock_urlopen.side_effect = original
+
+        with pytest.raises(AgrError) as exc_info:
+            _github_api_request("https://api.github.com/test")
+
+        assert exc_info.value.__cause__ is original
 
 
 class TestRateLimitHandling:
