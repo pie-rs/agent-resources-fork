@@ -65,6 +65,7 @@ description: TODO — describe what this skill does and when to use it
 
 ### Bug fixes
 
+- **Python SDK:** `list_skills()` now raises `InvalidHandleError` instead of `ValueError` for invalid repo handles, matching the behavior of `skill_info()` and `Skill.from_git()`. If your code catches `ValueError` from `list_skills()`, update it to catch `InvalidHandleError` (from `agr.exceptions`).
 - Antigravity detection signal corrected from `.agent` to `.agents`. Previously, `agr init` and `agr onboard` would not auto-detect Antigravity in repos that had an `.agents/` directory (used by Codex) — only `.gemini/` was matched.
 - `agrx --tool cursor` no longer passes an invalid `--force` flag to the Cursor CLI. The Cursor CLI (`agent`) does not support this flag, so `agrx` now runs without a permission-bypass flag for Cursor.
 - `agrx --tool opencode` now correctly uses two different modes: non-interactive runs use `opencode run "prompt"` (one-shot execution), while interactive runs (`-i`) use `opencode --prompt "prompt"` to inject the prompt into the TUI. Previously, `agrx` passed an invalid `--prompt` flag on the base command for non-interactive mode and routed both modes through `opencode run`.
