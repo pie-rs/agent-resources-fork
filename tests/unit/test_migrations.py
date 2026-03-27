@@ -448,6 +448,34 @@ class TestRunToolMigrations:
         assert (tmp_path / ".agents" / "skills" / "my-skill" / SKILL_MARKER).exists()
         assert not (tmp_path / ".codex").exists()
 
+    def test_cursor_global_migration_flattens_nested(self, tmp_path, monkeypatch):
+        """Cursor global migration flattens nested skills in ~/.cursor/skills/."""
+        monkeypatch.setattr(Path, "home", staticmethod(lambda: tmp_path))
+        _make_skill(
+            tmp_path / ".cursor" / "skills" / "user" / "repo" / "my-skill"
+        )
+
+        run_tool_migrations([CURSOR], None, global_install=True)
+
+        assert (
+            tmp_path / ".cursor" / "skills" / "my-skill" / SKILL_MARKER
+        ).exists()
+        assert not (tmp_path / ".cursor" / "skills" / "user").exists()
+
+    def test_antigravity_global_agent_to_gemini_migration(
+        self, tmp_path, monkeypatch
+    ):
+        """Antigravity global migration moves ~/.agent/skills/ to ~/.gemini/skills/."""
+        monkeypatch.setattr(Path, "home", staticmethod(lambda: tmp_path))
+        _make_skill(tmp_path / ".agent" / "skills" / "my-skill")
+
+        run_tool_migrations([ANTIGRAVITY], None, global_install=True)
+
+        assert (
+            tmp_path / ".gemini" / "skills" / "my-skill" / SKILL_MARKER
+        ).exists()
+        assert not (tmp_path / ".agent").exists()
+
     def test_skips_unconfigured_tools(self, tmp_path):
         """Only migrates tools that are in the tools list."""
         _make_skill(tmp_path / ".codex" / "skills" / "my-skill")
