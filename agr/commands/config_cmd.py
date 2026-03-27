@@ -247,37 +247,23 @@ def run_config_unset(key: str, global_scope: bool) -> None:
         console.print(f"[green]Reset:[/green] tools = {', '.join(DEFAULT_TOOL_NAMES)}")
         return
 
-    if key == "default_tool":
-        if config.default_tool is None:
-            console.print("[dim]default_tool is already unset.[/dim]")
-            return
-        config.default_tool = None
-        config.save()
-        console.print("[green]Unset:[/green] default_tool")
-
-    elif key == "default_source":
+    if key == "default_source":
         config.default_source = DEFAULT_SOURCE_NAME
         config.save()
         console.print(f"[green]Reset:[/green] default_source = {DEFAULT_SOURCE_NAME}")
+        return
 
-    elif key == "sync_instructions":
-        if config.sync_instructions is None:
-            console.print("[dim]sync_instructions is already unset.[/dim]")
-            return
-        config.sync_instructions = None
-        config.save()
-        console.print("[green]Unset:[/green] sync_instructions")
-
-    elif key == "canonical_instructions":
-        if config.canonical_instructions is None:
-            console.print("[dim]canonical_instructions is already unset.[/dim]")
-            return
-        config.canonical_instructions = None
-        config.save()
-        console.print("[green]Unset:[/green] canonical_instructions")
-
-    else:
-        raise AssertionError(f"Unhandled key: {key}")
+    # Nullable scalar keys: default_tool, sync_instructions, canonical_instructions
+    assert key in ("default_tool", "sync_instructions", "canonical_instructions"), (
+        f"Unhandled key: {key}"
+    )
+    current = getattr(config, key)
+    if current is None:
+        console.print(f"[dim]{key} is already unset.[/dim]")
+        return
+    setattr(config, key, None)
+    config.save()
+    console.print(f"[green]Unset:[/green] {key}")
 
 
 def run_config_add(
