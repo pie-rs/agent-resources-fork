@@ -215,24 +215,14 @@ def parse_handle(ref: str, *, prefer_local: bool = True) -> ParsedHandle:
     ref = ref.strip()
 
     if prefer_local:
-        # Local path detection: starts with . or /
-        if is_local_path_ref(ref):
-            path = Path(ref)
+        path = Path(ref)
+        # Local path detection: starts with ./ ../ / or exists on disk
+        if is_local_path_ref(ref) or path.exists():
             _validate_no_separator(ref, "name", path.name)
             return ParsedHandle(
                 is_local=True,
                 name=path.name,
                 local_path=path,
-            )
-
-        # Prefer local if the path exists (even with one slash)
-        test_path = Path(ref)
-        if test_path.exists():
-            _validate_no_separator(ref, "name", test_path.name)
-            return ParsedHandle(
-                is_local=True,
-                name=test_path.name,
-                local_path=test_path,
             )
 
     # Remote handle: split by /
