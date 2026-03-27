@@ -136,16 +136,8 @@ def run_config_get(key: str, global_scope: bool) -> None:
     elif key == "sources":
         for src in config.sources:
             print(f"{src.name} {src.type} {src.url}")
-    elif key == "default_tool":
-        print(_format_nullable_value(config.default_tool))
-    elif key == "default_source":
-        print(config.default_source)
-    elif key == "sync_instructions":
-        print(_format_nullable_value(config.sync_instructions))
-    elif key == "canonical_instructions":
-        print(_format_nullable_value(config.canonical_instructions))
     else:
-        raise AssertionError(f"Unhandled key: {key}")
+        print(_format_nullable_value(getattr(config, key)))
 
 
 def run_config_set(key: str, values: list[str], global_scope: bool) -> None:
