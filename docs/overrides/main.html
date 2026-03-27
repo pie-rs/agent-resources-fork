@@ -533,4 +533,53 @@
   }
   </script>
   {% endif %}
+
+  {% if page and page.file and page.file.src_path == "agrx.md" %}
+  <!-- HowTo Schema for agrx rich results -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "Try AI Agent Skills Without Installing — agrx",
+    "description": "Use agrx to download and run AI agent skills ephemerally in Claude Code, Cursor, Codex, OpenCode, Copilot, or Antigravity — no agr.toml changes, no cleanup needed.",
+    "totalTime": "PT2M",
+    "tool": [
+      {
+        "@type": "HowToTool",
+        "name": "agr CLI (includes agrx)"
+      },
+      {
+        "@type": "HowToTool",
+        "name": "An AI coding tool CLI (claude, agent, codex, opencode, or copilot)"
+      }
+    ],
+    "step": [
+      {
+        "@type": "HowToStep",
+        "name": "Run a skill once",
+        "text": "Run agrx with a skill handle to download, execute, and clean up in one command. Example: agrx anthropics/skills/pdf -p \"Extract tables from report.pdf\"",
+        "url": "https://kasperjunge.github.io/agent-resources/agrx/#quick-start"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Choose a tool",
+        "text": "Use --tool to pick which AI coding tool runs the skill. Example: agrx anthropics/skills/pdf --tool codex",
+        "url": "https://kasperjunge.github.io/agent-resources/agrx/#run-with-a-specific-tool"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Use interactive mode",
+        "text": "Add -i to continue chatting after the skill runs. Example: agrx kasperjunge/commit -i",
+        "url": "https://kasperjunge.github.io/agent-resources/agrx/#interactive-mode"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Run outside a git repo",
+        "text": "Use --global to run agrx anywhere without needing a git repository. Example: agrx anthropics/skills/pdf --global",
+        "url": "https://kasperjunge.github.io/agent-resources/agrx/#run-outside-a-git-repo"
+      }
+    ]
+  }
+  </script>
+  {% endif %}
 {% endblock %}
