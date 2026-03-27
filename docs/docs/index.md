@@ -214,3 +214,4 @@ Browse the full list at the [Skill Directory](skills.md) or on
 | Use agr in Python code | [Python SDK](sdk.md) — load, discover, and cache skills programmatically |
 | Look up a command | [CLI Reference](reference.md) — every command, flag, and option |
 | Fix a problem | [Troubleshooting](troubleshooting.md) — common errors and solutions |
+| Feed these docs to an LLM | [llms.txt](llms.txt) — summary for AI tools · [llms-full.txt](llms-full.txt) — complete docs in one file |
