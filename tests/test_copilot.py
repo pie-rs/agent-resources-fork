@@ -93,11 +93,11 @@ class TestCopilotPaths:
         for h in handles:
             assert h.to_skill_path(COPILOT) == h.to_skill_path(CLAUDE)
 
-    def test_copilot_paths_differ_from_cursor(self):
-        """Copilot uses flat paths, Cursor uses nested."""
+    def test_copilot_paths_match_cursor(self):
+        """Both Copilot and Cursor use flat paths."""
         h = ParsedHandle(username="maragudk", repo="skills", name="bluesky")
         assert h.to_skill_path(COPILOT) == Path("bluesky")
-        assert h.to_skill_path(CURSOR) == Path("maragudk/skills/bluesky")
+        assert h.to_skill_path(CURSOR) == Path("bluesky")
 
 
 class TestCopilotSkillName:

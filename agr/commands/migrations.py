@@ -148,6 +148,74 @@ def run_tool_migrations(
             cleanup_parent=False,
         )
 
+    # Cursor migration: flatten nested skill dirs to flat naming.
+    # Old layout stored skills as user/repo/skill/ or local/skill/ inside
+    # .cursor/skills/. Cursor expects flat naming where each skill is a
+    # direct child of the skills directory.
+    if "cursor" in tool_by_name:
+        cursor_skills = base / ".cursor" / "skills"
+        _flatten_nested_skills(cursor_skills)
+
+
+def _flatten_nested_skills(skills_dir: Path) -> None:
+    """Flatten nested skill directories to the top level.
+
+    Migrates skills stored in nested layouts (``user/repo/skill/`` or
+    ``local/skill/``) to flat naming (``skill/`` or ``user--repo--skill/``).
+
+    Only moves directories that contain a SKILL.md file.  When the plain
+    skill name is already taken, the fully-qualified ``user--repo--skill``
+    form is used instead.  Empty parent directories are cleaned up.
+
+    Args:
+        skills_dir: Root skills directory to scan (e.g. ``.cursor/skills/``).
+    """
+    console = get_console()
+
+    if not skills_dir.exists():
+        return
+
+    # Find all SKILL.md files nested more than one level deep.
+    nested: list[Path] = []
+    for skill_md in skills_dir.rglob(SKILL_MARKER):
+        rel = skill_md.relative_to(skills_dir)
+        # Direct children (depth == 2, e.g. "skill/SKILL.md") are fine.
+        if len(rel.parts) <= 2:
+            continue
+        nested.append(skill_md.parent)
+
+    for skill_dir in nested:
+        rel = skill_dir.relative_to(skills_dir)
+        skill_name = skill_dir.name
+
+        # Try the plain name first.
+        target = skills_dir / skill_name
+        if target.exists():
+            # Fall back to flat qualified name (user--repo--skill).
+            flat_name = INSTALLED_NAME_SEPARATOR.join(rel.parts)
+            target = skills_dir / flat_name
+            if target.exists():
+                console.print(
+                    f"[yellow]Cannot flatten:[/yellow] {rel.as_posix()}"
+                )
+                continue
+
+        try:
+            shutil.move(str(skill_dir), target)
+            console.print(
+                f"[blue]Flattened:[/blue] {rel.as_posix()} -> {target.name}"
+            )
+        except OSError as e:
+            console.print(f"[red]Failed to flatten:[/red] {rel.as_posix()}")
+            console.print(f"  [dim]{e}[/dim]")
+
+    # Clean up empty intermediate directories left behind.
+    if not skills_dir.exists():
+        return
+    for dirpath in sorted(skills_dir.rglob("*"), reverse=True):
+        if dirpath.is_dir() and not any(dirpath.iterdir()):
+            dirpath.rmdir()
+
 
 def migrate_legacy_directories(skills_dir: Path, tool: ToolConfig) -> None:
     """Migrate colon-based directory names to the new separator format.

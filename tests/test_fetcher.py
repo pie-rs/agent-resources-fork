@@ -739,17 +739,21 @@ class TestFetchAndInstallToTools:
         assert results["cursor"].exists()
         # Claude uses flat naming (default skill name)
         assert results["claude"].name == skill_fixture.name
-        # Cursor uses nested directories
-        assert results["cursor"].parent.name == "local"
+        # Cursor also uses flat naming
+        assert results["cursor"].name == skill_fixture.name
 
     def test_rollback_on_partial_failure(self, tmp_path, skill_fixture):
         """If second tool fails, first tool installation is rolled back."""
+        from agr.exceptions import AgrError
+
         repo_root = tmp_path / "repo"
         repo_root.mkdir()
         (repo_root / ".git").mkdir()
 
-        # Pre-install to cursor so it will fail without overwrite
-        cursor_skills = repo_root / ".cursor" / "skills" / "local"
+        # Pre-install to cursor so it will fail without overwrite.
+        # The existing skill has no metadata, so the local-conflict
+        # check treats it as an unknown install and raises AgrError.
+        cursor_skills = repo_root / ".cursor" / "skills"
         cursor_skills.mkdir(parents=True)
         (cursor_skills / skill_fixture.name).mkdir()
         (cursor_skills / skill_fixture.name / "SKILL.md").write_text("# existing")
@@ -758,8 +762,8 @@ class TestFetchAndInstallToTools:
             is_local=True, name=skill_fixture.name, local_path=skill_fixture
         )
 
-        # This should fail on cursor (file exists) and rollback claude
-        with pytest.raises(FileExistsError):
+        # This should fail on cursor (conflict) and rollback claude
+        with pytest.raises(AgrError, match="already installed"):
             fetch_and_install_to_tools(
                 handle, repo_root, [CLAUDE, CURSOR], overwrite=False
             )

@@ -18,7 +18,7 @@ class ToolConfig:
     name: str
     config_dir: str  # e.g., ".claude"
     skills_subdir: str = "skills"  # e.g., "skills"
-    supports_nested: bool = False  # True for nested dir structure (Cursor)
+    supports_nested: bool = False  # Reserved for future use
     global_config_dir: str | None = (
         None  # For tools where personal path differs (e.g., Copilot)
     )
