@@ -7,6 +7,14 @@ from pathlib import Path
 from agr.handle import ParsedHandle
 from agr.metadata import (
     METADATA_FILENAME,
+    METADATA_KEY_HANDLE,
+    METADATA_KEY_INSTALLED_NAME,
+    METADATA_KEY_LOCAL_PATH,
+    METADATA_KEY_SOURCE,
+    METADATA_KEY_TOOL,
+    METADATA_KEY_TYPE,
+    METADATA_TYPE_LOCAL,
+    METADATA_TYPE_REMOTE,
     build_handle_id,
     build_handle_ids,
     compute_content_hash,
@@ -376,11 +384,11 @@ class TestStampSkillMetadata:
 
         meta = read_skill_metadata(skill_dir)
         assert meta is not None
-        assert meta["type"] == "remote"
-        assert meta["handle"] == "owner/repo/my-skill"
-        assert meta["source"] == "github"
-        assert meta["tool"] == "cursor"
-        assert meta["installed_name"] == "my-skill"
+        assert meta[METADATA_KEY_TYPE] == METADATA_TYPE_REMOTE
+        assert meta[METADATA_KEY_HANDLE] == "owner/repo/my-skill"
+        assert meta[METADATA_KEY_SOURCE] == "github"
+        assert meta[METADATA_KEY_TOOL] == "cursor"
+        assert meta[METADATA_KEY_INSTALLED_NAME] == "my-skill"
 
     def test_writes_local_metadata_fields(self, tmp_path: Path):
         """Local handle metadata includes type and local_path fields."""
@@ -393,8 +401,8 @@ class TestStampSkillMetadata:
 
         meta = read_skill_metadata(skill_dir)
         assert meta is not None
-        assert meta["type"] == "local"
-        assert meta["local_path"] == str(skill_dir.resolve())
+        assert meta[METADATA_KEY_TYPE] == METADATA_TYPE_LOCAL
+        assert meta[METADATA_KEY_LOCAL_PATH] == str(skill_dir.resolve())
 
     def test_source_defaults_to_default_source_name(self, tmp_path: Path):
         """Remote handle without explicit source uses DEFAULT_SOURCE_NAME."""
@@ -407,4 +415,4 @@ class TestStampSkillMetadata:
 
         meta = read_skill_metadata(skill_dir)
         assert meta is not None
-        assert meta["source"] == DEFAULT_SOURCE_NAME
+        assert meta[METADATA_KEY_SOURCE] == DEFAULT_SOURCE_NAME

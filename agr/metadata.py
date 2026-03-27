@@ -16,6 +16,11 @@ METADATA_FILENAME = ".agr.json"
 METADATA_KEY_ID = "id"
 METADATA_KEY_TYPE = "type"
 METADATA_KEY_CONTENT_HASH = "content_hash"
+METADATA_KEY_TOOL = "tool"
+METADATA_KEY_INSTALLED_NAME = "installed_name"
+METADATA_KEY_LOCAL_PATH = "local_path"
+METADATA_KEY_HANDLE = "handle"
+METADATA_KEY_SOURCE = "source"
 
 # Metadata type discriminators written to and read from .agr.json
 METADATA_TYPE_LOCAL = "local"
@@ -113,16 +118,16 @@ def write_skill_metadata(
     )
     data: dict[str, Any] = {
         METADATA_KEY_ID: build_handle_id(handle, repo_root, source),
-        "tool": tool_name,
-        "installed_name": installed_name,
+        METADATA_KEY_TOOL: tool_name,
+        METADATA_KEY_INSTALLED_NAME: installed_name,
     }
     if handle.is_local:
         data[METADATA_KEY_TYPE] = METADATA_TYPE_LOCAL
-        data["local_path"] = str(resolved_local) if resolved_local else None
+        data[METADATA_KEY_LOCAL_PATH] = str(resolved_local) if resolved_local else None
     else:
         data[METADATA_KEY_TYPE] = METADATA_TYPE_REMOTE
-        data["handle"] = handle.to_toml_handle()
-        data["source"] = source or DEFAULT_SOURCE_NAME
+        data[METADATA_KEY_HANDLE] = handle.to_toml_handle()
+        data[METADATA_KEY_SOURCE] = source or DEFAULT_SOURCE_NAME
 
     if content_hash is not None:
         data[METADATA_KEY_CONTENT_HASH] = content_hash
