@@ -39,22 +39,24 @@ agrx kasperjunge/commit -i                          # Interactive: skill + chat
 1. **Determine tool** — Uses `--tool` flag, or `default_tool` from `agr.toml`, or the first tool in `tools`, or `claude` (see [Supported Tools](tools.md))
 2. **Download skill** — Clones the repo and extracts the skill (same as `agr add`, using [handles](concepts.md#handles))
 3. **Install temporarily** — Places the skill in your tool's skills directory with a unique `_agrx_` prefix so it doesn't conflict with permanent installs
-4. **Run the tool's CLI** — Invokes the tool (e.g., `claude -p "/skill-name"`) with
-   permission-skipping flags so the skill can run without manual approval prompts
+4. **Run the tool's CLI** — Invokes the tool (e.g., `claude -p "/skill-name"`)
 5. **Clean up** — Removes the temporary skill directory, even on Ctrl+C
 
-??? note "What flags does agrx pass to each tool?"
-    To avoid interactive permission prompts, `agrx` passes a tool-specific flag:
+??? note "Permission-bypass flags in interactive mode"
+    When you use `-i` (interactive mode), `agrx` passes a tool-specific flag
+    to reduce permission prompts during the session:
 
-    | Tool | Flag |
+    | Tool | Flag (with `-i` only) |
     |------|------|
     | Claude Code | `--dangerously-skip-permissions` |
     | OpenAI Codex | `--full-auto` |
     | GitHub Copilot | `--allow-all-tools` |
 
-    Cursor, OpenCode, and Antigravity don't use a permission-bypass flag.
-    If you need to review permissions before execution, use `agr add` to
-    install the skill permanently and invoke it manually through your tool's CLI.
+    Cursor, OpenCode, and Antigravity don't have a permission-bypass flag.
+
+    Without `-i`, the tool runs in non-interactive mode (prompt-and-exit) and
+    no permission-bypass flag is passed — you'll see normal permission prompts
+    if the skill takes actions that require approval.
 
 ## Options
 

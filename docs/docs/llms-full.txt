@@ -157,9 +157,9 @@ Run a skill temporarily without adding to agr.toml.
 agrx <handle> [options]
 ```
 
-Downloads the skill, runs it with the selected tool's CLI, and cleans up. To avoid interactive permission prompts, agrx passes a tool-specific flag:
+Downloads the skill, runs it with the selected tool's CLI, and cleans up. In interactive mode (`-i`), agrx passes a tool-specific permission-bypass flag:
 
-| Tool | Flag |
+| Tool | Flag (with `-i` only) |
 |------|------|
 | Claude Code | --dangerously-skip-permissions |
 | OpenAI Codex | --full-auto |
@@ -167,6 +167,8 @@ Downloads the skill, runs it with the selected tool's CLI, and cleans up. To avo
 | Cursor | (none) |
 | OpenCode | (none) |
 | Antigravity | (none — no CLI) |
+
+Without `-i`, the tool runs in prompt-and-exit mode with normal permission prompts.
 
 Options:
 - `--tool`, `-t` — tool CLI (claude, cursor, codex, opencode, copilot, antigravity)
