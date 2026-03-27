@@ -34,6 +34,18 @@ from agr.skill import (
 GITHUB_API_BASE = "https://api.github.com"
 
 
+def _build_display_handle(owner: str, repo: str, skill_name: str) -> str:
+    """Build a user-facing handle string, omitting the repo for the default.
+
+    Two-part handles (``owner/skill``) are used when the skill lives in the
+    default repo (``skills``); three-part handles (``owner/repo/skill``)
+    are used otherwise.
+    """
+    if repo == DEFAULT_REPO_NAME:
+        return f"{owner}/{skill_name}"
+    return f"{owner}/{repo}/{skill_name}"
+
+
 def _github_tree_url(owner: str, repo: str) -> str:
     """Build a GitHub API URL for fetching a repository's full tree."""
     return f"{GITHUB_API_BASE}/repos/{owner}/{repo}/git/trees/HEAD?recursive=1"
@@ -243,12 +255,7 @@ def list_skills(repo_handle: str) -> list[SkillInfo]:
         )
 
     for name in skill_names:
-        # Construct handle
-        if repo == DEFAULT_REPO_NAME:
-            handle = f"{owner}/{name}"
-        else:
-            handle = f"{owner}/{repo}/{name}"
-
+        handle = _build_display_handle(owner, repo, name)
         skills.append(
             SkillInfo(
                 name=name,
@@ -340,11 +347,7 @@ def skill_info(handle: str) -> SkillInfo:
             stacklevel=2,
         )
 
-    # Construct handle
-    if repo == DEFAULT_REPO_NAME:
-        full_handle = f"{owner}/{parsed.name}"
-    else:
-        full_handle = f"{owner}/{repo}/{parsed.name}"
+    full_handle = _build_display_handle(owner, repo, parsed.name)
 
     return SkillInfo(
         name=parsed.name,
