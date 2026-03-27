@@ -184,7 +184,7 @@ Gemini).
 | **Instruction file** | `GEMINI.md` |
 | **CLI command** | — (no CLI available) |
 | **Skill invocation** | — |
-| **Detection signals** | `.gemini/`, `.agent/` |
+| **Detection signals** | `.gemini/`, `.agents/` |
 
 !!! warning "No CLI support"
     Antigravity does not have a standalone CLI, so `agrx` cannot run skills
