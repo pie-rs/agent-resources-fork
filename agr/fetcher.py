@@ -5,7 +5,6 @@ Git operations (cloning, checkout, etc.) live in agr.git.
 
 import logging
 import shutil
-import warnings
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Generator, NamedTuple
@@ -23,9 +22,9 @@ from agr.git import (
 )
 from agr.handle import (
     INSTALLED_NAME_SEPARATOR,
-    LEGACY_REPO_DEPRECATION_WARNING,
     ParsedHandle,
     iter_repo_candidates,
+    warn_legacy_repo,
 )
 from agr.metadata import (
     build_handle_id,
@@ -567,11 +566,7 @@ def install_remote_skill(
             else handle
         )
         if loc.is_legacy:
-            warnings.warn(
-                LEGACY_REPO_DEPRECATION_WARNING,
-                UserWarning,
-                stacklevel=2,
-            )
+            warn_legacy_repo()
         return install_skill_from_repo(
             loc.repo_dir,
             handle.name,
@@ -710,11 +705,7 @@ def fetch_and_install_to_tools(
             # Warn after successful install so the user sees it once,
             # not on partial failure.
             if loc.is_legacy:
-                warnings.warn(
-                    LEGACY_REPO_DEPRECATION_WARNING,
-                    UserWarning,
-                    stacklevel=2,
-                )
+                warn_legacy_repo()
     return installed
 
 

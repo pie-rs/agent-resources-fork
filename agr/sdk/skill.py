@@ -3,7 +3,6 @@
 import hashlib
 import subprocess
 import time
-import warnings
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -16,10 +15,10 @@ from agr.exceptions import (
 from agr.fetcher import prepare_repo_for_skill
 from agr.git import downloaded_repo
 from agr.handle import (
-    LEGACY_REPO_DEPRECATION_WARNING,
     ParsedHandle,
     iter_repo_candidates,
     parse_handle,
+    warn_legacy_repo,
 )
 from agr.metadata import compute_content_hash, read_skill_metadata
 from agr.sdk.cache import cache_skill, get_skill_cache_path, is_cached
@@ -147,11 +146,7 @@ class Skill:
                         )
 
                     if is_legacy:
-                        warnings.warn(
-                            LEGACY_REPO_DEPRECATION_WARNING,
-                            UserWarning,
-                            stacklevel=2,
-                        )
+                        warn_legacy_repo()
                     return cls(
                         name=parsed.name,
                         path=cached_path,

@@ -355,6 +355,126 @@
           "@type": "Answer",
           "text": "You can't remove a source that is currently set as default_source. Change the default first: agr config set default_source github, then agr config remove sources my-server."
         }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Too many path segments\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Handles support at most three parts: user/repo/skill. Check for extra slashes in your handle. The format is either user/skill (two parts) or user/repo/skill (three parts)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Contains reserved sequence '--'\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Skill names cannot contain consecutive hyphens (--). Rename the skill to use single hyphens, for example my-skill instead of my--skill."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"No dependencies in agr.toml. Nothing to sync.\"?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Your agr.toml exists but has no dependencies entry. Add skills first with agr add user/skill — this both installs the skill and adds it to agr.toml."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Instruction sync skipped: CLAUDE.md not found\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You have sync_instructions = true but the canonical instruction file doesn't exist yet. Create the file (e.g., touch CLAUDE.md) then run agr sync again."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"default_source not found in [[source]] list\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Your default_source refers to a source that doesn't exist. Either add the source with agr config add sources <name> --type git --url <url>, or fix the default with agr config set default_source github."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"dependencies must be declared before [[source]] blocks\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "In agr.toml, the dependencies array must come before any [[source]] entries. Move your dependencies block above the [[source]] blocks in the file."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Unknown source in dependency\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A dependency in agr.toml specifies a source that isn't defined in your [[source]] list. Either add the missing source with agr config add sources <name>, or remove the source field from the dependency in agr.toml."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"canonical_instructions must be 'AGENTS.md', 'CLAUDE.md', or 'GEMINI.md'\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Only three instruction file names are supported for syncing: AGENTS.md, CLAUDE.md, and GEMINI.md. Other filenames like README.md or INSTRUCTIONS.md won't work. Set it with: agr config set canonical_instructions CLAUDE.md."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Source entry missing name\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A [[source]] block in your agr.toml is missing the name field. Every source needs a name, type, and url. Example: [[source]] with name = \"my-server\", type = \"git\", url = \"https://git.example.com/{owner}/{repo}.git\"."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Source missing url\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A [[source]] block in your agr.toml has a name but no url. Add a URL template with {owner} and {repo} placeholders, e.g., url = \"https://git.example.com/{owner}/{repo}.git\"."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Unsupported source type\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Only git sources are currently supported. Change the type field in your [[source]] block to \"git\". Other source types like svn or hg are not available."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Local skills cannot specify a source\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The --source flag only applies to remote handles. Local paths (like ./my-skill) are installed directly from disk and don't go through any source. Remove the --source flag: agr add ./my-skill."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Directory already exists\" when running agr init?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "agr init won't overwrite an existing directory. Either remove the existing directory, or choose a different name for your new skill."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Local skill name is already installed\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You have two local skills with the same name. agr enforces unique names to avoid conflicts. Either rename one of the skills or remove the existing one with agr remove, then add the new one."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"No global agr.toml found\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "There's no global config yet. Install a skill globally to create one: agr add -g user/skill. The global config lives at ~/.agr/agr.toml."
+        }
       }
     ]
   }

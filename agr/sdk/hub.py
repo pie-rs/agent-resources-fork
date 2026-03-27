@@ -3,7 +3,6 @@
 import base64
 import json
 import urllib.request
-import warnings
 from dataclasses import dataclass
 from typing import Any
 from urllib.error import HTTPError, URLError
@@ -19,9 +18,9 @@ from agr.git import get_github_token
 from agr.handle import (
     DEFAULT_REPO_NAME,
     LEGACY_DEFAULT_REPO_NAME,
-    LEGACY_REPO_DEPRECATION_WARNING,
     iter_repo_candidates,
     parse_handle,
+    warn_legacy_repo,
 )
 from agr.sdk.types import SkillInfo
 from agr.skill import (
@@ -248,11 +247,7 @@ def list_skills(repo_handle: str) -> list[SkillInfo]:
     # Build SkillInfo objects
     skills = []
     if used_legacy:
-        warnings.warn(
-            LEGACY_REPO_DEPRECATION_WARNING,
-            UserWarning,
-            stacklevel=2,
-        )
+        warn_legacy_repo()
 
     for name in skill_names:
         handle = _build_display_handle(owner, repo, name)
@@ -341,11 +336,7 @@ def skill_info(handle: str) -> SkillInfo:
         description = _extract_description(content)
 
     if used_legacy:
-        warnings.warn(
-            LEGACY_REPO_DEPRECATION_WARNING,
-            UserWarning,
-            stacklevel=2,
-        )
+        warn_legacy_repo()
 
     full_handle = _build_display_handle(owner, repo, parsed.name)
 

@@ -13,6 +13,7 @@ For tools with nested directory support (e.g., Cursor):
 - Local: local/skillname/
 """
 
+import warnings
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -36,6 +37,16 @@ LEGACY_REPO_DEPRECATION_WARNING = (
     "Use an explicit handle like 'owner/agent-resources/skill' "
     "or move/rename your repo to 'skills'."
 )
+
+
+def warn_legacy_repo() -> None:
+    """Issue a deprecation warning for legacy 'agent-resources' repo fallback.
+
+    Centralizes the warning so callers don't repeat the message, category,
+    and stacklevel. Uses ``stacklevel=3`` to point at the caller's caller
+    (the public API entry point).
+    """
+    warnings.warn(LEGACY_REPO_DEPRECATION_WARNING, UserWarning, stacklevel=3)
 
 
 def iter_repo_candidates(repo: str | None) -> list[tuple[str, bool]]:
