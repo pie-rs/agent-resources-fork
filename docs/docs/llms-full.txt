@@ -575,6 +575,9 @@ Use `--overwrite`: `agr add user/skill --overwrite`
 ### "Authentication failed"
 Token missing, expired, or wrong permissions. Export GITHUB_TOKEN or GH_TOKEN with Contents: Read-only access.
 
+### "GitHub API rate limit exceeded"
+Mainly affects the Python SDK (list_skills(), skill_info()), not agr add/sync which use Git clones. Set GITHUB_TOKEN to raise your limit from 60/hour (unauthenticated) to 5,000/hour. Rate limits reset hourly.
+
 ### "Invalid handle"
 Single words are treated as local paths. For remote skills, include the username: `agr add kasperjunge/commit` not `agr add commit`. Max three parts: `user/repo/skill`.
 

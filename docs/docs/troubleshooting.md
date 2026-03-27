@@ -419,6 +419,24 @@ type = "git"
 url = "https://git.example.com/{owner}/{repo}.git"
 ```
 
+### How do I fix "GitHub API rate limit exceeded"?
+
+```text
+Error: GitHub API rate limit exceeded
+```
+
+You've hit GitHub's API rate limit. This mainly affects the Python SDK (`list_skills()`, `skill_info()`) which use the GitHub API — not `agr add` or `agr sync`, which use Git clones.
+
+- **Authenticate to raise your limit.** Unauthenticated requests are limited to 60/hour. With a token, you get 5,000/hour:
+  ```bash
+  export GITHUB_TOKEN="ghp_your_token_here"
+  ```
+- **Wait for the limit to reset.** GitHub rate limits reset hourly. Check your remaining quota with:
+  ```bash
+  curl -s -H "Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/rate_limit | python3 -m json.tool
+  ```
+- **In CI, cache results.** If your pipeline calls `list_skills()` or `skill_info()` repeatedly, cache the output instead of calling the API on every run.
+
 ### How do I fix "Local skills cannot specify a source"?
 
 ```text
