@@ -114,7 +114,7 @@ when the repo has a different name.
 ### Sources & Private Repos
 
 ```bash
-export GITHUB_TOKEN="ghp_..."                    # Authenticate for private repos
+export GITHUB_TOKEN="ghp_aBcDeFgHiJkL01234567890mNoPqRsTuVwXy"  # Authenticate for private repos
 agr config add sources gitlab \
   --type git --url "https://gitlab.com/{owner}/{repo}.git"   # Custom source
 agr add user/skill --source gitlab               # Use a specific source

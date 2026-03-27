@@ -170,7 +170,7 @@ When a two-part [handle](concepts.md#handles) like `agr add owner/repo` fails (b
 repo, not a skill in the default `skills` repo), agr now probes the repo and
 suggests the correct three-part handles:
 
-```
+```text
 Skill 'my-repo' not found. However, 'owner/my-repo' exists as a repository with 3 skill(s):
   agr add owner/my-repo/skill-a
   agr add owner/my-repo/skill-b
@@ -308,7 +308,7 @@ for global).
 Set `GITHUB_TOKEN` or `GH_TOKEN` to access private skill repositories:
 
 ```bash
-export GITHUB_TOKEN="ghp_your_token"
+export GITHUB_TOKEN="ghp_aBcDeFgHiJkL01234567890mNoPqRsTuVwXy"
 agr add private-org/skills/internal-tool
 ```
 

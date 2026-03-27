@@ -64,7 +64,7 @@ The repository doesn't exist or is private. Check:
 1. **Typo in the handle?** Verify the username and repo name on GitHub.
 2. **Private repo?** Set a GitHub token (see [Private Repositories](configuration.md#private-repositories)):
    ```bash
-   export GITHUB_TOKEN="ghp_your_token_here"
+   export GITHUB_TOKEN="ghp_aBcDeFgHiJkL01234567890mNoPqRsTuVwXy"
    ```
 3. **Non-default repo name?** Use the three-part handle format:
    ```bash
@@ -81,7 +81,7 @@ Your GitHub token is missing, expired, or lacks permissions.
 
 - **No token set?** Export one:
   ```bash
-  export GITHUB_TOKEN="ghp_your_token_here"
+  export GITHUB_TOKEN="ghp_aBcDeFgHiJkL01234567890mNoPqRsTuVwXy"
   # or
   export GH_TOKEN="$(gh auth token)"
   ```
@@ -606,7 +606,7 @@ You've hit GitHub's API rate limit. This mainly affects the Python SDK (`list_sk
 
 - **Authenticate to raise your limit.** Unauthenticated requests are limited to 60/hour. With a token, you get 5,000/hour:
   ```bash
-  export GITHUB_TOKEN="ghp_your_token_here"
+  export GITHUB_TOKEN="ghp_aBcDeFgHiJkL01234567890mNoPqRsTuVwXy"
   ```
 - **Wait for the limit to reset.** GitHub rate limits reset hourly. Check your remaining quota with:
   ```bash

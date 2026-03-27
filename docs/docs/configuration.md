@@ -209,7 +209,7 @@ your environment and agr will use it automatically for all remote operations.
 Export one of these environment variables:
 
 ```bash
-export GITHUB_TOKEN="ghp_your_token_here"
+export GITHUB_TOKEN="ghp_aBcDeFgHiJkL01234567890mNoPqRsTuVwXy"
 ```
 
 Or, if you use the [GitHub CLI](https://cli.github.com/):
@@ -237,13 +237,13 @@ needed. It works with `agr add`, `agr sync`, `agrx`, and the Python SDK.
     === "bash"
 
         ```bash
-        echo 'export GITHUB_TOKEN="ghp_your_token"' >> ~/.bashrc
+        echo 'export GITHUB_TOKEN="ghp_aBcDeFgHiJkL01234567890mNoPqRsTuVwXy"' >> ~/.bashrc
         ```
 
     === "zsh"
 
         ```bash
-        echo 'export GITHUB_TOKEN="ghp_your_token"' >> ~/.zshrc
+        echo 'export GITHUB_TOKEN="ghp_aBcDeFgHiJkL01234567890mNoPqRsTuVwXy"' >> ~/.zshrc
         ```
 
     Or load it dynamically from the GitHub CLI:

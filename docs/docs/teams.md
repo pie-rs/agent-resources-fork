@@ -127,7 +127,7 @@ this through environment variables — no configuration changes needed.
 Each developer exports a GitHub token:
 
 ```bash
-export GITHUB_TOKEN="ghp_your_token_here"
+export GITHUB_TOKEN="ghp_aBcDeFgHiJkL01234567890mNoPqRsTuVwXy"
 ```
 
 Or, if you use the [GitHub CLI](https://cli.github.com/):
