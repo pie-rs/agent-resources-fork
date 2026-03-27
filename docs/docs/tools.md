@@ -23,14 +23,14 @@ keywords:
 
 ## All Tools at a Glance
 
-| Tool | Config name | Project skills dir | Global skills dir | agrx CLI |
-|------|-------------|-------------------|-------------------|----------|
-| [Claude Code](#claude-code) | `claude` | `.claude/skills/` | `~/.claude/skills/` | `claude` |
-| [Cursor](#cursor) | `cursor` | `.cursor/skills/` | `~/.cursor/skills/` | `agent` |
-| [OpenAI Codex](#openai-codex) | `codex` | `.agents/skills/` | `~/.agents/skills/` | `codex` |
-| [OpenCode](#opencode) | `opencode` | `.opencode/skills/` | `~/.config/opencode/skills/` | `opencode` |
-| [GitHub Copilot](#github-copilot) | `copilot` | `.github/skills/` | `~/.copilot/skills/` | `copilot` |
-| [Antigravity](#antigravity) | `antigravity` | `.agent/skills/` | `~/.gemini/antigravity/skills/` | — |
+| Tool | Config name | Invoke skill | Project skills dir | Global skills dir | agrx CLI |
+|------|-------------|-------------|-------------------|-------------------|----------|
+| [Claude Code](#claude-code) | `claude` | `/skill-name` | `.claude/skills/` | `~/.claude/skills/` | `claude` |
+| [Cursor](#cursor) | `cursor` | `/skill-name` | `.cursor/skills/` | `~/.cursor/skills/` | `agent` |
+| [OpenAI Codex](#openai-codex) | `codex` | `$skill-name` | `.agents/skills/` | `~/.agents/skills/` | `codex` |
+| [OpenCode](#opencode) | `opencode` | `skill-name` | `.opencode/skills/` | `~/.config/opencode/skills/` | `opencode` |
+| [GitHub Copilot](#github-copilot) | `copilot` | `/skill-name` | `.github/skills/` | `~/.copilot/skills/` | `copilot` |
+| [Antigravity](#antigravity) | `antigravity` | via IDE | `.agent/skills/` | `~/.gemini/antigravity/skills/` | — |
 
 ## Target Multiple Tools at Once
 
