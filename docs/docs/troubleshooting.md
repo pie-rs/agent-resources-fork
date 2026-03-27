@@ -10,6 +10,13 @@ keywords:
   - skill not found agr
   - agr.toml errors
   - agr handle format
+  - agr repository not found
+  - agr permission error private repo
+  - agr config error fix
+  - agrx tool CLI not found
+  - agr skill already exists
+  - agr invalid handle format
+  - agr git not found
 ---
 
 # Troubleshooting
