@@ -31,11 +31,14 @@ Complete reference for all `agr` and [`agrx`](agrx.md) commands. For guided
 setup, start with the [Tutorial](tutorial.md).
 
 **What is agr?** A package manager for AI agent skills. A **skill** is a folder
-with a `SKILL.md` file containing instructions for an AI coding agent. A
-**handle** like `user/skill` or `user/repo/skill` points to a skill on GitHub.
-agr installs skills into Claude Code, Cursor, Codex, OpenCode, GitHub Copilot,
-and Antigravity. `agr.toml` tracks dependencies — commit it so your team shares
-the same skills.
+with a `SKILL.md` file containing instructions for an AI coding agent — see
+[Creating Skills](creating.md) to build your own. A
+**[handle](concepts.md#handles)** like `user/skill` or `user/repo/skill` points
+to a skill on GitHub. Browse available skills in the
+[Skill Directory](skills.md). agr installs skills into
+[supported tools](tools.md) including Claude Code, Cursor, Codex, OpenCode,
+GitHub Copilot, and Antigravity. `agr.toml` tracks dependencies — commit it so
+your [team](teams.md) shares the same skills.
 
 ## Quick Reference
 
@@ -77,6 +80,8 @@ agrx user/skill --tool cursor          # Use a specific tool
 
 ### Create & Share
 
+See the full [Creating Skills](creating.md) guide for details.
+
 ```bash
 agr init my-skill                      # Scaffold a new skill
 agr add ./my-skill                     # Test locally
@@ -109,7 +114,8 @@ agr add ./path/to/skill            # Local directory on disk
 ```
 
 Two-part handles (`user/skill`) assume a repo named `skills`. Use three parts
-when the repo has a different name.
+when the repo has a different name. See [Handle Resolution](concepts.md#handles)
+for the full lookup rules.
 
 ### Sources & Private Repos
 
@@ -400,6 +406,7 @@ agrx <handle> [options]
 ```
 
 Downloads the skill, runs it with the selected tool, and cleans up afterwards.
+See the [agrx guide](agrx.md) for usage patterns and examples.
 
 **Options:**
 
@@ -456,6 +463,11 @@ Note: `dependencies` must appear before any `[[source]]` blocks in `agr.toml`.
 - `sync_instructions` — Sync instruction files on `agr sync`
 - `canonical_instructions` — Canonical instruction file (`AGENTS.md`, `CLAUDE.md`, or `GEMINI.md`)
 
+## Python SDK
+
+For programmatic access to skills, use the [Python SDK](sdk.md) — it provides
+`Skill`, `list_skills`, `skill_info`, and caching APIs.
+
 ## Troubleshooting
 
 See the [Troubleshooting](troubleshooting.md) page for solutions to common
@@ -466,3 +478,9 @@ and more.
 
 See the [Changelog](changelog.md) for release notes, new features, and
 breaking changes.
+
+## Next Steps
+
+- [Creating Skills](creating.md) — Build and publish your own skills
+- [Core Concepts](concepts.md) — Understand handles, sources, and scopes
+- [Teams](teams.md) — Share skills across your team with `agr.toml`
