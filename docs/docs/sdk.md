@@ -22,6 +22,12 @@ keywords:
 
 Use `agr` as a Python library to load, inspect, and cache [skills](concepts.md#skills) programmatically.
 
+**What is a skill?** A folder containing a `SKILL.md` file with YAML frontmatter
+(`name`, `description`) and markdown instructions for an AI coding agent. Skills
+work across Claude Code, Cursor, Codex, OpenCode, GitHub Copilot, and
+Antigravity. A **handle** like `"anthropics/skills/code-review"` points to a
+skill directory inside a GitHub repo.
+
 ## Install
 
 ```bash

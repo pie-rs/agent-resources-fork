@@ -30,6 +30,13 @@ keywords:
 Complete reference for all `agr` and [`agrx`](agrx.md) commands. For guided
 setup, start with the [Tutorial](tutorial.md).
 
+**What is agr?** A package manager for AI agent skills. A **skill** is a folder
+with a `SKILL.md` file containing instructions for an AI coding agent. A
+**handle** like `user/skill` or `user/repo/skill` points to a skill on GitHub.
+agr installs skills into Claude Code, Cursor, Codex, OpenCode, GitHub Copilot,
+and Antigravity. `agr.toml` tracks dependencies — commit it so your team shares
+the same skills.
+
 ## Quick Reference
 
 ### Install & Remove
