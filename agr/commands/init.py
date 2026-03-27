@@ -98,11 +98,12 @@ def run_init(
 
     config_path, created = init_config(repo_root)
     config = AgrConfig.load(config_path)
-    original_tools = list(config.tools)
-    original_default_tool = config.default_tool
-    original_sync_instructions = config.sync_instructions
-    original_canonical_instructions = config.canonical_instructions
-    changed = False
+    original_state = (
+        list(config.tools),
+        config.default_tool,
+        config.sync_instructions,
+        config.canonical_instructions,
+    )
 
     if created:
         console.print(f"[green]Created:[/green] {config_path}")
@@ -116,15 +117,11 @@ def run_init(
         tools_override = normalize_and_validate_tool_names(tools_override)
         config.tools = tools_override
         tools_display = tools_override
-        if config.tools != original_tools:
-            changed = True
     elif created:
         detected_tools = detect_tools(repo_root)
         if detected_tools:
             config.tools = detected_tools
             tools_display = detected_tools
-            if config.tools != original_tools:
-                changed = True
     else:
         tools_display = config.tools if config.tools else None
 
@@ -132,8 +129,6 @@ def run_init(
     if default_tool:
         names = normalize_and_validate_tool_names([default_tool])
         config.default_tool = names[0]
-        if config.default_tool != original_default_tool:
-            changed = True
 
     if config.default_tool and config.default_tool not in config.tools:
         error_exit("default_tool must be listed in tools. Use --tools to include it.")
@@ -141,8 +136,6 @@ def run_init(
     # Instruction sync
     if sync_instructions is not None:
         config.sync_instructions = sync_instructions
-        if config.sync_instructions != original_sync_instructions:
-            changed = True
 
     if canonical_instructions:
         try:
@@ -150,17 +143,19 @@ def run_init(
         except ConfigError as exc:
             error_exit(str(exc))
         config.canonical_instructions = canonical_instructions
-        if config.canonical_instructions != original_canonical_instructions:
-            changed = True
     elif config.sync_instructions and config.canonical_instructions is None:
         if config.default_tool:
             config.canonical_instructions = canonical_instruction_file(
                 config.default_tool
             )
-            if config.canonical_instructions != original_canonical_instructions:
-                changed = True
 
-    if changed:
+    current_state = (
+        list(config.tools),
+        config.default_tool,
+        config.sync_instructions,
+        config.canonical_instructions,
+    )
+    if current_state != original_state:
         config.save(config_path)
 
     # Summary
