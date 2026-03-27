@@ -216,6 +216,34 @@ Check your `agr.toml` for typos in the `tools` list. See [Supported Tools](tools
 | `copilot` | GitHub Copilot |
 | `antigravity` | Antigravity |
 
+### Why does `agr init` detect a tool I don't use?
+
+`agr init` and `agr onboard` auto-detect tools by looking for specific files and
+directories in your repo. Some detection signals are shared between tools:
+
+| Signal | Detected tools |
+|--------|---------------|
+| `.agents/` | OpenAI Codex **and** Antigravity |
+
+For example, if you use Codex and have an `.agents/` directory, agr also detects
+Antigravity because both tools use that directory. This is intentional — the
+`.agents/` path follows the [Agent Skills spec](https://agentskills.io/specification)
+and both tools read skills from it.
+
+To override detection and pick only the tools you want:
+
+```bash
+agr init --tools claude,codex
+```
+
+Or remove unwanted tools after setup:
+
+```bash
+agr config remove tools antigravity
+```
+
+See [Supported Tools — Detection signals](tools.md) for the full list per tool.
+
 ### How do I fix "Invalid TOML in agr.toml"?
 
 ```text

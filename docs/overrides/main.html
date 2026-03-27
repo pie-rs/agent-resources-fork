@@ -270,6 +270,14 @@
       },
       {
         "@type": "Question",
+        "name": "Why does agr init detect a tool I don't use?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Some detection signals are shared between tools. For example, the .agents/ directory detects both OpenAI Codex and Antigravity because both tools use that path. Override detection with: agr init --tools claude,codex — or remove unwanted tools after setup with: agr config remove tools antigravity."
+        }
+      },
+      {
+        "@type": "Question",
         "name": "Why is my skill not showing up in my AI coding tool after running agr add?",
         "acceptedAnswer": {
           "@type": "Answer",
