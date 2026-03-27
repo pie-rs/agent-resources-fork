@@ -123,6 +123,26 @@ agr add your-username/my-skill
 
 ---
 
+## Python SDK
+
+Use `agr` as a library to load, discover, and cache skills programmatically:
+
+```python
+from agr import Skill, list_skills
+
+skill = Skill.from_git("anthropics/skills/code-review")
+print(skill.prompt)   # SKILL.md contents
+print(skill.files)    # Files in the skill directory
+
+for info in list_skills("anthropics/skills"):
+    print(f"{info.handle}: {info.description}")
+```
+
+See the [SDK documentation](https://kasperjunge.github.io/agent-resources/sdk/) for
+cache management, error handling, and the full API.
+
+---
+
 ## Example skills
 
 **Documents & data:**
@@ -213,6 +233,6 @@ Browse all community skills in the [Skill Directory](https://kasperjunge.github.
 
 <div align="center">
 
-[Documentation](https://kasperjunge.github.io/agent-resources/) · [Skill Directory](https://kasperjunge.github.io/agent-resources/skills/) · [Tutorial](https://kasperjunge.github.io/agent-resources/tutorial/) · [MIT License](LICENSE)
+[Documentation](https://kasperjunge.github.io/agent-resources/) · [Skill Directory](https://kasperjunge.github.io/agent-resources/skills/) · [Tutorial](https://kasperjunge.github.io/agent-resources/tutorial/) · [Python SDK](https://kasperjunge.github.io/agent-resources/sdk/) · [MIT License](LICENSE)
 
 </div>
