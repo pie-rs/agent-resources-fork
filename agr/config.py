@@ -28,6 +28,7 @@ from agr.tool import (
 )
 
 CONFIG_FILENAME = "agr.toml"
+DEPENDENCY_TYPE_SKILL = "skill"
 
 
 def validate_canonical_instructions(value: str) -> None:
@@ -205,7 +206,7 @@ def _parse_dependencies_from_doc(
     for item in deps_list:
         if not isinstance(item, dict):
             continue
-        dep_type = item.get("type", "skill")
+        dep_type = item.get("type", DEPENDENCY_TYPE_SKILL)
         handle = item.get("handle")
         path_val = item.get("path")
         source = item.get("source")

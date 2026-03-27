@@ -3,7 +3,7 @@
 from agr.commands import CommandResult
 from agr.commands._tool_helpers import load_existing_config, save_and_summarize_results
 from agr.commands.migrations import run_tool_migrations
-from agr.config import Dependency
+from agr.config import DEPENDENCY_TYPE_SKILL, Dependency
 from agr.console import get_console
 from agr.exceptions import (
     INSTALL_ERROR_TYPES,
@@ -72,14 +72,14 @@ def run_add(
                     path_value = str(handle.resolve_local_path())
                 config.add_dependency(
                     Dependency(
-                        type="skill",
+                        type=DEPENDENCY_TYPE_SKILL,
                         path=path_value,
                     )
                 )
             else:
                 config.add_dependency(
                     Dependency(
-                        type="skill",
+                        type=DEPENDENCY_TYPE_SKILL,
                         handle=handle.to_toml_handle(),
                         source=source,
                     )

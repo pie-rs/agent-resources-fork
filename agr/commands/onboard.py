@@ -10,7 +10,14 @@ from pathlib import Path
 
 from rich.prompt import Confirm, Prompt
 
-from agr.config import CONFIG_FILENAME, AgrConfig, Dependency, find_config, find_repo_root
+from agr.config import (
+    CONFIG_FILENAME,
+    DEPENDENCY_TYPE_SKILL,
+    AgrConfig,
+    Dependency,
+    find_config,
+    find_repo_root,
+)
 from agr.console import error_exit, get_console
 from agr.detect import detect_tools
 from agr.instructions import canonical_instruction_file, detect_instruction_files
@@ -342,7 +349,7 @@ def run_onboard(*, no_migrate: bool = False) -> None:
         dep_path = format_dep_path(repo_root, skill.path)
         if dep_path in existing_ids:
             continue
-        config.add_dependency(Dependency(type="skill", path=dep_path))
+        config.add_dependency(Dependency(type=DEPENDENCY_TYPE_SKILL, path=dep_path))
         existing_ids.add(dep_path)
 
     config.save(config_path)
