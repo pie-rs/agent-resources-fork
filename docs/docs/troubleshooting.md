@@ -503,6 +503,28 @@ You used a key name that `agr config` doesn't recognize. Common mistakes:
 - `source` instead of `sources`
 - `instructions` instead of `sync_instructions`
 
+??? note "How do I fix \"'default_tool' is a scalar. Use 'agr config set'\"?"
+    ```text
+    Error: 'default_tool' is a scalar. Use 'agr config set default_tool <value>'.
+    ```
+
+    You used `agr config add` or `agr config remove` on a scalar key. Scalar
+    keys (`default_tool`, `default_source`, `sync_instructions`,
+    `canonical_instructions`) accept a single value — use `set` to change them
+    and `unset` to clear them:
+
+    ```bash
+    # Wrong — add/remove are for list keys (tools, sources)
+    agr config add default_tool claude
+    agr config remove default_tool
+
+    # Right — use set/unset for scalar keys
+    agr config set default_tool claude
+    agr config unset default_tool
+    ```
+
+    List keys (`tools`, `sources`) support `add` and `remove`.
+
 ??? note "How do I fix \"Cannot set sources directly\"?"
     ```text
     Error: Cannot set sources directly. Use 'agr config add sources' and 'agr config remove sources'.

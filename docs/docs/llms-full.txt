@@ -735,6 +735,10 @@ Run a global config command but no global config exists. Create one with `agr ad
 `Error: Unknown config key 'tool'. Valid keys: canonical_instructions, default_source, default_tool, sources, sync_instructions, tools`
 Check the error hint for valid key names. Common mistakes: `tool` instead of `tools`, `source` instead of `sources`, `instructions` instead of `sync_instructions`.
 
+#### "'default_tool' is a scalar. Use 'agr config set'"
+`Error: 'default_tool' is a scalar. Use 'agr config set default_tool <value>'.`
+You used `agr config add` or `agr config remove` on a scalar key. Scalar keys (`default_tool`, `default_source`, `sync_instructions`, `canonical_instructions`) use `set`/`unset`. List keys (`tools`, `sources`) use `add`/`remove`.
+
 #### "Cannot set sources directly"
 `Error: Cannot set sources directly. Use 'agr config add sources' and 'agr config remove sources'.`
 Sources can't be replaced in one shot with `set`. Add and remove them individually.
