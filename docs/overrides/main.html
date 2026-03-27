@@ -603,6 +603,38 @@
           "@type": "Answer",
           "text": "The source you're trying to remove doesn't exist. Check current sources with agr config get sources to see what's configured."
         }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Skill not found in sources\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "agr searched all configured sources and couldn't find a matching skill. Check the handle for typos, try the three-part format (user/repo/skill) if the skill is in a non-default repo, and verify your sources with agr config get sources."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"GitHub API authentication failed\" in the agr Python SDK?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Your GITHUB_TOKEN was rejected by the GitHub API. This SDK-specific error fires from list_skills() and skill_info(), not agr add. Check if the token is revoked or expired (regenerate at github.com/settings/tokens), and ensure fine-grained tokens have Contents: Read-only permission."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Failed to connect to GitHub API\" in the agr Python SDK?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The SDK couldn't reach api.github.com. This affects list_skills(), skill_info(), and other SDK functions. Check your internet connection, corporate proxy or firewall settings (try curl -s https://api.github.com), and DNS/VPN configuration."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"agrx only works with remote handles\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "agrx downloads skills from GitHub and cleans up after running — it doesn't work with local paths. For local skills, use agr add ./my-skill to install permanently. For remote skills, use the handle format: agrx user/skill."
+        }
       }
     ]
   }
