@@ -18,7 +18,7 @@ keywords:
   - Antigravity agr setup
 ---
 
-# Configuration
+# Configure agr.toml — Tools, Sources, and Syncing
 
 !!! tldr
     `agr.toml` is your skill manifest. Key settings: **tools** (which AI tools
@@ -41,7 +41,7 @@ see [Core Concepts](concepts.md).
 - A **source** is a Git server URL template (e.g., GitHub, GitLab, self-hosted) where agr fetches remote skills from.
 - A **tool** is one of the supported AI coding agents: Claude Code, Cursor, Codex, OpenCode, GitHub Copilot, or Antigravity.
 
-## Settings at a Glance
+## All agr.toml Settings
 
 | Key | Type | Default | What it does |
 |-----|------|---------|-------------|
@@ -116,7 +116,7 @@ per tool. Override detection with `--tools`:
 agr init --tools claude,codex,opencode
 ```
 
-## Sources
+## Fetch Skills from Custom Git Servers { #sources }
 
 Sources define where agr fetches remote skills from. The default source is
 GitHub:
@@ -287,7 +287,9 @@ each tool's global skills directory (see table above).
 
 ## Full agr.toml Example
 
-```toml
+???+ example "Complete annotated agr.toml"
+
+    ```toml
 default_source = "github" # (1)!
 tools = ["claude", "codex", "opencode"] # (2)!
 default_tool = "claude" # (3)!
