@@ -206,9 +206,11 @@ Browse the full list at the [Skill Directory](skills.md) or on
 |--------------|-------|
 | Get started from scratch | [Tutorial](tutorial.md) — install agr, add skills, sync a team, and create your own |
 | Understand how it works | [Core Concepts](concepts.md) — handles, tools, sources, scopes, and the install flow |
+| Try a skill without installing | [agrx](agrx.md) — download, run, and clean up in one command |
 | Set this up for my team | [Teams](teams.md) — team sync, CI/CD, private repos |
 | See what's available | [Skill Directory](skills.md) — official and community skills |
 | Use a specific AI tool | [Supported Tools](tools.md) — Claude Code, Cursor, Codex, OpenCode, Copilot, Antigravity |
 | Build my own skill | [Creating Skills](creating.md) — write, test, and publish skills |
+| Use agr in Python code | [Python SDK](sdk.md) — load, discover, and cache skills programmatically |
 | Look up a command | [CLI Reference](reference.md) — every command, flag, and option |
 | Fix a problem | [Troubleshooting](troubleshooting.md) — common errors and solutions |
