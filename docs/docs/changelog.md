@@ -22,7 +22,9 @@ details, see [CHANGELOG.md on GitHub](https://github.com/kasperjunge/agent-resou
 
 ### Cursor now uses flat naming
 
-Cursor skills are now installed with flat directory names (e.g., `.cursor/skills/skill-name/`) instead of the previous nested structure (`.cursor/skills/owner/repo/skill-name/`). This aligns Cursor with all other supported tools. Existing nested installs will continue to work but `agr sync` will install into the new flat layout.
+Cursor skills are now installed with flat directory names (e.g., `.cursor/skills/skill-name/`) instead of the previous nested structure (`.cursor/skills/owner/repo/skill-name/`). This aligns Cursor with all other supported tools.
+
+**Auto-migration:** When you run `agr sync`, `agr add`, or `agr remove`, agr automatically flattens existing nested Cursor skills to the new layout. If a plain name conflicts with an existing directory, the fully-qualified name (`owner--repo--skill`) is used instead. No manual steps needed.
 
 ### `agrx` now uses `--full-auto` for Codex
 
@@ -269,8 +271,8 @@ fails partway through, already-installed copies are rolled back automatically.
 
 ### Cursor support
 
-agr now supports [Cursor](https://cursor.com) with nested directory structure
-(`.cursor/skills/username/skill/`).
+agr now supports [Cursor](https://cursor.com) with skills installed to
+`.cursor/skills/`.
 
 ### GitHub Copilot support
 
