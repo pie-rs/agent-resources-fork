@@ -362,6 +362,16 @@ def sync_dependencies_to_tools(config: AgrConfig, tool_names: list[str]) -> int:
     return sync_errors
 
 
+def exit_if_sync_errors(sync_errors: int) -> None:
+    """Print a warning and exit if any dependency syncs failed."""
+    if sync_errors:
+        console = get_console()
+        console.print(
+            f"[yellow]Warning:[/yellow] {sync_errors} dependency sync(s) failed"
+        )
+        raise SystemExit(1)
+
+
 def delete_tool_skills(tool_name: str, repo_root: Path | None) -> bool:
     """Delete all installed skills for a configured tool.
 

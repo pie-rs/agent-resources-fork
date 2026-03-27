@@ -15,6 +15,7 @@ from agr.config import (
 from agr.commands._tool_helpers import (
     add_tools_to_config,
     ensure_valid_default_tool,
+    exit_if_sync_errors,
     normalize_and_validate_tool_names,
     print_tool_add_result,
     print_tool_remove_result,
@@ -172,11 +173,7 @@ def run_config_set(key: str, values: list[str], global_scope: bool) -> None:
         added = [n for n in names if n not in previous_tools]
         if not global_scope:
             sync_errors = sync_dependencies_to_tools(config, added)
-            if sync_errors:
-                console.print(
-                    f"[yellow]Warning:[/yellow] {sync_errors} dependency sync(s) failed"
-                )
-                raise SystemExit(1)
+            exit_if_sync_errors(sync_errors)
         config.save()
         console.print(f"[green]Set:[/green] tools = {', '.join(names)}")
         return
@@ -291,11 +288,7 @@ def run_config_add(
 
         if not global_scope:
             sync_errors = sync_dependencies_to_tools(config, result.added)
-            if sync_errors:
-                console.print(
-                    f"[yellow]Warning:[/yellow] {sync_errors} dependency sync(s) failed"
-                )
-                raise SystemExit(1)
+            exit_if_sync_errors(sync_errors)
         if result.added:
             config.save()
 

@@ -9,6 +9,7 @@ from agr.console import error_exit, get_console
 from agr.commands._tool_helpers import (
     add_tools_to_config,
     ensure_valid_default_tool,
+    exit_if_sync_errors,
     normalize_and_validate_tool_names,
     print_tool_add_result,
     print_tool_remove_result,
@@ -53,7 +54,6 @@ def run_tools_list() -> None:
 
 def run_tools_add(tool_names: list[str]) -> None:
     """Add tools and sync existing dependencies to newly added tools."""
-    console = get_console()
     names = normalize_and_validate_tool_names(tool_names)
     config = _load_required_config()
 
@@ -63,11 +63,7 @@ def run_tools_add(tool_names: list[str]) -> None:
     sync_errors = sync_dependencies_to_tools(config, result.added)
     config.save()
 
-    if sync_errors:
-        console.print(
-            f"[yellow]Warning:[/yellow] {sync_errors} dependency sync(s) failed"
-        )
-        raise SystemExit(1)
+    exit_if_sync_errors(sync_errors)
 
 
 def run_tools_set(tool_names: list[str]) -> None:
@@ -96,11 +92,7 @@ def run_tools_set(tool_names: list[str]) -> None:
     sync_errors = sync_dependencies_to_tools(config, added)
     config.save()
 
-    if sync_errors:
-        console.print(
-            f"[yellow]Warning:[/yellow] {sync_errors} dependency sync(s) failed"
-        )
-        raise SystemExit(1)
+    exit_if_sync_errors(sync_errors)
 
 
 def run_tools_remove(tool_names: list[str]) -> None:
