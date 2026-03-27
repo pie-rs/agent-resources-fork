@@ -673,6 +673,26 @@ A dependency is missing both `handle` and `path`. Every dependency needs one.
 #### "canonical_instructions must be 'AGENTS.md', 'CLAUDE.md', or 'GEMINI.md'"
 Only these three instruction file names are supported for syncing.
 
+#### "Unknown config key"
+`Error: Unknown config key 'tool'. Valid keys: canonical_instructions, default_source, default_tool, sources, sync_instructions, tools`
+Check the error hint for valid key names. Common mistakes: `tool` instead of `tools`, `source` instead of `sources`, `instructions` instead of `sync_instructions`.
+
+#### "Cannot set sources directly"
+`Error: Cannot set sources directly. Use 'agr config add sources' and 'agr config remove sources'.`
+Sources can't be replaced in one shot with `set`. Add and remove them individually.
+
+#### "--url is required when adding a source"
+`Error: --url is required when adding a source.`
+When adding a source, provide a URL template with `{owner}` and `{repo}` placeholders: `agr config add sources my-server --url "https://git.example.com/{owner}/{repo}.git"`.
+
+#### "Source already exists"
+`Error: Source 'github' already exists.`
+Remove the old source first, then re-add it: `agr config remove sources github` then `agr config add sources github --url "..."`.
+
+#### "Tool is not in configured tools"
+`Error: Tool 'codex' is not in configured tools. Add it first with 'agr config add tools codex'.`
+You tried to set `default_tool` to a tool not in your `tools` list. Add it first: `agr config add tools codex`.
+
 ### Syncing Errors
 
 #### "No dependencies in agr.toml. Nothing to sync."

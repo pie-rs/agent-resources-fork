@@ -511,6 +511,46 @@
           "@type": "Answer",
           "text": "A dependency in agr.toml is missing both handle and path. Every dependency needs one: use handle for remote GitHub skills or path for local directory skills."
         }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Unknown config key\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You used a key name that agr config doesn't recognize. Valid keys are: canonical_instructions, default_source, default_tool, sources, sync_instructions, tools. Common mistakes: tool instead of tools, source instead of sources, instructions instead of sync_instructions."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Cannot set sources directly\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sources can't be replaced in one shot with agr config set. Add and remove them individually: agr config add sources my-server --url \"https://...\" and agr config remove sources old-server."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"--url is required when adding a source\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "When adding a source, you must provide a URL template with {owner} and {repo} placeholders: agr config add sources my-server --url \"https://git.example.com/{owner}/{repo}.git\"."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Source already exists\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You're trying to add a source with a name that's already configured. Remove the old one first, then re-add it: agr config remove sources github, then agr config add sources github --url \"https://...\"."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Tool is not in configured tools\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You tried to set default_tool to a tool that isn't in your tools list. Add it first: agr config add tools codex, then agr config set default_tool codex."
+        }
       }
     ]
   }
