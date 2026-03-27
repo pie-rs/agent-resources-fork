@@ -190,13 +190,24 @@ agr sync
 
 ## Share with Others
 
-Push to GitHub. Others install with:
+Push your skill to GitHub. The recommended structure is a repo named `skills`
+under your GitHub username — this lets people install with the short two-part
+handle:
+
+```
+your-username/skills/
+├── my-skill/
+│   └── SKILL.md
+└── another-skill/
+    └── SKILL.md
+```
 
 ```bash
 agr add your-username/my-skill
 ```
 
-Or from a specific repo:
+If your skills live in a differently named repo, users use the three-part
+handle instead:
 
 ```bash
 agr add your-username/my-repo/my-skill
