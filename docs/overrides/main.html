@@ -558,6 +558,14 @@
       },
       {
         "@type": "Question",
+        "name": "How do I fix \"Failed to clone repository\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "This is a catch-all error when git clone fails for a reason agr can't classify. Common causes: disk full, file permission issues on the temp directory, corporate proxy or firewall blocking git, or corrupt local git state. Try cloning manually with git clone https://github.com/user/repo.git. If manual clone works, clear the agr cache and retry."
+        }
+      },
+      {
+        "@type": "Question",
         "name": "How do I fix \"agr onboard requires an interactive terminal\"?",
         "acceptedAnswer": {
           "@type": "Answer",

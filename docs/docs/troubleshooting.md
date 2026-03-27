@@ -139,6 +139,22 @@ Error: Network error: could not resolve host for source 'github'.
 
 DNS resolution failed. Check your internet connection, VPN, or proxy settings.
 
+### How do I fix "Failed to clone repository"?
+
+```text
+Error: Failed to clone repository from source 'github'.
+```
+
+This is a catch-all error when git clone fails for a reason agr can't classify
+(not auth, not network, not "repo not found"). Common causes:
+
+- **Disk full** — free up space and try again
+- **File permission issues** — check write access to your temp directory (`$TMPDIR` or `/tmp`)
+- **Corrupt local git state** — clear the agr cache: `python -c "from agr import cache; cache.clear()"`
+- **Corporate proxy or firewall** — git may be blocked. Try cloning the repo manually: `git clone https://github.com/user/repo.git`
+
+If the manual clone works but `agr add` doesn't, [open an issue](https://github.com/kasperjunge/agent-resources/issues/new) with the full error output.
+
 ### How do I fix "agr onboard requires an interactive terminal"?
 
 ```text

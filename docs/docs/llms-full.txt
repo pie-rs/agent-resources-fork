@@ -610,6 +610,10 @@ Use `--overwrite`: `agr add user/skill --overwrite`
 `Error: Network error: could not resolve host for source 'github'.`
 DNS resolution failed. Check your internet connection, VPN, or proxy settings.
 
+#### "Failed to clone repository"
+`Error: Failed to clone repository from source 'github'.`
+Catch-all when git clone fails for an unclassified reason. Check: disk space, file permissions on the temp directory, or corporate proxy/firewall settings. Try cloning manually with `git clone https://github.com/user/repo.git`. If manual clone works but agr doesn't, open an issue.
+
 #### "agr onboard requires an interactive terminal"
 `Error: agr onboard requires an interactive terminal. Hint: Use 'agr init' for non-interactive setup.`
 `agr onboard` needs a real terminal (TTY). In CI/CD or scripts, use `agr init --tools claude,cursor` instead.
