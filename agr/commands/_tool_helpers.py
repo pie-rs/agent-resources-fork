@@ -7,7 +7,8 @@ and the deprecated tool commands (tools.py).
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, Literal, overload
+from collections.abc import Callable
+from typing import Literal, overload
 
 from agr.commands import CommandResult
 from agr.config import (

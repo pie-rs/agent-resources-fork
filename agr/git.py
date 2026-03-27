@@ -6,7 +6,7 @@ import subprocess
 import tempfile
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Generator
+from collections.abc import Generator
 from urllib.parse import quote, urlparse, urlunparse
 
 from agr.exceptions import (

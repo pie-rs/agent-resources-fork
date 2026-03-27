@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Generator
+from collections.abc import Generator
 
 import tomlkit
 from tomlkit import TOMLDocument

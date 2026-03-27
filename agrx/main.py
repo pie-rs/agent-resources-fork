@@ -7,7 +7,8 @@ import sys
 import uuid
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Annotated, Generator, Optional
+from collections.abc import Generator
+from typing import Annotated, Optional
 
 import typer
 

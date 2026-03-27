@@ -7,7 +7,8 @@ import logging
 import shutil
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Generator, NamedTuple
+from collections.abc import Generator
+from typing import NamedTuple
 
 from agr.exceptions import (
     AgrError,

@@ -16,7 +16,8 @@ import os
 import re
 import shutil
 import tempfile
-from typing import Any, Generator, TextIO, cast
+from collections.abc import Generator
+from typing import Any, TextIO, cast
 from pathlib import Path
 
 from agr.exceptions import CacheError
