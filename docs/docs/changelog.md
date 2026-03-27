@@ -55,6 +55,10 @@ The `description` frontmatter field is now required when scaffolding a skill wit
 description: TODO — describe what this skill does and when to use it
 ```
 
+### Improved Copilot detection
+
+`agr init` and `agr onboard` now detect GitHub Copilot from `.github/copilot-instructions.md` and `.github/instructions/`, in addition to `.github/copilot/` and `.github/skills/`. This catches projects that use Copilot's repo-wide or path-specific instruction files without a dedicated skills directory.
+
 ### Improved OpenCode detection
 
 `agr init` and `agr onboard` now detect OpenCode from `opencode.json` and `opencode.jsonc` config files, in addition to the `.opencode/` directory. This catches projects that use OpenCode's config file without having created the `.opencode/` directory yet.

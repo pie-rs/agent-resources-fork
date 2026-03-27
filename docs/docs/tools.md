@@ -161,7 +161,7 @@ assistant, available in VS Code, JetBrains, and the CLI.
 | **Instruction file** | `AGENTS.md` |
 | **CLI command** | `copilot` |
 | **Skill invocation** | `/skill-name` |
-| **Detection signals** | `.github/copilot`, `.github/skills` |
+| **Detection signals** | `.github/copilot`, `.github/skills`, `.github/copilot-instructions.md`, `.github/instructions` |
 
 !!! note "Asymmetric paths"
     Copilot uses `.github/skills/` for project skills but `~/.copilot/skills/`
