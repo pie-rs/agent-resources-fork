@@ -208,7 +208,7 @@ deleted = cache.clear("kasperjunge/*/*")
 All SDK errors inherit from `AgrError`:
 
 ```python
-from agr import Skill
+from agr import Skill, list_skills, skill_info
 from agr.exceptions import (
     InvalidHandleError,
     InvalidLocalPathError,
@@ -234,6 +234,16 @@ try:
     skill = Skill.from_local("./missing-skill")
 except InvalidLocalPathError:
     print("Path does not exist or is missing SKILL.md")
+
+try:
+    skills = list_skills("not a valid handle/a/b")
+except InvalidHandleError:
+    print("Bad repo handle format")
+
+try:
+    info = skill_info("owner/nonexistent-skill")
+except SkillNotFoundError:
+    print("Skill not found in that repo")
 ```
 
 ## Types
