@@ -72,6 +72,7 @@ class SyncEntry:
     index: int
     handle: ParsedHandle
     source_name: str | None
+    tools_needing_install: list[ToolConfig] | None = None
 
 
 def _print_results_and_summary(
@@ -179,7 +180,8 @@ def _sync_individual_entries(
     for entry in entries:
         try:
             results[entry.index] = _sync_one_dependency(
-                entry.handle, entry.source_name, repo_root, tools, resolver
+                entry.handle, entry.source_name, repo_root, tools, resolver,
+                tools_needing_install=entry.tools_needing_install,
             )
         except INSTALL_ERROR_TYPES as e:
             results[entry.index] = SyncResult.from_error(e)
@@ -243,7 +245,7 @@ def _install_one_from_repo(
 ) -> None:
     """Install a single skill from an already-downloaded repo."""
     handle = entry.handle
-    tools_needing_install = filter_tools_needing_install(
+    tools_needing_install = entry.tools_needing_install or filter_tools_needing_install(
         handle, repo_root, tools, entry.source_name
     )
     if not tools_needing_install:
@@ -278,6 +280,7 @@ def _sync_one_dependency(
     tools: list[ToolConfig],
     resolver: SourceResolver,
     skills_dirs: dict[str, Path] | None = None,
+    tools_needing_install: list[ToolConfig] | None = None,
 ) -> SyncResult:
     """Sync a single dependency: check install status and install if needed.
 
@@ -285,9 +288,10 @@ def _sync_one_dependency(
     or INSTALLED after a successful install.  Raises on failure so the
     caller can handle errors per-entry.
     """
-    tools_needing_install = filter_tools_needing_install(
-        handle, repo_root, tools, source_name, skills_dirs
-    )
+    if tools_needing_install is None:
+        tools_needing_install = filter_tools_needing_install(
+            handle, repo_root, tools, source_name, skills_dirs
+        )
     if not tools_needing_install:
         return SyncResult.up_to_date()
 
@@ -410,6 +414,7 @@ def run_sync(global_install: bool = False) -> None:
                 index=index,
                 handle=handle,
                 source_name=source_name,
+                tools_needing_install=tools_needing_install,
             )
             if dep.is_local:
                 pending_local.append(entry)
