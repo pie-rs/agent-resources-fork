@@ -610,10 +610,7 @@ def fetch_and_install(
         if handle.local_path is None:
             raise ValueError("Local handle missing path")
 
-        source_path = handle.local_path
-        if not source_path.is_absolute():
-            base_path = repo_root or Path.cwd()
-            source_path = (base_path / source_path).resolve()
+        source_path = handle.resolve_local_path(repo_root)
         resolved_handle = ParsedHandle(
             is_local=True,
             name=handle.name,

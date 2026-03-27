@@ -152,8 +152,12 @@ class ParsedHandle:
             return Path(self.username or "") / self.name
         return Path(self.name)
 
-    def resolve_local_path(self) -> Path:
+    def resolve_local_path(self, base: Path | None = None) -> Path:
         """Resolve local_path to an absolute path.
+
+        Args:
+            base: Base directory for resolving relative paths.
+                  Defaults to the current working directory.
 
         Returns:
             The resolved absolute path.
@@ -163,7 +167,10 @@ class ParsedHandle:
         """
         if not self.is_local or self.local_path is None:
             raise InvalidHandleError("Cannot resolve path for non-local handle")
-        return self.local_path.resolve()
+        if self.local_path.is_absolute():
+            return self.local_path.resolve()
+        root = base or Path.cwd()
+        return (root / self.local_path).resolve()
 
     def get_skill_name_for_tool(self, tool: "ToolConfig") -> str:
         """Get the skill name to use in SKILL.md frontmatter.

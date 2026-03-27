@@ -17,11 +17,7 @@ def _resolve_local_path(handle: ParsedHandle, repo_root: Path | None) -> Path | 
     """Resolve a local handle path to an absolute path."""
     if handle.local_path is None:
         return None
-
-    base = repo_root or Path.cwd()
-    if handle.local_path.is_absolute():
-        return handle.local_path.resolve()
-    return (base / handle.local_path).resolve()
+    return handle.resolve_local_path(repo_root)
 
 
 def build_handle_id(
