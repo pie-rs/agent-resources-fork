@@ -275,6 +275,22 @@
           "@type": "Answer",
           "text": "Verify the skill directory exists in your tool's skills folder (e.g., .claude/skills/my-skill/SKILL.md). Check that SKILL.md has valid frontmatter with both name and description fields. Some tools require a restart to pick up new skills. Run agr list to confirm the skill is registered."
         }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Tool CLI not found\" in agrx?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "agrx needs the selected tool's CLI installed. Claude Code uses 'claude', Cursor uses 'agent', Codex uses 'codex' (npm i -g @openai/codex), OpenCode uses 'opencode'. Check that the CLI is on your PATH with: which claude (or the relevant command)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I use agrx outside a git repository?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "By default agrx requires a git repo to find agr.toml for configuration. Use --global to skip this: agrx anthropics/skills/pdf --global. This installs to the tool's global skills directory, runs, and cleans up."
+        }
       }
     ]
   }

@@ -193,6 +193,12 @@ Project-level commands need to run inside a git repo. Either `cd` into one or in
 git init
 ```
 
+For `agrx`, use `--global` to run outside a git repo:
+
+```bash
+agrx anthropics/skills/pdf --global
+```
+
 ### How do I fix "Unknown tool"?
 
 ```text
@@ -550,6 +556,46 @@ agr add -g user/skill
 ```
 
 The global config lives at `~/.agr/agr.toml`.
+
+---
+
+## agrx
+
+### How do I fix "Tool CLI not found"?
+
+```text
+Error: Tool CLI 'codex' not found. Install it to use agrx.
+```
+
+`agrx` needs the selected tool's CLI installed on your system. See which CLI each tool requires:
+
+| Tool | CLI command | Install |
+|------|------------|---------|
+| Claude Code | `claude` | [claude.ai/download](https://claude.ai/download) |
+| Cursor | `agent` | Install the Cursor IDE |
+| OpenAI Codex | `codex` | `npm i -g @openai/codex` |
+| OpenCode | `opencode` | [opencode.ai](https://opencode.ai) |
+| GitHub Copilot | `copilot` | Install GitHub Copilot CLI |
+
+If you have the tool installed but `agrx` can't find it, check that the CLI is on your `PATH`:
+
+```bash
+which claude   # or codex, agent, opencode, copilot
+```
+
+### Why can't I use agrx with Antigravity?
+
+Antigravity does not have a standalone CLI, so `agrx` cannot run skills with it. Use `agr add` to install skills permanently, then invoke them through the Antigravity IDE interface.
+
+### How do I use agrx outside a git repository?
+
+By default, `agrx` requires a git repo (to find `agr.toml` for tool/source config). Use `--global` to skip this:
+
+```bash
+agrx anthropics/skills/pdf --global
+```
+
+This installs the skill into the tool's global skills directory, runs it, and cleans up.
 
 ---
 
