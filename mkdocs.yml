@@ -52,6 +52,7 @@ theme:
     - content.tooltips
     - search.suggest
     - search.highlight
+    - search.share
     - toc.follow
   custom_dir: docs/overrides
 
@@ -79,6 +80,17 @@ extra:
 not_in_nav: |
   404.md
 
+validation:
+  nav:
+    omitted_files: info
+    not_found: warn
+    absolute_links: info
+  links:
+    not_found: warn
+    anchors: warn
+    absolute_links: info
+    unrecognized_links: info
+
 plugins:
   - search:
       separator: '[\s\-\._]+'
@@ -96,6 +108,8 @@ markdown_extensions:
   - pymdownx.details
   - abbr
   - tables
+  - def_list
+  - md_in_html
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
