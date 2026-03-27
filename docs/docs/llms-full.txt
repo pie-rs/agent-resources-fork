@@ -719,6 +719,18 @@ A dependency is missing both `handle` and `path`. Every dependency needs one.
 #### "canonical_instructions must be 'AGENTS.md', 'CLAUDE.md', or 'GEMINI.md'"
 Only these three instruction file names are supported for syncing.
 
+#### "Cannot unset sources"
+`Error: Cannot unset sources. Use 'agr config remove sources <name>'.`
+Sources can't be cleared with `unset`. Remove individual sources with `agr config remove sources my-server`.
+
+#### "expects exactly one value"
+`Error: 'default_tool' expects exactly one value.`
+Scalar keys (`default_tool`, `default_source`, `sync_instructions`, `canonical_instructions`) accept a single value. Use `agr config set default_tool claude`, not `agr config set default_tool claude cursor`.
+
+#### "At least one tool name is required"
+`Error: At least one tool name is required.`
+You ran `agr config set tools` or `agr config add tools` without tool names. Provide at least one: `agr config set tools claude`.
+
 #### "sync_instructions must be 'true' or 'false'"
 `Error: sync_instructions must be 'true' or 'false'.`
 The setting only accepts boolean values. Use `agr config set sync_instructions true` or `false`.

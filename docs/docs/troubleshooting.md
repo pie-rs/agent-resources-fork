@@ -22,6 +22,9 @@ keywords:
   - agr cannot set sources directly
   - agr source already exists
   - agr url required adding source
+  - agr cannot unset sources
+  - agr expects exactly one value
+  - agr at least one tool name required
 ---
 
 # Fix Common agr Errors
@@ -445,6 +448,53 @@ agr config set default_source github
 
 ??? note "How do I fix \"canonical_instructions must be 'AGENTS.md', 'CLAUDE.md', or 'GEMINI.md'\"?"
     Only these three instruction file names are supported for syncing. Other filenames like `README.md` or `INSTRUCTIONS.md` won't work.
+
+??? note "How do I fix \"Cannot unset sources\"?"
+    ```text
+    Error: Cannot unset sources. Use 'agr config remove sources <name>'.
+    ```
+
+    Sources can't be cleared with `unset` because agr needs at least one source.
+    Remove individual sources instead:
+
+    ```bash
+    agr config remove sources my-server
+    ```
+
+??? note "How do I fix \"expects exactly one value\"?"
+    ```text
+    Error: 'default_tool' expects exactly one value.
+    ```
+
+    Scalar keys (`default_tool`, `default_source`, `sync_instructions`,
+    `canonical_instructions`) accept a single value, not a list:
+
+    ```bash
+    # Wrong — multiple values for a scalar key
+    agr config set default_tool claude cursor
+
+    # Right
+    agr config set default_tool claude
+    ```
+
+    List keys (`tools`) accept multiple values with `set`:
+
+    ```bash
+    agr config set tools claude cursor codex
+    ```
+
+??? note "How do I fix \"At least one tool name is required\"?"
+    ```text
+    Error: At least one tool name is required.
+    ```
+
+    You ran `agr config set tools` or `agr config add tools` without specifying
+    any tool names. Provide at least one:
+
+    ```bash
+    agr config set tools claude
+    agr config add tools cursor
+    ```
 
 ### How do I fix "sync_instructions must be 'true' or 'false'"?
 
