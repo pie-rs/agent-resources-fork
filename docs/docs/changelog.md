@@ -52,7 +52,7 @@ description: TODO — describe what this skill does and when to use it
 ### Bug fixes
 
 - `agrx --tool cursor` no longer passes an invalid `--force` flag to the Cursor CLI. The Cursor CLI (`agent`) does not support this flag, so `agrx` now runs without a permission-bypass flag for Cursor.
-- `agrx --tool opencode` no longer passes an invalid `--prompt` flag. OpenCode's CLI does not support `--prompt` on the base command — both interactive and non-interactive `agrx` modes now route through `opencode run`, which is the documented way to pass prompts.
+- `agrx --tool opencode` no longer passes an invalid `--prompt` flag. OpenCode's CLI does not support `--prompt` on the base command — both interactive and non-interactive `agrx` modes now route through `opencode run --command <prompt>`, which is the documented way to pass prompts.
 
 ---
 
