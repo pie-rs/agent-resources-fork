@@ -23,9 +23,14 @@ keywords:
   - agr url required adding source
 ---
 
-# Troubleshooting
+# Fix Common agr Errors
 
-Common problems and how to fix them.
+!!! tldr
+    Most issues come from wrong handle formats (`user/skill` not `skill`),
+    missing `GITHUB_TOKEN` for private repos, or stale installs (fix with
+    `agr add --overwrite`). Error messages include hints — read them first.
+
+Quick links: [Installation](#installation) · [Handle Format](#handle-format) · [Configuration](#configuration) · [Syncing](#syncing) · [Sources](#sources) · [Creating Skills](#creating-skills) · [Global Installs](#global-installs) · [agrx](#agrx)
 
 ## Installation
 
@@ -319,97 +324,76 @@ agr config add sources my-server --url "https://git.example.com/{owner}/{repo}.g
 agr config set default_source github
 ```
 
-### How do I fix "dependencies must be declared before [[source]] blocks"?
+??? note "How do I fix \"dependencies must be declared before [[source]] blocks\"?"
+    ```text
+    Error: dependencies must be declared before [[source]] blocks
+    ```
 
-```text
-Error: dependencies must be declared before [[source]] blocks
-```
+    In `agr.toml`, the `dependencies` array must come before any `[[source]]` entries:
 
-In `agr.toml`, the `dependencies` array must come before any `[[source]]` entries:
+    ```toml
+    # Correct order
+    dependencies = [
+        {handle = "user/skill", type = "skill"},
+    ]
 
-```toml
-# Correct order
-dependencies = [
-    {handle = "user/skill", type = "skill"},
-]
+    [[source]]
+    name = "github"
+    type = "git"
+    url = "https://github.com/{owner}/{repo}.git"
+    ```
 
-[[source]]
-name = "github"
-type = "git"
-url = "https://github.com/{owner}/{repo}.git"
-```
+??? note "How do I fix \"Unknown source in dependency\"?"
+    ```text
+    Error: Unknown source 'gitlab' in dependency 'user/skill'
+    ```
 
-### How do I fix "Unknown source in dependency"?
+    A dependency specifies a `source` that isn't defined in your `[[source]]` list. Either add the source or remove the `source` field from the dependency:
 
-```text
-Error: Unknown source 'gitlab' in dependency 'user/skill'
-```
+    ```bash
+    # Add the missing source
+    agr config add sources gitlab --url "https://gitlab.com/{owner}/{repo}.git"
 
-A dependency in `agr.toml` specifies a `source` that isn't defined in your `[[source]]` list. Either add the source or remove the `source` field from the dependency:
+    # Or edit agr.toml and remove source = "gitlab" from the dependency
+    ```
 
-```bash
-# Add the missing source
-agr config add sources gitlab --url "https://gitlab.com/{owner}/{repo}.git"
+??? note "How do I fix \"Dependency cannot have both handle and path\"?"
+    ```text
+    Error: Dependency cannot have both handle and path
+    ```
 
-# Or edit agr.toml and remove source = "gitlab" from the dependency
-```
+    Each dependency must use `handle` or `path`, not both:
 
-### How do I fix "Dependency cannot have both handle and path"?
+    ```toml
+    # Wrong — both handle and path
+    dependencies = [
+        {handle = "user/skill", path = "./skills/skill", type = "skill"},
+    ]
+    ```
 
-```text
-Error: Dependency cannot have both handle and path
-```
+    ```toml
+    # Right — remote
+    dependencies = [
+        {handle = "user/skill", type = "skill"},
+    ]
+    ```
 
-A dependency in `agr.toml` has both a `handle` and a `path` field. Each
-dependency must use one or the other:
+??? note "How do I fix \"Dependency must have either handle or path\"?"
+    ```text
+    Error: Dependency must have either handle or path
+    ```
 
-```toml
-# Wrong — both handle and path
-dependencies = [
-    {handle = "user/skill", path = "./skills/skill", type = "skill"},
-]
-```
+    A dependency is missing both `handle` and `path`. Every dependency needs one:
 
-```toml
-# Right — remote
-dependencies = [
-    {handle = "user/skill", type = "skill"},
-]
-```
+    ```toml
+    # Right
+    dependencies = [
+        {handle = "user/skill", type = "skill"},
+    ]
+    ```
 
-```toml
-# Right — local
-dependencies = [
-    {path = "./skills/skill", type = "skill"},
-]
-```
-
-### How do I fix "Dependency must have either handle or path"?
-
-```text
-Error: Dependency must have either handle or path
-```
-
-A dependency in `agr.toml` is missing both `handle` and `path`. Every dependency
-needs one:
-
-```toml
-# Wrong — no handle or path
-dependencies = [
-    {type = "skill"},
-]
-```
-
-```toml
-# Right
-dependencies = [
-    {handle = "user/skill", type = "skill"},
-]
-```
-
-### How do I fix "canonical_instructions must be 'AGENTS.md', 'CLAUDE.md', or 'GEMINI.md'"?
-
-Only these three instruction file names are supported for syncing. Other filenames like `README.md` or `INSTRUCTIONS.md` won't work.
+??? note "How do I fix \"canonical_instructions must be 'AGENTS.md', 'CLAUDE.md', or 'GEMINI.md'\"?"
+    Only these three instruction file names are supported for syncing. Other filenames like `README.md` or `INSTRUCTIONS.md` won't work.
 
 ### How do I fix "Unknown config key"?
 
@@ -417,62 +401,58 @@ Only these three instruction file names are supported for syncing. Other filenam
 Error: Unknown config key 'tool'. Valid keys: canonical_instructions, default_source, default_tool, sources, sync_instructions, tools
 ```
 
-You used a key name that `agr config` doesn't recognize. Check the hint for valid keys. Common mistakes:
+You used a key name that `agr config` doesn't recognize. Common mistakes:
 
 - `tool` instead of `tools`
 - `source` instead of `sources`
 - `instructions` instead of `sync_instructions`
 
-### How do I fix "Cannot set sources directly"?
+??? note "How do I fix \"Cannot set sources directly\"?"
+    ```text
+    Error: Cannot set sources directly. Use 'agr config add sources' and 'agr config remove sources'.
+    ```
 
-```text
-Error: Cannot set sources directly. Use 'agr config add sources' and 'agr config remove sources'.
-```
+    Sources can't be replaced in one shot with `set`. Add and remove them individually:
 
-Sources can't be replaced in one shot with `set`. Add and remove them individually:
+    ```bash
+    agr config add sources my-server --url "https://git.example.com/{owner}/{repo}.git"
+    agr config remove sources old-server
+    ```
 
-```bash
-agr config add sources my-server --url "https://git.example.com/{owner}/{repo}.git"
-agr config remove sources old-server
-```
+??? note "How do I fix \"--url is required when adding a source\"?"
+    ```text
+    Error: --url is required when adding a source.
+    ```
 
-### How do I fix "--url is required when adding a source"?
+    When adding a source, you must provide a URL template with `{owner}` and `{repo}` placeholders:
 
-```text
-Error: --url is required when adding a source.
-```
+    ```bash
+    agr config add sources my-server --url "https://git.example.com/{owner}/{repo}.git"
+    ```
 
-When adding a source, you must provide a URL template with `{owner}` and `{repo}` placeholders:
+??? note "How do I fix \"Source already exists\"?"
+    ```text
+    Error: Source 'github' already exists.
+    ```
 
-```bash
-agr config add sources my-server --url "https://git.example.com/{owner}/{repo}.git"
-```
+    To update it, remove the old one first:
 
-### How do I fix "Source already exists"?
+    ```bash
+    agr config remove sources github
+    agr config add sources github --url "https://github.com/{owner}/{repo}.git"
+    ```
 
-```text
-Error: Source 'github' already exists.
-```
+??? note "How do I fix \"Tool is not in configured tools\"?"
+    ```text
+    Error: Tool 'codex' is not in configured tools. Add it first with 'agr config add tools codex'.
+    ```
 
-You're trying to add a source with a name that's already configured. To update it, remove the old one first:
+    Add the tool first, then set it as default:
 
-```bash
-agr config remove sources github
-agr config add sources github --url "https://github.com/{owner}/{repo}.git"
-```
-
-### How do I fix "Tool is not in configured tools"?
-
-```text
-Error: Tool 'codex' is not in configured tools. Add it first with 'agr config add tools codex'.
-```
-
-You tried to set `default_tool` to a tool that isn't in your `tools` list. Add it first:
-
-```bash
-agr config add tools codex
-agr config set default_tool codex
-```
+    ```bash
+    agr config add tools codex
+    agr config set default_tool codex
+    ```
 
 ---
 
@@ -545,56 +525,40 @@ agr config set default_source github
 agr config remove sources my-server
 ```
 
-### How do I fix "Source entry missing name"?
+??? note "How do I fix \"Source entry missing name\"?"
+    ```text
+    Error: Source entry missing name
+    ```
 
-```text
-Error: Source entry missing name
-```
+    Every `[[source]]` block needs a `name` field:
 
-A `[[source]]` block in your `agr.toml` is missing the `name` field. Every source needs a name:
+    ```toml
+    [[source]]
+    name = "my-server"
+    type = "git"
+    url = "https://git.example.com/{owner}/{repo}.git"
+    ```
 
-```toml
-# Wrong — missing name
-[[source]]
-type = "git"
-url = "https://git.example.com/{owner}/{repo}.git"
+??? note "How do I fix \"Source missing url\"?"
+    ```text
+    Error: Source 'my-server' missing url
+    ```
 
-# Right
-[[source]]
-name = "my-server"
-type = "git"
-url = "https://git.example.com/{owner}/{repo}.git"
-```
+    Add the URL template:
 
-### How do I fix "Source missing url"?
+    ```toml
+    [[source]]
+    name = "my-server"
+    type = "git"
+    url = "https://git.example.com/{owner}/{repo}.git"
+    ```
 
-```text
-Error: Source 'my-server' missing url
-```
+??? note "How do I fix \"Unsupported source type\"?"
+    ```text
+    Error: Unsupported source type 'svn' for 'my-server'
+    ```
 
-A `[[source]]` block has a name but no `url`. Add the URL template:
-
-```toml
-[[source]]
-name = "my-server"
-type = "git"
-url = "https://git.example.com/{owner}/{repo}.git"
-```
-
-### How do I fix "Unsupported source type"?
-
-```text
-Error: Unsupported source type 'svn' for 'my-server'
-```
-
-Only `git` sources are supported. Change the `type` to `git`:
-
-```toml
-[[source]]
-name = "my-server"
-type = "git"
-url = "https://git.example.com/{owner}/{repo}.git"
-```
+    Only `git` sources are supported. Change the `type` to `git`.
 
 ### How do I fix "GitHub API rate limit exceeded"?
 
@@ -614,22 +578,21 @@ You've hit GitHub's API rate limit. This mainly affects the Python SDK (`list_sk
   ```
 - **In CI, cache results.** If your pipeline calls `list_skills()` or `skill_info()` repeatedly, cache the output instead of calling the API on every run.
 
-### How do I fix "Local skills cannot specify a source"?
+??? note "How do I fix \"Local skills cannot specify a source\"?"
+    ```text
+    Error: Local skills cannot specify a source
+    ```
 
-```text
-Error: Local skills cannot specify a source
-```
+    The `--source` flag only applies to remote handles. Local paths are installed
+    directly from disk:
 
-The `--source` flag only applies to remote handles. Local paths (`./my-skill`)
-are installed directly from disk — they don't go through any source:
+    ```bash
+    # Wrong
+    agr add ./my-skill --source github
 
-```bash
-# Wrong
-agr add ./my-skill --source github
-
-# Right
-agr add ./my-skill
-```
+    # Right
+    agr add ./my-skill
+    ```
 
 ---
 
@@ -656,28 +619,24 @@ agr init myskill
 agr init code-reviewer
 ```
 
-### How do I fix "Directory already exists"?
+??? note "How do I fix \"Directory already exists\"?"
+    ```text
+    Error: Directory 'myskill' already exists
+    ```
 
-```text
-Error: Directory 'myskill' already exists
-```
+    `agr init` won't overwrite an existing directory. Either remove it or choose a different name.
 
-`agr init` won't overwrite an existing directory. Either remove it or choose a different name.
+??? note "How do I fix \"Local skill name is already installed\"?"
+    ```text
+    Error: Local skill name 'my-skill' is already installed at /path/to/my-skill.
+    ```
 
-### How do I fix "Local skill name is already installed"?
+    agr enforces unique names. Rename one skill or remove the existing one:
 
-```text
-Error: Local skill name 'my-skill' is already installed at /path/to/my-skill.
-agr allows only one local skill with a given name.
-Rename the skill or remove the existing one.
-```
-
-You have two local skills with the same name. agr enforces unique names to avoid conflicts. Either rename one of the skills or remove the existing one:
-
-```bash
-agr remove my-skill
-agr add ./new-location/my-skill
-```
+    ```bash
+    agr remove my-skill
+    agr add ./new-location/my-skill
+    ```
 
 ### How do I fix "not a valid skill (missing SKILL.md)"?
 
@@ -685,14 +644,7 @@ agr add ./new-location/my-skill
 Error: './my-skill' is not a valid skill (missing SKILL.md)
 ```
 
-The path you specified doesn't contain a `SKILL.md` file. Every skill needs one:
-
-```bash
-# Create the required file
-touch my-skill/SKILL.md
-```
-
-Then add the required frontmatter (`name` and `description`) — see [Creating Skills](creating.md).
+The path doesn't contain a `SKILL.md` file. Create one and add the required frontmatter — see [Creating Skills](creating.md).
 
 ### Why is my skill not showing up in my tool?
 
