@@ -157,6 +157,7 @@ Browse the full list in the [Skill Directory](https://kasperjunge.github.io/agen
 | Command | Description |
 |---------|-------------|
 | `agr add <handle>` | Install a skill |
+| `agr add <handle> -o` | Update to the latest version |
 | `agr remove <handle>` | Uninstall a skill |
 | `agr sync` | Install all from `agr.toml` |
 | `agr list` | Show installed skills |
