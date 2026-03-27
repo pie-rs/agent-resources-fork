@@ -5,7 +5,7 @@ Shared helpers live in ``agr.commands._tool_helpers``.
 """
 
 from agr.config import AgrConfig, find_config, find_repo_root, require_config
-from agr.console import get_console, print_error
+from agr.console import error_exit, get_console
 from agr.commands._tool_helpers import (
     add_tools_to_config,
     ensure_valid_default_tool,
@@ -122,11 +122,10 @@ def run_default_tool_set(tool_name: str) -> None:
     config = _load_required_config()
 
     if name not in config.tools:
-        print_error(
+        error_exit(
             f"Tool '{name}' is not configured. "
             f"Add it first with 'agr config tools add {name}'."
         )
-        raise SystemExit(1)
 
     if config.default_tool == name:
         console.print(f"[dim]Default tool already set:[/dim] {name}")

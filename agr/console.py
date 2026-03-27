@@ -1,5 +1,7 @@
 """Shared console factory supporting --quiet flag."""
 
+from typing import NoReturn
+
 from rich.console import Console
 
 _quiet = False
@@ -24,6 +26,18 @@ def get_console() -> Console:
 def print_error(message: str) -> None:
     """Print a styled error message to the console."""
     get_console().print(f"[red]Error:[/red] {message}")
+
+
+def error_exit(message: str, *, hint: str | None = None) -> NoReturn:
+    """Print a styled error message and exit with code 1.
+
+    Replaces the common ``print_error(msg); raise SystemExit(1)`` pattern.
+    An optional *hint* is displayed on the next line in dim style.
+    """
+    print_error(message)
+    if hint:
+        get_console().print(f"[dim]{hint}[/dim]")
+    raise SystemExit(1)
 
 
 def print_deprecation(old_cmd: str, new_cmd: str) -> None:

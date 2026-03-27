@@ -475,10 +475,9 @@ def require_repo_root(start_path: Path | None = None) -> Path:
     """
     repo_root = find_repo_root(start_path)
     if repo_root is None:
-        from agr.console import print_error
+        from agr.console import error_exit
 
-        print_error("Not in a git repository")
-        raise SystemExit(1)
+        error_exit("Not in a git repository")
     return repo_root
 
 
@@ -499,11 +498,9 @@ def require_config(start_path: Path | None = None) -> Path:
     """
     config_path = find_config(start_path)
     if config_path is None:
-        from agr.console import get_console, print_error
+        from agr.console import error_exit
 
-        print_error("No agr.toml found.")
-        get_console().print("[dim]Run 'agr init' first to create one.[/dim]")
-        raise SystemExit(1)
+        error_exit("No agr.toml found.", hint="Run 'agr init' first to create one.")
     return config_path
 
 

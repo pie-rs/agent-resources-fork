@@ -11,7 +11,7 @@ from pathlib import Path
 from rich.prompt import Confirm, Prompt
 
 from agr.config import CONFIG_FILENAME, AgrConfig, Dependency, find_config, find_repo_root
-from agr.console import get_console, print_error
+from agr.console import error_exit, get_console
 from agr.detect import detect_tools
 from agr.instructions import canonical_instruction_file, detect_instruction_files
 from agr.metadata import read_skill_metadata
@@ -127,9 +127,10 @@ def run_onboard(*, no_migrate: bool = False) -> None:
 
     # TTY check (bypass with _AGR_FORCE_TTY=1 for testing)
     if not sys.stdin.isatty() and not os.environ.get("_AGR_FORCE_TTY"):
-        print_error("agr onboard requires an interactive terminal.")
-        console.print("[dim]Use 'agr init' for non-interactive setup.[/dim]")
-        raise SystemExit(1)
+        error_exit(
+            "agr onboard requires an interactive terminal.",
+            hint="Use 'agr init' for non-interactive setup.",
+        )
 
     # Find repo root
     repo_root = find_repo_root() or Path.cwd()

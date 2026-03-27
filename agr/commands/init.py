@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from agr.console import get_console, print_error
+from agr.console import error_exit, get_console
 from agr.config import (
     CONFIG_FILENAME,
     AgrConfig,
@@ -91,8 +91,7 @@ def run_init(
                 f"  [dim]Edit {skill_path}/SKILL.md to customize your skill[/dim]"
             )
         except (ValueError, FileExistsError) as e:
-            print_error(str(e))
-            raise SystemExit(1)
+            error_exit(str(e))
         return
 
     repo_root = find_repo_root() or Path.cwd()
@@ -137,8 +136,7 @@ def run_init(
             changed = True
 
     if config.default_tool and config.default_tool not in config.tools:
-        print_error("default_tool must be listed in tools. Use --tools to include it.")
-        raise SystemExit(1)
+        error_exit("default_tool must be listed in tools. Use --tools to include it.")
 
     # Instruction sync
     if sync_instructions is not None:
@@ -150,8 +148,7 @@ def run_init(
         try:
             validate_canonical_instructions(canonical_instructions)
         except ConfigError as exc:
-            print_error(str(exc))
-            raise SystemExit(1) from exc
+            error_exit(str(exc))
         config.canonical_instructions = canonical_instructions
         if config.canonical_instructions != original_canonical_instructions:
             changed = True

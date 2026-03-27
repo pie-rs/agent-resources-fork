@@ -17,7 +17,7 @@ from agr.config import (
     get_global_config_path,
     require_repo_root,
 )
-from agr.console import get_console, print_error
+from agr.console import error_exit, get_console, print_error
 from agr.exceptions import INSTALL_ERROR_TYPES, format_install_error
 from agr.fetcher import fetch_and_install_to_tools, filter_tools_needing_install
 from agr.tool import TOOLS, ToolConfig, available_tools_string, build_global_skills_dirs
@@ -147,12 +147,12 @@ def normalize_tool_names(tool_names: list[str]) -> list[str]:
 
 def validate_tool_names(tool_names: list[str]) -> None:
     """Validate tool names against the TOOLS registry, exiting on failure."""
-    console = get_console()
     invalid = [name for name in tool_names if name not in TOOLS]
     if invalid:
-        print_error(f"Unknown tool(s): {', '.join(invalid)}")
-        console.print(f"[dim]Available tools: {available_tools_string()}[/dim]")
-        raise SystemExit(1)
+        error_exit(
+            f"Unknown tool(s): {', '.join(invalid)}",
+            hint=f"Available tools: {available_tools_string()}",
+        )
 
 
 def normalize_and_validate_tool_names(
@@ -175,8 +175,7 @@ def normalize_and_validate_tool_names(
     """
     names = list(dict.fromkeys(normalize_tool_names(tool_names)))
     if not allow_empty and not names:
-        print_error("At least one tool name is required.")
-        raise SystemExit(1)
+        error_exit("At least one tool name is required.")
     validate_tool_names(names)
     return names
 
@@ -225,8 +224,7 @@ def remove_tools_from_config(
     """
     remaining = [t for t in config.tools if t not in names]
     if not remaining:
-        print_error("Cannot remove all tools. At least one must remain.")
-        raise SystemExit(1)
+        error_exit("Cannot remove all tools. At least one must remain.")
 
     previous_default = config.default_tool
     removed: list[str] = []
