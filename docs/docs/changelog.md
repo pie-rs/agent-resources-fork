@@ -20,6 +20,12 @@ details, see [CHANGELOG.md on GitHub](https://github.com/kasperjunge/agent-resou
 
 ## Unreleased
 
+### Antigravity now uses `.gemini/` directory
+
+Antigravity skills now install to `.gemini/skills/` instead of the previous `.agent/skills/`. This matches the Gemini CLI's move from `.agent/` to `.gemini/` as its primary configuration directory.
+
+**Auto-migration:** When you run `agr sync`, `agr add`, or `agr remove`, agr automatically moves existing skills from `.agent/skills/` to `.gemini/skills/`. No manual steps needed.
+
 ### Cursor now uses flat naming
 
 Cursor skills are now installed with flat directory names (e.g., `.cursor/skills/skill-name/`) instead of the previous nested structure (`.cursor/skills/owner/repo/skill-name/`). This aligns Cursor with all other supported tools.
