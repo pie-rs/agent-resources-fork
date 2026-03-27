@@ -17,6 +17,10 @@ keywords:
   - agr skill already exists
   - agr invalid handle format
   - agr git not found
+  - agr unknown config key
+  - agr cannot set sources directly
+  - agr source already exists
+  - agr url required adding source
 ---
 
 # Troubleshooting
@@ -406,6 +410,69 @@ dependencies = [
 ### How do I fix "canonical_instructions must be 'AGENTS.md', 'CLAUDE.md', or 'GEMINI.md'"?
 
 Only these three instruction file names are supported for syncing. Other filenames like `README.md` or `INSTRUCTIONS.md` won't work.
+
+### How do I fix "Unknown config key"?
+
+```text
+Error: Unknown config key 'tool'. Valid keys: canonical_instructions, default_source, default_tool, sources, sync_instructions, tools
+```
+
+You used a key name that `agr config` doesn't recognize. Check the hint for valid keys. Common mistakes:
+
+- `tool` instead of `tools`
+- `source` instead of `sources`
+- `instructions` instead of `sync_instructions`
+
+### How do I fix "Cannot set sources directly"?
+
+```text
+Error: Cannot set sources directly. Use 'agr config add sources' and 'agr config remove sources'.
+```
+
+Sources can't be replaced in one shot with `set`. Add and remove them individually:
+
+```bash
+agr config add sources my-server --url "https://git.example.com/{owner}/{repo}.git"
+agr config remove sources old-server
+```
+
+### How do I fix "--url is required when adding a source"?
+
+```text
+Error: --url is required when adding a source.
+```
+
+When adding a source, you must provide a URL template with `{owner}` and `{repo}` placeholders:
+
+```bash
+agr config add sources my-server --url "https://git.example.com/{owner}/{repo}.git"
+```
+
+### How do I fix "Source already exists"?
+
+```text
+Error: Source 'github' already exists.
+```
+
+You're trying to add a source with a name that's already configured. To update it, remove the old one first:
+
+```bash
+agr config remove sources github
+agr config add sources github --url "https://github.com/{owner}/{repo}.git"
+```
+
+### How do I fix "Tool is not in configured tools"?
+
+```text
+Error: Tool 'codex' is not in configured tools. Add it first with 'agr config add tools codex'.
+```
+
+You tried to set `default_tool` to a tool that isn't in your `tools` list. Add it first:
+
+```bash
+agr config add tools codex
+agr config set default_tool codex
+```
 
 ---
 
