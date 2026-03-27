@@ -139,6 +139,20 @@ Error: Network error: could not resolve host for source 'github'.
 
 DNS resolution failed. Check your internet connection, VPN, or proxy settings.
 
+### How do I fix "agr onboard requires an interactive terminal"?
+
+```text
+Error: agr onboard requires an interactive terminal.
+Hint: Use 'agr init' for non-interactive setup.
+```
+
+`agr onboard` is an interactive wizard that needs a real terminal (TTY). It won't work in CI/CD, scripts, or piped commands. Use `agr init` instead:
+
+```bash
+# In CI/CD or scripts
+agr init --tools claude,cursor
+```
+
 ---
 
 ## Handle Format
@@ -395,6 +409,55 @@ agr config set default_source github
 ??? note "How do I fix \"canonical_instructions must be 'AGENTS.md', 'CLAUDE.md', or 'GEMINI.md'\"?"
     Only these three instruction file names are supported for syncing. Other filenames like `README.md` or `INSTRUCTIONS.md` won't work.
 
+### How do I fix "sync_instructions must be 'true' or 'false'"?
+
+```text
+Error: sync_instructions must be 'true' or 'false'.
+```
+
+The `sync_instructions` setting only accepts boolean values:
+
+```bash
+# Wrong
+agr config set sync_instructions yes
+
+# Right
+agr config set sync_instructions true
+```
+
+### How do I fix "Neither $VISUAL nor $EDITOR is set"?
+
+```text
+Error: Neither $VISUAL nor $EDITOR is set.
+```
+
+`agr config edit` opens `agr.toml` in your default editor, but no editor is configured. Set one:
+
+```bash
+export EDITOR="vim"       # or nano, code, etc.
+agr config edit
+```
+
+Add the `export` to your shell profile (`~/.zshrc`, `~/.bashrc`) to make it permanent.
+
+### How do I fix "No global config found"?
+
+```text
+Error: No global config found at ~/.agr/agr.toml
+```
+
+You ran a global config command (`agr config -g ...`) but no global config exists yet. Create one by installing a skill globally:
+
+```bash
+agr add -g user/skill
+```
+
+Or initialize a global config manually:
+
+```bash
+agr init -g
+```
+
 ### How do I fix "Unknown config key"?
 
 ```text
@@ -524,6 +587,17 @@ default first:
 agr config set default_source github
 agr config remove sources my-server
 ```
+
+??? note "How do I fix \"Source not found\" when removing?"
+    ```text
+    Error: Source 'my-server' not found.
+    ```
+
+    The source you're trying to remove doesn't exist. Check the current sources:
+
+    ```bash
+    agr config get sources
+    ```
 
 ??? note "How do I fix \"Source entry missing name\"?"
     ```text

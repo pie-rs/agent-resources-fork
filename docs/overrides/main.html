@@ -551,6 +551,46 @@
           "@type": "Answer",
           "text": "You tried to set default_tool to a tool that isn't in your tools list. Add it first: agr config add tools codex, then agr config set default_tool codex."
         }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"agr onboard requires an interactive terminal\"?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "agr onboard is an interactive wizard that needs a real terminal (TTY). It won't work in CI/CD, scripts, or piped commands. Use agr init instead: agr init --tools claude,cursor."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Neither $VISUAL nor $EDITOR is set\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "agr config edit opens agr.toml in your default editor, but no editor is configured. Set one with: export EDITOR=\"vim\" (or nano, code, etc.). Add the export to your shell profile to make it permanent."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"sync_instructions must be 'true' or 'false'\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The sync_instructions setting only accepts boolean values. Use: agr config set sync_instructions true (or false). Values like yes, 1, or on are not accepted."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"No global config found\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You ran a global config command (agr config -g) but no global config exists yet. Create one by installing a skill globally: agr add -g user/skill, or initialize with agr init -g."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Source not found\" when removing a source in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The source you're trying to remove doesn't exist. Check current sources with agr config get sources to see what's configured."
+        }
       }
     ]
   }

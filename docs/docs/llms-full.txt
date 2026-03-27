@@ -610,6 +610,10 @@ Use `--overwrite`: `agr add user/skill --overwrite`
 `Error: Network error: could not resolve host for source 'github'.`
 DNS resolution failed. Check your internet connection, VPN, or proxy settings.
 
+#### "agr onboard requires an interactive terminal"
+`Error: agr onboard requires an interactive terminal. Hint: Use 'agr init' for non-interactive setup.`
+`agr onboard` needs a real terminal (TTY). In CI/CD or scripts, use `agr init --tools claude,cursor` instead.
+
 ### Handle Format Errors
 
 #### "Invalid handle: remote handles require username/name format"
@@ -673,6 +677,18 @@ A dependency is missing both `handle` and `path`. Every dependency needs one.
 #### "canonical_instructions must be 'AGENTS.md', 'CLAUDE.md', or 'GEMINI.md'"
 Only these three instruction file names are supported for syncing.
 
+#### "sync_instructions must be 'true' or 'false'"
+`Error: sync_instructions must be 'true' or 'false'.`
+The setting only accepts boolean values. Use `agr config set sync_instructions true` or `false`.
+
+#### "Neither $VISUAL nor $EDITOR is set"
+`Error: Neither $VISUAL nor $EDITOR is set.`
+`agr config edit` needs an editor configured. Set one: `export EDITOR="vim"` (or nano, code, etc.).
+
+#### "No global config found"
+`Error: No global config found at ~/.agr/agr.toml`
+Run a global config command but no global config exists. Create one with `agr add -g user/skill` or `agr init -g`.
+
 #### "Unknown config key"
 `Error: Unknown config key 'tool'. Valid keys: canonical_instructions, default_source, default_tool, sources, sync_instructions, tools`
 Check the error hint for valid key names. Common mistakes: `tool` instead of `tools`, `source` instead of `sources`, `instructions` instead of `sync_instructions`.
@@ -712,6 +728,10 @@ Use `--overwrite` to force a fresh install: `agr add user/skill --overwrite`
 #### "Cannot remove default source"
 `Error: Cannot remove default source 'my-server'. Change the default source first.`
 Change the default first: `agr config set default_source github`, then `agr config remove sources my-server`.
+
+#### "Source not found" (when removing)
+`Error: Source 'my-server' not found.`
+The source you're trying to remove doesn't exist. Check current sources with `agr config get sources`.
 
 #### "Source entry missing name"
 Every `[[source]]` block needs a `name` field.
