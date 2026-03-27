@@ -117,8 +117,9 @@ def _find_existing_skill_dir(
 
     For nested tools (Cursor), the path is deterministic from the handle.
     For flat tools, we check two candidate paths in priority order:
-    1. Plain name (e.g. ``skill/``) — preferred, matched by metadata ID
-    2. Full name (e.g. ``user--repo--skill/``) — used on collision or legacy
+    1. Plain name (e.g. ``skill/``) — preferred, requires metadata ID match
+    2. Full name (e.g. ``user--repo--skill/``) — accepted without metadata
+       (covers both current installs and legacy installs without metadata)
     """
     if tool.supports_nested:
         skill_path = skills_dir / handle.to_skill_path(tool)
@@ -135,15 +136,11 @@ def _find_existing_skill_dir(
         name_path, handle_ids
     ):
         return name_path
-    # Fall back to the full (qualified) name path.
-    if is_valid_skill_dir(full_path) and _skill_dir_matches_handle(
-        full_path, handle_ids
-    ):
-        return full_path
 
-    # Legacy fallback: older versions always used full path names
-    # (user--repo--skill) even when no collision existed. Match by
-    # directory name alone so those installs are still found.
+    # Fall back to the full (qualified) name path without requiring a
+    # metadata match.  Older versions always installed under the full
+    # name (user--repo--skill), potentially without metadata, so
+    # matching by directory name alone keeps those installs reachable.
     if is_valid_skill_dir(full_path):
         return full_path
 

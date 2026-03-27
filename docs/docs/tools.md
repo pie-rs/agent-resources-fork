@@ -8,13 +8,21 @@ keywords:
   - Codex skills install
   - GitHub Copilot skills
   - OpenCode skills
-  - Antigravity skills
+  - Antigravity Gemini skills
   - multi-tool AI setup
   - install skills multiple AI tools
   - agr config set tools
+  - how to add skills to Claude Code
+  - Cursor AI agent skills directory
+  - sync skills across AI coding tools
+  - OpenAI Codex agents skills directory
+  - manage AI skills across editors
+  - Claude Code Cursor Codex skill sync
+  - SKILL.md install path
+  - AI coding tool skill directories
 ---
 
-# Supported Tools
+# Supported Tools — Install Skills Across AI Coding Agents
 
 !!! tldr
     agr installs skills into Claude Code, Cursor, Codex, OpenCode, GitHub
