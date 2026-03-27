@@ -323,7 +323,7 @@ Config: /Users/you/project/agr.toml
   canonical_instructions = CLAUDE.md
 
 Sources:
-  - github  https://github.com/{owner}/{repo}.git (default)
+  - github [git] https://github.com/{owner}/{repo}.git (default)
 ```
 
 ```bash
