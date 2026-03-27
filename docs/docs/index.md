@@ -13,6 +13,18 @@ keywords:
   - GitHub Copilot skills
   - Antigravity skills
   - skill manager
+  - share AI prompts across team
+  - reusable AI coding instructions
+  - npm for AI agents
+  - manage Claude Code prompts
+  - install Cursor custom instructions
+  - AI coding assistant skills marketplace
+  - SKILL.md format
+  - agr add install skill
+  - agr sync team skills
+  - how to install AI agent skills
+  - share custom prompts Claude Code Cursor
+  - AI agent prompt management tool
 hide:
   - navigation
   - toc
