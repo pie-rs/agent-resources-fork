@@ -74,7 +74,8 @@ extra:
             <a href="https://github.com/kasperjunge/agent-resources/issues/new?title=Docs+feedback:+{title}&labels=docs" target="_blank">opening an issue</a>.
 
 plugins:
-  - search
+  - search:
+      separator: '[\s\-\._]+'
 
 markdown_extensions:
   - pymdownx.highlight:
