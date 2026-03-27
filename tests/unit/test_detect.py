@@ -80,8 +80,16 @@ class TestDetectTools:
 
         assert "opencode" in result
 
-    def test_antigravity_detected_from_agent_dir(self, tmp_path):
-        """detect_tools finds antigravity from .agent/ directory."""
+    def test_antigravity_detected_from_gemini_dir(self, tmp_path):
+        """detect_tools finds antigravity from .gemini/ directory."""
+        (tmp_path / ".gemini").mkdir()
+
+        result = detect_tools(tmp_path)
+
+        assert "antigravity" in result
+
+    def test_antigravity_detected_from_legacy_agent_dir(self, tmp_path):
+        """detect_tools still finds antigravity from legacy .agent/ directory."""
         (tmp_path / ".agent").mkdir()
 
         result = detect_tools(tmp_path)
@@ -112,7 +120,7 @@ class TestDetectTools:
         (tmp_path / ".agents").mkdir()
         (tmp_path / ".opencode").mkdir()
         (tmp_path / ".github" / "copilot").mkdir(parents=True)
-        (tmp_path / ".agent").mkdir()
+        (tmp_path / ".gemini").mkdir()
 
         result = detect_tools(tmp_path)
 

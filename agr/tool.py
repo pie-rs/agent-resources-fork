@@ -141,30 +141,27 @@ COPILOT = ToolConfig(
 )
 
 # Antigravity tool configuration (flat naming: <skill-name>)
-# Skill paths based on Antigravity documentation:
-# - Workspace: .agent/skills/
-# - Global: ~/.gemini/antigravity/skills/
+# Skill paths based on Gemini CLI documentation:
+# - Workspace: .gemini/skills/  (primary; .agents/skills/ is an alias)
+# - User: ~/.gemini/skills/     (primary; ~/.agents/skills/ is an alias)
 # No CLI support — only fields that differ from ToolConfig defaults are set.
 ANTIGRAVITY = ToolConfig(
     name="antigravity",
-    config_dir=".agent",
-    global_config_dir=".gemini/antigravity",
+    config_dir=".gemini",
     cli_prompt_flag=None,
     cli_continue_flag=None,
     skill_prompt_prefix="",
-    detection_signals=(".agent",),
+    detection_signals=(".gemini", ".agent"),
     instruction_file="GEMINI.md",
 )
 
-# Registry of all supported tools
-TOOLS: dict[str, ToolConfig] = {
-    "claude": CLAUDE,
-    "cursor": CURSOR,
-    "codex": CODEX,
-    "opencode": OPENCODE,
-    "copilot": COPILOT,
-    "antigravity": ANTIGRAVITY,
-}
+# All tool configurations — order here determines iteration order in TOOLS.
+_ALL_TOOLS: tuple[ToolConfig, ...] = (
+    CLAUDE, CURSOR, CODEX, OPENCODE, COPILOT, ANTIGRAVITY,
+)
+
+# Registry of all supported tools, keyed by ToolConfig.name.
+TOOLS: dict[str, ToolConfig] = {tool.name: tool for tool in _ALL_TOOLS}
 
 # Default tool names for new configurations
 DEFAULT_TOOL_NAMES: tuple[str, ...] = ("claude",)

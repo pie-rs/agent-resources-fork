@@ -148,6 +148,24 @@ def run_tool_migrations(
             cleanup_parent=False,
         )
 
+    # Antigravity migration: .agent/skills/ -> .gemini/skills/
+    # Gemini CLI moved from .agent/ to .gemini/ as the primary skills path.
+    if "antigravity" in tool_by_name:
+        _migrate_skills_directory(
+            base / ".agent" / "skills",
+            base / ".gemini" / "skills",
+            cleanup_parent=True,
+        )
+
+    # Antigravity global migration: .gemini/antigravity/skills/ -> .gemini/skills/
+    # Older versions used a nested .gemini/antigravity/ subdir for global skills.
+    if "antigravity" in tool_by_name and global_install:
+        _migrate_skills_directory(
+            base / ".gemini" / "antigravity" / "skills",
+            base / ".gemini" / "skills",
+            cleanup_parent=True,
+        )
+
     # Cursor migration: flatten nested skill dirs to flat naming.
     # Old layout stored skills as user/repo/skill/ or local/skill/ inside
     # .cursor/skills/. Cursor expects flat naming where each skill is a

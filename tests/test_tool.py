@@ -211,12 +211,12 @@ class TestSkillsDirPaths:
         assert COPILOT.get_global_skills_dir() == (Path.home() / ".copilot" / "skills")
 
     def test_antigravity_project_skills_dir(self, tmp_path):
-        assert ANTIGRAVITY.get_skills_dir(tmp_path) == (tmp_path / ".agent" / "skills")
+        assert ANTIGRAVITY.get_skills_dir(tmp_path) == (tmp_path / ".gemini" / "skills")
 
     def test_antigravity_global_skills_dir(self):
-        """Antigravity uses ~/.gemini/antigravity/skills/ for personal skills."""
+        """Antigravity uses ~/.gemini/skills/ for personal skills."""
         assert ANTIGRAVITY.get_global_skills_dir() == (
-            Path.home() / ".gemini" / "antigravity" / "skills"
+            Path.home() / ".gemini" / "skills"
         )
 
 
@@ -243,7 +243,7 @@ class TestDetectionSignals:
         assert COPILOT.detection_signals == (".github/copilot", ".github/skills")
 
     def test_antigravity_detection_signals(self):
-        assert ANTIGRAVITY.detection_signals == (".agent",)
+        assert ANTIGRAVITY.detection_signals == (".gemini", ".agent")
 
 
 class TestInstructionFiles:
