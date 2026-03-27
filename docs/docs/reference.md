@@ -331,11 +331,11 @@ agr config show
 ```text
 Config: /Users/you/project/agr.toml
 
-  tools             = claude, codex, opencode
-  default_tool      = claude
-  default_source    = github
-  sync_instructions = true
-  canonical_instructions = CLAUDE.md
+  tools                    = claude, codex, opencode
+  default_tool             = claude
+  default_source           = github
+  sync_instructions        = true
+  canonical_instructions   = CLAUDE.md
 
 Sources:
   - github [git] https://github.com/{owner}/{repo}.git (default)
