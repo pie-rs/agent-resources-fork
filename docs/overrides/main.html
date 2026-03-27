@@ -654,6 +654,57 @@
   </script>
   {% endif %}
 
+  {% if page and page.file and page.file.src_path == "configuration.md" %}
+  <!-- HowTo Schema for configuration rich results -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "Configure agr for Multi-Tool Setup, Sources, and Instruction Syncing",
+    "description": "Configure agr.toml for multi-tool setup across Claude Code, Cursor, Codex, OpenCode, Copilot, and Antigravity — custom Git sources, instruction syncing, and global installs.",
+    "totalTime": "PT5M",
+    "tool": [
+      {
+        "@type": "HowToTool",
+        "name": "agr CLI"
+      }
+    ],
+    "step": [
+      {
+        "@type": "HowToStep",
+        "name": "Configure multiple AI tools",
+        "text": "Run agr config set tools claude cursor codex to install skills into multiple tools at once. Use agr init --tools to set tools during initial setup.",
+        "url": "https://kasperjunge.github.io/agent-resources/configuration/#multi-tool-setup"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Add a custom Git source",
+        "text": "Run agr config add sources my-server --type git --url 'https://git.example.com/{owner}/{repo}.git' to fetch skills from a self-hosted Git server or GitLab.",
+        "url": "https://kasperjunge.github.io/agent-resources/configuration/#adding-a-custom-source"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Enable instruction syncing",
+        "text": "Run agr config set sync_instructions true and agr config set canonical_instructions CLAUDE.md to keep CLAUDE.md, AGENTS.md, and GEMINI.md in sync across tools.",
+        "url": "https://kasperjunge.github.io/agent-resources/configuration/#instruction-syncing"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Set up private repositories",
+        "text": "Export GITHUB_TOKEN or GH_TOKEN with Contents: Read-only access. agr injects the token into HTTPS clone URLs automatically — no config changes needed.",
+        "url": "https://kasperjunge.github.io/agent-resources/configuration/#private-repositories"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Install skills globally",
+        "text": "Use the -g flag to install skills available in all projects: agr add -g anthropics/skills/pdf. Global config lives at ~/.agr/agr.toml.",
+        "url": "https://kasperjunge.github.io/agent-resources/configuration/#global-installs"
+      }
+    ]
+  }
+  </script>
+  {% endif %}
+
   {% if page and page.file and page.file.src_path == "sdk.md" %}
   <!-- HowTo Schema for Python SDK rich results -->
   <script type="application/ld+json">
