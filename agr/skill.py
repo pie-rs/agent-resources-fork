@@ -2,7 +2,10 @@
 
 import re
 from pathlib import Path, PurePosixPath
+from typing import TypeVar
 
+
+_P = TypeVar("_P", Path, PurePosixPath)
 
 # Marker file for skills
 SKILL_MARKER = "SKILL.md"
@@ -33,6 +36,17 @@ EXCLUDED_DIRS = {
     ".pytest_cache",
     ".ruff_cache",
 }
+
+
+def _shallowest(paths: list[_P]) -> _P:
+    """Return the path with the fewest components (shallowest in the tree).
+
+    When multiple paths share the same minimum depth, returns the first
+    such path for deterministic behaviour (sorted input → sorted output).
+
+    Precondition: *paths* must be non-empty.
+    """
+    return min(paths, key=lambda p: len(p.parts))
 
 
 def _is_excluded_path(path: Path, repo_dir: Path) -> bool:
@@ -111,8 +125,7 @@ def find_skill_in_repo(repo_dir: Path, skill_name: str) -> Path | None:
     if not matches:
         return None
 
-    # Return shallowest match for deterministic behavior
-    return min(matches, key=lambda p: len(p.parts))
+    return _shallowest(matches)
 
 
 def _find_skill_dirs_in_listing(paths: list[str]) -> list[PurePosixPath]:
@@ -156,7 +169,7 @@ def find_skill_in_repo_listing(
     matches = [d for d in _find_skill_dirs_in_listing(paths) if d.name == skill_name]
     if not matches:
         return None
-    return min(matches, key=lambda p: len(p.parts))
+    return _shallowest(matches)
 
 
 def find_skills_in_repo_listing(
@@ -176,14 +189,11 @@ def find_skills_in_repo_listing(
         Missing skills are omitted from the result.
     """
     name_set = set(skill_names)
-    result: dict[str, PurePosixPath] = {}
+    matches: dict[str, list[PurePosixPath]] = {}
     for d in _find_skill_dirs_in_listing(paths):
-        if d.name not in name_set:
-            continue
-        # Keep the shallowest match for each skill name.
-        if d.name not in result or len(d.parts) < len(result[d.name].parts):
-            result[d.name] = d
-    return result
+        if d.name in name_set:
+            matches.setdefault(d.name, []).append(d)
+    return {name: _shallowest(dirs) for name, dirs in matches.items()}
 
 
 def discover_skills_in_repo_listing(paths: list[str]) -> list[str]:
@@ -215,16 +225,11 @@ def discover_skills_in_repo(repo_dir: Path) -> list[tuple[str, Path]]:
     Returns:
         List of (skill_name, skill_path) tuples, deduplicated by name
     """
-    skills_by_name: dict[str, Path] = {}
-
+    matches: dict[str, list[Path]] = {}
     for skill_dir in _find_skill_dirs(repo_dir):
-        name = skill_dir.name
-        # Keep shallowest path for duplicate names
-        if name not in skills_by_name or len(skill_dir.parts) < len(
-            skills_by_name[name].parts
-        ):
-            skills_by_name[name] = skill_dir
+        matches.setdefault(skill_dir.name, []).append(skill_dir)
 
+    skills_by_name = {name: _shallowest(dirs) for name, dirs in matches.items()}
     return sorted(skills_by_name.items(), key=lambda x: x[0])
 
 
