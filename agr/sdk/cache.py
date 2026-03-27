@@ -20,6 +20,7 @@ from typing import Any, Generator, TextIO, cast
 from pathlib import Path
 
 from agr.exceptions import CacheError
+from agr.skill import SKILL_MARKER
 
 _LOCKS_USE_MSVCRT = os.name == "nt"
 _msvcrt = None
@@ -145,7 +146,7 @@ def is_cached(owner: str, repo: str, skill: str, revision: str) -> bool:
         True if the skill is cached
     """
     cache_path = get_skill_cache_path(owner, repo, skill, revision)
-    return cache_path.exists() and (cache_path / "SKILL.md").exists()
+    return cache_path.exists() and (cache_path / SKILL_MARKER).exists()
 
 
 def cache_skill(

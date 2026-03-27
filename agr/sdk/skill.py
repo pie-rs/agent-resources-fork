@@ -124,41 +124,27 @@ class Skill:
                     # Get commit hash for cache key
                     commit = _get_head_commit(repo_dir)
 
-                    # Check cache
+                    # Check cache first, otherwise download and cache
                     if not force_download and is_cached(
                         owner, repo_name, parsed.name, commit
                     ):
                         cached_path = get_skill_cache_path(
                             owner, repo_name, parsed.name, commit
                         )
-                        if is_legacy:
-                            warnings.warn(
-                                LEGACY_REPO_DEPRECATION_WARNING,
-                                UserWarning,
-                                stacklevel=2,
+                    else:
+                        skill_path = prepare_repo_for_skill(
+                            repo_dir, parsed.name
+                        )
+                        if skill_path is None:
+                            last_error = SkillNotFoundError(
+                                f"Skill '{parsed.name}' not found "
+                                f"in repository "
+                                f"'{owner}/{repo_name}'."
                             )
-                        return cls(
-                            name=parsed.name,
-                            path=cached_path,
-                            handle=parsed,
-                            source=source_config.name,
-                            revision=commit,
+                            continue
+                        cached_path = cache_skill(
+                            skill_path, owner, repo_name, parsed.name, commit
                         )
-
-                    # Find and checkout skill
-                    skill_path = prepare_repo_for_skill(repo_dir, parsed.name)
-                    if skill_path is None:
-                        last_error = SkillNotFoundError(
-                            f"Skill '{parsed.name}' not found "
-                            f"in repository "
-                            f"'{owner}/{repo_name}'."
-                        )
-                        continue
-
-                    # Cache the skill
-                    cached_path = cache_skill(
-                        skill_path, owner, repo_name, parsed.name, commit
-                    )
 
                     if is_legacy:
                         warnings.warn(
@@ -166,7 +152,6 @@ class Skill:
                             UserWarning,
                             stacklevel=2,
                         )
-
                     return cls(
                         name=parsed.name,
                         path=cached_path,
