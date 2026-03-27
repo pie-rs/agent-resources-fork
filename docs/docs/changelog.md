@@ -55,6 +55,10 @@ The `description` frontmatter field is now required when scaffolding a skill wit
 description: TODO — describe what this skill does and when to use it
 ```
 
+### Improved OpenCode detection
+
+`agr init` and `agr onboard` now detect OpenCode from `opencode.json` and `opencode.jsonc` config files, in addition to the `.opencode/` directory. This catches projects that use OpenCode's config file without having created the `.opencode/` directory yet.
+
 ### Bug fixes
 
 - `agrx --tool cursor` no longer passes an invalid `--force` flag to the Cursor CLI. The Cursor CLI (`agent`) does not support this flag, so `agrx` now runs without a permission-bypass flag for Cursor.
