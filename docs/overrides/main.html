@@ -479,6 +479,60 @@
     ]
   }
   </script>
+
+  <!-- TechArticle Schema for troubleshooting reference rich results -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Fix agr Errors — Troubleshooting Installs, Auth, Sync, Handles, and Skills",
+    "description": "Fix common agr problems — installation errors, GitHub auth, sync failures, handle formats, skill conflicts, and configuration issues.",
+    "url": "https://kasperjunge.github.io/agent-resources/troubleshooting/",
+    "author": {
+      "@type": "Person",
+      "name": "Kasper Junge",
+      "url": "https://github.com/kasperjunge"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Agent Resources",
+      "url": "https://github.com/kasperjunge/agent-resources"
+    },
+    "about": [
+      {
+        "@type": "DefinedTerm",
+        "name": "Installation errors",
+        "description": "Fix git CLI not found, repository not found, authentication failed, and network errors when installing skills"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "Handle format errors",
+        "description": "Fix invalid handle, too many path segments, and reserved sequence errors in skill handles"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "Configuration errors",
+        "description": "Fix agr.toml issues — missing config, invalid TOML, unknown tools, default_tool and default_source mismatches"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "Sync errors",
+        "description": "Fix agr sync issues — outdated skills, instruction sync not working, missing dependencies"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "Skill errors",
+        "description": "Fix invalid skill names, missing SKILL.md, skills not appearing in tools, and name conflicts"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "agrx errors",
+        "description": "Fix tool CLI not found, Antigravity not supported, and running agrx outside a git repository"
+      }
+    ],
+    "keywords": ["agr troubleshooting", "agr errors", "fix agr", "agr sync not working", "GitHub authentication agr", "skill not found agr"]
+  }
+  </script>
   {% endif %}
 
   {% if page and page.file and page.file.src_path == "creating.md" %}
