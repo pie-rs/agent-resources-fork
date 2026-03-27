@@ -292,7 +292,7 @@ When you run `agr add anthropics/skills/pdf`, agr parses the handle, clones
 the repo (sparse checkout), finds the `pdf/SKILL.md` directory, copies it into
 each configured tool's skills folder, and updates `agr.toml`.
 
-??? note "Full install flow (7 steps)"
+???+ note "Full install flow (7 steps)"
     1. **Parse the handle** — `anthropics` is the owner, `skills` is the repo,
        `pdf` is the skill name
     2. **Load config** — Read `agr.toml` (or create it) to find configured tools
