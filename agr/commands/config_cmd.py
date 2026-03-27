@@ -97,7 +97,7 @@ def run_config_show(global_scope: bool) -> None:
     console.print("[bold]Sources:[/bold]")
     for src in config.sources:
         default_marker = " (default)" if src.name == config.default_source else ""
-        console.print(f"  - {src.name} [{src.type}] {src.url}{default_marker}")
+        console.print(f"  - {src.name} \\[{src.type}] {src.url}{default_marker}")
 
 
 def run_config_path(global_scope: bool) -> None:
@@ -304,7 +304,7 @@ def run_config_add(
         config.sources.append(SourceConfig(name=name, type=source_type, url=source_url))
         config.save()
         console.print(
-            f"[green]Added source:[/green] {name} [{source_type}] {source_url}"
+            f"[green]Added source:[/green] {name} \\[{source_type}] {source_url}"
         )
 
 
