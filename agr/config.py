@@ -3,6 +3,7 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 from collections.abc import Generator
+from typing import Any
 
 import tomlkit
 from tomlkit import TOMLDocument
@@ -84,6 +85,34 @@ def _parse_default_tool_from_doc(doc: TOMLDocument, tools: list[str]) -> str | N
     return default_tool
 
 
+def _parse_source_entry(item: Any) -> SourceConfig:
+    """Parse and validate a single ``[[source]]`` entry.
+
+    Args:
+        item: A TOML table (dict) representing one ``[[source]]`` block.
+
+    Returns:
+        A validated SourceConfig.
+
+    Raises:
+        ConfigError: If the entry is malformed or has invalid values.
+    """
+    if not isinstance(item, dict):
+        raise ConfigError("Invalid [[source]] entry in agr.toml")
+    name = str(item.get("name", "")).strip()
+    source_type = str(item.get("type", SOURCE_TYPE_GIT)).strip()
+    url = item.get("url")
+    if not name:
+        raise ConfigError("Source entry missing name")
+    if source_type != SOURCE_TYPE_GIT:
+        raise ConfigError(
+            f"Unsupported source type '{source_type}' for '{name}'"
+        )
+    if not url:
+        raise ConfigError(f"Source '{name}' missing url")
+    return SourceConfig(name=name, type=source_type, url=str(url))
+
+
 def _parse_sources_from_doc(
     doc: TOMLDocument,
 ) -> tuple[list[SourceConfig], str]:
@@ -99,21 +128,7 @@ def _parse_sources_from_doc(
     else:
         if not isinstance(sources_list, list):
             raise ConfigError("Invalid [[source]] format in agr.toml")
-        for item in sources_list:
-            if not isinstance(item, dict):
-                raise ConfigError("Invalid [[source]] entry in agr.toml")
-            name = str(item.get("name", "")).strip()
-            source_type = str(item.get("type", SOURCE_TYPE_GIT)).strip()
-            url = item.get("url")
-            if not name:
-                raise ConfigError("Source entry missing name")
-            if source_type != SOURCE_TYPE_GIT:
-                raise ConfigError(
-                    f"Unsupported source type '{source_type}' for '{name}'"
-                )
-            if not url:
-                raise ConfigError(f"Source '{name}' missing url")
-            sources.append(SourceConfig(name=name, type=source_type, url=str(url)))
+        sources = [_parse_source_entry(item) for item in sources_list]
 
     default_source = doc.get("default_source")
     if default_source:
