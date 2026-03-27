@@ -35,6 +35,14 @@ your AI coding tool's CLI, and cleans up afterwards. Nothing is added to
 
 ```bash
 agrx anthropics/skills/pdf                          # Run once, then clean up
+```
+
+```text
+Downloading anthropics/skills/pdf...
+Running skill 'pdf' with claude...
+```
+
+```bash
 agrx anthropics/skills/pdf -p "Extract tables"      # Pass a prompt
 agrx kasperjunge/commit -i                          # Interactive: skill + chat
 ```
@@ -79,6 +87,14 @@ agrx kasperjunge/commit -i                          # Interactive: skill + chat
 
 ```bash
 agrx anthropics/skills/pdf --tool codex
+```
+
+```text
+Downloading anthropics/skills/pdf...
+Running skill 'pdf' with codex...
+```
+
+```bash
 agrx anthropics/skills/pdf --tool cursor
 agrx anthropics/skills/pdf --tool opencode
 ```
@@ -92,10 +108,20 @@ can continue the conversation:
 agrx kasperjunge/commit -i
 ```
 
+```text
+Downloading kasperjunge/commit...
+Running skill 'commit' with claude...
+```
+
 ### Pass a prompt
 
 ```bash
 agrx anthropics/skills/pdf -p "Extract all tables from report.pdf as CSV"
+```
+
+```text
+Downloading anthropics/skills/pdf...
+Running skill 'pdf' with claude...
 ```
 
 ### Use a custom source
@@ -106,12 +132,22 @@ See [Configuration — Sources](configuration.md#sources) for how to set up cust
 agrx team/internal-skill --source my-server
 ```
 
+```text
+Downloading team/internal-skill...
+Running skill 'internal-skill' with claude...
+```
+
 ### Run outside a git repo
 
 `agrx` requires a git repository by default. Use `--global` to run anywhere:
 
 ```bash
 agrx anthropics/skills/pdf --global
+```
+
+```text
+Downloading anthropics/skills/pdf...
+Running skill 'pdf' with claude...
 ```
 
 ## Differences from `agr add`
@@ -123,6 +159,30 @@ agrx anthropics/skills/pdf --global
 | Runs the skill | No | Yes (invokes tool CLI) |
 | Local paths | Supported | Not supported (remote only) |
 | Multi-tool | Installs to all configured tools | Uses one tool |
+
+## Common Errors
+
+Running `agrx` on a local path fails — only remote handles are supported:
+
+```bash
+agrx ./my-skill
+```
+
+```text
+Error: agrx only works with remote handles
+Use 'agr add' for local skills
+```
+
+Running outside a git repo without `--global`:
+
+```bash
+agrx anthropics/skills/pdf
+```
+
+```text
+Error: Not in a git repository
+Use --global to install to ~/.claude/skills/
+```
 
 ## Tool CLI Requirements
 
