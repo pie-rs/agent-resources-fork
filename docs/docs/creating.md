@@ -35,6 +35,14 @@ guide helps you create, test, and share a skill with minimal ceremony.
 **Prerequisites:** [agr installed](tutorial.md#step-1-install-agr), a project
 with at least one [supported AI tool](tools.md)
 
+**Key terms:** A **skill** is a directory containing a `SKILL.md` file with
+YAML frontmatter (`name`, `description`) and markdown instructions for an AI
+coding agent. A **handle** like `user/skill` or `user/repo/skill` identifies a
+skill on GitHub. **agr.toml** is the manifest file that tracks your project's
+skill dependencies — similar to `package.json` or `Cargo.toml`. **agr** installs
+skills into tools like Claude Code, Cursor, Codex, OpenCode, Copilot, and
+Antigravity. See [Core Concepts](concepts.md) for details.
+
 ## Scaffold a New Skill with `agr init`
 
 ```bash
