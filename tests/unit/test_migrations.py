@@ -1,6 +1,7 @@
 """Unit tests for agr.commands.migrations module."""
 
 import json
+from pathlib import Path
 
 from agr.commands.migrations import (
     _flatten_nested_skills,
@@ -13,7 +14,7 @@ from agr.config import AgrConfig, Dependency
 from agr.handle import INSTALLED_NAME_SEPARATOR, LEGACY_SEPARATOR
 from agr.metadata import METADATA_FILENAME
 from agr.skill import SKILL_MARKER
-from agr.tool import ANTIGRAVITY, CLAUDE, CODEX, OPENCODE
+from agr.tool import ANTIGRAVITY, CLAUDE, CODEX, CURSOR, OPENCODE
 
 
 def _make_skill(path, *, metadata=None):
@@ -403,6 +404,49 @@ class TestRunToolMigrations:
     def test_noop_when_repo_root_none(self):
         """No-op when repo_root is None and not global."""
         run_tool_migrations([CLAUDE], None)  # Should not raise
+
+    def test_cursor_migration_flattens_nested(self, tmp_path):
+        """Cursor nested skills are flattened to top level during migration."""
+        _make_skill(tmp_path / ".cursor" / "skills" / "user" / "repo" / "my-skill")
+
+        run_tool_migrations([CURSOR], tmp_path)
+
+        assert (tmp_path / ".cursor" / "skills" / "my-skill" / SKILL_MARKER).exists()
+        assert not (tmp_path / ".cursor" / "skills" / "user").exists()
+
+    def test_opencode_global_migration_uses_global_config_dir(
+        self, tmp_path, monkeypatch
+    ):
+        """OpenCode global migration uses ~/.config/opencode/ not ~/.opencode/."""
+        monkeypatch.setattr(Path, "home", staticmethod(lambda: tmp_path))
+        _make_skill(tmp_path / ".config" / "opencode" / "skill" / "my-skill")
+
+        run_tool_migrations([OPENCODE], None, global_install=True)
+
+        assert (
+            tmp_path / ".config" / "opencode" / "skills" / "my-skill" / SKILL_MARKER
+        ).exists()
+        assert not (tmp_path / ".config" / "opencode" / "skill").exists()
+
+    def test_antigravity_global_migration(self, tmp_path, monkeypatch):
+        """Antigravity global migration moves .gemini/antigravity/skills/ to .gemini/skills/."""
+        monkeypatch.setattr(Path, "home", staticmethod(lambda: tmp_path))
+        _make_skill(tmp_path / ".gemini" / "antigravity" / "skills" / "my-skill")
+
+        run_tool_migrations([ANTIGRAVITY], None, global_install=True)
+
+        assert (tmp_path / ".gemini" / "skills" / "my-skill" / SKILL_MARKER).exists()
+        assert not (tmp_path / ".gemini" / "antigravity").exists()
+
+    def test_codex_global_migration(self, tmp_path, monkeypatch):
+        """Codex global migration moves ~/.codex/skills/ to ~/.agents/skills/."""
+        monkeypatch.setattr(Path, "home", staticmethod(lambda: tmp_path))
+        _make_skill(tmp_path / ".codex" / "skills" / "my-skill")
+
+        run_tool_migrations([CODEX], None, global_install=True)
+
+        assert (tmp_path / ".agents" / "skills" / "my-skill" / SKILL_MARKER).exists()
+        assert not (tmp_path / ".codex").exists()
 
     def test_skips_unconfigured_tools(self, tmp_path):
         """Only migrates tools that are in the tools list."""
