@@ -1,18 +1,22 @@
 ---
-title: "agrx — Try AI Agent Skills Without Installing Them"
-description: Use agrx to download and run AI agent skills ephemerally in Claude Code, Cursor, Codex, OpenCode, Copilot, or Antigravity — no agr.toml changes, no cleanup needed.
+title: "agrx — Run AI Agent Skills Instantly Without Installing"
+description: Run AI agent skills instantly with agrx — test before installing, no agr.toml changes, automatic cleanup. Like npx for AI skills in Claude Code, Cursor, Codex, OpenCode, Copilot, and Antigravity.
 keywords:
   - agrx
+  - run skills without installing
+  - test AI agent skill before installing
   - try AI skills without installing
+  - npx for AI skills
+  - one-off skill execution
   - ephemeral skill runner
-  - run skill one-off
   - agrx command
-  - test AI agent skill
+  - temporary skill testing
   - agrx interactive mode
   - agrx vs agr add
-  - run skill temporarily
-  - agrx OpenCode
-  - agrx Copilot
+  - download and run AI skills
+  - agrx Claude Code
+  - agrx Cursor
+  - agrx Codex
 ---
 
 # agrx — Run Skills Without Installing
@@ -22,9 +26,10 @@ keywords:
     afterwards. Nothing is added to `agr.toml`. Use it to try skills before
     committing to an install.
 
-`agrx` is an ephemeral skill runner. It downloads a [skill](concepts.md#skills)
-from GitHub, runs it with your AI coding tool's CLI, and cleans up afterwards.
-Nothing is added to [`agr.toml`](configuration.md).
+`agrx` is like [npx](https://docs.npmjs.com/cli/commands/npx) for AI agent
+skills. It downloads a [skill](concepts.md#skills) from GitHub, runs it with
+your AI coding tool's CLI, and cleans up afterwards. Nothing is added to
+[`agr.toml`](configuration.md) — no permanent install, no project changes.
 
 ## Quick Start
 
