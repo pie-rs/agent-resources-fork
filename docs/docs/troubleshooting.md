@@ -89,11 +89,12 @@ Your GitHub token is missing, expired, or lacks permissions.
 ```text
 Error: Skill 'myskill' not found in repository.
 No directory named 'myskill' containing SKILL.md was found.
+Hint: Create a skill at 'skills/myskill/SKILL.md' or 'myskill/SKILL.md'
 ```
 
 The repo exists but doesn't contain a skill with that name. agr searches recursively for a directory matching the skill name that contains a `SKILL.md` file.
 
-**Fix:** Check the repo on GitHub to see what skills are available. If you used a two-part handle, agr may suggest corrections:
+**Fix:** Follow the hint to create the skill, or check the repo on GitHub to see what skills are available. If you used a two-part handle, agr may suggest corrections:
 
 ```text
 Skill 'myskill' not found. However, 'user/myskill' exists as a repository with 3 skill(s):
