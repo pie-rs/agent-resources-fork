@@ -220,17 +220,6 @@ export GH_TOKEN="$(gh auth token)"
 
 agr checks `GITHUB_TOKEN` first, then falls back to `GH_TOKEN`.
 
-### How It Works
-
-When a `GITHUB_TOKEN` or `GH_TOKEN` is set, agr injects the token into HTTPS
-clone URLs for GitHub sources. This happens transparently — no config changes
-needed. The token is used for:
-
-- `agr add` — cloning private repos
-- `agr sync` — syncing private dependencies
-- `agrx` — ephemeral runs from private repos
-- Python SDK — `Skill.from_git()`, `list_skills()`, `skill_info()`
-
 ### Token Permissions
 
 The token needs **read access** to the repositories containing your skills:
@@ -239,37 +228,37 @@ The token needs **read access** to the repositories containing your skills:
   specific repositories
 - **Classic tokens**: The `repo` scope works but grants broader access
 
-### Per-Shell vs Permanent
+agr injects the token into HTTPS clone URLs transparently — no config changes
+needed. It works with `agr add`, `agr sync`, `agrx`, and the Python SDK.
 
-Add the export to your shell profile for permanent access:
+??? note "Persist your token across shell sessions"
+    Add the export to your shell profile so it's always available:
 
-=== "bash"
+    === "bash"
+
+        ```bash
+        echo 'export GITHUB_TOKEN="ghp_your_token"' >> ~/.bashrc
+        ```
+
+    === "zsh"
+
+        ```bash
+        echo 'export GITHUB_TOKEN="ghp_your_token"' >> ~/.zshrc
+        ```
+
+    Or load it dynamically from the GitHub CLI:
 
     ```bash
-    echo 'export GITHUB_TOKEN="ghp_your_token"' >> ~/.bashrc
+    export GITHUB_TOKEN="$(gh auth token)"
     ```
 
-=== "zsh"
+??? note "Self-hosted Git servers (non-GitHub)"
+    Token injection only applies to GitHub URLs. For self-hosted Git servers,
+    configure credentials through your system's Git credential helper:
 
     ```bash
-    echo 'export GITHUB_TOKEN="ghp_your_token"' >> ~/.zshrc
+    git config --global credential.helper store
     ```
-
-Or use a secrets manager and load it dynamically:
-
-```bash
-export GITHUB_TOKEN="$(gh auth token)"
-```
-
-### Non-GitHub Sources
-
-Token injection only applies to GitHub URLs. For self-hosted Git servers, embed
-credentials in the source URL or configure them through your system's Git
-credential helper:
-
-```bash
-git config --global credential.helper store
-```
 
 ## Global Installs
 
