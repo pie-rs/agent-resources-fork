@@ -64,6 +64,28 @@ user/repo/skill         → github.com/user/repo repo, "skill" directory
 ./path/to/skill         → local directory on disk
 ```
 
+## agr.toml
+
+Track dependencies and configuration in `agr.toml` — commit it so your team shares the same skills:
+
+```toml
+tools = ["claude", "cursor", "codex"]
+default_tool = "claude"
+
+dependencies = [
+    {handle = "anthropics/skills/frontend-design", type = "skill"},
+    {handle = "kasperjunge/commit", type = "skill"},
+    {path = "./skills/local-skill", type = "skill"},
+]
+
+[[source]]
+name = "github"
+type = "git"
+url = "https://github.com/{owner}/{repo}.git"
+```
+
+Teammates install everything with: `agr sync`
+
 ## Supported Tools
 
 agr installs skills into 6 AI coding tools. Configure with `agr config set tools claude cursor codex`.
