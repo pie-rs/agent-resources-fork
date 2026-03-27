@@ -183,4 +183,63 @@
   }
   </script>
   {% endif %}
+
+  {% if page and page.file and page.file.src_path == "tutorial.md" %}
+  <!-- HowTo Schema for tutorial rich results -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "Get Started with agr: Install, Add, and Share AI Agent Skills",
+    "description": "Step-by-step guide to installing agr, adding AI agent skills to Claude Code, Cursor, Codex, OpenCode, Copilot, or Antigravity, syncing skills across a team, and creating your own.",
+    "totalTime": "PT10M",
+    "tool": [
+      {
+        "@type": "HowToTool",
+        "name": "Python 3.10+"
+      },
+      {
+        "@type": "HowToTool",
+        "name": "git"
+      },
+      {
+        "@type": "HowToTool",
+        "name": "uv, pipx, or pip"
+      }
+    ],
+    "step": [
+      {
+        "@type": "HowToStep",
+        "name": "Install agr",
+        "text": "Install the agr CLI with uv tool install agr (recommended), pipx install agr, or pip install agr. This installs two commands: agr (the main CLI) and agrx (an ephemeral skill runner).",
+        "url": "https://kasperjunge.github.io/agent-resources/tutorial/#step-1-install-agr"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Set up a project",
+        "text": "Navigate to your project and optionally run agr init to create agr.toml. agr auto-detects which AI tools you use from repo signals like .claude/ or CLAUDE.md.",
+        "url": "https://kasperjunge.github.io/agent-resources/tutorial/#step-2-set-up-a-project"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Add your first skill",
+        "text": "Run agr add anthropics/skills/frontend-design to install a skill from GitHub. agr clones the repo, finds the skill, copies it into your tool's skills folder, and updates agr.toml.",
+        "url": "https://kasperjunge.github.io/agent-resources/tutorial/#step-3-add-your-first-skill"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Sync skills across a team",
+        "text": "Commit agr.toml to version control. Teammates run agr sync to install all skills listed in agr.toml — like npm install for agent skills.",
+        "url": "https://kasperjunge.github.io/agent-resources/tutorial/#step-5-team-sync"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Create your own skill",
+        "text": "Run agr init my-skill to scaffold a new skill with a SKILL.md template. Edit the file, test locally with agr add ./my-skill, then push to GitHub so others can install it.",
+        "url": "https://kasperjunge.github.io/agent-resources/tutorial/#step-7-create-your-own-skill"
+      }
+    ]
+  }
+  </script>
+  {% endif %}
 {% endblock %}
