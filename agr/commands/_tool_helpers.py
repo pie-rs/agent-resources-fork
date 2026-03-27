@@ -7,7 +7,7 @@ and the deprecated tool commands (tools.py).
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Literal, overload
 
 from agr.commands import CommandResult
 from agr.config import (
@@ -46,6 +46,30 @@ def print_missing_config_hint(global_install: bool) -> None:
     else:
         console.print("[yellow]No agr.toml found.[/yellow]")
         console.print("[dim]Run 'agr init' to create one.[/dim]")
+
+
+@overload
+def load_existing_config(
+    global_install: bool,
+    *,
+    missing_ok: Literal[True],
+    create_if_missing: bool = ...,
+) -> LoadedConfig | None: ...
+
+
+@overload
+def load_existing_config(
+    global_install: bool,
+    *,
+    missing_ok: bool = ...,
+    create_if_missing: Literal[True],
+) -> LoadedConfig: ...
+
+
+@overload
+def load_existing_config(
+    global_install: bool,
+) -> LoadedConfig: ...
 
 
 def load_existing_config(

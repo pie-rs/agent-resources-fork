@@ -48,7 +48,6 @@ def run_remove(refs: list[str], global_install: bool = False) -> None:
     """
     console = get_console()
     loaded = load_existing_config(global_install)
-    assert loaded is not None  # load_existing_config raises SystemExit on missing
     config, config_path = loaded.config, loaded.config_path
     tools, repo_root, skills_dirs = loaded.tools, loaded.repo_root, loaded.skills_dirs
     run_tool_migrations(tools, repo_root, global_install=global_install)

@@ -30,7 +30,6 @@ def run_add(
     """
     console = get_console()
     loaded = load_existing_config(global_install, create_if_missing=True)
-    assert loaded is not None  # create_if_missing=True always returns a result
     config, config_path = loaded.config, loaded.config_path
     tools, repo_root, skills_dirs = loaded.tools, loaded.repo_root, loaded.skills_dirs
 
