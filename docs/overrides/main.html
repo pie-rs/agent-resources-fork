@@ -798,4 +798,55 @@
   }
   </script>
   {% endif %}
+
+  {% if page and page.file and page.file.src_path == "concepts.md" %}
+  <!-- Article Schema for core concepts rich results -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "How agr Works — Skills, Handles, Sources, Scopes, and the Sync Lifecycle",
+    "description": "Understand how agr works — skills, handles, sources, and the sync lifecycle that keeps your AI tools in sync.",
+    "url": "https://kasperjunge.github.io/agent-resources/concepts/",
+    "author": {
+      "@type": "Person",
+      "name": "Kasper Junge",
+      "url": "https://github.com/kasperjunge"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Agent Resources",
+      "url": "https://github.com/kasperjunge/agent-resources"
+    },
+    "about": [
+      {
+        "@type": "DefinedTerm",
+        "name": "Skill",
+        "description": "A folder containing a SKILL.md file with YAML frontmatter and instructions for an AI coding agent"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "Handle",
+        "description": "A reference string (user/skill, user/repo/skill, or ./path) that tells agr where to find a skill"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "Tool",
+        "description": "An AI coding agent (Claude Code, Cursor, Codex, OpenCode, Copilot, or Antigravity) that reads and executes skills"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "Source",
+        "description": "A Git host configuration that defines where agr fetches remote skills from"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "Scope",
+        "description": "Whether a skill is installed locally (per-project) or globally (available in all projects)"
+      }
+    ],
+    "keywords": ["agr", "AI agent skills", "skill handles", "SKILL.md format", "agr.toml", "agr sync lifecycle"]
+  }
+  </script>
+  {% endif %}
 {% endblock %}
