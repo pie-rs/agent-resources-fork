@@ -173,19 +173,45 @@ automated environments.
 
 ### GitHub Actions
 
-```yaml
-- name: Install agr
-  run: uv tool install agr
+A complete workflow that syncs skills before your CI jobs run:
 
-- name: Sync skills
-  run: agr sync -q
-  env:
-    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Only needed for private repos
+```yaml
+name: Sync agent skills
+on: [push, pull_request]
+
+jobs:
+  sync-skills:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6 # (1)!
+
+      - name: Install agr
+        run: uv tool install agr
+
+      - name: Sync skills
+        run: agr sync -q # (2)!
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # (3)!
 ```
 
-The `-q` (`--quiet`) flag suppresses non-error output, keeping your CI logs
-clean. The `GITHUB_TOKEN` line is only required if your team uses private skill
-repos. For public skills, `agr sync` works without authentication.
+1. Sets up `uv` — see [astral-sh/setup-uv](https://github.com/astral-sh/setup-uv) for options
+2. `-q` suppresses non-error output, keeping CI logs clean
+3. Only needed for private skill repos. For public skills, remove this line.
+
+??? note "Run as a step in an existing workflow"
+    If you already have a CI workflow, add just the install and sync steps:
+
+    ```yaml
+    - name: Install agr
+      run: uv tool install agr
+
+    - name: Sync skills
+      run: agr sync -q
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    ```
 
 ### Other CI systems
 
