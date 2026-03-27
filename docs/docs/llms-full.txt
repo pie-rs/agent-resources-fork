@@ -782,6 +782,14 @@ Only `git` sources are supported. Change the `type` to `git`.
 `Error: GitHub API rate limit exceeded`
 Mainly affects the Python SDK (list_skills(), skill_info()), not agr add/sync which use Git clones. Set `GITHUB_TOKEN` to raise your limit from 60/hour (unauthenticated) to 5,000/hour. Rate limits reset hourly.
 
+#### "GitHub API authentication failed"
+`Error: GitHub API authentication failed (HTTP 403)`
+SDK-specific error — your `GITHUB_TOKEN` was rejected by the GitHub API. Unlike the git-level "Authentication failed" error (which fires during `agr add`), this fires from SDK functions like `list_skills()` and `skill_info()`. Check: token revoked/expired (regenerate at github.com/settings/tokens), wrong token type (fine-grained tokens need Contents: Read-only permission). HTTP 401 means invalid token; 403 means insufficient permissions.
+
+#### "Failed to connect to GitHub API"
+`Error: Failed to connect to GitHub API: <urlopen error ...>`
+The SDK couldn't reach api.github.com. Affects `list_skills()`, `skill_info()`, and other SDK functions that call the GitHub REST API. Check your internet connection, corporate proxy/firewall (`curl -s https://api.github.com`), or DNS/VPN settings.
+
 #### "Local skills cannot specify a source"
 The `--source` flag only applies to remote handles. Local paths are installed directly from disk.
 
