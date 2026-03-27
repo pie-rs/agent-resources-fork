@@ -180,6 +180,7 @@ See [Creating Skills](creating.md) for the full guide.
 agr add anthropics/skills/pdf       # Extract tables, summarize, create PDFs
 agr add anthropics/skills/docx      # Generate and edit Word documents
 agr add anthropics/skills/xlsx      # Build and manipulate spreadsheets
+agr add anthropics/skills/pptx      # Create and work with slide decks
 ```
 
 **Design & frontend** — build UIs and visual assets:
