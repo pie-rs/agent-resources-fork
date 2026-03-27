@@ -126,7 +126,7 @@ my-skill/
 ├── references/       # Domain knowledge the agent reads at runtime
 │   └── style-guide.md
 ├── scripts/          # Executable code for deterministic tasks
-│   └── validate.py
+│   └── validate.sh
 └── assets/           # Templates, data files
     └── template.json
 ```
