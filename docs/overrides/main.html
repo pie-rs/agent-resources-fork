@@ -243,6 +243,38 @@
           "@type": "Answer",
           "text": "Skill names must be 1-64 characters, lowercase alphanumeric and hyphens only. Names cannot start or end with a hyphen, and consecutive hyphens (--) are not allowed. Use names like my-skill or code-reviewer."
         }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"git CLI not found\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "agr uses git for all remote operations. Install it: on macOS run xcode-select --install, on Ubuntu/Debian run sudo apt install git, on Windows download from git-scm.com."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Not in a git repository\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Project-level agr commands need to run inside a git repo. Either cd into a git repository or run git init to create one. For agrx, use the --global flag to run outside a repo."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I fix \"Unknown tool\" in agr?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Check your agr.toml for typos in the tools list. Available tools are: claude (Claude Code), cursor (Cursor), codex (OpenAI Codex), opencode (OpenCode), copilot (GitHub Copilot), and antigravity (Antigravity)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why is my skill not showing up in my AI coding tool after running agr add?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Verify the skill directory exists in your tool's skills folder (e.g., .claude/skills/my-skill/SKILL.md). Check that SKILL.md has valid frontmatter with both name and description fields. Some tools require a restart to pick up new skills. Run agr list to confirm the skill is registered."
+        }
       }
     ]
   }
