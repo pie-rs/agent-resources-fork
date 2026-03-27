@@ -46,6 +46,7 @@ agrx anthropics/skills/pdf -p "Extract tables from report.pdf"
 agr add user/skill         # Install from GitHub
 agr add user/repo/skill    # From a specific repo
 agr add ./path/to/skill    # Local path
+agr add user/skill -o      # Update to latest version
 agr remove user/skill      # Uninstall
 agr sync                   # Install all dependencies from agr.toml
 agr list                   # Show installed skills
