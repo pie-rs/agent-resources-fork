@@ -41,7 +41,12 @@ with at least one [supported AI tool](tools.md)
 agr init my-skill
 ```
 
-Creates `my-skill/SKILL.md` with a starter template:
+```text
+Created skill scaffold: my-skill
+  Edit my-skill/SKILL.md to customize your skill
+```
+
+This creates `my-skill/SKILL.md` with a starter template:
 
 ```markdown
 ---
@@ -130,7 +135,7 @@ Be specific and actionable in your feedback. Reference line numbers when possibl
 
 For complex skills, add supporting files alongside SKILL.md:
 
-```
+```text
 my-skill/
 ├── SKILL.md
 ├── references/       # Domain knowledge the agent reads at runtime
@@ -163,16 +168,27 @@ Keep your main SKILL.md under 500 lines. Put detailed reference material in the 
 The fastest way to iterate on a skill:
 
 ```bash
-# 1. Install it locally
 agr add ./skills/my-skill
-
-# 2. Test it in your AI tool — invoke the skill and see if it works
-
-# 3. Edit SKILL.md, then reinstall
-agr add ./skills/my-skill --overwrite
-
-# Repeat steps 2-3 until the skill works well
 ```
+
+```text
+Added: ./skills/my-skill
+  Installed to claude: .claude/skills/my-skill
+```
+
+Test it in your AI tool — invoke the skill and see if it works. Edit
+`SKILL.md`, then reinstall:
+
+```bash
+agr add ./skills/my-skill --overwrite
+```
+
+```text
+Added: ./skills/my-skill
+  Installed to claude: .claude/skills/my-skill (overwritten)
+```
+
+Repeat until the skill works well.
 
 **What to test:**
 
@@ -204,7 +220,7 @@ Push your skill to GitHub. The recommended structure is a repo named `skills`
 under your GitHub username — this lets people install with the short two-part
 handle:
 
-```
+```text
 your-username/skills/
 ├── my-skill/
 │   └── SKILL.md

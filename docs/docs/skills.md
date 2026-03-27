@@ -157,7 +157,7 @@ Edit the generated `my-skill/SKILL.md` with your instructions.
 
 Push your skill to a GitHub repository. The recommended structure is a repo named `skills` with one directory per skill:
 
-```
+```text
 your-username/skills/
 ├── my-skill/
 │   └── SKILL.md
