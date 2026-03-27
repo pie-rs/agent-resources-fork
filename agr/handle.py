@@ -309,21 +309,15 @@ def installed_name_to_toml_handle(installed_name: str) -> str:
     Returns:
         Handle like "kasperjunge/commit" or the local path
     """
-    # Support legacy colon format during migration
+    # Detect which separator is present (legacy colon or current double-hyphen).
     if LEGACY_SEPARATOR in installed_name:
-        parts = installed_name.split(LEGACY_SEPARATOR)
-        if parts[0] == LOCAL_PREFIX:
-            return parts[1] if len(parts) > 1 else installed_name
-        return "/".join(parts)
-
-    # New separator format
-    if INSTALLED_NAME_SEPARATOR not in installed_name:
+        separator = LEGACY_SEPARATOR
+    elif INSTALLED_NAME_SEPARATOR in installed_name:
+        separator = INSTALLED_NAME_SEPARATOR
+    else:
         return installed_name
 
-    parts = installed_name.split(INSTALLED_NAME_SEPARATOR)
+    parts = installed_name.split(separator)
     if parts[0] == LOCAL_PREFIX:
-        # Local skill - return just the name (path is lost)
         return parts[1] if len(parts) > 1 else installed_name
-
-    # Remote: convert separators to slashes
     return "/".join(parts)
