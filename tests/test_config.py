@@ -41,7 +41,9 @@ class TestDependency:
 
     def test_local_with_source_raises(self):
         """Local dependency cannot specify a source."""
-        with pytest.raises(ValueError, match="Local dependency cannot specify a source"):
+        with pytest.raises(
+            ValueError, match="Local dependency cannot specify a source"
+        ):
             Dependency(type="skill", path="./my-skill", source="github")
 
     def test_to_parsed_handle_remote_two_part(self):
@@ -193,6 +195,19 @@ dependencies = [
             'canonical_instructions = "README.md"\ndependencies = []\n'
         )
         with pytest.raises(ConfigError, match="canonical_instructions"):
+            AgrConfig.load(config_path)
+
+    def test_load_local_dep_with_source_raises(self, tmp_path):
+        """Local dependency with source in TOML raises ConfigError."""
+        config_path = tmp_path / "agr.toml"
+        config_path.write_text("""
+dependencies = [
+    { path = "./my-skill", type = "skill", source = "github" },
+]
+""")
+        with pytest.raises(
+            ConfigError, match="Local dependency cannot specify a source"
+        ):
             AgrConfig.load(config_path)
 
     def test_load_invalid_toml_raises(self, tmp_path):

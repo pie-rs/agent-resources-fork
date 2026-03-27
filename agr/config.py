@@ -213,12 +213,15 @@ def _parse_dependencies_from_doc(
         if source is not None:
             source = str(source)
 
-        if handle:
-            dependencies.append(Dependency(handle=handle, type=dep_type, source=source))
-        elif path_val:
-            if source is not None:
-                raise ConfigError("Local dependencies cannot specify a source")
-            dependencies.append(Dependency(path=path_val, type=dep_type))
+        if handle or path_val:
+            try:
+                dependencies.append(
+                    Dependency(
+                        handle=handle, path=path_val, type=dep_type, source=source
+                    )
+                )
+            except ValueError as e:
+                raise ConfigError(str(e)) from None
 
     for dep in dependencies:
         if dep.source and dep.source not in source_names:
