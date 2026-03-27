@@ -2,14 +2,21 @@
 
 import pytest
 
+from agr.commands import CommandResult
 from agr.commands._tool_helpers import (
     ToolAddResult,
     ToolRemoveResult,
     add_tools_to_config,
+    delete_tool_skills,
     ensure_valid_default_tool,
+    exit_if_sync_errors,
     normalize_and_validate_tool_names,
     normalize_tool_names,
+    print_missing_config_hint,
+    print_tool_add_result,
+    print_tool_remove_result,
     remove_tools_from_config,
+    save_and_summarize_results,
     validate_tool_names,
 )
 from agr.config import AgrConfig
@@ -221,3 +228,222 @@ class TestToolRemoveResult:
         a = ToolRemoveResult(removed=["cursor"], not_configured=[])
         b = ToolRemoveResult(removed=[], not_configured=["cursor"])
         assert a != b
+
+
+class TestSaveAndSummarizeResults:
+    """Tests for save_and_summarize_results()."""
+
+    def _noop_printer(self, result: CommandResult) -> None:
+        pass
+
+    def test_saves_config_when_successes(self, tmp_path):
+        config_path = tmp_path / "agr.toml"
+        config = AgrConfig(tools=["claude"])
+        results = [CommandResult("user/skill", True, "ok")]
+
+        save_and_summarize_results(
+            results, config, config_path,
+            action="added", total=1, print_result=self._noop_printer,
+        )
+
+        assert config_path.exists()
+
+    def test_does_not_save_config_when_all_failures(self, tmp_path):
+        config_path = tmp_path / "agr.toml"
+        config = AgrConfig(tools=["claude"])
+        results = [CommandResult("user/skill", False, "error")]
+
+        with pytest.raises(SystemExit):
+            save_and_summarize_results(
+                results, config, config_path,
+                action="added", total=1, print_result=self._noop_printer,
+            )
+
+        assert not config_path.exists()
+
+    def test_exits_on_failure_by_default(self, tmp_path):
+        config_path = tmp_path / "agr.toml"
+        config = AgrConfig(tools=["claude"])
+        results = [CommandResult("user/skill", False, "error")]
+
+        with pytest.raises(SystemExit):
+            save_and_summarize_results(
+                results, config, config_path,
+                action="added", total=1, print_result=self._noop_printer,
+            )
+
+    def test_no_exit_when_exit_on_failure_false(self, tmp_path):
+        config_path = tmp_path / "agr.toml"
+        config = AgrConfig(tools=["claude"])
+        results = [CommandResult("user/skill", False, "error")]
+
+        # Should not raise
+        save_and_summarize_results(
+            results, config, config_path,
+            action="removed", total=1, print_result=self._noop_printer,
+            exit_on_failure=False,
+        )
+
+    def test_calls_print_result_for_each(self, tmp_path):
+        config_path = tmp_path / "agr.toml"
+        config = AgrConfig(tools=["claude"])
+        results = [
+            CommandResult("a", True, "ok"),
+            CommandResult("b", False, "err"),
+        ]
+        printed: list[str] = []
+
+        def capture(result: CommandResult) -> None:
+            printed.append(result.ref)
+
+        with pytest.raises(SystemExit):
+            save_and_summarize_results(
+                results, config, config_path,
+                action="added", total=2, print_result=capture,
+            )
+
+        assert printed == ["a", "b"]
+
+    def test_prints_summary_when_multiple_refs(self, tmp_path, capsys):
+        config_path = tmp_path / "agr.toml"
+        config = AgrConfig(tools=["claude"])
+        results = [
+            CommandResult("a", True, "ok"),
+            CommandResult("b", True, "ok"),
+        ]
+
+        save_and_summarize_results(
+            results, config, config_path,
+            action="added", total=2, print_result=self._noop_printer,
+        )
+
+        captured = capsys.readouterr()
+        assert "2/2 skills added" in captured.out
+
+    def test_no_summary_for_single_ref(self, tmp_path, capsys):
+        config_path = tmp_path / "agr.toml"
+        config = AgrConfig(tools=["claude"])
+        results = [CommandResult("a", True, "ok")]
+
+        save_and_summarize_results(
+            results, config, config_path,
+            action="added", total=1, print_result=self._noop_printer,
+        )
+
+        captured = capsys.readouterr()
+        assert "Summary" not in captured.out
+
+
+class TestDeleteToolSkills:
+    """Tests for delete_tool_skills()."""
+
+    def test_returns_true_when_repo_root_is_none(self):
+        assert delete_tool_skills("claude", None) is True
+
+    def test_returns_true_when_skills_dir_missing(self, tmp_path):
+        assert delete_tool_skills("claude", tmp_path) is True
+
+    def test_deletes_skills_directory(self, tmp_path):
+        skills_dir = tmp_path / ".claude" / "skills"
+        skills_dir.mkdir(parents=True)
+        (skills_dir / "my-skill").mkdir()
+        (skills_dir / "my-skill" / "SKILL.md").write_text("# Skill")
+
+        result = delete_tool_skills("claude", tmp_path)
+
+        assert result is True
+        assert not skills_dir.exists()
+
+    def test_reports_deleted_skill_count(self, tmp_path, capsys):
+        skills_dir = tmp_path / ".claude" / "skills"
+        skills_dir.mkdir(parents=True)
+        (skills_dir / "skill-a").mkdir()
+        (skills_dir / "skill-b").mkdir()
+
+        delete_tool_skills("claude", tmp_path)
+
+        captured = capsys.readouterr()
+        assert "Deleted 2 skills" in captured.out
+
+
+class TestExitIfSyncErrors:
+    """Tests for exit_if_sync_errors()."""
+
+    def test_no_errors_does_nothing(self):
+        exit_if_sync_errors(0)
+
+    def test_exits_on_nonzero_errors(self):
+        with pytest.raises(SystemExit):
+            exit_if_sync_errors(1)
+
+    def test_prints_warning_on_errors(self, capsys):
+        with pytest.raises(SystemExit):
+            exit_if_sync_errors(3)
+
+        captured = capsys.readouterr()
+        assert "3 dependency sync(s) failed" in captured.out
+
+
+class TestPrintMissingConfigHint:
+    """Tests for print_missing_config_hint()."""
+
+    def test_global_hint(self, capsys):
+        print_missing_config_hint(global_install=True)
+
+        captured = capsys.readouterr()
+        assert "No global agr.toml found" in captured.out
+        assert "agr add -g" in captured.out
+
+    def test_local_hint(self, capsys):
+        print_missing_config_hint(global_install=False)
+
+        captured = capsys.readouterr()
+        assert "No agr.toml found" in captured.out
+        assert "agr init" in captured.out
+
+
+class TestPrintToolAddResult:
+    """Tests for print_tool_add_result()."""
+
+    def test_prints_added_tools(self, capsys):
+        result = ToolAddResult(added=["claude", "cursor"], skipped=[])
+        print_tool_add_result(result)
+
+        captured = capsys.readouterr()
+        assert "claude" in captured.out
+        assert "cursor" in captured.out
+
+    def test_prints_skipped_tools(self, capsys):
+        result = ToolAddResult(added=[], skipped=["claude"])
+        print_tool_add_result(result)
+
+        captured = capsys.readouterr()
+        assert "Already configured" in captured.out
+        assert "claude" in captured.out
+
+    def test_prints_both_added_and_skipped(self, capsys):
+        result = ToolAddResult(added=["cursor"], skipped=["claude"])
+        print_tool_add_result(result)
+
+        captured = capsys.readouterr()
+        assert "cursor" in captured.out
+        assert "Already configured" in captured.out
+
+
+class TestPrintToolRemoveResult:
+    """Tests for print_tool_remove_result()."""
+
+    def test_prints_removed_tools(self, capsys):
+        result = ToolRemoveResult(removed=["cursor"], not_configured=[])
+        print_tool_remove_result(result)
+
+        captured = capsys.readouterr()
+        assert "cursor" in captured.out
+
+    def test_prints_not_configured_tools(self, capsys):
+        result = ToolRemoveResult(removed=[], not_configured=["codex"])
+        print_tool_remove_result(result)
+
+        captured = capsys.readouterr()
+        assert "Not configured" in captured.out
+        assert "codex" in captured.out
