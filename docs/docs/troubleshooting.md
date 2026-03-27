@@ -34,6 +34,14 @@ keywords:
     missing `GITHUB_TOKEN` for private repos, or stale installs (fix with
     `agr add --overwrite`). Error messages include hints — read them first.
 
+**Key terms:** A **skill** is a directory containing a `SKILL.md` file with
+YAML frontmatter (`name`, `description`) and markdown instructions for an AI
+coding agent. A **handle** identifies a skill on GitHub: `user/skill` (from
+user's `skills` repo), `user/repo/skill` (from a specific repo), or
+`./path/to/skill` (local). A **tool** is a supported AI coding agent (Claude
+Code, Cursor, Codex, OpenCode, Copilot, or Antigravity). A **source** is a Git
+server URL template where agr fetches remote skills from (default: GitHub).
+
 Quick links: [Installation](#installation) · [Handle Format](#handle-format) · [Configuration](#configuration) · [Syncing](#syncing) · [Sources](#sources) · [Creating Skills](#creating-skills) · [Global Installs](#global-installs) · [agrx](#agrx)
 
 ## Installation
