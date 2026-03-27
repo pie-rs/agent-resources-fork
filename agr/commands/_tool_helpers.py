@@ -11,13 +11,16 @@ from typing import Callable
 
 from agr.commands import CommandResult
 from agr.config import (
+    CONFIG_FILENAME,
     AgrConfig,
     find_config,
     find_repo_root,
     get_global_config_path,
+    get_or_create_global_config,
     require_repo_root,
 )
 from agr.console import error_exit, get_console, print_error
+from agr.detect import detect_tools
 from agr.exceptions import INSTALL_ERROR_TYPES, format_install_error
 from agr.fetcher import fetch_and_install_to_tools, filter_tools_needing_install
 from agr.tool import TOOLS, ToolConfig, available_tools_string, build_global_skills_dirs
@@ -49,17 +52,22 @@ def load_existing_config(
     global_install: bool,
     *,
     missing_ok: bool = False,
+    create_if_missing: bool = False,
 ) -> LoadedConfig | None:
     """Load an existing agr.toml config with tools and skills dirs.
 
-    This is the shared config-loading pattern used by commands that operate
-    on an existing config (remove, list, sync). The ``add`` command has its
-    own logic because it may create the config.
+    This is the shared config-loading pattern used by commands that need
+    a resolved config, tools list, and skills directories.
 
     Args:
         global_install: Whether to use the global config.
         missing_ok: If True, return None when the config is missing instead
             of printing an error and raising SystemExit.
+        create_if_missing: If True, create a new config when none exists.
+            For global installs, creates ``~/.agr/agr.toml`` with defaults.
+            For local installs, creates an in-memory config at the repo
+            root with auto-detected tools. Mutually exclusive with
+            missing_ok (create_if_missing takes precedence).
 
     Returns:
         A LoadedConfig, or None when missing_ok is True and no config exists.
@@ -68,22 +76,34 @@ def load_existing_config(
 
     if global_install:
         repo_root = None
-        config_path = get_global_config_path()
-        if not config_path.exists():
-            if missing_ok:
-                return None
-            print_missing_config_hint(global_install=True)
-            raise SystemExit(1)
+        if create_if_missing:
+            config_path, config = get_or_create_global_config()
+        else:
+            config_path = get_global_config_path()
+            if not config_path.exists():
+                if missing_ok:
+                    return None
+                print_missing_config_hint(global_install=True)
+                raise SystemExit(1)
+            config = AgrConfig.load(config_path)
     else:
         repo_root = require_repo_root()
         config_path = find_config()
         if config_path is None:
-            if missing_ok:
+            if create_if_missing:
+                config_path = repo_root / CONFIG_FILENAME
+                config = AgrConfig()
+                detected = detect_tools(repo_root)
+                if detected:
+                    config.tools = detected
+            elif missing_ok:
                 return None
-            print_missing_config_hint(global_install=False)
-            raise SystemExit(1)
+            else:
+                print_missing_config_hint(global_install=False)
+                raise SystemExit(1)
+        else:
+            config = AgrConfig.load(config_path)
 
-    config = AgrConfig.load(config_path)
     tools = config.get_tools()
     if global_install:
         skills_dirs = build_global_skills_dirs(tools)

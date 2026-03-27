@@ -1,20 +1,10 @@
 """agr add command implementation."""
 
-from pathlib import Path
-
 from agr.commands import CommandResult
-from agr.commands._tool_helpers import save_and_summarize_results
+from agr.commands._tool_helpers import load_existing_config, save_and_summarize_results
 from agr.commands.migrations import run_tool_migrations
-from agr.config import (
-    CONFIG_FILENAME,
-    AgrConfig,
-    Dependency,
-    find_config,
-    get_or_create_global_config,
-    require_repo_root,
-)
+from agr.config import Dependency
 from agr.console import get_console
-from agr.detect import detect_tools
 from agr.exceptions import (
     INSTALL_ERROR_TYPES,
     AgrError,
@@ -24,7 +14,6 @@ from agr.exceptions import (
 from agr.fetcher import fetch_and_install_to_tools, list_remote_repo_skills
 from agr.handle import ParsedHandle, parse_handle
 from agr.source import SourceResolver
-from agr.tool import build_global_skills_dirs
 
 
 def run_add(
@@ -40,29 +29,12 @@ def run_add(
         overwrite: Whether to overwrite existing skills
     """
     console = get_console()
-    skills_dirs: dict[str, Path] | None = None
-    if global_install:
-        repo_root = None
-        config_path, config = get_or_create_global_config()
-    else:
-        repo_root = require_repo_root()
+    loaded = load_existing_config(global_install, create_if_missing=True)
+    assert loaded is not None  # create_if_missing=True always returns a result
+    config, config_path = loaded.config, loaded.config_path
+    tools, repo_root, skills_dirs = loaded.tools, loaded.repo_root, loaded.skills_dirs
 
-        # Find or create config
-        config_path = find_config()
-        if config_path is None:
-            config_path = repo_root / CONFIG_FILENAME
-            config = AgrConfig()
-            detected = detect_tools(repo_root)
-            if detected:
-                config.tools = detected
-        else:
-            config = AgrConfig.load(config_path)
-
-    # Get configured tools
-    tools = config.get_tools()
     resolver = config.get_source_resolver()
-    if global_install:
-        skills_dirs = build_global_skills_dirs(tools)
     run_tool_migrations(tools, repo_root, global_install=global_install)
 
     # Track results for summary
