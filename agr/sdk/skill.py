@@ -20,7 +20,7 @@ from agr.handle import (
     parse_handle,
     warn_legacy_repo,
 )
-from agr.metadata import compute_content_hash, read_skill_metadata
+from agr.metadata import METADATA_KEY_CONTENT_HASH, compute_content_hash, read_skill_metadata
 from agr.sdk.cache import cache_skill, get_skill_cache_path, is_cached
 from agr.skill import SKILL_MARKER, is_valid_skill_dir
 from agr.source import default_sources
@@ -266,7 +266,7 @@ class Skill:
         meta = read_skill_metadata(self.path)
         if meta is None:
             return None
-        return meta.get("content_hash")
+        return meta.get(METADATA_KEY_CONTENT_HASH)
 
     def recompute_content_hash(self) -> str:
         """Recompute the content hash from the current files on disk.

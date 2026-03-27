@@ -12,6 +12,11 @@ from agr.source import DEFAULT_SOURCE_NAME
 
 METADATA_FILENAME = ".agr.json"
 
+# Metadata JSON field names used as dictionary keys in .agr.json
+METADATA_KEY_ID = "id"
+METADATA_KEY_TYPE = "type"
+METADATA_KEY_CONTENT_HASH = "content_hash"
+
 # Metadata type discriminators written to and read from .agr.json
 METADATA_TYPE_LOCAL = "local"
 METADATA_TYPE_REMOTE = "remote"
@@ -107,20 +112,20 @@ def write_skill_metadata(
         handle.resolve_local_path(repo_root) if handle.local_path is not None else None
     )
     data: dict[str, Any] = {
-        "id": build_handle_id(handle, repo_root, source),
+        METADATA_KEY_ID: build_handle_id(handle, repo_root, source),
         "tool": tool_name,
         "installed_name": installed_name,
     }
     if handle.is_local:
-        data["type"] = METADATA_TYPE_LOCAL
+        data[METADATA_KEY_TYPE] = METADATA_TYPE_LOCAL
         data["local_path"] = str(resolved_local) if resolved_local else None
     else:
-        data["type"] = METADATA_TYPE_REMOTE
+        data[METADATA_KEY_TYPE] = METADATA_TYPE_REMOTE
         data["handle"] = handle.to_toml_handle()
         data["source"] = source or DEFAULT_SOURCE_NAME
 
     if content_hash is not None:
-        data["content_hash"] = content_hash
+        data[METADATA_KEY_CONTENT_HASH] = content_hash
 
     metadata_path = skill_dir / METADATA_FILENAME
     metadata_path.write_text(json.dumps(data, indent=2, ensure_ascii=True) + "\n")

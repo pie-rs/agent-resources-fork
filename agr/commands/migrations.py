@@ -16,6 +16,7 @@ from agr.handle import (
     ParsedHandle,
 )
 from agr.metadata import (
+    METADATA_KEY_ID,
     build_handle_id,
     build_handle_ids,
     read_skill_metadata,
@@ -364,7 +365,7 @@ def migrate_flat_installed_names(
         if name_dir_meta:
             for handle, source_name in handles:
                 handle_ids = build_handle_ids(handle, repo_root, source_name)
-                if name_dir_meta.get("id") in handle_ids:
+                if name_dir_meta.get(METADATA_KEY_ID) in handle_ids:
                     matched_handle = (handle, source_name)
                     break
 
@@ -375,7 +376,7 @@ def migrate_flat_installed_names(
             handle_id = build_handle_id(handle, repo_root, source_name)
             if name_dir_is_skill:
                 # Plain-name dir exists — just ensure metadata is current.
-                if not name_dir_meta or name_dir_meta.get("id") != handle_id:
+                if not name_dir_meta or name_dir_meta.get(METADATA_KEY_ID) != handle_id:
                     _update_dir_metadata(
                         name_dir, handle, repo_root, tool.name, source_name
                     )
