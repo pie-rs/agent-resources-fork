@@ -24,7 +24,11 @@ from agr.handle import (
     parse_handle,
 )
 from agr.sdk.types import SkillInfo
-from agr.skill import SKILL_MARKER
+from agr.skill import (
+    SKILL_MARKER,
+    discover_skills_in_repo_listing,
+    find_skill_in_repo_listing,
+)
 
 
 GITHUB_API_BASE = "https://api.github.com"
@@ -123,21 +127,33 @@ def _github_api_request(url: str) -> dict[str, Any]:
         raise ConnectionError(f"Failed to connect to GitHub API: {e}") from e
 
 
+def _extract_paths_from_tree(tree_data: dict[str, Any]) -> list[str]:
+    """Extract file paths from a GitHub API tree response.
+
+    Filters to blob (file) entries only, producing the same format
+    used by ``git ls-tree`` so that ``agr.skill`` discovery functions
+    can be reused directly.
+    """
+    return [
+        item["path"]
+        for item in tree_data.get("tree", [])
+        if item.get("type") == "blob" and item.get("path")
+    ]
+
+
 def _find_skill_md_in_tree(tree_data: dict[str, Any], skill_name: str) -> str | None:
     """Find the path to a skill's SKILL.md in a GitHub tree response.
 
-    Returns the path string if found, None otherwise.
+    Uses the same discovery logic as the CLI (``find_skill_in_repo_listing``)
+    to ensure consistent filtering of excluded directories.
+
+    Returns the SKILL.md path string if found, None otherwise.
     """
-    for item in tree_data.get("tree", []):
-        if item.get("type") != "blob":
-            continue
-        path = item.get("path", "")
-        if (
-            path.endswith(f"/{skill_name}/{SKILL_MARKER}")
-            or path == f"{skill_name}/{SKILL_MARKER}"
-        ):
-            return path
-    return None
+    paths = _extract_paths_from_tree(tree_data)
+    skill_dir = find_skill_in_repo_listing(paths, skill_name)
+    if skill_dir is None:
+        return None
+    return f"{skill_dir.as_posix()}/{SKILL_MARKER}"
 
 
 def _extract_description(skill_md_content: str) -> str | None:
@@ -211,22 +227,11 @@ def list_skills(repo_handle: str) -> list[SkillInfo]:
     repo = result.repo
     used_legacy = result.used_legacy
 
-    # Find SKILL.md files
-    skill_dirs: dict[str, str] = {}  # name -> path
-    for item in tree_data.get("tree", []):
-        if item.get("type") != "blob":
-            continue
-        path = item.get("path", "")
-
-        # Must end with SKILL.md and be in a subdirectory (not root)
-        if not path.endswith(SKILL_MARKER) or "/" not in path:
-            continue
-
-        # Extract skill name from parent directory
-        skill_path = path.rsplit(f"/{SKILL_MARKER}", 1)[0]
-        skill_name = skill_path.rsplit("/", 1)[-1]
-        if skill_name not in skill_dirs:
-            skill_dirs[skill_name] = skill_path
+    # Discover skills using the same logic as the CLI, which filters
+    # excluded directories (node_modules, .git, etc.) and root-level
+    # SKILL.md files.
+    paths = _extract_paths_from_tree(tree_data)
+    skill_names = discover_skills_in_repo_listing(paths)
 
     # Build SkillInfo objects
     skills = []
@@ -237,7 +242,7 @@ def list_skills(repo_handle: str) -> list[SkillInfo]:
             stacklevel=2,
         )
 
-    for name, path in sorted(skill_dirs.items()):
+    for name in skill_names:
         # Construct handle
         if repo == DEFAULT_REPO_NAME:
             handle = f"{owner}/{name}"
