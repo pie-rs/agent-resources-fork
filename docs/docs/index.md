@@ -189,10 +189,11 @@ See [Creating Skills](creating.md) for the full guide.
 **Documents & data** — read, create, and transform office files:
 
 ```bash
-agr add anthropics/skills/pdf       # Extract tables, summarize, create PDFs
-agr add anthropics/skills/docx      # Generate and edit Word documents
-agr add anthropics/skills/xlsx      # Build and manipulate spreadsheets
-agr add anthropics/skills/pptx      # Create and work with slide decks
+agr add anthropics/skills/pdf              # Extract tables, summarize, create PDFs
+agr add anthropics/skills/docx             # Generate and edit Word documents
+agr add anthropics/skills/xlsx             # Build and manipulate spreadsheets
+agr add anthropics/skills/pptx             # Create and work with slide decks
+agr add anthropics/skills/doc-coauthoring  # Structured doc co-authoring workflow
 ```
 
 **Design & frontend** — build UIs and visual assets:
@@ -200,14 +201,18 @@ agr add anthropics/skills/pptx      # Create and work with slide decks
 ```bash
 agr add anthropics/skills/frontend-design   # Production-grade interfaces
 agr add anthropics/skills/canvas-design     # Visual art in PNG and PDF
+agr add anthropics/skills/algorithmic-art   # Algorithmic art with p5.js
+agr add anthropics/skills/theme-factory     # Style artifacts with themes
+agr add anthropics/skills/brand-guidelines  # Anthropic brand colors and typography
 ```
 
 **Development** — build integrations and test apps:
 
 ```bash
-agr add anthropics/skills/claude-api        # Build apps with the Claude API
-agr add anthropics/skills/mcp-builder       # Create MCP servers
-agr add anthropics/skills/webapp-testing    # Test web apps with Playwright
+agr add anthropics/skills/claude-api             # Build apps with the Claude API
+agr add anthropics/skills/mcp-builder            # Create MCP servers
+agr add anthropics/skills/web-artifacts-builder  # Multi-component HTML artifacts
+agr add anthropics/skills/webapp-testing         # Test web apps with Playwright
 ```
 
 **Productivity** — create skills and content:
