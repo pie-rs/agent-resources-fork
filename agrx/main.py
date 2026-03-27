@@ -8,7 +8,7 @@ import uuid
 from contextlib import contextmanager
 from pathlib import Path
 from collections.abc import Generator
-from typing import Annotated, Optional
+from typing import Annotated
 
 import typer
 
@@ -19,9 +19,7 @@ from agr.fetcher import install_remote_skill
 from agr.handle import parse_handle
 from agr.tool import (
     DEFAULT_TOOL_NAMES,
-    TOOLS,
     ToolConfig,
-    available_tools_string,
     get_tool,
 )
 
@@ -182,7 +180,7 @@ def main(
         ),
     ],
     tool: Annotated[
-        Optional[str],
+        str | None,
         typer.Option(
             "--tool",
             "-t",
@@ -201,7 +199,7 @@ def main(
         ),
     ] = False,
     prompt: Annotated[
-        Optional[str],
+        str | None,
         typer.Option(
             "--prompt",
             "-p",
@@ -209,7 +207,7 @@ def main(
         ),
     ] = None,
     source: Annotated[
-        Optional[str],
+        str | None,
         typer.Option(
             "--source",
             "-s",
@@ -243,30 +241,24 @@ def main(
     # Determine which tool to use
     tool_name = tool or _get_default_tool()
 
-    # Validate tool name
-    if tool_name not in TOOLS:
-        print_error(f"Unknown tool '{tool_name}'")
-        console.print(f"[dim]Available tools: {available_tools_string()}[/dim]")
-        raise typer.Exit(1)
-
-    tool_config = get_tool(tool_name)
-
-    # Find repo root (or use global dir)
-    repo_root: Path | None = None
-    if global_install:
-        skills_dir = tool_config.get_global_skills_dir()
-    else:
-        repo_root = find_repo_root()
-        if repo_root is None:
-            print_error("Not in a git repository")
-            console.print(
-                f"[dim]Use --global to install to "
-                f"{tool_config.get_global_skills_dir()}[/dim]"
-            )
-            raise typer.Exit(1)
-        skills_dir = tool_config.get_skills_dir(repo_root)
-
     try:
+        tool_config = get_tool(tool_name)
+
+        # Find repo root (or use global dir)
+        repo_root: Path | None = None
+        if global_install:
+            skills_dir = tool_config.get_global_skills_dir()
+        else:
+            repo_root = find_repo_root()
+            if repo_root is None:
+                print_error("Not in a git repository")
+                console.print(
+                    f"[dim]Use --global to install to "
+                    f"{tool_config.get_global_skills_dir()}[/dim]"
+                )
+                raise typer.Exit(1)
+            skills_dir = tool_config.get_skills_dir(repo_root)
+
         # Parse handle
         parsed = parse_handle(handle)
 
