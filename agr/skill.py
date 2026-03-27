@@ -229,7 +229,7 @@ def discover_all_skill_dirs(repo_dir: Path) -> list[Path]:
     return sorted(_find_skill_dirs(repo_dir), key=lambda p: p.as_posix())
 
 
-def _parse_frontmatter(content: str) -> tuple[str, str] | None:
+def parse_frontmatter(content: str) -> tuple[str, str] | None:
     """Parse YAML frontmatter from SKILL.md content.
 
     Args:
@@ -253,7 +253,7 @@ def get_skill_frontmatter_name(skill_dir: Path) -> str | None:
     if not skill_md.exists():
         return None
 
-    parsed = _parse_frontmatter(skill_md.read_text())
+    parsed = parse_frontmatter(skill_md.read_text())
     if parsed is None:
         return None
 
@@ -277,7 +277,7 @@ def update_skill_md_name(skill_dir: Path, new_name: str) -> None:
         return
 
     content = skill_md.read_text()
-    parsed = _parse_frontmatter(content)
+    parsed = parse_frontmatter(content)
 
     if parsed is None:
         # No valid frontmatter — prepend one

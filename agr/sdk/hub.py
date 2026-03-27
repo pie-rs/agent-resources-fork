@@ -27,6 +27,7 @@ from agr.skill import (
     SKILL_MARKER,
     discover_skills_in_repo_listing,
     find_skill_in_repo_listing,
+    parse_frontmatter,
 )
 
 
@@ -172,19 +173,12 @@ def _extract_description(skill_md_content: str) -> str | None:
 
     Takes the first paragraph after any frontmatter.
     """
-    lines = skill_md_content.split("\n")
-
-    # Skip frontmatter
-    start = 0
-    if lines and lines[0].strip() == "---":
-        for i, line in enumerate(lines[1:], 1):
-            if line.strip() == "---":
-                start = i + 1
-                break
+    parsed = parse_frontmatter(skill_md_content)
+    body = parsed[1] if parsed else skill_md_content
 
     # Find first non-empty, non-heading line
-    description_lines = []
-    for line in lines[start:]:
+    description_lines: list[str] = []
+    for line in body.split("\n"):
         stripped = line.strip()
         if not stripped:
             if description_lines:
