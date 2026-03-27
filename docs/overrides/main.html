@@ -705,6 +705,45 @@
   </script>
   {% endif %}
 
+  {% if page and page.file and page.file.src_path == "tools.md" %}
+  <!-- HowTo Schema for multi-tool setup rich results -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "Install AI Skills Across Claude Code, Cursor, Codex, Copilot, OpenCode, and Antigravity",
+    "description": "Configure agr to install AI agent skills into multiple coding tools at once — Claude Code, Cursor, OpenAI Codex, OpenCode, GitHub Copilot, and Antigravity.",
+    "totalTime": "PT5M",
+    "tool": [
+      {
+        "@type": "HowToTool",
+        "name": "agr CLI"
+      }
+    ],
+    "step": [
+      {
+        "@type": "HowToStep",
+        "name": "Target multiple tools",
+        "text": "Run agr config set tools claude cursor codex to install skills into multiple AI coding tools at once. Or use agr init --tools claude,cursor,codex during initial setup.",
+        "url": "https://kasperjunge.github.io/agent-resources/tools/#target-multiple-tools-at-once"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Add or remove a tool",
+        "text": "Run agr config add tools cursor to start syncing to a new tool — existing dependencies are installed automatically. Run agr config remove tools cursor to stop (this deletes skills from that tool).",
+        "url": "https://kasperjunge.github.io/agent-resources/tools/#add-or-remove-a-tool-after-setup"
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Sync instruction files",
+        "text": "Enable instruction syncing with agr config set sync_instructions true and agr config set canonical_instructions CLAUDE.md. On agr sync, the canonical file is copied to AGENTS.md and GEMINI.md as needed.",
+        "url": "https://kasperjunge.github.io/agent-resources/tools/#keep-instruction-files-in-sync-across-tools"
+      }
+    ]
+  }
+  </script>
+  {% endif %}
+
   {% if page and page.file and page.file.src_path == "sdk.md" %}
   <!-- HowTo Schema for Python SDK rich results -->
   <script type="application/ld+json">
