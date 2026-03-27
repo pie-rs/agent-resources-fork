@@ -290,39 +290,39 @@ each tool's global skills directory (see table above).
 ???+ example "Complete annotated agr.toml"
 
     ```toml
-default_source = "github" # (1)!
-tools = ["claude", "codex", "opencode"] # (2)!
-default_tool = "claude" # (3)!
-sync_instructions = true # (4)!
-canonical_instructions = "CLAUDE.md" # (5)!
+    default_source = "github" # (1)!
+    tools = ["claude", "codex", "opencode"] # (2)!
+    default_tool = "claude" # (3)!
+    sync_instructions = true # (4)!
+    canonical_instructions = "CLAUDE.md" # (5)!
 
-dependencies = [ # (6)!
-    {handle = "anthropics/skills/frontend-design", type = "skill"},
-    {handle = "kasperjunge/commit", type = "skill"},
-    {handle = "team/internal-tool", type = "skill", source = "my-server"}, # (7)!
-    {path = "./skills/local-skill", type = "skill"}, # (8)!
-]
+    dependencies = [ # (6)!
+        {handle = "anthropics/skills/frontend-design", type = "skill"},
+        {handle = "kasperjunge/commit", type = "skill"},
+        {handle = "team/internal-tool", type = "skill", source = "my-server"}, # (7)!
+        {path = "./skills/local-skill", type = "skill"}, # (8)!
+    ]
 
-[[source]] # (9)!
-name = "github"
-type = "git"
-url = "https://github.com/{owner}/{repo}.git"
+    [[source]] # (9)!
+    name = "github"
+    type = "git"
+    url = "https://github.com/{owner}/{repo}.git"
 
-[[source]]
-name = "my-server"
-type = "git"
-url = "https://git.example.com/{owner}/{repo}.git"
-```
+    [[source]]
+    name = "my-server"
+    type = "git"
+    url = "https://git.example.com/{owner}/{repo}.git"
+    ```
 
-1. Source used when `--source` is not passed to `agr add` or `agrx`
-2. Skills are installed into all listed tools on every `agr add` and `agr sync`
-3. Tool used by `agrx` and for instruction sync — defaults to the first in `tools`
-4. Copies the canonical instruction file to other tools on `agr sync`
-5. The instruction file treated as the source of truth (`CLAUDE.md`, `AGENTS.md`, or `GEMINI.md`)
-6. Must appear before any `[[source]]` blocks
-7. Pin a dependency to a specific source instead of using `default_source`
-8. Local path dependencies point to a directory on disk — no Git fetch needed
-9. Each `[[source]]` defines a Git server URL template with `{owner}` and `{repo}` placeholders
+    1. Source used when `--source` is not passed to `agr add` or `agrx`
+    2. Skills are installed into all listed tools on every `agr add` and `agr sync`
+    3. Tool used by `agrx` and for instruction sync — defaults to the first in `tools`
+    4. Copies the canonical instruction file to other tools on `agr sync`
+    5. The instruction file treated as the source of truth (`CLAUDE.md`, `AGENTS.md`, or `GEMINI.md`)
+    6. Must appear before any `[[source]]` blocks
+    7. Pin a dependency to a specific source instead of using `default_source`
+    8. Local path dependencies point to a directory on disk — no Git fetch needed
+    9. Each `[[source]]` defines a Git server URL template with `{owner}` and `{repo}` placeholders
 
 ## Managing Config
 
