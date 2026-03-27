@@ -148,7 +148,7 @@ For automated environments, pass the token as a secret:
 
 ```yaml
 - name: Sync skills
-  run: agr sync
+  run: agr sync -q
   env:
     GITHUB_TOKEN: ${{ secrets.SKILL_TOKEN }}
 ```
@@ -172,12 +172,13 @@ automated environments.
   run: uv tool install agr
 
 - name: Sync skills
-  run: agr sync
+  run: agr sync -q
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Only needed for private repos
 ```
 
-The `GITHUB_TOKEN` line is only required if your team uses private skill
+The `-q` (`--quiet`) flag suppresses non-error output, keeping your CI logs
+clean. The `GITHUB_TOKEN` line is only required if your team uses private skill
 repos. For public skills, `agr sync` works without authentication.
 
 ### Other CI systems
@@ -187,7 +188,7 @@ agr is a standard Python CLI. Install it with `pip install agr` or
 
 ```bash
 pip install agr
-agr sync
+agr sync -q
 ```
 
 Set `GITHUB_TOKEN` in your CI environment variables for private repos.
