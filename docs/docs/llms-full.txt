@@ -185,7 +185,7 @@ agrx kasperjunge/commit -i
 agrx kasperjunge/commit --tool codex
 ```
 
-### Global Options
+### Global Options (agr only, not agrx)
 
 - `--quiet`, `-q` — suppress non-error output
 - `--version`, `-v` — show version and exit

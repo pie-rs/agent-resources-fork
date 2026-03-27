@@ -124,7 +124,9 @@ agr sync                                          # Copies to AGENTS.md, GEMINI.
 
 ## Global Options
 
-- `--quiet`, `-q` — Suppress non-error output (works with all commands)
+These apply to all `agr` commands (not `agrx`):
+
+- `--quiet`, `-q` — Suppress non-error output
 - `--version`, `-v` — Show version and exit
 
 ## CLI Commands
