@@ -211,11 +211,14 @@ deleted = cache.clear("kasperjunge/*/*")
 
 ## Error Handling
 
-All SDK errors inherit from `AgrError`:
+All SDK errors inherit from `AgrError`, including network failures. Catch
+specific subclasses for targeted handling, or catch `AgrError` as a fallback
+for any SDK error (including network issues like DNS failures and timeouts):
 
 ```python
 from agr import Skill, list_skills, skill_info
 from agr.exceptions import (
+    AgrError,
     InvalidHandleError,
     InvalidLocalPathError,
     SkillNotFoundError,
@@ -235,6 +238,8 @@ except AuthenticationError:
     print("Set GITHUB_TOKEN for private repos")
 except RateLimitError:
     print("GitHub API rate limit exceeded")
+except AgrError as e:
+    print(f"Unexpected error: {e}")  # Network failures, etc.
 
 try:
     skill = Skill.from_local("./missing-skill")
@@ -251,6 +256,12 @@ try:
 except SkillNotFoundError:
     print("Skill not found in that repo")
 ```
+
+!!! tip "Network errors are `AgrError`, not `ConnectionError`"
+    Network failures (DNS resolution, timeouts, connection refused) in
+    `list_skills()`, `skill_info()`, and `Skill.from_git()` raise `AgrError`
+    — not Python's built-in `ConnectionError`. If your code catches `AgrError`
+    (or its subclasses), network errors are included automatically.
 
 ## Types
 

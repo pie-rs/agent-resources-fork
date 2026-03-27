@@ -481,9 +481,11 @@ cache.clear("anthropics/skills/*")  # clear by pattern
 
 ### Error Handling
 
+All SDK errors inherit from `AgrError`, including network failures. Catch specific subclasses for targeted handling, or catch `AgrError` as a fallback for any SDK error:
+
 ```python
 from agr.exceptions import (
-    AgrError,              # base class
+    AgrError,              # base class — also raised for network failures
     InvalidHandleError,    # unparseable handle
     InvalidLocalPathError, # missing path or SKILL.md
     SkillNotFoundError,    # skill not in repo
@@ -493,6 +495,8 @@ from agr.exceptions import (
     CacheError,            # cache failures
 )
 ```
+
+Network failures (DNS resolution, timeouts, connection refused) in `list_skills()`, `skill_info()`, and `Skill.from_git()` raise `AgrError` — not Python's built-in `ConnectionError`.
 
 ### Skill Properties
 
