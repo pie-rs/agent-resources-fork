@@ -619,6 +619,19 @@ agr handles point to a specific skill, not a repo:
 agrx kasperjunge/agent-resources/migrate-to-skills
 ```
 
+### Automatic Directory Migrations
+
+`agr sync`, `agr add`, and `agr remove` automatically migrate skills from old directory layouts. No manual steps needed.
+
+| Tool | Old directory | New directory |
+|------|-------------|---------------|
+| Antigravity | `.agent/skills/` | `.gemini/skills/` |
+| OpenAI Codex | `.codex/skills/` | `.agents/skills/` |
+| OpenCode | `.opencode/skill/` | `.opencode/skills/` |
+| Cursor | `.cursor/skills/owner/repo/skill/` (nested) | `.cursor/skills/skill/` (flat) |
+
+If you see skills in the old locations, run `agr sync` to move them automatically.
+
 ## License
 
 MIT License
