@@ -29,6 +29,7 @@ from agr.handle import (
 )
 from agr.metadata import (
     build_handle_id,
+    build_handle_ids,
     compute_content_hash,
     read_skill_metadata,
     write_skill_metadata,
@@ -42,7 +43,6 @@ from agr.skill import (
     update_skill_md_name,
 )
 from agr.source import (
-    DEFAULT_SOURCE_NAME,
     SourceConfig,
     SourceResolver,
 )
@@ -51,10 +51,8 @@ from agr.tool import DEFAULT_TOOL, ToolConfig, lookup_skills_dir
 logger = logging.getLogger(__name__)
 
 
-def _skill_dir_matches_handle(skill_dir: Path, handle_ids: list[str] | None) -> bool:
+def _skill_dir_matches_handle(skill_dir: Path, handle_ids: list[str]) -> bool:
     """Check whether a skill directory matches a handle via metadata."""
-    if not handle_ids:
-        return False
     meta = read_skill_metadata(skill_dir)
     if not meta:
         return False
@@ -126,7 +124,7 @@ def _find_existing_skill_dir(
 
     # Build all possible metadata IDs for this handle, including legacy
     # formats (with/without explicit source name).
-    handle_ids = _build_handle_ids(handle, repo_root, source)
+    handle_ids = build_handle_ids(handle, repo_root, source)
     name_path = skills_dir / handle.name
     full_path = skills_dir / handle.to_installed_name()
 
@@ -261,28 +259,6 @@ def list_remote_repo_skills(
             continue
     return []
 
-
-def _build_handle_ids(
-    handle: ParsedHandle,
-    repo_root: Path | None,
-    source: str | None,
-) -> list[str] | None:
-    """Build handle IDs to match, including legacy ids.
-
-    Remote skills may have been installed with or without an explicit source
-    name in their metadata. To find them regardless of when they were installed,
-    we generate both the current ID and the legacy variant:
-    - source=None  → also check with DEFAULT_SOURCE_NAME ("github")
-    - source="github" → also check without explicit source
-    """
-    if handle.is_local:
-        return [build_handle_id(handle, repo_root)]
-    handle_ids = [build_handle_id(handle, repo_root, source)]
-    if source is None:
-        handle_ids.append(build_handle_id(handle, repo_root, DEFAULT_SOURCE_NAME))
-    if source == DEFAULT_SOURCE_NAME:
-        handle_ids.append(build_handle_id(handle, repo_root))
-    return handle_ids
 
 
 def _copy_skill_to_destination(

@@ -36,6 +36,27 @@ def build_handle_id(
     return f"remote:{handle.to_toml_handle()}"
 
 
+def build_handle_ids(
+    handle: ParsedHandle, repo_root: Path | None, source: str | None
+) -> list[str]:
+    """Build all possible metadata IDs for a handle, including legacy variants.
+
+    Remote skills may have been installed with or without an explicit source
+    name in their metadata. To find them regardless of when they were installed,
+    we generate both the current ID and the legacy variant:
+    - source=None  → also check with DEFAULT_SOURCE_NAME ("github")
+    - source="github" → also check without explicit source
+    """
+    if handle.is_local:
+        return [build_handle_id(handle, repo_root)]
+    handle_ids = [build_handle_id(handle, repo_root, source)]
+    if source is None:
+        handle_ids.append(build_handle_id(handle, repo_root, DEFAULT_SOURCE_NAME))
+    if source == DEFAULT_SOURCE_NAME:
+        handle_ids.append(build_handle_id(handle, repo_root))
+    return handle_ids
+
+
 def read_skill_metadata(skill_dir: Path) -> dict[str, Any] | None:
     """Read metadata from a skill directory."""
     metadata_path = skill_dir / METADATA_FILENAME

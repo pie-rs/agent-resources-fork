@@ -17,12 +17,12 @@ from agr.handle import (
 )
 from agr.metadata import (
     build_handle_id,
+    build_handle_ids,
     compute_content_hash,
     read_skill_metadata,
     write_skill_metadata,
 )
 from agr.skill import SKILL_MARKER, is_valid_skill_dir, update_skill_md_name
-from agr.source import DEFAULT_SOURCE_NAME
 from agr.tool import ToolConfig
 
 
@@ -362,15 +362,8 @@ def migrate_flat_installed_names(
         matched_handle: tuple[ParsedHandle, str | None] | None = None
         if name_dir_meta:
             for handle, source_name in handles:
-                handle_id = build_handle_id(handle, repo_root, source_name)
-                # Also check the legacy ID format (without explicit source)
-                # for backward compatibility with pre-source metadata.
-                legacy_id = (
-                    build_handle_id(handle, repo_root)
-                    if source_name == DEFAULT_SOURCE_NAME
-                    else None
-                )
-                if name_dir_meta.get("id") in {handle_id, legacy_id}:
+                handle_ids = build_handle_ids(handle, repo_root, source_name)
+                if name_dir_meta.get("id") in handle_ids:
                     matched_handle = (handle, source_name)
                     break
 
