@@ -452,3 +452,8 @@ Note: `dependencies` must appear before any `[[source]]` blocks in `agr.toml`.
 See the [Troubleshooting](troubleshooting.md) page for solutions to common
 errors — installation failures, handle format issues, authentication problems,
 and more.
+
+## What's New
+
+See the [Changelog](changelog.md) for release notes, new features, and
+breaking changes.

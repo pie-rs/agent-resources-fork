@@ -27,7 +27,7 @@ keywords:
     `agrx user/skill` or install with `agr add user/skill`.
 
 Browse available skills and find ones that fit your workflow. Every skill below
-can be tried instantly without installing:
+can be tried instantly without installing using [`agrx`](agrx.md):
 
 ```bash
 agrx anthropics/skills/pdf -p "Extract tables from report.pdf"
@@ -120,7 +120,7 @@ Any GitHub repository with a `SKILL.md` file can be installed with agr:
 
 ### List skills in a repository
 
-Use the Python SDK to list all skills in any repo:
+Use the [Python SDK](sdk.md) to list all skills in any repo:
 
 ```python
 from agr import list_skills
@@ -134,7 +134,7 @@ file.
 
 ### Try before you install
 
-Use `agrx` to run any skill without adding it to your project:
+Use [`agrx`](agrx.md) to run any skill without adding it to your project:
 
 ```bash
 agrx anthropics/skills/webapp-testing
@@ -176,3 +176,12 @@ agr add your-username/my-skill
 Open an issue at [github.com/kasperjunge/agent-resources](https://github.com/kasperjunge/agent-resources/issues) to get your skill added to this directory.
 
 See [Creating Skills](creating.md) for a full guide on writing effective skills.
+
+---
+
+## Next Steps
+
+- [Creating Skills](creating.md) — Write and publish your own skills
+- [Try Skills with agrx](agrx.md) — Run any skill instantly without installing
+- [Python SDK](sdk.md) — Discover and manage skills programmatically
+- [What's New](changelog.md) — Latest skill support and feature updates
