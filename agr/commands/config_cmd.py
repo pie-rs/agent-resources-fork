@@ -175,15 +175,13 @@ def run_config_set(key: str, values: list[str], global_scope: bool) -> None:
 
     if key == "default_tool":
         names = normalize_and_validate_tool_names([value])
-        name = names[0]
-        if name not in config.tools:
+        display_value = names[0]
+        if display_value not in config.tools:
             error_exit(
-                f"Tool '{name}' is not in configured tools. "
-                f"Add it first with 'agr config add tools {name}'."
+                f"Tool '{display_value}' is not in configured tools. "
+                f"Add it first with 'agr config add tools {display_value}'."
             )
-        config.default_tool = name
-        config.save()
-        console.print(f"[green]Set:[/green] default_tool = {name}")
+        config.default_tool = display_value
 
     elif key == "default_source":
         source_names = [s.name for s in config.sources]
@@ -193,15 +191,13 @@ def run_config_set(key: str, values: list[str], global_scope: bool) -> None:
                 hint=f"Available sources: {', '.join(source_names)}",
             )
         config.default_source = value
-        config.save()
-        console.print(f"[green]Set:[/green] default_source = {value}")
+        display_value = value
 
     elif key == "sync_instructions":
         if value.lower() not in ("true", "false"):
             error_exit("sync_instructions must be 'true' or 'false'.")
         config.sync_instructions = value.lower() == "true"
-        config.save()
-        console.print(f"[green]Set:[/green] sync_instructions = {value.lower()}")
+        display_value = value.lower()
 
     elif key == "canonical_instructions":
         try:
@@ -209,11 +205,13 @@ def run_config_set(key: str, values: list[str], global_scope: bool) -> None:
         except ConfigError as exc:
             error_exit(str(exc))
         config.canonical_instructions = value
-        config.save()
-        console.print(f"[green]Set:[/green] canonical_instructions = {value}")
+        display_value = value
 
     else:
         raise AssertionError(f"Unhandled key: {key}")
+
+    config.save()
+    console.print(f"[green]Set:[/green] {key} = {display_value}")
 
 
 def run_config_unset(key: str, global_scope: bool) -> None:
