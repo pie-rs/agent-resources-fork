@@ -216,6 +216,26 @@ class TestToolDocumentation:
                 f"Tool '{tool}' not mentioned in reference.md"
             )
 
+    def test_tools_page_detection_signals_match_code(self):
+        """tools.md Detection Signals table matches ToolConfig.detection_signals."""
+        content = (DOCS_DIR / "tools.md").read_text()
+        section_marker = "## Detection Signals"
+        assert section_marker in content, (
+            "tools.md missing 'Detection Signals' section"
+        )
+        section = content[content.index(section_marker) :]
+        # Stop at the next h2 section
+        next_h2 = section.find("\n## ", 1)
+        if next_h2 != -1:
+            section = section[:next_h2]
+
+        for name, tool in self.TOOLS.items():
+            for signal in tool.detection_signals:
+                assert signal in section, (
+                    f"Detection signal '{signal}' for tool '{name}' "
+                    f"missing from tools.md Detection Signals table"
+                )
+
 
 class TestContentQuality:
     """Test documentation content quality."""
