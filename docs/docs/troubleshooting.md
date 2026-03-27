@@ -452,11 +452,7 @@ You ran a global config command (`agr config -g ...`) but no global config exist
 agr add -g user/skill
 ```
 
-Or initialize a global config manually:
-
-```bash
-agr init -g
-```
+This creates `~/.agr/agr.toml` automatically.
 
 ### How do I fix "Unknown config key"?
 

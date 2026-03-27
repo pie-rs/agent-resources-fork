@@ -687,7 +687,7 @@ The setting only accepts boolean values. Use `agr config set sync_instructions t
 
 #### "No global config found"
 `Error: No global config found at ~/.agr/agr.toml`
-Run a global config command but no global config exists. Create one with `agr add -g user/skill` or `agr init -g`.
+Run a global config command but no global config exists. Create one with `agr add -g user/skill`.
 
 #### "Unknown config key"
 `Error: Unknown config key 'tool'. Valid keys: canonical_instructions, default_source, default_tool, sources, sync_instructions, tools`
