@@ -56,10 +56,19 @@ tools at once:
 agr config set tools claude cursor codex
 ```
 
+```text
+Set: tools = claude, cursor, codex
+```
+
 Or during initial setup:
 
 ```bash
 agr init --tools claude,cursor,codex
+```
+
+```text
+Created: agr.toml
+Tools: claude, cursor, codex
 ```
 
 After this, every [`agr add`](reference.md#agr-add) and [`agr sync`](reference.md#agr-sync) installs skills into all configured
@@ -226,6 +235,11 @@ agr config set sync_instructions true
 agr config set canonical_instructions CLAUDE.md
 ```
 
+```text
+Set: sync_instructions = true
+Set: canonical_instructions = CLAUDE.md
+```
+
 See [Configuration — Instruction Syncing](configuration.md#instruction-syncing)
 for details.
 
@@ -262,6 +276,14 @@ To start syncing skills to an additional tool:
 agr config add tools cursor
 ```
 
+```text
+Added: cursor
+Syncing 3 dependencies to new tools...
+Installed: anthropics/skills/frontend-design (cursor)
+Installed: anthropics/skills/pdf (cursor)
+Installed: kasperjunge/commit (cursor)
+```
+
 This automatically installs all existing dependencies into the new tool — no
 separate `agr sync` needed.
 
@@ -269,6 +291,11 @@ To stop syncing to a tool:
 
 ```bash
 agr config remove tools cursor
+```
+
+```text
+Removed: cursor
+Deleted 3 skills from .cursor/skills/
 ```
 
 !!! warning "This deletes installed skills"
