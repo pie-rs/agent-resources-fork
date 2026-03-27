@@ -512,6 +512,16 @@ content = skill.read_file("scripts/lint.sh")
 # Path traversal is blocked — paths with .. raise ValueError
 ```
 
+### Content Hash Verification
+
+Installed skills include a SHA-256 content hash in their `.agr.json` metadata. Use it to detect whether skill files have been modified on disk since installation:
+
+```python
+skill = Skill.from_git("anthropics/skills/code-review")
+if skill.content_hash != skill.recompute_content_hash():
+    print("Skill files have changed since install")
+```
+
 ## Updating Skills
 
 Use the `--overwrite` (`-o`) flag to update a skill to the latest version:
