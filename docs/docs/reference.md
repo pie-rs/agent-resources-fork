@@ -428,40 +428,34 @@ agrx kasperjunge/commit --source github
 ## agr.toml Format
 
 ```toml
-default_source = "github"
-tools = ["claude", "codex", "opencode"]
-default_tool = "claude"
-sync_instructions = true
-canonical_instructions = "CLAUDE.md"
+default_source = "github" # (1)!
+tools = ["claude", "codex", "opencode"] # (2)!
+default_tool = "claude" # (3)!
+sync_instructions = true # (4)!
+canonical_instructions = "CLAUDE.md" # (5)!
 
-dependencies = [
+dependencies = [ # (6)!
     {handle = "anthropics/skills/frontend-design", type = "skill"},
     {handle = "kasperjunge/commit", type = "skill"},
-    {path = "./local-skill", type = "skill"},
+    {handle = "team/internal-tool", type = "skill", source = "my-server"}, # (7)!
+    {path = "./local-skill", type = "skill"}, # (8)!
 ]
 
-[[source]]
+[[source]] # (9)!
 name = "github"
 type = "git"
 url = "https://github.com/{owner}/{repo}.git"
 ```
 
-Each dependency has:
-
-- `handle` — Remote handle
-- `path` — Local path
-- `source` — Optional source name for remote handles
-- `type` — Currently always `skill`
-
-Note: `dependencies` must appear before any `[[source]]` blocks in `agr.toml`.
-
-### Top-Level Keys
-
-- `default_source` — Name of the default `[[source]]` for remote installs
-- `tools` — List of tools to sync instructions/skills to
-- `default_tool` — Default tool used by `agrx`
-- `sync_instructions` — Sync instruction files on `agr sync`
-- `canonical_instructions` — Canonical instruction file (`AGENTS.md`, `CLAUDE.md`, or `GEMINI.md`)
+1. Source used when `--source` is not passed to `agr add` or `agrx`
+2. Skills are installed into all listed tools on every `agr add` and `agr sync`
+3. Tool used by `agrx` and for instruction sync — defaults to the first in `tools`
+4. Copies the canonical instruction file to other tools on `agr sync`
+5. The instruction file treated as the source of truth (`CLAUDE.md`, `AGENTS.md`, or `GEMINI.md`)
+6. Must appear before any `[[source]]` blocks — each entry needs `type = "skill"` plus either `handle` or `path`
+7. Pin a dependency to a specific source instead of using `default_source`
+8. Local path dependencies point to a directory on disk — no Git fetch needed
+9. Each `[[source]]` defines a Git server URL template with `{owner}` and `{repo}` placeholders
 
 ## Python SDK
 
