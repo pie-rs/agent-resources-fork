@@ -84,16 +84,32 @@ need a remote repo.
 agr clones the repo, searches for a matching `SKILL.md` directory, and copies
 it into your tool's skills folder.
 
-When you run `agr add user/repo/skill`:
+**Two-part handles** (`user/skill`) — the most common pattern:
 
-1. agr clones `github.com/user/repo` (using sparse checkout for speed)
-2. It recursively searches the repo for a directory named `skill` that contains
-   `SKILL.md`
+1. agr clones `github.com/user/skills` (the repo is always named `skills`)
+2. It searches the repo for a directory named `skill` containing `SKILL.md`
 3. It copies that directory into your tool's skills folder
 
-The search finds the skill regardless of nesting depth (`skills/skill/`,
-`resources/skills/skill/`, `skill/`). When multiple matches exist, the
-shallowest path wins.
+This is why the recommended way to share skills is a repo named `skills` under
+your GitHub username — it lets people install with the short `user/skill` form.
+
+**Three-part handles** (`user/repo/skill`) — for skills in non-default repos:
+
+1. agr clones `github.com/user/repo` (using sparse checkout for speed)
+2. It searches the repo for a directory named `skill` containing `SKILL.md`
+3. It copies that directory into your tool's skills folder
+
+Use three-part handles when skills live in a repo with a different name, like
+`agr add madsnorgaard/drupal-agent-resources/drupal-expert`.
+
+In both cases, agr searches recursively regardless of nesting depth
+(`skills/skill/`, `resources/skills/skill/`, `skill/`). When multiple matches
+exist, the shallowest path wins.
+
+!!! tip "Wrong handle format?"
+    If `agr add user/repo` fails because it's actually a repo (not a skill in
+    the `skills` repo), agr probes the repo and suggests the correct three-part
+    handles — so you don't have to guess.
 
 ---
 
