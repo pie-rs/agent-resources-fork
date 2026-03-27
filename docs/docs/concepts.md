@@ -79,32 +79,27 @@ Local handles point to a skill directory on your filesystem. They're useful
 for testing skills before publishing or for project-specific skills that don't
 need a remote repo.
 
-### How handle resolution works
+### How agr resolves a handle to files on disk
 
-agr clones the repo, searches for a matching `SKILL.md` directory, and copies
-it into your tool's skills folder.
+Every remote handle follows the same three-step flow — clone, search, copy:
 
-**Two-part handles** (`user/skill`) — the most common pattern:
+1. **Clone** — agr sparse-checkouts the repo from GitHub (fast, even for large repos)
+2. **Search** — it finds a directory named after the skill that contains `SKILL.md`
+3. **Copy** — it installs that directory into each configured tool's skills folder
 
-1. agr clones `github.com/user/skills` (the repo is always named `skills`)
-2. It searches the repo for a directory named `skill` containing `SKILL.md`
-3. It copies that directory into your tool's skills folder
+The handle format determines *which* repo gets cloned:
 
-This is why the recommended way to share skills is a repo named `skills` under
-your GitHub username — it lets people install with the short `user/skill` form.
+| Handle | Repo cloned | When to use |
+|--------|-------------|-------------|
+| `user/skill` | `github.com/user/skills` | Default — repo is always named `skills` |
+| `user/repo/skill` | `github.com/user/repo` | Skills live in a differently named repo |
 
-**Three-part handles** (`user/repo/skill`) — for skills in non-default repos:
+The two-part form is the most common. It's why the recommended way to share
+skills is a repo named `skills` under your GitHub username.
 
-1. agr clones `github.com/user/repo` (using sparse checkout for speed)
-2. It searches the repo for a directory named `skill` containing `SKILL.md`
-3. It copies that directory into your tool's skills folder
-
-Use three-part handles when skills live in a repo with a different name, like
-`agr add madsnorgaard/drupal-agent-resources/drupal-expert`.
-
-In both cases, agr searches recursively regardless of nesting depth
-(`skills/skill/`, `resources/skills/skill/`, `skill/`). When multiple matches
-exist, the shallowest path wins.
+agr searches recursively regardless of nesting depth (`skills/skill/`,
+`resources/skills/skill/`, `skill/`). When multiple matches exist, the
+shallowest path wins.
 
 !!! tip "Wrong handle format?"
     If `agr add user/repo` fails because it's actually a repo (not a skill in
@@ -257,7 +252,7 @@ See [Configuration](configuration.md) for all options and
 
 ---
 
-## Instruction Syncing
+## Keep Instruction Files Aligned Across Tools
 
 Different tools use different instruction files:
 
@@ -280,7 +275,7 @@ This keeps all your tools aligned without maintaining multiple files manually.
 
 ---
 
-## The Two CLIs
+## `agr` vs `agrx` — Permanent Install vs One-Off Run
 
 agr ships two commands:
 
@@ -302,7 +297,7 @@ See [agrx](agrx.md) for full details.
 
 ---
 
-## What Happens When You Install
+## The Full `agr add` Install Flow
 
 When you run `agr add anthropics/skills/pdf`, agr parses the handle, clones
 the repo (sparse checkout), finds the `pdf/SKILL.md` directory, copies it into
