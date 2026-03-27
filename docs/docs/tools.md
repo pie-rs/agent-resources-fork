@@ -222,6 +222,31 @@ agr config set canonical_instructions CLAUDE.md
 See [Configuration — Instruction Syncing](configuration.md#instruction-syncing)
 for details.
 
+## Detection Signals
+
+`agr init` and `agr onboard` auto-detect which tools you use by checking for
+these files and directories in your repo:
+
+| Tool | Detection signals |
+|------|-------------------|
+| Claude Code | `.claude/`, `CLAUDE.md` |
+| Cursor | `.cursor/`, `.cursorrules` |
+| OpenAI Codex | `.agents/`, `.codex` |
+| OpenCode | `.opencode/`, `opencode.json`, `opencode.jsonc` |
+| GitHub Copilot | `.github/copilot/`, `.github/skills/`, `.github/copilot-instructions.md`, `.github/instructions/` |
+| Antigravity | `.gemini/`, `.agents/` |
+
+Any single signal is enough to detect a tool. Note that `.agents/` is shared
+between Codex and Antigravity — see
+[Troubleshooting](troubleshooting.md#why-does-agr-init-detect-a-tool-i-dont-use)
+if this causes unexpected results.
+
+Override detection with `--tools`:
+
+```bash
+agr init --tools claude,codex
+```
+
 ## Add or Remove a Tool After Setup
 
 To start syncing skills to an additional tool:
@@ -243,16 +268,6 @@ agr config remove tools cursor
     Removing a tool also deletes all skills from that tool's skills directory
     (e.g., `.cursor/skills/`). The skills remain installed in your other
     configured tools and can be reinstalled with `agr config add tools cursor`.
-
-??? note "How agr auto-detects your tools"
-    When you run `agr init` or `agr onboard`, agr detects which tools you use
-    by looking for their config directories and instruction files in your repo
-    (`.claude/`, `CLAUDE.md`, `.cursor/`, `.cursorrules`, etc.). Override with
-    `--tools`:
-
-    ```bash
-    agr init --tools claude,codex,opencode
-    ```
 
 ## Automatic Directory Migrations
 

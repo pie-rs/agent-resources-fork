@@ -250,7 +250,7 @@ Or remove unwanted tools after setup:
 agr config remove tools antigravity
 ```
 
-See [Supported Tools — Detection signals](tools.md) for the full list per tool.
+See [Supported Tools — Detection Signals](tools.md#detection-signals) for the full list per tool.
 
 ### How do I fix "Cannot remove all tools. At least one must remain."?
 
