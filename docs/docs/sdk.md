@@ -265,6 +265,22 @@ except SkillNotFoundError:
 
 ## Types
 
+### `ParsedHandle`
+
+Returned by `skill.handle`:
+
+```python
+@dataclass
+class ParsedHandle:
+    username: str | None   # GitHub username (None for local skills)
+    repo: str | None       # Repository name (None = default "skills" repo)
+    name: str              # Skill name (final segment of the handle)
+    is_local: bool         # True for local path references
+    local_path: Path | None  # Original local path (if is_local)
+```
+
+`ParsedHandle` also has an `is_remote` property that returns `True` for GitHub references.
+
 ### `SkillInfo`
 
 Returned by `list_skills()` and `skill_info()`:

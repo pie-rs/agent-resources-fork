@@ -456,6 +456,19 @@ print(info.name, info.owner, info.repo, info.description)
 
 Both functions use the GitHub API and respect `GITHUB_TOKEN` / `GH_TOKEN` for authentication.
 
+### ParsedHandle Type
+
+Returned by `skill.handle`:
+
+| Property | Type | Description |
+|----------|------|-------------|
+| username | str or None | GitHub username (None for local skills) |
+| repo | str or None | Repository name (None = default "skills" repo) |
+| name | str | Skill name (final segment of the handle) |
+| is_local | bool | True for local path references |
+| local_path | Path or None | Original local path (if is_local) |
+| is_remote | bool (property) | True for GitHub references |
+
 ### SkillInfo Type
 
 Returned by `list_skills()` and `skill_info()`:
