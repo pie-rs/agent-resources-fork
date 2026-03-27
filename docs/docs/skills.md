@@ -131,11 +131,17 @@ Any GitHub repository with a [`SKILL.md`](creating.md#skillmd-format) file can b
 Use the [Python SDK](sdk.md) to list all skills in any repo:
 
 ```python
-from agr import list_skills
+from agr import list_skills, skill_info
 
 for info in list_skills("anthropics/skills"):
-    print(f"{info.handle}: {info.description}")
+    details = skill_info(info.handle)
+    print(f"{details.handle}: {details.description}")
 ```
+
+!!! note
+    `list_skills()` discovers skills without downloading each `SKILL.md`, so
+    `description` is `None`. Use `skill_info()` to fetch the description for
+    a specific skill.
 
 Or check a repo manually — agr looks for any directory containing a `SKILL.md`
 file.
