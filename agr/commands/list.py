@@ -86,8 +86,7 @@ def run_list(global_install: bool = False) -> None:
 
         # Check installation status
         try:
-            handle = dep.to_parsed_handle()
-            source_name = dep.resolve_source_name(config.default_source)
+            handle, source_name = dep.resolve(config.default_source)
             status = _get_installation_status(
                 handle, repo_root, tools, source_name, skills_dirs
             )

@@ -312,8 +312,7 @@ def _run_global_sync() -> None:
 
     for dep in config.dependencies:
         try:
-            handle = dep.to_parsed_handle()
-            source_name = dep.resolve_source_name(config.default_source)
+            handle, source_name = dep.resolve(config.default_source)
             result = _sync_one_dependency(
                 handle, source_name, None, tools, resolver, skills_dirs
             )
@@ -381,8 +380,7 @@ def run_sync(global_install: bool = False) -> None:
 
     for index, dep in enumerate(config.dependencies):
         try:
-            handle = dep.to_parsed_handle()
-            source_name = dep.resolve_source_name(config.default_source)
+            handle, source_name = dep.resolve(config.default_source)
 
             # Skip dependencies already installed on every configured tool.
             tools_needing_install = filter_tools_needing_install(

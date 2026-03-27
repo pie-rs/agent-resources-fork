@@ -174,6 +174,16 @@ class Dependency:
             return None
         return self.source or default_source
 
+    def resolve(
+        self, default_source: str | None = None
+    ) -> tuple[ParsedHandle, str | None]:
+        """Parse the handle and resolve the source name in one step.
+
+        Combines ``to_parsed_handle()`` and ``resolve_source_name()`` —
+        the two calls are always used together when processing dependencies.
+        """
+        return self.to_parsed_handle(), self.resolve_source_name(default_source)
+
 
 def _parse_dependencies_from_doc(
     doc: TOMLDocument,

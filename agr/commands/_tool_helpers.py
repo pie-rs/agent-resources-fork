@@ -290,8 +290,7 @@ def sync_dependencies_to_tools(config: AgrConfig, tool_names: list[str]) -> int:
 
     for dep in config.dependencies:
         try:
-            handle = dep.to_parsed_handle()
-            source_name = dep.resolve_source_name(config.default_source)
+            handle, source_name = dep.resolve(config.default_source)
 
             tools_needing_install = filter_tools_needing_install(
                 handle, repo_root, new_tools, source_name
