@@ -128,6 +128,23 @@ class TestDetectTools:
 
         assert "copilot" in result
 
+    def test_copilot_detected_from_copilot_instructions_md(self, tmp_path):
+        """detect_tools finds copilot from .github/copilot-instructions.md."""
+        (tmp_path / ".github").mkdir()
+        (tmp_path / ".github" / "copilot-instructions.md").write_text("# Instructions")
+
+        result = detect_tools(tmp_path)
+
+        assert "copilot" in result
+
+    def test_copilot_detected_from_github_instructions_dir(self, tmp_path):
+        """detect_tools finds copilot from .github/instructions/ directory."""
+        (tmp_path / ".github" / "instructions").mkdir(parents=True)
+
+        result = detect_tools(tmp_path)
+
+        assert "copilot" in result
+
     def test_all_tools_detectable(self, tmp_path):
         """Every registered tool can be detected from at least one signal."""
         # Create first detection signal for each tool

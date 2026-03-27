@@ -137,7 +137,12 @@ COPILOT = ToolConfig(
     cli_continue_flag="--continue",
     cli_interactive_prompt_flag="-i",
     install_hint="Install GitHub Copilot CLI",
-    detection_signals=(".github/copilot", ".github/skills"),
+    detection_signals=(
+        ".github/copilot",
+        ".github/skills",
+        ".github/copilot-instructions.md",
+        ".github/instructions",
+    ),
 )
 
 # Antigravity tool configuration (flat naming: <skill-name>)
@@ -157,7 +162,12 @@ ANTIGRAVITY = ToolConfig(
 
 # All tool configurations — order here determines iteration order in TOOLS.
 _ALL_TOOLS: tuple[ToolConfig, ...] = (
-    CLAUDE, CURSOR, CODEX, OPENCODE, COPILOT, ANTIGRAVITY,
+    CLAUDE,
+    CURSOR,
+    CODEX,
+    OPENCODE,
+    COPILOT,
+    ANTIGRAVITY,
 )
 
 # Registry of all supported tools, keyed by ToolConfig.name.

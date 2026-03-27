@@ -237,10 +237,19 @@ class TestDetectionSignals:
         assert CODEX.detection_signals == (".agents", ".codex")
 
     def test_opencode_detection_signals(self):
-        assert OPENCODE.detection_signals == (".opencode", "opencode.json", "opencode.jsonc")
+        assert OPENCODE.detection_signals == (
+            ".opencode",
+            "opencode.json",
+            "opencode.jsonc",
+        )
 
     def test_copilot_detection_signals(self):
-        assert COPILOT.detection_signals == (".github/copilot", ".github/skills")
+        assert COPILOT.detection_signals == (
+            ".github/copilot",
+            ".github/skills",
+            ".github/copilot-instructions.md",
+            ".github/instructions",
+        )
 
     def test_antigravity_detection_signals(self):
         assert ANTIGRAVITY.detection_signals == (".gemini", ".agent")
