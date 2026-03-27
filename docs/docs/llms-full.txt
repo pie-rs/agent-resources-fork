@@ -503,10 +503,10 @@ content = skill.read_file("scripts/lint.sh")
 
 ## Updating Skills
 
-agr has no dedicated update command. Reinstall to get the latest version:
+Use the `--overwrite` (`-o`) flag to update a skill to the latest version:
 
 ```bash
-agr add user/skill --overwrite
+agr add user/skill -o
 ```
 
 ## Skill Directory
