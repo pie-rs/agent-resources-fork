@@ -62,7 +62,7 @@ Verify it works:
 agr --version
 ```
 
-```
+```text
 agr 0.7.10
 ```
 
@@ -90,7 +90,7 @@ agr init
 This creates an `agr.toml` file and auto-detects which tools you use based on
 repo signals (`.claude/`, `CLAUDE.md`, `.cursor/`, `.cursorrules`, etc.):
 
-```
+```text
 Created: agr.toml
 Tools: claude
 Next: agr add <handle> or agr onboard
@@ -126,7 +126,7 @@ Install a skill from GitHub:
 agr add anthropics/skills/frontend-design
 ```
 
-```
+```text
 Added: anthropics/skills/frontend-design
   Installed to claude: .claude/skills/frontend-design
 ```
@@ -152,7 +152,7 @@ List what's installed:
 agr list
 ```
 
-```
+```text
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━┓
 ┃ Skill                             ┃ Type   ┃ Status    ┃
 ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━┩
@@ -216,7 +216,7 @@ agr sync
 This installs every skill listed in `agr.toml` that isn't already present. It's
 like `npm install` for agent skills:
 
-```
+```text
 Up to date: anthropics/skills/frontend-design
 Up to date: anthropics/skills/pdf
 Up to date: anthropics/skills/skill-creator
@@ -256,7 +256,7 @@ Scaffold a new skill:
 agr init my-skill
 ```
 
-```
+```text
 Created skill scaffold: my-skill
   Edit my-skill/SKILL.md to customize your skill
 ```
@@ -289,7 +289,7 @@ actual instruction content that gets loaded by your AI tool.
 A minimal skill is just a `SKILL.md` file in a directory. But skills can include
 supporting files too:
 
-```
+```text
 my-skill/
 ├── SKILL.md          # Required — skill instructions
 ├── scripts/          # Optional — helper scripts the skill references
@@ -320,7 +320,7 @@ agr add ./my-skill -o
 Push your skill to GitHub. The recommended structure is a repo named `skills`
 under your GitHub username:
 
-```
+```text
 your-username/skills/
 ├── my-skill/
 │   └── SKILL.md
@@ -350,7 +350,7 @@ agr add your-username/my-repo/my-skill
 agr remove anthropics/skills/frontend-design
 ```
 
-```
+```text
 Removed: anthropics/skills/frontend-design
 ```
 
@@ -368,7 +368,7 @@ globally:
 agr add -g anthropics/skills/skill-creator
 ```
 
-```
+```text
 Added: anthropics/skills/skill-creator
   Installed to claude: ~/.claude/skills/skill-creator
 ```
