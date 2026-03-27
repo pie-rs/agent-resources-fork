@@ -67,7 +67,7 @@ description: TODO — describe what this skill does and when to use it
 
 - Antigravity detection signal corrected from `.agent` to `.agents`. Previously, `agr init` and `agr onboard` would not auto-detect Antigravity in repos that had an `.agents/` directory (used by Codex) — only `.gemini/` was matched.
 - `agrx --tool cursor` no longer passes an invalid `--force` flag to the Cursor CLI. The Cursor CLI (`agent`) does not support this flag, so `agrx` now runs without a permission-bypass flag for Cursor.
-- `agrx --tool opencode` no longer passes an invalid `--prompt` flag. OpenCode's CLI expects prompts as a positional argument to the `run` subcommand (`opencode run "prompt"`), not via `--prompt` on the base command. Both interactive and non-interactive `agrx` modes now route through `opencode run` with the prompt passed positionally.
+- `agrx --tool opencode` now correctly uses two different modes: non-interactive runs use `opencode run "prompt"` (one-shot execution), while interactive runs (`-i`) use `opencode --prompt "prompt"` to inject the prompt into the TUI. Previously, `agrx` passed an invalid `--prompt` flag on the base command for non-interactive mode and routed both modes through `opencode run`.
 
 ---
 
