@@ -24,7 +24,7 @@ from agr.commands._tool_helpers import (
 )
 from agr.console import error_exit, get_console
 from agr.exceptions import ConfigError
-from agr.source import DEFAULT_SOURCE_NAME, SourceConfig
+from agr.source import DEFAULT_SOURCE_NAME, SOURCE_TYPE_GIT, SourceConfig
 from agr.tool import DEFAULT_TOOL_NAMES
 
 VALID_KEYS = {
@@ -298,10 +298,10 @@ def run_config_add(
         name = _require_single_source_name(values)
 
         if source_type is None:
-            source_type = "git"
-        if source_type != "git":
+            source_type = SOURCE_TYPE_GIT
+        if source_type != SOURCE_TYPE_GIT:
             error_exit(
-                f"Unsupported source type '{source_type}'. Only 'git' is supported."
+                f"Unsupported source type '{source_type}'. Only '{SOURCE_TYPE_GIT}' is supported."
             )
         if source_url is None:
             error_exit("--url is required when adding a source.")

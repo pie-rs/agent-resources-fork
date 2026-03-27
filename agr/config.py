@@ -14,6 +14,7 @@ from agr.handle import ParsedHandle, parse_handle
 from agr.instructions import INSTRUCTION_FILES
 from agr.source import (
     DEFAULT_SOURCE_NAME,
+    SOURCE_TYPE_GIT,
     SourceConfig,
     SourceResolver,
     default_sources,
@@ -91,11 +92,11 @@ def _parse_sources_from_doc(
             if not isinstance(item, dict):
                 raise ConfigError("Invalid [[source]] entry in agr.toml")
             name = str(item.get("name", "")).strip()
-            source_type = str(item.get("type", "git")).strip()
+            source_type = str(item.get("type", SOURCE_TYPE_GIT)).strip()
             url = item.get("url")
             if not name:
                 raise ConfigError("Source entry missing name")
-            if source_type != "git":
+            if source_type != SOURCE_TYPE_GIT:
                 raise ConfigError(
                     f"Unsupported source type '{source_type}' for '{name}'"
                 )
