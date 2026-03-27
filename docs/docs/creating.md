@@ -73,15 +73,17 @@ Describe when this skill should be used.
 Provide detailed instructions here.
 ```
 
-If you want to keep the skill in your project, place it under `./skills/`:
+If you want to keep the skill in your project, scaffold it then move it under
+`./skills/`:
 
 ```bash
-agr init skills/my-skill
+agr init my-skill
+mv my-skill skills/
 ```
 
 From there you can:
 
-1. Edit the `description` and body in `SKILL.md`
+1. Edit the `description` and body in `skills/my-skill/SKILL.md`
 2. Add the skill to your tool with `agr add ./skills/my-skill`
 3. Add it to `agr.toml` for team sync (see below)
 
