@@ -514,29 +514,6 @@ def require_config(start_path: Path | None = None) -> Path:
     return config_path
 
 
-def get_or_create_config(start_path: Path | None = None) -> tuple[Path, AgrConfig]:
-    """Get existing config or create new one.
-
-    Args:
-        start_path: Directory to start searching from (defaults to cwd)
-
-    Returns:
-        Tuple of (path to config, AgrConfig instance)
-    """
-    existing = find_config(start_path)
-    if existing:
-        return existing, AgrConfig.load(existing)
-
-    # Create new config in cwd
-    cwd = start_path or Path.cwd()
-    config_path = cwd / CONFIG_FILENAME
-
-    config = AgrConfig()
-    config.save(config_path)
-
-    return config_path, config
-
-
 def get_global_config_dir() -> Path:
     """Get global agr config directory (~/.agr)."""
     return Path.home() / ".agr"

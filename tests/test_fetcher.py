@@ -15,7 +15,6 @@ from agr.exceptions import (
 from agr.fetcher import (
     _cleanup_empty_parents,
     fetch_and_install_to_tools,
-    get_installed_skills,
     install_local_skill,
     install_skill_from_repo,
     is_skill_installed,
@@ -467,33 +466,6 @@ class TestMetadataMatching:
         assert uninstall_skill(handle_b, repo_root, CLAUDE, "github") is True
         assert not (skills_dir / handle_b.to_installed_name()).exists()
         assert (skills_dir / "test-skill").exists()
-
-
-class TestGetInstalledSkills:
-    """Tests for get_installed_skills function."""
-
-    def test_no_skills_dir(self, tmp_path):
-        """Returns empty list when skills dir doesn't exist."""
-        repo_root = tmp_path / "repo"
-        repo_root.mkdir()
-        (repo_root / ".git").mkdir()
-
-        skills = get_installed_skills(repo_root, CLAUDE)
-        assert skills == []
-
-    def test_with_skills(self, tmp_path, skill_fixture):
-        """Returns list of installed skill names."""
-        repo_root = tmp_path / "repo"
-        repo_root.mkdir()
-        (repo_root / ".git").mkdir()
-        skills_dir = repo_root / ".claude" / "skills"
-        skills_dir.mkdir(parents=True)
-
-        install_local_skill(skill_fixture, skills_dir, CLAUDE)
-
-        skills = get_installed_skills(repo_root, CLAUDE)
-        assert len(skills) == 1
-        assert skills[0] == skill_fixture.name
 
 
 class TestIsSkillInstalled:

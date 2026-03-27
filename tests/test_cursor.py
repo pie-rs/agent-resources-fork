@@ -12,7 +12,6 @@ import pytest
 from agr.config import AgrConfig
 from agr.fetcher import (
     fetch_and_install,
-    get_installed_skills,
     install_local_skill,
     is_skill_installed,
     uninstall_skill,
@@ -190,24 +189,6 @@ class TestMultiToolInstallation:
         cursor_path = cursor_skills / skill_fixture.name
         assert cursor_path.exists()
         assert (cursor_path / SKILL_MARKER).exists()
-
-
-class TestGetInstalledSkillsFlat:
-    """Tests for get_installed_skills with flat Cursor structure."""
-
-    def test_get_flat_skills(self, tmp_path, skill_fixture):
-        """Get installed skills from flat Cursor structure."""
-        repo_root = tmp_path / "repo"
-        repo_root.mkdir()
-        (repo_root / ".git").mkdir()
-        skills_dir = repo_root / ".cursor" / "skills"
-        skills_dir.mkdir(parents=True)
-
-        install_local_skill(skill_fixture, skills_dir, CURSOR)
-
-        skills = get_installed_skills(repo_root, CURSOR)
-        assert len(skills) == 1
-        assert skills[0] == skill_fixture.name
 
 
 class TestIsSkillInstalledFlat:

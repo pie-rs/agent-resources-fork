@@ -7,7 +7,6 @@ from agr.config import (
     Dependency,
     find_config,
     find_repo_root,
-    get_or_create_config,
 )
 from agr.exceptions import AgrError, ConfigError
 from agr.tool import ToolConfig
@@ -265,33 +264,6 @@ class TestFindRepoRoot:
 
         root = find_repo_root()
         assert root is None
-
-
-class TestGetOrCreateConfig:
-    """Tests for get_or_create_config function."""
-
-    def test_creates_new(self, tmp_path, monkeypatch):
-        """Creates new config if none exists."""
-        monkeypatch.chdir(tmp_path)
-
-        path, config = get_or_create_config()
-        assert path == tmp_path / "agr.toml"
-        assert path.exists()
-        assert config.dependencies == []
-
-    def test_returns_existing(self, tmp_path, monkeypatch):
-        """Returns existing config."""
-        monkeypatch.chdir(tmp_path)
-        config_path = tmp_path / "agr.toml"
-        config_path.write_text("""
-dependencies = [
-    { handle = "user/skill", type = "skill" },
-]
-""")
-
-        path, config = get_or_create_config()
-        assert path == config_path
-        assert len(config.dependencies) == 1
 
 
 class TestGetTools:

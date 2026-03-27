@@ -294,30 +294,3 @@ def _validate_no_separator_in_components(
                 f"contains reserved sequence "
                 f"'{sep}'"
             )
-
-
-def installed_name_to_toml_handle(installed_name: str) -> str:
-    """Convert installed directory name back to agr.toml handle.
-
-    Supports both new separator format and legacy colon format
-    for backward compatibility.
-
-    Args:
-        installed_name: Directory name like "kasperjunge--commit" or "local--my-skill"
-                       (also accepts legacy "kasperjunge:commit" or "local:my-skill")
-
-    Returns:
-        Handle like "kasperjunge/commit" or the local path
-    """
-    # Detect which separator is present (legacy colon or current double-hyphen).
-    if LEGACY_SEPARATOR in installed_name:
-        separator = LEGACY_SEPARATOR
-    elif INSTALLED_NAME_SEPARATOR in installed_name:
-        separator = INSTALLED_NAME_SEPARATOR
-    else:
-        return installed_name
-
-    parts = installed_name.split(separator)
-    if parts[0] == LOCAL_PREFIX:
-        return parts[1] if len(parts) > 1 else installed_name
-    return "/".join(parts)

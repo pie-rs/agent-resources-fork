@@ -863,37 +863,6 @@ def _cleanup_empty_parents(path: Path, stop_at: Path) -> None:
             break
 
 
-def get_installed_skills(repo_root: Path, tool: ToolConfig = DEFAULT_TOOL) -> list[str]:
-    """Get list of installed skill names.
-
-    Args:
-        repo_root: Repository root path
-        tool: Tool configuration for path structure
-
-    Returns:
-        List of installed skill directory names (flat) or paths (nested)
-    """
-    skills_dir = tool.get_skills_dir(repo_root)
-
-    if not skills_dir.exists():
-        return []
-
-    if tool.supports_nested:
-        # For nested tools, recursively find all SKILL.md files
-        skills = []
-        for skill_md in skills_dir.rglob(SKILL_MARKER):
-            skill_path = skill_md.parent.relative_to(skills_dir)
-            skills.append(str(skill_path))
-        return skills
-
-    # For flat tools, just list top-level directories
-    return [
-        d.name
-        for d in skills_dir.iterdir()
-        if d.is_dir() and (d / SKILL_MARKER).exists()
-    ]
-
-
 def is_skill_installed(
     handle: ParsedHandle,
     repo_root: Path | None,
