@@ -73,6 +73,9 @@ extra:
             Thanks for the feedback! Help us improve by
             <a href="https://github.com/kasperjunge/agent-resources/issues/new?title=Docs+feedback:+{title}&labels=docs" target="_blank">opening an issue</a>.
 
+not_in_nav: |
+  404.md
+
 plugins:
   - search:
       separator: '[\s\-\._]+'
