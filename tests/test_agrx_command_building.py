@@ -47,10 +47,10 @@ def test_build_skill_command_non_interactive_opencode_run():
     assert cmd == ["opencode", "run", "skill prompt"]
 
 
-def test_build_skill_command_interactive_opencode_uses_run():
-    """OpenCode interactive uses 'run' subcommand with positional prompt."""
+def test_build_skill_command_interactive_opencode_uses_prompt_flag():
+    """OpenCode interactive uses TUI with --prompt flag."""
     cmd = _build_skill_command(OPENCODE, "skill prompt", non_interactive=False)
-    assert cmd == ["opencode", "run", "skill prompt"]
+    assert cmd == ["opencode", "--prompt", "skill prompt"]
 
 
 def test_build_skill_command_non_interactive_claude_print_flag():

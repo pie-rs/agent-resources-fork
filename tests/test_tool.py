@@ -91,7 +91,7 @@ class TestToolConfig:
         assert CLAUDE.cli_interactive_prompt_flag is None
         assert CURSOR.cli_interactive_prompt_flag is None
         assert CODEX.cli_interactive_prompt_flag is None
-        assert OPENCODE.cli_interactive_prompt_flag is None
+        assert OPENCODE.cli_interactive_prompt_flag == "--prompt"
         assert COPILOT.cli_interactive_prompt_flag == "-i"
         assert ANTIGRAVITY.cli_interactive_prompt_flag is None
         assert CLAUDE.skill_prompt_prefix == "/"

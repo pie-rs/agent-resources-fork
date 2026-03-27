@@ -116,6 +116,7 @@ OPENCODE = ToolConfig(
     cli_prompt_flag=None,  # opencode run <prompt> (positional arg)
     cli_continue_flag="--continue",
     cli_exec_command=["opencode", "run"],
+    cli_interactive_prompt_flag="--prompt",  # opencode --prompt <text> (TUI mode)
     skill_prompt_prefix="",
     install_hint="Install OpenCode CLI (https://opencode.ai/docs/cli/)",
     detection_signals=(".opencode", "opencode.json", "opencode.jsonc"),

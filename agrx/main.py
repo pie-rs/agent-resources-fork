@@ -115,8 +115,7 @@ def _build_skill_command(
 ) -> list[str]:
     """Build the command to run a skill with the selected tool."""
     # Use cli_exec_command for non-interactive mode, or when interactive mode
-    # has no prompt injection (e.g., OpenCode TUI has no --prompt flag, so
-    # both modes go through ``opencode run``).
+    # has no prompt injection (i.e. no --prompt flag and no positional prompt).
     has_interactive_prompt = (
         tool_config.cli_interactive_prompt_flag
         or tool_config.cli_interactive_prompt_positional
