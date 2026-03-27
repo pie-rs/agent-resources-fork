@@ -154,15 +154,21 @@ agr add anthropics/skills/pdf --source github
 
 ### agr remove
 
-Uninstall skills.
+Uninstall skills from all configured tools and remove them from `agr.toml`.
+Each skill is deleted from every tool's skills directory (e.g., `.claude/skills/`,
+`.cursor/skills/`) and its dependency entry is removed from the manifest.
 
 ```bash
 agr remove <handle>...
 ```
 
+**Arguments:**
+
+- `handle` — Skill handle or local path (same formats as `agr add`)
+
 **Options:**
 
-- `--global`, `-g` — Remove from global skills directory
+- `--global`, `-g` — Remove from global skills directory and `~/.agr/agr.toml`
 
 **Examples:**
 
