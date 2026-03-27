@@ -317,7 +317,7 @@ All config operations use the `agr config` command:
 ```bash
 agr config show               # View formatted config
 agr config path               # Print agr.toml path
-agr config edit               # Open in $EDITOR or $VISUAL
+agr config edit               # Open in $VISUAL or $EDITOR
 agr config get <key>           # Read a value
 agr config set <key> <values>  # Write a value
 agr config add <key> <values>  # Append to a list
@@ -328,7 +328,7 @@ agr config unset <key>         # Clear to default
 Add `-g` to any command to operate on the global config (`~/.agr/agr.toml`).
 
 !!! note "`agr config edit` requires an editor"
-    `agr config edit` opens `agr.toml` in your `$EDITOR` (or `$VISUAL`).
+    `agr config edit` opens `agr.toml` in your `$VISUAL` (or `$EDITOR`).
     If neither environment variable is set, you'll get an error. Set one:
     ```bash
     export EDITOR="vim"              # or nano, code --wait, etc.

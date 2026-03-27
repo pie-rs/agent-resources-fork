@@ -330,7 +330,7 @@ claude codex opencode
 ```bash
 agr config show                              # View formatted config
 agr config path                              # Print agr.toml path
-agr config edit                              # Open in $EDITOR
+agr config edit                              # Open in $VISUAL or $EDITOR
 agr config get <key>                         # Read a config value
 agr config set <key> <values>                # Write scalar or replace list
 agr config add <key> <values>                # Append to list

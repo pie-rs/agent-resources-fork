@@ -117,7 +117,7 @@ Manage agr.toml configuration.
 ```bash
 agr config show               # view formatted config
 agr config path               # print agr.toml path
-agr config edit               # open in $EDITOR
+agr config edit               # open in $VISUAL or $EDITOR
 agr config get <key>           # read a value
 agr config set <key> <values>  # write scalar or replace list
 agr config add <key> <values>  # append to list
