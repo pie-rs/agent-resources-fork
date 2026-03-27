@@ -84,14 +84,14 @@ class TestToolConfig:
         """ToolConfig includes interactive prompt mode controls."""
         assert CLAUDE.cli_interactive_prompt_positional is True
         assert CURSOR.cli_interactive_prompt_positional is True
-        assert CODEX.cli_interactive_prompt_positional is False
+        assert CODEX.cli_interactive_prompt_positional is True
         assert OPENCODE.cli_interactive_prompt_positional is False
         assert COPILOT.cli_interactive_prompt_positional is False
         assert ANTIGRAVITY.cli_interactive_prompt_positional is False
         assert CLAUDE.cli_interactive_prompt_flag is None
         assert CURSOR.cli_interactive_prompt_flag is None
         assert CODEX.cli_interactive_prompt_flag is None
-        assert OPENCODE.cli_interactive_prompt_flag == "--prompt"
+        assert OPENCODE.cli_interactive_prompt_flag is None
         assert COPILOT.cli_interactive_prompt_flag == "-i"
         assert ANTIGRAVITY.cli_interactive_prompt_flag is None
         assert CLAUDE.skill_prompt_prefix == "/"
