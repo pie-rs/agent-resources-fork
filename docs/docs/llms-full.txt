@@ -847,7 +847,7 @@ Use `--overwrite` to force a fresh install: `agr add user/skill --overwrite`
 ### Source Errors
 
 #### "Cannot remove default source"
-`Error: Cannot remove default source 'my-server'. Change the default source first.`
+`Error: Cannot remove default source 'my-server'. Change default_source first.`
 Change the default first: `agr config set default_source github`, then `agr config remove sources my-server`.
 
 #### "Source not found" (when removing)

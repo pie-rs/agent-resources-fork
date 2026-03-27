@@ -775,7 +775,7 @@ This re-downloads the skill from GitHub and replaces your local copy.
 ### How do I fix "Cannot remove default source"?
 
 ```text
-Error: Cannot remove default source 'my-server'. Change the default source first.
+Error: Cannot remove default source 'my-server'. Change default_source first.
 ```
 
 You can't remove a source that is currently set as `default_source`. Change the
@@ -830,7 +830,14 @@ agr config remove sources my-server
     Error: Unsupported source type 'svn' for 'my-server'
     ```
 
-    Only `git` sources are supported. Change the `type` to `git`.
+    ```text
+    Error: Unsupported source type 'svn'. Only 'git' is supported.
+    ```
+
+    Only `git` sources are supported. The first error appears when loading
+    `agr.toml` with an invalid `type` in a `[[source]]` block. The second
+    appears when running `agr config add sources --type svn`. In both cases,
+    change the type to `git`.
 
 ### How do I fix "GitHub API rate limit exceeded"?
 
