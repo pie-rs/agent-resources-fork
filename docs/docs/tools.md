@@ -136,7 +136,7 @@ terminal.
 | **Instruction file** | `AGENTS.md` |
 | **CLI command** | `opencode` |
 | **Skill invocation** | `skill-name` (no prefix) |
-| **Detection signals** | `.opencode/` |
+| **Detection signals** | `.opencode/`, `opencode.json`, `opencode.jsonc` |
 
 !!! note "Global path"
     OpenCode uses `~/.config/opencode/skills/` for global skills, which differs
