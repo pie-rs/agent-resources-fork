@@ -407,10 +407,33 @@ agr add anthropics/skills/frontend-design
 git add agr.toml && git commit -m "Add agr skill dependencies"
 ```
 
+### What to commit vs gitignore
+
+Commit `agr.toml` (your skill lockfile) and any local skills in `./skills/`. Gitignore the tool skills directories — `agr sync` recreates them:
+
+```gitignore
+# agr-managed skill directories (recreated by agr sync)
+.claude/skills/
+.cursor/skills/
+.agents/skills/
+.opencode/skills/
+.github/skills/
+.gemini/skills/
+```
+
 ### Teammates
 
 ```bash
 uv tool install agr
+agr sync
+```
+
+### Private repos
+
+Set `GITHUB_TOKEN` or `GH_TOKEN` for private skill repositories. The token needs Contents: Read-only access.
+
+```bash
+export GITHUB_TOKEN="ghp_..."
 agr sync
 ```
 
@@ -421,7 +444,7 @@ agr sync
   run: uv tool install agr
 
 - name: Sync skills
-  run: agr sync
+  run: agr sync -q
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
