@@ -799,6 +799,62 @@
   </script>
   {% endif %}
 
+  {% if page and page.file and page.file.src_path == "reference.md" %}
+  <!-- TechArticle Schema for CLI reference rich results -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "CLI Reference — All agr and agrx Commands, Flags, and Options",
+    "description": "Complete CLI reference for agr and agrx — all commands, flags, and handle formats for managing AI agent skills across Claude Code, Cursor, Codex, OpenCode, Copilot, and Antigravity.",
+    "url": "https://kasperjunge.github.io/agent-resources/reference/",
+    "author": {
+      "@type": "Person",
+      "name": "Kasper Junge",
+      "url": "https://github.com/kasperjunge"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Agent Resources",
+      "url": "https://github.com/kasperjunge/agent-resources"
+    },
+    "about": [
+      {
+        "@type": "DefinedTerm",
+        "name": "agr add",
+        "description": "Install AI agent skills from GitHub or local paths into your tool's skills folder"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "agr remove",
+        "description": "Uninstall skills and remove them from agr.toml"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "agr sync",
+        "description": "Install all dependencies from agr.toml, sync instruction files, and run directory migrations"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "agr config",
+        "description": "Manage agr.toml configuration — tools, sources, instruction syncing, and defaults"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "agrx",
+        "description": "Run a skill temporarily without adding to agr.toml — downloads, executes, and cleans up"
+      },
+      {
+        "@type": "DefinedTerm",
+        "name": "agr.toml",
+        "description": "Manifest file that tracks skill dependencies and configuration, similar to package.json"
+      }
+    ],
+    "keywords": ["agr CLI", "agrx CLI", "agr commands", "agr add", "agr sync", "agr config", "agr.toml format", "AI agent skill management"]
+  }
+  </script>
+  {% endif %}
+
   {% if page and page.file and page.file.src_path == "concepts.md" %}
   <!-- Article Schema for core concepts rich results -->
   <script type="application/ld+json">
