@@ -38,6 +38,16 @@ def validate_canonical_instructions(value: str) -> None:
         raise ConfigError(f"canonical_instructions must be one of: {valid}")
 
 
+def _validate_default_source(
+    default_source: str, sources: list[SourceConfig]
+) -> None:
+    """Raise ConfigError if *default_source* is not in the sources list."""
+    if not any(source.name == default_source for source in sources):
+        raise ConfigError(
+            f"default_source '{default_source}' not found in [[source]] list"
+        )
+
+
 def _parse_tools_from_doc(doc: TOMLDocument) -> list[str]:
     """Parse and validate tools list from TOML document."""
     tools_list = doc.get("tools", list(DEFAULT_TOOL_NAMES))
@@ -113,10 +123,7 @@ def _parse_sources_from_doc(
     else:
         default_source = DEFAULT_SOURCE_NAME
 
-    if not any(source.name == default_source for source in sources):
-        raise ConfigError(
-            f"default_source '{default_source}' not found in [[source]] list"
-        )
+    _validate_default_source(default_source, sources)
 
     return sources, default_source
 
@@ -342,10 +349,7 @@ class AgrConfig:
         # Always write default source and sources for clarity
         default_source = self.default_source or DEFAULT_SOURCE_NAME
         sources = self.sources or default_sources()
-        if not any(source.name == default_source for source in sources):
-            raise ValueError(
-                f"default_source '{default_source}' not found in sources list"
-            )
+        _validate_default_source(default_source, sources)
         doc["default_source"] = default_source
 
         # Save tools array if not default
