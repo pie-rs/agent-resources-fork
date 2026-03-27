@@ -304,7 +304,7 @@ user/repo/skill         → github.com/user/repo repo, "skill" directory
 ./path/to/skill         → local directory on disk
 ```
 
-Two-part handles (`user/skill`) default to a repo named `skills`. During a deprecation period, agr falls back to `agent-resources` if the skill isn't found in `skills`.
+Two-part handles (`user/skill`) assume a repo named `skills`. Use three parts (`user/repo/skill`) when skills live in a differently named repo.
 
 ### Skill Discovery
 
