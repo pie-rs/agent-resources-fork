@@ -104,9 +104,9 @@ class TestDetectTools:
 
         assert "antigravity" in result
 
-    def test_antigravity_detected_from_legacy_agent_dir(self, tmp_path):
-        """detect_tools still finds antigravity from legacy .agent/ directory."""
-        (tmp_path / ".agent").mkdir()
+    def test_antigravity_detected_from_agents_dir(self, tmp_path):
+        """detect_tools finds antigravity from .agents/ directory (shared with Codex)."""
+        (tmp_path / ".agents").mkdir()
 
         result = detect_tools(tmp_path)
 

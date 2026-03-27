@@ -160,9 +160,9 @@ class TestAgrInit:
         config = AgrConfig.load(cli_project / "agr.toml")
         assert "antigravity" in config.tools
 
-    def test_init_detects_antigravity_from_legacy_agent_dir(self, agr, cli_project):
-        """agr init detects Antigravity tools from legacy .agent/ directory."""
-        (cli_project / ".agent").mkdir()
+    def test_init_detects_antigravity_from_agents_dir(self, agr, cli_project):
+        """agr init detects Antigravity from .agents/ directory (shared with Codex)."""
+        (cli_project / ".agents").mkdir()
 
         result = agr("init")
 

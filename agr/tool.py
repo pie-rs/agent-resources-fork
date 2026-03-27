@@ -156,7 +156,7 @@ ANTIGRAVITY = ToolConfig(
     cli_prompt_flag=None,
     cli_continue_flag=None,
     skill_prompt_prefix="",
-    detection_signals=(".gemini", ".agent"),
+    detection_signals=(".gemini", ".agents"),
     instruction_file="GEMINI.md",
 )
 

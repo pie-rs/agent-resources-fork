@@ -252,7 +252,7 @@ class TestDetectionSignals:
         )
 
     def test_antigravity_detection_signals(self):
-        assert ANTIGRAVITY.detection_signals == (".gemini", ".agent")
+        assert ANTIGRAVITY.detection_signals == (".gemini", ".agents")
 
 
 class TestInstructionFiles:
