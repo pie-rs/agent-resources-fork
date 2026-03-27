@@ -183,14 +183,14 @@ agrx kasperjunge/commit --tool codex
 
 agr installs skills into 6 AI coding tools simultaneously.
 
-| Tool | Config name | Project skills dir | Global skills dir | CLI | Instruction file |
-|------|-------------|-------------------|-------------------|-----|-----------------|
-| Claude Code | claude | .claude/skills/ | ~/.claude/skills/ | claude | CLAUDE.md |
-| Cursor | cursor | .cursor/skills/ | ~/.cursor/skills/ | agent | AGENTS.md |
-| OpenAI Codex | codex | .agents/skills/ | ~/.agents/skills/ | codex | AGENTS.md |
-| OpenCode | opencode | .opencode/skills/ | ~/.config/opencode/skills/ | opencode | AGENTS.md |
-| GitHub Copilot | copilot | .github/skills/ | ~/.copilot/skills/ | copilot | AGENTS.md |
-| Antigravity | antigravity | .agent/skills/ | ~/.gemini/antigravity/skills/ | (none) | GEMINI.md |
+| Tool | Config name | Invoke skill | Project skills dir | Global skills dir | CLI | Instruction file |
+|------|-------------|-------------|-------------------|-------------------|-----|-----------------|
+| Claude Code | claude | /skill-name | .claude/skills/ | ~/.claude/skills/ | claude | CLAUDE.md |
+| Cursor | cursor | /skill-name | .cursor/skills/ | ~/.cursor/skills/ | agent | AGENTS.md |
+| OpenAI Codex | codex | $skill-name | .agents/skills/ | ~/.agents/skills/ | codex | AGENTS.md |
+| OpenCode | opencode | skill-name | .opencode/skills/ | ~/.config/opencode/skills/ | opencode | AGENTS.md |
+| GitHub Copilot | copilot | /skill-name | .github/skills/ | ~/.copilot/skills/ | copilot | AGENTS.md |
+| Antigravity | antigravity | (via IDE) | .agent/skills/ | ~/.gemini/antigravity/skills/ | (none) | GEMINI.md |
 
 Configure tools:
 ```bash
