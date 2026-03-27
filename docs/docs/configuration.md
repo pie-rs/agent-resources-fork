@@ -306,20 +306,10 @@ url = "https://git.example.com/{owner}/{repo}.git"
 
 ## Managing Config
 
-All config operations use the `agr config` command:
-
-```bash
-agr config show               # View formatted config
-agr config path               # Print agr.toml path
-agr config edit               # Open in $VISUAL or $EDITOR
-agr config get <key>           # Read a value
-agr config set <key> <values>  # Write a value
-agr config add <key> <values>  # Append to a list
-agr config remove <key> <values>  # Remove from a list
-agr config unset <key>         # Clear to default
-```
-
-Add `-g` to any command to operate on the global config (`~/.agr/agr.toml`).
+All examples on this page use `agr config` subcommands (`show`, `get`, `set`,
+`add`, `remove`, `unset`). Add `-g` to any command to operate on the global
+config (`~/.agr/agr.toml`). See the [CLI Reference](reference.md#agr-config)
+for the full list of subcommands and flags.
 
 !!! note "`agr config edit` requires an editor"
     `agr config edit` opens `agr.toml` in your `$VISUAL` (or `$EDITOR`).
@@ -327,8 +317,6 @@ Add `-g` to any command to operate on the global config (`~/.agr/agr.toml`).
     ```bash
     export EDITOR="vim"              # or nano, code --wait, etc.
     ```
-
-See the [CLI Reference](reference.md) for full details.
 
 ## Next Steps
 
