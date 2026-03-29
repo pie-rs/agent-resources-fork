@@ -112,6 +112,27 @@ class TestDetectTools:
 
         assert "antigravity" in result
 
+    def test_agents_dir_detects_both_codex_and_antigravity(self, tmp_path):
+        """The .agents/ directory is a shared signal that detects both Codex and Antigravity.
+
+        The .agents/ path is the Agent Skills spec standard directory.
+        Both Codex (primary skill path) and Antigravity (alias for .gemini/)
+        declare it as a detection signal.  Other tools (Cursor, Claude,
+        OpenCode, Copilot) do NOT use .agents/ as a detection signal, even
+        though some of them read skills from that path at runtime.
+        """
+        (tmp_path / ".agents").mkdir()
+
+        result = detect_tools(tmp_path)
+
+        assert "codex" in result
+        assert "antigravity" in result
+        # Other tools must NOT be detected from .agents/ alone
+        assert "claude" not in result
+        assert "cursor" not in result
+        assert "opencode" not in result
+        assert "copilot" not in result
+
     def test_cursor_detected_from_cursorrules_file(self, tmp_path):
         """detect_tools finds cursor from legacy .cursorrules file."""
         (tmp_path / ".cursorrules").write_text("rules here")

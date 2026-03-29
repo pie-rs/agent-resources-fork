@@ -339,9 +339,7 @@ class TestAgrConfigUnset:
     ):
         """agr config unset tools updates default_tool if it's no longer valid."""
         cli_config(
-            'tools = ["claude", "cursor"]\n'
-            'default_tool = "cursor"\n'
-            "dependencies = []"
+            'tools = ["claude", "cursor"]\ndefault_tool = "cursor"\ndependencies = []'
         )
 
         result = agr("config", "unset", "tools")

@@ -242,8 +242,12 @@ class TestSaveAndSummarizeResults:
         results = [CommandResult("user/skill", True, "ok")]
 
         save_and_summarize_results(
-            results, config, config_path,
-            action="added", total=1, print_result=self._noop_printer,
+            results,
+            config,
+            config_path,
+            action="added",
+            total=1,
+            print_result=self._noop_printer,
         )
 
         assert config_path.exists()
@@ -255,8 +259,12 @@ class TestSaveAndSummarizeResults:
 
         with pytest.raises(SystemExit):
             save_and_summarize_results(
-                results, config, config_path,
-                action="added", total=1, print_result=self._noop_printer,
+                results,
+                config,
+                config_path,
+                action="added",
+                total=1,
+                print_result=self._noop_printer,
             )
 
         assert not config_path.exists()
@@ -268,8 +276,12 @@ class TestSaveAndSummarizeResults:
 
         with pytest.raises(SystemExit):
             save_and_summarize_results(
-                results, config, config_path,
-                action="added", total=1, print_result=self._noop_printer,
+                results,
+                config,
+                config_path,
+                action="added",
+                total=1,
+                print_result=self._noop_printer,
             )
 
     def test_no_exit_when_exit_on_failure_false(self, tmp_path):
@@ -279,8 +291,12 @@ class TestSaveAndSummarizeResults:
 
         # Should not raise
         save_and_summarize_results(
-            results, config, config_path,
-            action="removed", total=1, print_result=self._noop_printer,
+            results,
+            config,
+            config_path,
+            action="removed",
+            total=1,
+            print_result=self._noop_printer,
             exit_on_failure=False,
         )
 
@@ -298,8 +314,12 @@ class TestSaveAndSummarizeResults:
 
         with pytest.raises(SystemExit):
             save_and_summarize_results(
-                results, config, config_path,
-                action="added", total=2, print_result=capture,
+                results,
+                config,
+                config_path,
+                action="added",
+                total=2,
+                print_result=capture,
             )
 
         assert printed == ["a", "b"]
@@ -313,8 +333,12 @@ class TestSaveAndSummarizeResults:
         ]
 
         save_and_summarize_results(
-            results, config, config_path,
-            action="added", total=2, print_result=self._noop_printer,
+            results,
+            config,
+            config_path,
+            action="added",
+            total=2,
+            print_result=self._noop_printer,
         )
 
         captured = capsys.readouterr()
@@ -326,8 +350,12 @@ class TestSaveAndSummarizeResults:
         results = [CommandResult("a", True, "ok")]
 
         save_and_summarize_results(
-            results, config, config_path,
-            action="added", total=1, print_result=self._noop_printer,
+            results,
+            config,
+            config_path,
+            action="added",
+            total=1,
+            print_result=self._noop_printer,
         )
 
         captured = capsys.readouterr()

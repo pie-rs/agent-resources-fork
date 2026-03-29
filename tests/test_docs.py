@@ -220,9 +220,7 @@ class TestToolDocumentation:
         """tools.md Detection Signals table matches ToolConfig.detection_signals."""
         content = (DOCS_DIR / "tools.md").read_text()
         section_marker = "## Detection Signals"
-        assert section_marker in content, (
-            "tools.md missing 'Detection Signals' section"
-        )
+        assert section_marker in content, "tools.md missing 'Detection Signals' section"
         section = content[content.index(section_marker) :]
         # Stop at the next h2 section
         next_h2 = section.find("\n## ", 1)

@@ -65,7 +65,9 @@ class TestSelectSkills:
     """Tests for select_skills."""
 
     def _skill(self, name: str, path: str, tool: str | None = None) -> DiscoveredSkill:
-        return DiscoveredSkill(name=name, path=Path(path), frontmatter_name=None, tool=tool)
+        return DiscoveredSkill(
+            name=name, path=Path(path), frontmatter_name=None, tool=tool
+        )
 
     def test_empty_list(self):
         assert select_skills([]) == []
@@ -137,7 +139,9 @@ class TestMigrateSkill:
     """Tests for migrate_skill."""
 
     def _skill(self, name: str, path: Path) -> DiscoveredSkill:
-        return DiscoveredSkill(name=name, path=path, frontmatter_name=None, tool="claude")
+        return DiscoveredSkill(
+            name=name, path=path, frontmatter_name=None, tool="claude"
+        )
 
     def test_copies_skill_to_destination(self, tmp_path):
         source = tmp_path / ".claude" / "skills" / "my-skill"

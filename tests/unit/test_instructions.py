@@ -79,7 +79,9 @@ class TestSyncInstructionFiles:
 
     def test_creates_missing_files(self, tmp_path: Path) -> None:
         (tmp_path / "CLAUDE.md").write_text("instructions here")
-        updated = sync_instruction_files(tmp_path, "CLAUDE.md", ["AGENTS.md", "GEMINI.md"])
+        updated = sync_instruction_files(
+            tmp_path, "CLAUDE.md", ["AGENTS.md", "GEMINI.md"]
+        )
         assert updated == ["AGENTS.md", "GEMINI.md"]
         assert (tmp_path / "AGENTS.md").read_text() == "instructions here"
         assert (tmp_path / "GEMINI.md").read_text() == "instructions here"
