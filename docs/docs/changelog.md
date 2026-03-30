@@ -59,17 +59,17 @@ See [SKILL.md Format](creating.md#skillmd-format) for all frontmatter fields.
 
 ### Improved Copilot detection
 
-[`agr init`](reference.md#agr-init) and [`agr onboard`](reference.md#agr-onboard) now detect [GitHub Copilot](tools.md#github-copilot) from `.github/copilot-instructions.md` and `.github/instructions/`, in addition to `.github/copilot/` and `.github/skills/`. This catches projects that use Copilot's repo-wide or path-specific instruction files without a dedicated skills directory.
+[`agr init`](reference.md#agr-init) now detects [GitHub Copilot](tools.md#github-copilot) from `.github/copilot-instructions.md` and `.github/instructions/`, in addition to `.github/copilot/` and `.github/skills/`. This catches projects that use Copilot's repo-wide or path-specific instruction files without a dedicated skills directory.
 
 ### Improved OpenCode detection
 
-[`agr init`](reference.md#agr-init) and [`agr onboard`](reference.md#agr-onboard) now detect [OpenCode](tools.md#opencode) from `opencode.json` and `opencode.jsonc` config files, in addition to the `.opencode/` directory. This catches projects that use OpenCode's config file without having created the `.opencode/` directory yet.
+[`agr init`](reference.md#agr-init) now detects [OpenCode](tools.md#opencode) from `opencode.json` and `opencode.jsonc` config files, in addition to the `.opencode/` directory. This catches projects that use OpenCode's config file without having created the `.opencode/` directory yet.
 
 ### Bug fixes
 
 - **[Python SDK](sdk.md):** Network failures in `list_skills()` and `skill_info()` now raise `AgrError` instead of Python's built-in `ConnectionError`. If your code catches `AgrError` (or its subclasses), network errors are now included automatically. If you were catching `ConnectionError` separately, you can remove that handler. See [Error Handling](sdk.md#handle-errors-with-agrerror-subclasses).
 - **[Python SDK](sdk.md):** `list_skills()` now raises `InvalidHandleError` instead of `ValueError` for invalid repo handles, matching the behavior of `skill_info()` and `Skill.from_git()`. If your code catches `ValueError` from `list_skills()`, update it to catch `InvalidHandleError` (from `agr.exceptions`). See [Error Handling](sdk.md#handle-errors-with-agrerror-subclasses).
-- [Antigravity](tools.md#antigravity) detection signal corrected from `.agent` to `.agents`. Previously, `agr init` and `agr onboard` would not auto-detect Antigravity in repos that had an `.agents/` directory (used by Codex) — only `.gemini/` was matched.
+- [Antigravity](tools.md#antigravity) detection signal corrected from `.agent` to `.agents`. Previously, `agr init` would not auto-detect Antigravity in repos that had an `.agents/` directory (used by Codex) — only `.gemini/` was matched.
 - [`agrx --tool cursor`](agrx.md) no longer passes an invalid `--force` flag to the Cursor CLI. The Cursor CLI (`agent`) does not support this flag, so `agrx` now runs without a permission-bypass flag for Cursor.
 - [`agrx --tool opencode`](agrx.md) now correctly uses two different modes: non-interactive runs use `opencode run "prompt"` (one-shot execution), while interactive runs (`-i`) use `opencode --prompt "prompt"` to inject the prompt into the TUI. Previously, `agrx` passed an invalid `--prompt` flag on the base command for non-interactive mode and routed both modes through `opencode run`.
 
@@ -124,18 +124,9 @@ if skill.content_hash != skill.recompute_content_hash():
 
 ## 0.7.8 — 2026-03-02
 
-### Interactive onboarding
+### Interactive onboarding (removed)
 
-New command: [`agr onboard`](reference.md#agr-onboard). Walks you through setting up agr in an existing
-project — tool selection, skill discovery, migration, and configuration — all
-interactively.
-
-```bash
-agr onboard
-```
-
-If you used `agr init --interactive` before, that flag has been removed. Use
-`agr onboard` instead.
+Added `agr onboard` interactive guided setup command (later removed — use `agr init` instead).
 
 ### Quiet mode
 
@@ -148,8 +139,7 @@ agr add user/skill -q
 
 ### Simplified `agr init`
 
-[`agr init`](reference.md#agr-init) now only creates `agr.toml` and auto-detects your [tools](tools.md). Interactive
-setup, skill discovery, and migration moved to [`agr onboard`](reference.md#agr-onboard).
+[`agr init`](reference.md#agr-init) now only creates `agr.toml` and auto-detects your [tools](tools.md).
 
 ---
 

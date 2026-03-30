@@ -187,20 +187,6 @@ This is a catch-all error when git clone fails for a reason agr can't classify
 
 If the manual clone works but `agr add` doesn't, [open an issue](https://github.com/kasperjunge/agent-resources/issues/new) with the full error output.
 
-### How do I fix "agr onboard requires an interactive terminal"?
-
-```text
-Error: agr onboard requires an interactive terminal.
-Hint: Use 'agr init' for non-interactive setup.
-```
-
-`agr onboard` is an interactive wizard that needs a real terminal (TTY). It won't work in CI/CD, scripts, or piped commands. Use `agr init` instead:
-
-```bash
-# In CI/CD or scripts
-agr init --tools claude,cursor
-```
-
 ---
 
 ## Handle Format
@@ -254,12 +240,6 @@ You're running a command that requires `agr.toml` but the file doesn't exist yet
 agr init
 ```
 
-Or use interactive setup:
-
-```bash
-agr onboard
-```
-
 ### How do I fix "Not in a git repository"?
 
 ```text
@@ -297,7 +277,7 @@ Check your `agr.toml` for typos in the `tools` list. See [Supported Tools](tools
 
 ### Why does `agr init` detect a tool I don't use?
 
-`agr init` and `agr onboard` auto-detect tools by looking for specific files and
+`agr init` auto-detects tools by looking for specific files and
 directories in your repo. Some detection signals are shared between tools:
 
 | Signal | Detected tools |

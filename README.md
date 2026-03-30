@@ -198,7 +198,6 @@ Browse the full list in the [Skill Directory](https://kasperjunge.github.io/agen
 | `agr list` | Show installed skills |
 | `agr init` | Create `agr.toml` (auto-detects tools) |
 | `agr init <name>` | Create a new skill |
-| `agr onboard` | Interactive guided setup |
 | `agr config <cmd>` | Manage configuration |
 | `agrx <handle>` | Run a skill temporarily |
 

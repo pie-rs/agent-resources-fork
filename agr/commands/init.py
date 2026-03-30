@@ -162,4 +162,4 @@ def run_init(
     if tools_display:
         console.print(f"[green]Tools:[/green] {', '.join(tools_display)}")
 
-    console.print("[dim]Next: agr add <handle> or agr onboard[/dim]")
+    console.print("[dim]Next: agr add <handle>[/dim]")

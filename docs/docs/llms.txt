@@ -52,7 +52,6 @@ agr sync                   # Install all dependencies from agr.toml
 agr list                   # Show installed skills
 agr init                   # Create agr.toml (auto-detects tools)
 agr init my-skill          # Scaffold a new skill
-agr onboard               # Interactive guided setup
 agr config show            # View current config
 agr config set tools claude cursor  # Configure tools
 agr config get <key>       # Read a config value

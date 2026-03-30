@@ -245,7 +245,7 @@ for details.
 
 ## Detection Signals
 
-`agr init` and `agr onboard` auto-detect which tools you use by checking for
+`agr init` auto-detects which tools you use by checking for
 these files and directories in your repo:
 
 | Tool | Detection signals |

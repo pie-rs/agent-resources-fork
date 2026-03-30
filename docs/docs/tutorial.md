@@ -94,16 +94,12 @@ This creates an [`agr.toml`](configuration.md) file and auto-detects which
 ```text
 Created: agr.toml
 Tools: claude
-Next: agr add <handle> or agr onboard
+Next: agr add <handle>
 ```
 
 ??? tip "Skip this step"
     `agr init` is optional. If you jump straight to `agr add` in the next step,
     agr auto-creates `agr.toml` and detects your tools automatically.
-
-??? tip "Prefer a guided setup?"
-    Run `agr onboard` instead. It walks you through tool selection, skill
-    discovery, and configuration interactively.
 
 Your `agr.toml` starts with the defaults and an empty dependency list:
 

@@ -180,7 +180,6 @@ See [Creating Skills](creating.md) for the full guide.
 | [`agr list`](reference.md#agr-list) | Show skills and installation status |
 | [`agr init`](reference.md#agr-init) | Create `agr.toml` (auto-detects tools) |
 | [`agr init <name>`](reference.md#agr-init) | Create a skill scaffold |
-| [`agr onboard`](reference.md#agr-onboard) | Interactive guided setup |
 | [`agr config <cmd>`](reference.md#agr-config) | Manage tools, sources, and settings |
 | [`agrx <handle>`](reference.md#agrx) | Run a skill temporarily |
 

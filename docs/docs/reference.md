@@ -92,7 +92,6 @@ agr add ./my-skill -o                  # Reinstall after editing
 
 ```bash
 agr init                               # Create agr.toml (auto-detects tools)
-agr onboard                            # Interactive guided setup
 agr config show                        # View current config
 agr config set tools claude cursor     # Target multiple tools
 agr config set default_tool claude     # Set default for agrx
@@ -280,9 +279,7 @@ agr init <name>       # Create skill scaffold
 ```
 
 `agr init` creates `agr.toml` and auto-detects which tools you use from repo
-signals (`.claude/`, `CLAUDE.md`, `.cursor/`, `.cursorrules`, etc.). It does not
-discover or add skills — use `agr onboard` for interactive setup with skill
-discovery and migration.
+signals (`.claude/`, `CLAUDE.md`, `.cursor/`, `.cursorrules`, etc.).
 
 **Options:**
 
@@ -298,26 +295,6 @@ agr init                    # Creates agr.toml in current directory
 agr init my-skill           # Creates my-skill/SKILL.md
 agr init --tools claude,codex,opencode --default-tool claude
 agr init --sync-instructions --canonical-instructions CLAUDE.md
-```
-
-### agr onboard
-
-Interactive guided setup. Walks you through tool selection, skill discovery,
-migration from tool folders into `./skills/`, and configuration.
-
-```bash
-agr onboard
-```
-
-**Options:**
-
-- `--no-migrate` — Skip migration offer for skills in tool folders
-
-**Examples:**
-
-```bash
-agr onboard                # Start guided setup
-agr onboard --no-migrate   # Skip migration prompts
 ```
 
 ### agr config
@@ -393,9 +370,6 @@ agr config set canonical_instructions CLAUDE.md
 agr config add sources my-source --url "https://git.example.com/{owner}/{repo}.git"
 agr config unset default_tool
 ```
-
-!!! note "Deprecated aliases"
-    `agr config tools list/add/set/remove` and `agr config default-tool set/unset` still work but print deprecation warnings. Use the unified commands above instead.
 
 ### agrx
 

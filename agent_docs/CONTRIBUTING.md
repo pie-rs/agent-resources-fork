@@ -181,9 +181,7 @@ tests/
 │   │   ├── test_sync.py           # agr sync end-to-end
 │   │   ├── test_list.py           # agr list end-to-end
 │   │   ├── test_init.py           # agr init end-to-end
-│   │   ├── test_onboard.py        # agr onboard end-to-end
 │   │   ├── test_config_commands.py # agr config subcommands
-│   │   ├── test_tools.py          # agr config tools (deprecated)
 │   │   ├── test_sources.py        # Source-related CLI tests
 │   │   ├── test_global_flags.py   # --global flag tests
 │   │   ├── test_quiet.py          # --quiet flag tests

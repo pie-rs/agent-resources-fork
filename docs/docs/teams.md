@@ -268,31 +268,6 @@ Set `GITHUB_TOKEN` in your CI environment variables for private repos.
 
 ---
 
-## Onboarding existing projects
-
-If your project already has skills installed manually (copied into
-`.claude/skills/` or similar), use the interactive onboard command:
-
-```bash
-agr onboard
-```
-
-This walks you through:
-
-- Selecting which tools your team uses
-- Discovering skills already in your tool directories
-- Migrating them into `./skills/` as local dependencies
-- Creating your `agr.toml`
-
-If you have `.claude/commands/`, `.cursorrules`, or other files that should
-become skills:
-
-```bash
-agrx kasperjunge/agent-resources/migrate-to-skills
-```
-
----
-
 ## Adding and updating skills
 
 ### Add a new skill for the team

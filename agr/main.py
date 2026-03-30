@@ -8,7 +8,6 @@ from agr import __version__
 from agr.commands.add import run_add
 from agr.commands.init import run_init
 from agr.commands.list import run_list
-from agr.commands.onboard import run_onboard
 from agr.commands.remove import run_remove
 from agr.commands.sync import run_sync
 from agr.commands.config_cmd import (
@@ -21,15 +20,7 @@ from agr.commands.config_cmd import (
     run_config_show,
     run_config_unset,
 )
-from agr.commands.tools import (
-    run_default_tool_set,
-    run_default_tool_unset,
-    run_tools_add,
-    run_tools_list,
-    run_tools_remove,
-    run_tools_set,
-)
-from agr.console import print_deprecation, set_quiet
+from agr.console import set_quiet
 
 GlobalScope = Annotated[
     bool,
@@ -134,32 +125,6 @@ def config_remove(
     run_config_remove(key, values, global_scope)
 
 
-# --- Deprecated sub-Typers (still functional, print warnings) ---
-
-# Config tools sub-app
-config_tools_app = typer.Typer(
-    name="tools",
-    help="Manage configured tools.",
-    no_args_is_help=False,  # Default to list
-)
-config_app.add_typer(config_tools_app, name="tools")
-
-# Config default-tool sub-app
-default_tool_app = typer.Typer(
-    name="default-tool",
-    help="Manage default tool used by agrx.",
-    no_args_is_help=True,
-)
-config_app.add_typer(default_tool_app, name="default-tool")
-
-# Backwards-compatible tools alias
-tools_app = typer.Typer(
-    name="tools",
-    help="Deprecated alias for 'agr config tools'.",
-    no_args_is_help=False,  # Default to list
-)
-app.add_typer(tools_app, name="tools")
-
 
 def version_callback(value: bool) -> None:
     """Print version and exit."""
@@ -191,129 +156,6 @@ def main(
 ) -> None:
     """Agent Resources - Install and manage agent skills."""
     set_quiet(quiet)
-
-
-# Tools subcommand group
-@tools_app.callback(invoke_without_command=True)
-def tools_default(ctx: typer.Context) -> None:
-    """Deprecated alias callback for agr tools commands."""
-    print_deprecation("agr tools", "agr config tools")
-    if ctx.invoked_subcommand is None:
-        run_tools_list()
-
-
-@tools_app.command("list")
-def tools_list() -> None:
-    """Deprecated alias for agr config tools list."""
-    run_tools_list()
-
-
-@tools_app.command("add")
-def tools_add(
-    names: Annotated[
-        list[str],
-        typer.Argument(help="Tool names to add."),
-    ],
-) -> None:
-    """Deprecated alias for agr config tools add."""
-    run_tools_add(names)
-
-
-@tools_app.command("remove")
-def tools_remove(
-    names: Annotated[
-        list[str],
-        typer.Argument(help="Tool names to remove."),
-    ],
-) -> None:
-    """Deprecated alias for agr config tools remove."""
-    run_tools_remove(names)
-
-
-# Config tools subcommand group
-@config_tools_app.callback(invoke_without_command=True)
-def config_tools_default(ctx: typer.Context) -> None:
-    """List configured tools (default behavior)."""
-    if ctx.invoked_subcommand is None:
-        print_deprecation("agr config tools", "agr config get tools")
-        run_tools_list()
-
-
-@config_tools_app.command("list")
-def config_tools_list() -> None:
-    """List configured tools."""
-    print_deprecation("agr config tools list", "agr config get tools")
-    run_tools_list()
-
-
-@config_tools_app.command("add")
-def config_tools_add(
-    names: Annotated[
-        list[str],
-        typer.Argument(help="Tool names to add."),
-    ],
-) -> None:
-    """Add tools and sync existing dependencies to them."""
-    print_deprecation("agr config tools add", f"agr config add tools {' '.join(names)}")
-    run_tools_add(names)
-
-
-@config_tools_app.command("set")
-def config_tools_set(
-    names: Annotated[
-        list[str],
-        typer.Argument(help="Tool names to set (replaces current list)."),
-    ],
-) -> None:
-    """Replace configured tools with the provided list."""
-    print_deprecation("agr config tools set", f"agr config set tools {' '.join(names)}")
-    run_tools_set(names)
-
-
-@config_tools_app.command("remove")
-def config_tools_remove(
-    names: Annotated[
-        list[str],
-        typer.Argument(help="Tool names to remove."),
-    ],
-) -> None:
-    """Remove tools and delete their installed skills."""
-    new_cmd = f"agr config remove tools {' '.join(names)}"
-    print_deprecation("agr config tools remove", new_cmd)
-    run_tools_remove(names)
-
-
-@config_tools_app.command("unset")
-def config_tools_unset(
-    names: Annotated[
-        list[str],
-        typer.Argument(help="Tool names to unset (alias of remove)."),
-    ],
-) -> None:
-    """Alias of remove."""
-    new_cmd = f"agr config remove tools {' '.join(names)}"
-    print_deprecation("agr config tools unset", new_cmd)
-    run_tools_remove(names)
-
-
-@default_tool_app.command("set")
-def default_tool_set(
-    name: Annotated[
-        str,
-        typer.Argument(help="Tool name to set as default."),
-    ],
-) -> None:
-    """Set the default tool used by agrx."""
-    new_cmd = f"agr config set default_tool {name}"
-    print_deprecation("agr config default-tool set", new_cmd)
-    run_default_tool_set(name)
-
-
-@default_tool_app.command("unset")
-def default_tool_unset() -> None:
-    """Unset the default tool (agrx falls back to first configured tool)."""
-    print_deprecation("agr config default-tool unset", "agr config unset default_tool")
-    run_default_tool_unset()
 
 
 @app.command()
@@ -370,27 +212,6 @@ def init(
         canonical_instructions=canonical_instructions,
     )
 
-
-@app.command()
-def onboard(
-    no_migrate: Annotated[
-        bool,
-        typer.Option(
-            "--no-migrate",
-            help="Skip migration offer for skills in tool folders.",
-        ),
-    ] = False,
-) -> None:
-    """Interactive guided setup for agr.
-
-    Walks you through tool selection, skill discovery, and configuration
-    in an interactive terminal session.
-
-    Examples:
-        agr onboard           # Start guided setup
-        agr onboard --no-migrate  # Skip migration prompts
-    """
-    run_onboard(no_migrate=no_migrate)
 
 
 @app.command()

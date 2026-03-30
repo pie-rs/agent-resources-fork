@@ -257,7 +257,6 @@ You don't need to create `agr.toml` manually. It's created automatically by:
 
 - `agr init` — Creates the file and auto-detects your tools
 - `agr add` — Creates the file if it doesn't exist
-- `agr onboard` — Interactive guided setup
 
 See [Configuration](configuration.md) for all options and
 [Reference — agr.toml Format](reference.md#agrtoml-format) for the full schema.

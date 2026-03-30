@@ -27,8 +27,8 @@ keywords:
     manage everything from the CLI. Add `-g` for global config at `~/.agr/agr.toml`.
 
 **Prerequisites:** [agr installed](tutorial.md#step-1-install-agr) and an
-`agr.toml` file (created by [`agr init`](reference.md#agr-init),
-[`agr add`](reference.md#agr-add), or [`agr onboard`](reference.md#agr-onboard))
+`agr.toml` file (created by [`agr init`](reference.md#agr-init) or
+[`agr add`](reference.md#agr-add))
 
 agr uses `agr.toml` for project-level configuration and `~/.agr/agr.toml` for
 global configuration. For an overview of how config fits into agr's architecture,
@@ -107,7 +107,7 @@ agr config add tools cursor
 
 ### Tool Detection
 
-`agr init` and `agr onboard` auto-detect which tools you use by looking for
+`agr init` auto-detects which tools you use by looking for
 tool-specific files and directories in your repo. Each tool has its own set of
 detection signals — see the [Supported Tools](tools.md) page for the full list
 per tool. Override detection with `--tools`:

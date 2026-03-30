@@ -26,7 +26,7 @@ uv run agrx --help
 
 Two CLI tools share a common core library:
 
-- **`agr`** — Main CLI (Typer app in `agr/main.py`). Commands: add, remove, sync, list, init, onboard, config.
+- **`agr`** — Main CLI (Typer app in `agr/main.py`). Commands: add, remove, sync, list, init, config.
 - **`agrx`** — Ephemeral skill runner (`agrx/main.py`). Downloads and runs a skill without persisting it.
 
 ### Core modules (`agr/`)

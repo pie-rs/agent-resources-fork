@@ -72,3 +72,5 @@ docs/.cache/
 # Release messages output
 .releases/
 skill-repos/
+.ruff_cache
+.ralphify

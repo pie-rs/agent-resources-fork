@@ -27,9 +27,7 @@ agr/                  # Core library
     sync.py            # agr sync
     list.py            # agr list
     init.py            # agr init
-    onboard.py         # agr onboard
     config_cmd.py      # agr config {show,path,edit,get,set,unset,add,remove}
-    tools.py           # agr config tools (deprecated sub-commands)
     migrations.py      # Legacy skill migration utilities
     _tool_helpers.py   # Shared helpers for tool-related commands
   sdk/                 # Programmatic Python API
@@ -97,7 +95,7 @@ Frozen dataclass defining how a tool stores skills. Key fields:
 
 Six tools defined: `CLAUDE`, `CURSOR`, `CODEX`, `OPENCODE`, `COPILOT`, `ANTIGRAVITY`.
 
-**Detection signals** (used by `agr init` and `agr onboard` to auto-detect tools):
+**Detection signals** (used by `agr init` to auto-detect tools):
 
 | Tool | Detection signals |
 |------|-------------------|

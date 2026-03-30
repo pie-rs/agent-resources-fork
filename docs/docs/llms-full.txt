@@ -110,15 +110,6 @@ Options:
 - `--sync-instructions/--no-sync-instructions` — sync instruction files
 - `--canonical-instructions` — canonical instruction file (CLAUDE.md, AGENTS.md, or GEMINI.md)
 
-### agr onboard
-
-Interactive guided setup — walks through tool selection, skill discovery, migration from tool folders into ./skills/, and configuration.
-
-```bash
-agr onboard
-agr onboard --no-migrate
-```
-
 ### agr config
 
 Manage agr.toml configuration.
@@ -224,7 +215,7 @@ Claude Code is the default. When multiple tools are configured, `agr add` and `a
 
 ### Tool Detection
 
-`agr init` and `agr onboard` auto-detect tools from repo signals:
+`agr init` auto-detects tools from repo signals:
 
 | Tool | Detection signals |
 |------|-------------------|
@@ -701,10 +692,6 @@ DNS resolution failed. Check your internet connection, VPN, or proxy settings.
 `Error: Failed to clone repository from source 'github'.`
 Catch-all when git clone fails for an unclassified reason. Check: disk space, file permissions on the temp directory, or corporate proxy/firewall settings. Try cloning manually with `git clone https://github.com/user/repo.git`. If manual clone works but agr doesn't, open an issue.
 
-#### "agr onboard requires an interactive terminal"
-`Error: agr onboard requires an interactive terminal. Hint: Use 'agr init' for non-interactive setup.`
-`agr onboard` needs a real terminal (TTY). In CI/CD or scripts, use `agr init --tools claude,cursor` instead.
-
 ### Handle Format Errors
 
 #### "Invalid handle: remote handles require username/name format"
@@ -723,7 +710,7 @@ Skill names cannot contain consecutive hyphens. Use single hyphens (e.g., `my-sk
 
 #### "No agr.toml found"
 `Error: No agr.toml found. Run 'agr init' first to create one.`
-Run `agr init` or `agr onboard` to create one.
+Run `agr init` to create one.
 
 #### "Not in a git repository"
 `Error: Not in a git repository`
@@ -926,7 +913,7 @@ Use `--global`: `agrx anthropics/skills/pdf --global`. This installs to the glob
 ### From Manual Skill Management
 
 ```bash
-agr onboard    # interactive migration of existing skills
+agr init       # create agr.toml and auto-detect tools
 ```
 
 ### From npx skills
