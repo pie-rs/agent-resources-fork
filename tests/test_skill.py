@@ -428,7 +428,6 @@ class TestFindSkillsInRepoListing:
         assert result["commit"].as_posix() == "skills/commit"
 
 
-
 class TestIsExcludedSkillPath:
     """Tests for _is_excluded_skill_path — the shared exclusion predicate."""
 

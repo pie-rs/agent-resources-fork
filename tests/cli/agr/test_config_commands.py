@@ -414,7 +414,6 @@ class TestAgrConfigRemove:
         assert_cli(result).failed().stdout_contains("scalar")
 
 
-
 class TestAgrConfigEdit:
     """Tests for agr config edit."""
 

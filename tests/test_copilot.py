@@ -100,7 +100,6 @@ class TestCopilotPaths:
         assert h.to_skill_path(CURSOR) == Path("bluesky")
 
 
-
 class TestCopilotInstallation:
     """Tests for installing skills to Copilot."""
 

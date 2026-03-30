@@ -39,9 +39,7 @@ def _get_installation_status(
     if not tools_needing_install:
         return "[green]installed[/green]"
     elif len(tools_needing_install) < len(tools):
-        installed_names = [
-            t.name for t in tools if t not in tools_needing_install
-        ]
+        installed_names = [t.name for t in tools if t not in tools_needing_install]
         return f"[yellow]partial ({', '.join(installed_names)})[/yellow]"
     else:
         return "[yellow]not synced[/yellow]"

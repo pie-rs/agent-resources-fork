@@ -84,7 +84,6 @@ class TestFlatPaths:
         assert h.to_skill_path(CURSOR) == Path("my-skill")
 
 
-
 class TestCursorInstallation:
     """Tests for installing skills to Cursor (flat naming)."""
 

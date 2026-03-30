@@ -39,9 +39,7 @@ def validate_canonical_instructions(value: str) -> None:
         raise ConfigError(f"canonical_instructions must be one of: {valid}")
 
 
-def _validate_default_source(
-    default_source: str, sources: list[SourceConfig]
-) -> None:
+def _validate_default_source(default_source: str, sources: list[SourceConfig]) -> None:
     """Raise ConfigError if *default_source* is not in the sources list."""
     if not any(source.name == default_source for source in sources):
         raise ConfigError(
@@ -105,9 +103,7 @@ def _parse_source_entry(item: Any) -> SourceConfig:
     if not name:
         raise ConfigError("Source entry missing name")
     if source_type != SOURCE_TYPE_GIT:
-        raise ConfigError(
-            f"Unsupported source type '{source_type}' for '{name}'"
-        )
+        raise ConfigError(f"Unsupported source type '{source_type}' for '{name}'")
     if not url:
         raise ConfigError(f"Source '{name}' missing url")
     return SourceConfig(name=name, type=source_type, url=str(url))
