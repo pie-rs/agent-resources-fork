@@ -68,8 +68,9 @@ class TestDownloadedRepoE2E:
             type="git",
             url="https://github.com/{owner}/{repo}.git",
         )
-        with pytest.raises(AgrError, match="git CLI not found"), downloaded_repo(
-            source, "user", "repo"
+        with (
+            pytest.raises(AgrError, match="git CLI not found"),
+            downloaded_repo(source, "user", "repo"),
         ):
             pass
 
@@ -176,9 +177,7 @@ class TestDownloadedRepoE2E:
             type="git",
             url="https://github.com/{owner}/{repo}.git",
         )
-        with pytest.raises(RepoNotFoundError), downloaded_repo(
-            source, "user", "repo"
-        ):
+        with pytest.raises(RepoNotFoundError), downloaded_repo(source, "user", "repo"):
             pass
 
     def test_git_clone_auth_failure(self, monkeypatch):
@@ -197,8 +196,9 @@ class TestDownloadedRepoE2E:
             type="git",
             url="https://github.com/{owner}/{repo}.git",
         )
-        with pytest.raises(AuthenticationError), downloaded_repo(
-            source, "user", "repo"
+        with (
+            pytest.raises(AuthenticationError),
+            downloaded_repo(source, "user", "repo"),
         ):
             pass
 
@@ -542,8 +542,9 @@ class TestDownloadedRepo:
             type="git",
             url="https://github.com/{owner}/{repo}.git",
         )
-        with pytest.raises(RepoNotFoundError), downloaded_repo(
-            source, "nonexistent-user-12345", "nonexistent-repo-67890"
+        with (
+            pytest.raises(RepoNotFoundError),
+            downloaded_repo(source, "nonexistent-user-12345", "nonexistent-repo-67890"),
         ):
             pass
 
@@ -703,7 +704,7 @@ class TestFetchAndInstallToTools:
             is_local=True, name=skill_fixture.name, local_path=skill_fixture
         )
 
-        results = fetch_and_install_to_tools(
+        results, install_result = fetch_and_install_to_tools(
             handle, repo_root, [CLAUDE, CURSOR], overwrite=False
         )
 
@@ -715,6 +716,8 @@ class TestFetchAndInstallToTools:
         assert results["claude"].name == skill_fixture.name
         # Cursor also uses flat naming
         assert results["cursor"].name == skill_fixture.name
+        # Local skills have no commit or content_hash in InstallResult
+        assert install_result.commit is None
 
     def test_rollback_on_partial_failure(self, tmp_path, skill_fixture):
         """If second tool fails, first tool installation is rolled back."""

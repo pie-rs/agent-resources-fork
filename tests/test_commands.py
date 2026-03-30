@@ -7,6 +7,7 @@ import pytest
 from agr.commands.init import init_config, init_skill
 from agr.commands.list import run_list
 from agr.config import AgrConfig, Dependency
+from agr.fetcher import InstallResult
 from agr.skill import SKILL_MARKER
 
 # Windows doesn't allow colons in directory names
@@ -333,8 +334,9 @@ class TestSyncCommand:
 
         def fake_fetch_and_install(
             handle, repo_root, tools, overwrite, resolver, source, skills_dirs=None
-        ) -> None:
+        ):
             captured["source"] = source
+            return {}, InstallResult()
 
         monkeypatch.setattr(
             "agr.commands.sync.fetch_and_install_to_tools", fake_fetch_and_install

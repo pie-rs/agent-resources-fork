@@ -115,6 +115,40 @@ def get_head_commit(repo_dir: Path) -> str:
     return result.stdout.strip()[:12]
 
 
+def get_head_commit_full(repo_dir: Path) -> str:
+    """Get the full HEAD commit hash of a repository (40 hex chars).
+
+    Unlike ``get_head_commit``, this raises on failure instead of
+    generating a fallback — the lockfile needs real commit SHAs.
+    """
+    result = _run_git(_git_cmd(repo_dir, "rev-parse", "HEAD"))
+    if result.returncode != 0:
+        raise AgrError("Failed to determine HEAD commit for lockfile.")
+    return result.stdout.strip()
+
+
+def fetch_and_checkout_commit(repo_dir: Path, commit: str) -> None:
+    """Fetch a specific commit and check it out.
+
+    Used by ``--frozen`` sync to pin to lockfile commits.
+    Works with depth-1 clones on GitHub by fetching the exact SHA.
+    """
+    current = get_head_commit_full(repo_dir)
+    if current == commit:
+        return
+
+    result = _run_git(_git_cmd(repo_dir, "fetch", "--depth=1", "origin", commit))
+    if result.returncode != 0:
+        raise AgrError(
+            f"Failed to fetch commit {commit[:12]}. The commit may no longer exist."
+        )
+
+    _run_git_checked(
+        _git_cmd(repo_dir, "checkout", commit),
+        f"Failed to checkout commit {commit[:12]}.",
+    )
+
+
 def _is_github_source(source: SourceConfig) -> bool:
     """Return True if the source URL points to GitHub."""
     return "github.com" in source.url.lower()

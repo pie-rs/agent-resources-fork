@@ -6,6 +6,7 @@ Git operations (cloning, checkout, etc.) live in agr.git.
 import logging
 import shutil
 from contextlib import contextmanager
+from dataclasses import dataclass
 from pathlib import Path
 from collections.abc import Generator
 from typing import NamedTuple
@@ -19,6 +20,7 @@ from agr.git import (
     checkout_full,
     checkout_sparse_paths,
     downloaded_repo,
+    get_head_commit_full,
     git_list_files,
 )
 from agr.handle import (
@@ -33,6 +35,7 @@ from agr.metadata import (
     METADATA_TYPE_LOCAL,
     build_handle_id,
     build_handle_ids,
+    compute_content_hash,
     read_skill_metadata,
     stamp_skill_metadata,
 )
@@ -51,6 +54,15 @@ from agr.source import (
 from agr.tool import DEFAULT_TOOL, ToolConfig, lookup_skills_dir
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class InstallResult:
+    """Lockfile-relevant metadata captured during skill installation."""
+
+    commit: str | None = None
+    content_hash: str | None = None
+    source_name: str | None = None
 
 
 def _skill_dir_matches_handle(skill_dir: Path, handle_ids: list[str]) -> bool:
@@ -488,6 +500,7 @@ class _RemoteSkillLocation(NamedTuple):
     skill_source: Path
     source_config: SourceConfig
     is_legacy: bool
+    commit: str | None = None
 
 
 @contextmanager
@@ -521,11 +534,16 @@ def _locate_remote_skill(
                     skill_source = prepare_repo_for_skill(repo_dir, handle.name)
                     if skill_source is None:
                         continue
+                    try:
+                        commit = get_head_commit_full(repo_dir)
+                    except AgrError:
+                        commit = None
                     yield _RemoteSkillLocation(
                         repo_dir=repo_dir,
                         skill_source=skill_source,
                         source_config=source_config,
                         is_legacy=is_legacy,
+                        commit=commit,
                     )
                     return
             except RepoNotFoundError:
@@ -642,7 +660,7 @@ def fetch_and_install_to_tools(
     resolver: SourceResolver | None = None,
     source: str | None = None,
     skills_dirs: dict[str, Path] | None = None,
-) -> dict[str, Path]:
+) -> tuple[dict[str, Path], InstallResult]:
     """Fetch skill once and install to multiple tools.
 
     This optimizes the common case of installing to multiple tools by
@@ -655,7 +673,8 @@ def fetch_and_install_to_tools(
         overwrite: Whether to overwrite existing installations
 
     Returns:
-        Dict mapping tool name to installed path
+        Tuple of (dict mapping tool name to installed path, InstallResult
+        with lockfile-relevant metadata).
 
     Raises:
         Various exceptions on failure. On partial failure, already installed
@@ -677,11 +696,12 @@ def fetch_and_install_to_tools(
                     source,
                     skills_dir=lookup_skills_dir(skills_dirs, tool),
                 )
-        return installed
+        return installed, InstallResult()
 
     # Remote: download once via _locate_remote_skill, then install the same
     # checked-out skill to every tool. The context manager keeps the temp
     # repo directory alive until all tools are done.
+    install_result = InstallResult()
     with (
         _rollback_on_failure() as installed,
         _locate_remote_skill(handle, resolver, source) as loc,
@@ -706,7 +726,17 @@ def fetch_and_install_to_tools(
         # not on partial failure.
         if loc.is_legacy:
             warn_legacy_repo()
-    return installed
+
+        # Compute content hash from the first installed path for the lockfile.
+        first_path = next(iter(installed.values()), None)
+        content_hash = compute_content_hash(first_path) if first_path else None
+
+        install_result = InstallResult(
+            commit=loc.commit,
+            content_hash=content_hash,
+            source_name=loc.source_config.name,
+        )
+    return installed, install_result
 
 
 def uninstall_skill(

@@ -342,7 +342,7 @@ def sync_dependencies_to_tools(config: AgrConfig, tool_names: list[str]) -> int:
             if not tools_needing_install:
                 continue
 
-            fetch_and_install_to_tools(
+            _paths, _ = fetch_and_install_to_tools(
                 handle,
                 repo_root,
                 tools_needing_install,
