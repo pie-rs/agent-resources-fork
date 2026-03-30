@@ -42,7 +42,6 @@ agrx/                 # Ephemeral skill runner CLI
 
 tests/                # Pytest test suite
 docs/                 # MkDocs site source
-agent_docs/           # This directory — documentation for AI agents
 ```
 
 ## Key types
@@ -347,29 +346,114 @@ Tests live in `tests/`. Key patterns:
 - Tests are organized by module: `test_fetcher.py`, `test_config.py`, `test_skill.py`, etc.
 - Run with `uv run pytest`
 
-## SDK (`agr/sdk/`)
+### Available fixtures (`tests/conftest.py`)
 
-Programmatic API for using agr from Python code:
+| Fixture | What it provides |
+|---|---|
+| `git_project` | A `tmp_path` with `.git/` dir and cwd set to it — simulates a git repo |
+| `skill_fixture` | A valid skill directory with `SKILL.md` containing frontmatter |
+| `tmp_path` | Built-in pytest fixture — unique temp directory per test |
+| `monkeypatch` | Built-in pytest fixture — for mocking env vars, functions, attributes |
+
+### Mocking git operations
+
+Most tests mock `subprocess.run` to avoid real git clones:
 
 ```python
-from agr import Skill, cache, list_skills, skill_info
+def test_clone_uses_branch(self, monkeypatch):
+    """Clone passes --branch when default branch is detected."""
+    monkeypatch.setattr(shutil, "which", lambda _: "/usr/bin/git")
+    captured_cmds = []
 
-# Load a skill from GitHub (cached locally)
-skill = Skill.from_git("user/skill")
-print(skill.prompt)   # Contents of SKILL.md
-print(skill.files)    # List of files in the skill directory
+    def fake_run(cmd, capture_output, text, check):
+        captured_cmds.append(cmd)
+        if cmd[:2] == ["git", "ls-remote"]:
+            return subprocess.CompletedProcess(
+                cmd, 0, "ref: refs/heads/main\tHEAD\n", ""
+            )
+        repo_path = Path(cmd[-1])
+        repo_path.mkdir(parents=True, exist_ok=True)
+        return subprocess.CompletedProcess(cmd, 0, "", "")
 
-# Load a local skill
-skill = Skill.from_local("./my-skill")
-
-# Discover skills in a repo
-skills = list_skills("anthropics/skills")
-info = skill_info("anthropics/skills/code-review")
-
-# Cache management
-cache.info()          # {"skills_count": N, "size_bytes": N, ...}
-cache.clear()         # Clear all cached skills
-cache.clear("user/*") # Clear by pattern
+    monkeypatch.setattr(subprocess, "run", fake_run)
+    # ... test logic using downloaded_repo() ...
 ```
 
-Skills are cached in `~/.cache/agr/skills/` keyed by `source/owner/repo/skill/revision`. The cache uses file locking for concurrent safety and atomic writes via temp dir + rename.
+### Testing with skill directories
+
+Create a minimal valid skill on disk, then exercise install/uninstall:
+
+```python
+def test_install_local_skill(self, tmp_path):
+    """Local skill is copied to the tool's skills directory."""
+    # Set up source skill
+    source = tmp_path / "my-skill"
+    source.mkdir()
+    (source / "SKILL.md").write_text("---\nname: my-skill\n---\n# My Skill\n")
+
+    # Set up destination
+    skills_dir = tmp_path / ".claude" / "skills"
+    skills_dir.mkdir(parents=True)
+
+    result = install_local_skill(source, skills_dir, CLAUDE, repo_root=tmp_path)
+    assert (result / "SKILL.md").exists()
+```
+
+### Testing exceptions
+
+```python
+def test_missing_skill_raises(self):
+    """SkillNotFoundError raised when skill doesn't exist in repo."""
+    with pytest.raises(SkillNotFoundError, match="not found"):
+        install_skill_from_repo(repo_dir, "nonexistent", handle, dest, CLAUDE, None)
+```
+
+### Test directory layout
+
+```
+tests/
+├── conftest.py                    # Shared fixtures (git_project, skill_fixture)
+├── test_fetcher.py                # agr/fetcher.py tests
+├── test_config.py                 # agr/config.py tests
+├── test_handle.py                 # agr/handle.py tests
+├── test_skill.py                  # agr/skill.py tests
+├── test_metadata.py               # agr/metadata.py tests
+├── test_tool.py                   # agr/tool.py tests
+├── test_copilot.py                # Copilot-specific tests
+├── test_cursor.py                 # Cursor-specific tests
+├── test_commands.py               # CLI command integration tests
+├── test_agrx_command_building.py  # agrx CLI command building
+├── test_docs.py                   # Documentation accuracy tests
+├── test_gh_issue_phase.py         # Regression tests for GitHub issues
+├── cli/                           # CLI end-to-end tests
+│   ├── conftest.py                # CLI test fixtures (mock git, subprocess)
+│   ├── runner.py                  # Test runner helpers for CLI invocation
+│   ├── assertions.py              # Common CLI assertion helpers
+│   ├── agr/                       # agr CLI tests
+│   │   ├── test_add.py            # agr add end-to-end
+│   │   ├── test_remove.py         # agr remove end-to-end
+│   │   ├── test_sync.py           # agr sync end-to-end
+│   │   ├── test_list.py           # agr list end-to-end
+│   │   ├── test_init.py           # agr init end-to-end
+│   │   ├── test_config_commands.py # agr config subcommands
+│   │   ├── test_sources.py        # Source-related CLI tests
+│   │   ├── test_global_flags.py   # --global flag tests
+│   │   ├── test_quiet.py          # --quiet flag tests
+│   │   ├── test_version.py        # --version flag tests
+│   │   ├── test_private_repo.py   # Private repo handling
+│   │   ├── test_antigravity.py    # Antigravity tool CLI tests
+│   │   ├── test_codex.py          # Codex tool CLI tests
+│   │   ├── test_copilot.py        # Copilot tool CLI tests
+│   │   ├── test_cursor.py         # Cursor tool CLI tests
+│   │   └── test_opencode.py       # OpenCode tool CLI tests
+│   └── agrx/                      # agrx CLI tests
+│       ├── test_run.py            # agrx run end-to-end
+│       └── test_tool_flag.py      # agrx --tool flag tests
+├── sdk/                           # SDK tests
+│   ├── conftest.py                # SDK test fixtures
+│   ├── test_skill.py              # Skill class tests
+│   ├── test_cache.py              # Cache management tests
+│   └── test_hub.py                # Hub discovery tests
+└── unit/                          # Isolated unit tests
+    └── test_detect.py             # Tool detection tests
+```
