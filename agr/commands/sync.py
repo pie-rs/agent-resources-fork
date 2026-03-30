@@ -13,8 +13,8 @@ from agr.commands.migrations import (
     run_tool_migrations,
 )
 from agr.config import AgrConfig, find_config, require_repo_root
-from agr.console import get_console, print_error
-from agr.exceptions import INSTALL_ERROR_TYPES, format_install_error
+from agr.console import error_exit, get_console, print_error
+from agr.exceptions import INSTALL_ERROR_TYPES, AgrError, format_install_error
 from agr.fetcher import (
     fetch_and_install_to_tools,
     filter_tools_needing_install,
@@ -22,8 +22,19 @@ from agr.fetcher import (
     prepare_repo_for_skills,
     skill_not_found_message,
 )
-from agr.git import downloaded_repo
+from agr.git import downloaded_repo, fetch_and_checkout_commit, get_head_commit_full
+from agr.lockfile import (
+    LockedSkill,
+    Lockfile,
+    build_lockfile_path,
+    find_locked_skill,
+    is_lockfile_current,
+    load_lockfile,
+    save_lockfile,
+    update_lockfile_entry,
+)
 from agr.handle import ParsedHandle
+from agr.metadata import compute_content_hash
 from agr.source import SourceResolver
 from agr.instructions import (
     canonical_instruction_file,
@@ -47,10 +58,24 @@ class SyncResult:
 
     status: SyncStatus
     error: str | None = None
+    # Lockfile metadata captured during install
+    commit: str | None = None
+    content_hash: str | None = None
+    source_name: str | None = None
 
     @classmethod
-    def installed(cls) -> SyncResult:
-        return cls(SyncStatus.INSTALLED)
+    def installed(
+        cls,
+        commit: str | None = None,
+        content_hash: str | None = None,
+        source_name: str | None = None,
+    ) -> SyncResult:
+        return cls(
+            SyncStatus.INSTALLED,
+            commit=commit,
+            content_hash=content_hash,
+            source_name=source_name,
+        )
 
     @classmethod
     def up_to_date(cls) -> SyncResult:
@@ -218,6 +243,12 @@ def _sync_batched_repo_entries(
         try:
             source_config = resolver.get(source_name)
             with downloaded_repo(source_config, owner, repo_name) as repo_dir:
+                # Capture commit SHA for lockfile before installing.
+                try:
+                    commit = get_head_commit_full(repo_dir)
+                except Exception:
+                    commit = None
+
                 # Prepare all skills from this repo in one sparse checkout pass.
                 skill_names = [entry.handle.name for entry in group]
                 skill_sources = prepare_repo_for_skills(repo_dir, skill_names)
@@ -230,6 +261,7 @@ def _sync_batched_repo_entries(
                         repo_root,
                         tools,
                         source_name,
+                        commit=commit,
                     )
         except INSTALL_ERROR_TYPES as e:
             # If the repo-level operation fails (clone, checkout), mark
@@ -246,6 +278,7 @@ def _install_one_from_repo(
     repo_root: Path | None,
     tools: list[ToolConfig],
     source_name: str,
+    commit: str | None = None,
 ) -> None:
     """Install a single skill from an already-downloaded repo."""
     handle = entry.handle
@@ -262,7 +295,7 @@ def _install_one_from_repo(
         )
         return
     try:
-        install_skill_from_repo_to_tools(
+        installed_paths = install_skill_from_repo_to_tools(
             repo_dir,
             handle.name,
             handle,
@@ -272,7 +305,13 @@ def _install_one_from_repo(
             install_source=source_name,
             skill_source=skill_source,
         )
-        results[entry.index] = SyncResult.installed()
+        first_path = next(iter(installed_paths.values()), None)
+        content_hash = compute_content_hash(first_path) if first_path else None
+        results[entry.index] = SyncResult.installed(
+            commit=commit,
+            content_hash=content_hash,
+            source_name=source_name,
+        )
     except INSTALL_ERROR_TYPES as e:
         results[entry.index] = SyncResult.from_error(e)
 
@@ -299,7 +338,7 @@ def _sync_one_dependency(
     if not tools_needing_install:
         return SyncResult.up_to_date()
 
-    fetch_and_install_to_tools(
+    _paths, install_result = fetch_and_install_to_tools(
         handle,
         repo_root,
         tools_needing_install,
@@ -308,7 +347,11 @@ def _sync_one_dependency(
         source=source_name,
         skills_dirs=skills_dirs,
     )
-    return SyncResult.installed()
+    return SyncResult.installed(
+        commit=install_result.commit,
+        content_hash=install_result.content_hash,
+        source_name=install_result.source_name,
+    )
 
 
 def _run_global_sync() -> None:
@@ -346,7 +389,11 @@ def _run_global_sync() -> None:
     _print_results_and_summary(results)
 
 
-def run_sync(global_install: bool = False) -> None:
+def run_sync(
+    global_install: bool = False,
+    frozen: bool = False,
+    locked: bool = False,
+) -> None:
     """Run the sync command.
 
     Installs all dependencies from agr.toml that aren't already installed.
@@ -358,9 +405,19 @@ def run_sync(global_install: bool = False) -> None:
        conventions (colon → double-hyphen, full names → plain names).
     3. **Dependency install** — install missing skills, optimizing downloads
        by batching same-repo remotes into a single git clone.
-    4. **Report** — print per-dependency status and a summary line.
+    4. **Lockfile** — update agr.lock with resolved commit SHAs.
+    5. **Report** — print per-dependency status and a summary line.
+
+    Args:
+        global_install: Use global ~/.agr/agr.toml.
+        frozen: Install from lockfile exactly, fail if missing.
+        locked: Fail if lockfile is out-of-date vs agr.toml.
     """
     console = get_console()
+
+    if frozen and locked:
+        error_exit("--frozen and --locked are mutually exclusive.")
+
     if global_install:
         _run_global_sync()
         return
@@ -391,6 +448,33 @@ def run_sync(global_install: bool = False) -> None:
         return
 
     resolver = config.get_source_resolver()
+
+    # --- Lockfile handling ---
+    lockfile_path = build_lockfile_path(config_path)
+    existing_lockfile = load_lockfile(lockfile_path)
+
+    if frozen:
+        if existing_lockfile is None:
+            error_exit(
+                "No agr.lock found. Cannot use --frozen without a lockfile.",
+                hint="Run 'agr sync' first to generate a lockfile.",
+            )
+        _sync_from_lockfile(existing_lockfile, config, repo_root, tools, resolver)
+        return
+
+    if locked:
+        if existing_lockfile is None:
+            error_exit(
+                "No agr.lock found. Cannot use --locked without a lockfile.",
+                hint="Run 'agr sync' first to generate a lockfile.",
+            )
+        if not is_lockfile_current(existing_lockfile, config.dependencies):
+            error_exit(
+                "agr.lock is out of date with agr.toml.",
+                hint="Run 'agr sync' to update the lockfile.",
+            )
+        _sync_from_lockfile(existing_lockfile, config, repo_root, tools, resolver)
+        return
 
     # --- Phase 1: Classify dependencies ---
     # Pre-allocate a result slot per dependency so parallel paths can fill
@@ -453,9 +537,150 @@ def run_sync(global_install: bool = False) -> None:
         config.default_source,
     )
 
-    # --- Phase 3: Report ---
+    # --- Phase 3: Update lockfile ---
+    new_lockfile = _build_lockfile_from_results(config, results, existing_lockfile)
+    save_lockfile(new_lockfile, lockfile_path)
+
+    # --- Phase 4: Report ---
     labeled_results = [
         (dep.identifier, results[index])
         for index, dep in enumerate(config.dependencies)
     ]
     _print_results_and_summary(labeled_results)
+
+
+def _sync_from_lockfile(
+    lockfile: Lockfile,
+    config: AgrConfig,
+    repo_root: Path,
+    tools: list[ToolConfig],
+    resolver: SourceResolver,
+) -> None:
+    """Install dependencies from lockfile pins (--frozen/--locked mode).
+
+    For remote skills with a pinned commit, clones the repo and checks
+    out the exact commit. For local skills, installs from disk as usual.
+    """
+    results: list[tuple[str, SyncResult]] = []
+
+    for dep in config.dependencies:
+        try:
+            handle, source_name = dep.resolve(config.default_source)
+
+            tools_needing_install = filter_tools_needing_install(
+                handle, repo_root, tools, source_name
+            )
+            if not tools_needing_install:
+                results.append((dep.identifier, SyncResult.up_to_date()))
+                continue
+
+            locked_skill = find_locked_skill(lockfile, dep)
+
+            if dep.is_local:
+                # Local skills: install from disk, no lockfile pin
+                _paths, _result = fetch_and_install_to_tools(
+                    handle,
+                    repo_root,
+                    tools_needing_install,
+                    overwrite=False,
+                    resolver=resolver,
+                    source=source_name,
+                )
+                results.append((dep.identifier, SyncResult.installed()))
+                continue
+
+            if locked_skill is None or locked_skill.commit is None:
+                raise AgrError(
+                    f"No lockfile entry with commit for '{dep.identifier}'. "
+                    "Run 'agr sync' to update the lockfile."
+                )
+
+            # Clone the repo and checkout the pinned commit
+            source_config = resolver.get(source_name or config.default_source)
+            owner, repo_name = handle.get_github_repo()
+            with downloaded_repo(source_config, owner, repo_name) as repo_dir:
+                fetch_and_checkout_commit(repo_dir, locked_skill.commit)
+                install_skill_from_repo_to_tools(
+                    repo_dir,
+                    handle.name,
+                    handle,
+                    tools_needing_install,
+                    repo_root,
+                    overwrite=False,
+                    install_source=source_name,
+                )
+            results.append((dep.identifier, SyncResult.installed()))
+
+        except INSTALL_ERROR_TYPES as e:
+            results.append((dep.identifier, SyncResult.from_error(e)))
+
+    _print_results_and_summary(results)
+
+
+def _build_lockfile_from_results(
+    config: AgrConfig,
+    results: list[SyncResult],
+    existing_lockfile: Lockfile | None,
+) -> Lockfile:
+    """Build a new lockfile from sync results.
+
+    For freshly installed skills, uses commit/hash from SyncResult.
+    For up-to-date skills, carries forward existing lockfile entries.
+    """
+    lockfile = Lockfile()
+
+    for index, dep in enumerate(config.dependencies):
+        result = results[index]
+
+        if dep.is_local:
+            # Local skills: record path and name, no commit or hash
+            handle = dep.to_parsed_handle()
+            update_lockfile_entry(
+                lockfile,
+                LockedSkill(
+                    path=dep.path,
+                    installed_name=handle.name,
+                ),
+            )
+            continue
+
+        if result.status == SyncStatus.INSTALLED and result.commit:
+            # Freshly installed: use captured metadata
+            handle = dep.to_parsed_handle()
+            update_lockfile_entry(
+                lockfile,
+                LockedSkill(
+                    handle=dep.handle,
+                    source=result.source_name,
+                    commit=result.commit,
+                    content_hash=result.content_hash,
+                    installed_name=handle.name,
+                ),
+            )
+        else:
+            # Up-to-date or error: carry forward existing entry if available
+            existing = (
+                find_locked_skill(existing_lockfile, dep)
+                if existing_lockfile is not None
+                else None
+            )
+            if existing is not None:
+                update_lockfile_entry(lockfile, existing)
+            elif result.status == SyncStatus.ERROR:
+                # Failed installs: skip — don't write partial entries
+                # that would break --frozen sync.
+                pass
+            else:
+                # No existing entry — create a partial one (no commit).
+                # --frozen sync will reject this and require a full sync.
+                handle = dep.to_parsed_handle()
+                update_lockfile_entry(
+                    lockfile,
+                    LockedSkill(
+                        handle=dep.handle,
+                        source=dep.resolve_source_name(config.default_source),
+                        installed_name=handle.name,
+                    ),
+                )
+
+    return lockfile

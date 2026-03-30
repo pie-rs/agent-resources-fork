@@ -125,7 +125,6 @@ def config_remove(
     run_config_remove(key, values, global_scope)
 
 
-
 def version_callback(value: bool) -> None:
     """Print version and exit."""
     if value:
@@ -213,7 +212,6 @@ def init(
     )
 
 
-
 @app.command()
 def add(
     refs: Annotated[
@@ -295,12 +293,26 @@ def sync(
             help="Sync global dependencies from ~/.agr/agr.toml.",
         ),
     ] = False,
+    frozen: Annotated[
+        bool,
+        typer.Option(
+            "--frozen",
+            help="Install from lockfile exactly, fail if missing.",
+        ),
+    ] = False,
+    locked: Annotated[
+        bool,
+        typer.Option(
+            "--locked",
+            help="Fail if lockfile is out-of-date with agr.toml.",
+        ),
+    ] = False,
 ) -> None:
     """Install all skills from the current scope config.
 
     Installs any dependencies that aren't already installed.
     """
-    run_sync(global_install=global_install)
+    run_sync(global_install=global_install, frozen=frozen, locked=locked)
 
 
 @app.command(name="list")

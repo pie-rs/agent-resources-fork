@@ -11,8 +11,20 @@ from agr.exceptions import (
     SkillNotFoundError,
     format_install_error,
 )
-from agr.fetcher import fetch_and_install_to_tools, list_remote_repo_skills
+from agr.fetcher import (
+    InstallResult,
+    fetch_and_install_to_tools,
+    list_remote_repo_skills,
+)
 from agr.handle import ParsedHandle, parse_handle
+from agr.lockfile import (
+    LockedSkill,
+    Lockfile,
+    build_lockfile_path,
+    load_lockfile,
+    save_lockfile,
+    update_lockfile_entry,
+)
 from agr.source import SourceResolver
 
 
@@ -38,6 +50,8 @@ def run_add(
 
     # Track results for summary
     results: list[CommandResult] = []
+    # Track install results for lockfile
+    lockfile_updates: list[tuple[ParsedHandle, str, InstallResult]] = []
 
     for ref in refs:
         try:
@@ -52,7 +66,7 @@ def run_add(
                 resolver.get(source)
 
             # Install the skill to all configured tools (downloads once)
-            installed_paths_dict = fetch_and_install_to_tools(
+            installed_paths_dict, install_result = fetch_and_install_to_tools(
                 handle,
                 repo_root,
                 tools,
@@ -85,6 +99,7 @@ def run_add(
                     )
                 )
 
+            lockfile_updates.append((handle, ref, install_result))
             results.append(CommandResult(ref, True, ", ".join(installed_paths)))
 
         except SkillNotFoundError as e:
@@ -109,6 +124,29 @@ def run_add(
         total=len(refs),
         print_result=_print_add_result,
     )
+
+    # Update lockfile with install results
+    if lockfile_updates:
+        lockfile_path = build_lockfile_path(config_path)
+        lockfile = load_lockfile(lockfile_path) or Lockfile()
+        for handle, ref, install_result in lockfile_updates:
+            if handle.is_local:
+                update_lockfile_entry(
+                    lockfile,
+                    LockedSkill(path=ref, installed_name=handle.name),
+                )
+            else:
+                update_lockfile_entry(
+                    lockfile,
+                    LockedSkill(
+                        handle=handle.to_toml_handle(),
+                        source=install_result.source_name,
+                        commit=install_result.commit,
+                        content_hash=install_result.content_hash,
+                        installed_name=handle.name,
+                    ),
+                )
+        save_lockfile(lockfile, lockfile_path)
 
 
 def _maybe_suggest_repo_skills(

@@ -7,6 +7,12 @@ from agr.console import get_console, print_error
 from agr.exceptions import INSTALL_ERROR_TYPES, format_install_error
 from agr.fetcher import uninstall_skill
 from agr.handle import ParsedHandle, parse_handle
+from agr.lockfile import (
+    build_lockfile_path,
+    load_lockfile,
+    remove_lockfile_entry,
+    save_lockfile,
+)
 from agr.tool import lookup_skills_dir
 
 
@@ -114,3 +120,19 @@ def run_remove(refs: list[str], global_install: bool = False) -> None:
         print_result=_print_remove_result,
         exit_on_failure=False,
     )
+
+    # Update lockfile: remove entries for successfully removed skills
+    removed_refs = [r.ref for r in results if r.success]
+    if removed_refs:
+        lockfile_path = build_lockfile_path(config_path)
+        lockfile = load_lockfile(lockfile_path)
+        if lockfile is not None:
+            for ref in removed_refs:
+                handle = parse_handle(ref)
+                # Try multiple identifier forms (handle string, path, toml handle)
+                abs_path_str: str | None = None
+                if global_install and handle.is_local and handle.local_path is not None:
+                    abs_path_str = str(handle.resolve_local_path())
+                for identifier in _identifier_candidates(ref, handle, abs_path_str):
+                    remove_lockfile_entry(lockfile, identifier)
+            save_lockfile(lockfile, lockfile_path)
