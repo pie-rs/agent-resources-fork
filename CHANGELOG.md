@@ -2,9 +2,29 @@
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-03-30
+
+### Added
+- Lockfile support for reproducible skill installs (`agr.lock` written during `add`, `remove`, and `sync` with pinned commit SHAs)
+- Documentation site with MkDocs: tutorial, CLI reference, core concepts, creating skills guide, Python SDK docs, troubleshooting, teams guide, skill directory, agrx page, and llms.txt for AI tool discovery
+- Structured data (FAQPage, HowTo, TechArticle, BreadcrumbList) across documentation pages for search engine rich results
+
 ### Changed
 - Cursor skills now use flat naming (`skill-name/` directly under `.cursor/skills/`) instead of nested directories (`user/repo/skill/`)
 - Auto-migration flattens existing nested Cursor skills during `agr sync`, `agr add`, and `agr remove`
+- Skill scaffold now includes a required `description` field in SKILL.md
+- README rewritten with clearer value proposition, real skill examples, and invocation instructions
+
+### Fixed
+- OpenCode compatibility: use correct CLI flags for run mode and TUI interactive mode
+- Antigravity detection: correct `.agent` signal to `.agents`; update skills paths from `.agent/` to `.gemini/`
+- SDK `list_skills()` now raises `InvalidHandleError` instead of `ValueError`
+- SDK network failures raise `AgrError` instead of `ConnectionError`
+- `agr config show` correctly escapes Rich markup in source type brackets
+
+### Removed
+- `agr onboard` command and deprecated `agr tools` subcommands
+- Orphaned `test_gh_issue_phase.py` test file referencing removed development skills
 
 ## [0.7.10] - 2026-03-10
 ### Changed
